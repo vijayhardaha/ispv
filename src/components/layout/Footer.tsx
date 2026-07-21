@@ -1,189 +1,231 @@
-import { Heart, ShieldAlert, GitCommitHorizontal, Mail, BookOpen } from 'lucide-react';
+import { BookOpen, Heart } from 'lucide-react';
 import Link from 'next/link';
 import type { JSX } from 'react/jsx-runtime';
 
-import { Chakra } from '@/components/flags/FlagStripe';
+import { Container } from '@/components/ui/Container';
+
+interface InfoLink {
+  label: string;
+  href: string;
+  isAnchor?: boolean;
+}
+
+interface ExternalLink {
+  label: string;
+  href: string;
+}
+
+interface ResourceLink {
+  label: string;
+  href: string;
+  Icon: React.ComponentType<{ className?: string }>;
+}
+
+const infoLinks: InfoLink[] = [
+  { label: 'About the project', href: '/about' },
+  { label: 'Browse categories', href: '/categories' },
+  { label: 'All videos', href: '/videos' },
+  { label: 'How submissions work', href: '/about#how-it-works', isAnchor: true },
+];
+
+const usefulLinks: ExternalLink[] = [
+  { label: 'Instagram (open)', href: 'https://www.instagram.com/' },
+  { label: 'BBC India coverage', href: 'https://www.bbc.com/news/world/asia/india' },
+  { label: 'Indian Express', href: 'https://indianexpress.com/' },
+  { label: 'The Wire', href: 'https://thewire.in/' },
+  { label: 'Scroll.in', href: 'https://scroll.in/' },
+];
+
+const resourceLinks: ResourceLink[] = [
+  { label: 'Know India — Government of India', href: 'https://knowindia.india.gov.in/', Icon: BookOpen },
+  {
+    label: 'Freedom of speech in India',
+    href: 'https://en.wikipedia.org/wiki/Freedom_of_speech_in_India',
+    Icon: BookOpen,
+  },
+  { label: 'CJP Official Website', href: 'https://cockroachjanata.org/', Icon: BookOpen },
+];
+
+const bottomLinks: ExternalLink[] = [
+  { label: 'Privacy', href: '#' },
+  { label: 'Terms', href: '#' },
+  { label: 'Sitemap', href: '#' },
+];
 
 /**
- * Site-wide footer with branding, links, resources, and disclaimer.
+ * Renders a list of external links with anchor tags.
  *
- * @returns {JSX.Element} Rendered footer with flag stripe and multi-column layout.
+ * @param {object} props - Component properties.
+ * @param {ExternalLink[]} props.links - External link entries.
+ *
+ * @returns {JSX.Element} Rendered external link list.
+ */
+export function ExternalLinkList({ links }: { links: ExternalLink[] }): JSX.Element {
+  return (
+    <ul className="mt-3 space-y-2 text-sm">
+      {links.map((link) => (
+        <li key={link.href}>
+          <a className="hover:text-yellow-500" href={link.href} target="_blank" rel="noreferrer">
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * Renders a list of internal navigation links with optional anchor support.
+ *
+ * @param {object} props - Component properties.
+ * @param {InfoLink[]} props.links - Internal link entries.
+ *
+ * @returns {JSX.Element} Rendered internal link list.
+ */
+function InternalLinkList({ links }: { links: InfoLink[] }): JSX.Element {
+  return (
+    <ul className="mt-3 space-y-2 text-sm">
+      {links.map((link) => (
+        <li key={link.href}>
+          {link.isAnchor ? (
+            <a className="text-zinc-400 hover:text-yellow-500" href={link.href}>
+              {link.label}
+            </a>
+          ) : (
+            <Link className="text-zinc-400 hover:text-yellow-500" href={link.href}>
+              {link.label}
+            </Link>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * Renders a list of resource links with leading icons.
+ *
+ * @param {object} props - Component properties.
+ * @param {ResourceLink[]} props.links - Resource link entries with icons.
+ *
+ * @returns {JSX.Element} Rendered resource link list.
+ */
+function ResourceLinkList({ links }: { links: ResourceLink[] }): JSX.Element {
+  return (
+    <ul className="mt-3 space-y-2 text-sm">
+      {links.map((link) => (
+        <li className="flex items-start gap-2" key={link.href}>
+          <link.Icon className="mt-0.5 size-4 text-yellow-500" />
+          <a className="hover:text-yellow-500" href={link.href} target="_blank" rel="noreferrer">
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * Footer section title with underline accent.
+ *
+ * @param {object} props - Component properties.
+ * @param {object} props.children - Title text content.
+ *
+ * @returns {JSX.Element} Rendered widget title.
+ */
+function WidgetTitle({ children }: { children: React.ReactNode }): JSX.Element {
+  return (
+    <h4 className="font-display mb-6 text-sm font-extrabold tracking-wider text-white uppercase">
+      <span className="border-b-2 border-yellow-400 pb-1">{children}</span>
+    </h4>
+  );
+}
+
+/**
+ * Site-wide footer with branding, navigation links, resources, and disclaimer.
+ *
+ * @returns {JSX.Element} Rendered footer with multi-column layout.
  */
 export function Footer(): JSX.Element {
   return (
-    <footer className="mt-20 border-t-[3px] border-black">
-      <div className="bg-black text-white">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-12 md:grid-cols-4 md:px-6">
+    <footer className="mt-20 border-t-2 border-black">
+      <div className="bg-black text-zinc-400">
+        <Container className="grid grid-cols-1 gap-10 py-12 md:grid-cols-12">
           {/* Brand */}
-          <div>
-            <div className="flex items-center gap-2 text-orange-600">
-              <Chakra className="h-7 w-7" />
-              <span className="font-display text-xl font-extrabold tracking-tight uppercase">Protest Vault</span>
+          <div className="md:col-span-4">
+            <div className="flex items-center gap-2 text-yellow-500">
+              <span className="font-display text-xl font-extrabold tracking-tight uppercase">
+                Indian Students Protest Vault
+              </span>
             </div>
-            <p className="mt-3 text-sm text-white/80">
-              A peaceful archive of India&apos;s protest movement. Reels, marches, candlelight vigils, art on the walls
-              — collected, indexed, and kept open.
+            <p className="mt-3 text-sm">
+              The story wasn&apos;t written. It was recorded. A searchable archive preserving publicly shared videos
+              from student protests across India.
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1 border-2 border-black bg-orange-500 px-2.5 py-0.5 font-mono text-xs font-bold text-black uppercase">
-                #PeacefulProtest
-              </span>
-              <span className="inline-flex items-center gap-1 border-2 border-black bg-white px-2.5 py-0.5 font-mono text-xs font-bold text-black uppercase">
-                #India
-              </span>
-              <span className="inline-flex items-center gap-1 border-2 border-black bg-blue-600 px-2.5 py-0.5 font-mono text-xs font-bold text-white uppercase">
-                #OpenArchive
-              </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-10 md:col-span-8 md:grid-cols-3">
+            {/* Info */}
+            <div>
+              <WidgetTitle>Info</WidgetTitle>
+              <InternalLinkList links={infoLinks} />
+            </div>
+
+            {/* Useful links */}
+            <div>
+              <WidgetTitle>Useful Links</WidgetTitle>
+              <ExternalLinkList links={usefulLinks} />
+            </div>
+
+            {/* Resources */}
+            <div>
+              <WidgetTitle>Resources</WidgetTitle>
+              <ResourceLinkList links={resourceLinks} />
             </div>
           </div>
+        </Container>
 
-          {/* Info */}
-          <div>
-            <h4 className="font-display text-sm font-extrabold tracking-wider text-orange-600 uppercase">Info</h4>
-            <ul className="mt-3 space-y-2 text-sm">
-              <li>
-                <Link className="hover:text-orange-600" href="/about">
-                  About the project
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:text-orange-600" href="/categories">
-                  Browse categories
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:text-orange-600" href="/videos">
-                  All videos
-                </Link>
-              </li>
-              <li>
-                <a className="hover:text-orange-600" href="/about#how-it-works">
-                  How submissions work
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Useful links */}
-          <div>
-            <h4 className="font-display text-sm font-extrabold tracking-wider text-orange-600 uppercase">
-              Useful Links
-            </h4>
-            <ul className="mt-3 space-y-2 text-sm">
-              <li>
-                <a className="hover:text-orange-600" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
-                  Instagram (open)
-                </a>
-              </li>
-              <li>
-                <a
-                  className="hover:text-orange-600"
-                  href="https://www.bbc.com/news/world/asia/india"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  BBC India coverage
-                </a>
-              </li>
-              <li>
-                <a className="hover:text-orange-600" href="https://indianexpress.com/" target="_blank" rel="noreferrer">
-                  Indian Express
-                </a>
-              </li>
-              <li>
-                <a className="hover:text-orange-600" href="https://thewire.in/" target="_blank" rel="noreferrer">
-                  The Wire
-                </a>
-              </li>
-              <li>
-                <a className="hover:text-orange-600" href="https://scroll.in/" target="_blank" rel="noreferrer">
-                  Scroll.in
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Resources */}
-          <div>
-            <h4 className="font-display text-sm font-extrabold tracking-wider text-orange-600 uppercase">Resources</h4>
-            <ul className="mt-3 space-y-2 text-sm">
-              <li className="flex items-start gap-2">
-                <BookOpen className="mt-0.5 h-4 w-4 text-orange-600" />
-                <a
-                  className="hover:text-orange-600"
-                  href="https://knowindia.india.gov.in/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Know India — Government of India
-                </a>
-              </li>
-              <li className="flex items-start gap-2">
-                <BookOpen className="mt-0.5 h-4 w-4 text-orange-600" />
-                <a
-                  className="hover:text-orange-600"
-                  href="https://en.wikipedia.org/wiki/Freedom_of_speech_in_India"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Freedom of speech in India
-                </a>
-              </li>
-              <li className="flex items-start gap-2">
-                <GitCommitHorizontal className="mt-0.5 h-4 w-4 text-orange-600" />
-                <a className="hover:text-orange-600" href="https://github.com/" target="_blank" rel="noreferrer">
-                  Source on GitHub
-                </a>
-              </li>
-              <li className="flex items-start gap-2">
-                <Mail className="mt-0.5 h-4 w-4 text-orange-600" />
-                <a className="hover:text-orange-600" href="mailto:hi@protest.vault">
-                  hi@protest.vault
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="border-t-[3px] border-white/20 bg-black px-4 py-6 md:px-6">
-          <div className="mx-auto flex max-w-7xl flex-col items-start gap-6">
-            <div className="flex items-start gap-2 text-sm text-white/80">
-              <ShieldAlert className="mt-0.5 h-4 w-4 text-orange-600" />
-              <p className="max-w-3xl">
-                <span className="font-bold text-orange-600 uppercase">Disclaimer:</span> Protest Vault is an
-                independent, non-partisan archive of publicly-shared Instagram reels. It is not affiliated with
+        <Container>
+          <div className="flex flex-col items-start gap-6 py-6">
+            <div className="flex items-start gap-2 text-sm text-zinc-400">
+              <p>
+                <span className="font-bold text-yellow-500 uppercase">Disclaimer:</span> Indian Students Protest Vault
+                is an independent, non-partisan archive of publicly-shared Instagram reels. It is not affiliated with
                 Instagram/Meta, the Government of India, or any political party. All clips remain the property of their
                 original creators. If you believe a video should be removed, email
-                <a className="ml-1 underline hover:text-orange-600" href="mailto:hi@protest.vault">
+                <a className="ml-1 underline hover:text-yellow-500" href="mailto:hi@protest.vault">
                   hi@protest.vault
                 </a>{' '}
                 and we will review it within 48 hours. We do not host any media files — embeds point back to Instagram.
               </p>
             </div>
-            <div className="flex items-center gap-2 font-mono text-xs tracking-widest text-white/60 uppercase">
+            <div className="flex items-center gap-2 font-mono text-sm tracking-widest text-zinc-400 uppercase">
               <span>Made with</span>
-              <Heart className="h-4 w-4 fill-orange-600 text-orange-600" />
+              <Heart className="size-4 fill-yellow-500 text-yellow-500" />
               <span>in India</span>
             </div>
           </div>
-        </div>
+        </Container>
 
-        <div className="border-t-4 border-white">
-          <div className="mx-auto flex max-w-7xl flex-col md:flex-row justify-between items-center gap-6 px-4 py-8 md:px-6">
-            <p className="font-bold uppercase tracking-wider text-sm">© 2024 Shelter Structure. All rights reserved.</p>
+        <Container>
+          <div className="flex flex-col items-center justify-between gap-6 border-t-2 border-zinc-800 py-8 text-zinc-400 md:flex-row">
+            <p className="text-sm font-bold tracking-wider uppercase">
+              © 2026 Indian Students Protest Vault. All rights reserved.
+            </p>
             <div className="flex space-x-8">
-              <a className="font-bold uppercase tracking-wider text-sm hover:text-orange-500 transition-colors" href="#" target="_self">
-                Privacy
-              </a>
-              <a className="font-bold uppercase tracking-wider text-sm hover:text-orange-500 transition-colors" href="#" target="_self">
-                Terms
-              </a>
-              <a className="font-bold uppercase tracking-wider text-sm hover:text-orange-500 transition-colors" href="#" target="_self">
-                Sitemap
-              </a>
+              {bottomLinks.map((link) => (
+                <a
+                  key={link.label}
+                  className="text-sm font-bold tracking-wider uppercase transition-colors hover:text-yellow-400"
+                  href={link.href}
+                  target="_self"
+                >
+                  {link.label}
+                </a>
+              ))}
             </div>
           </div>
-        </div>
+        </Container>
       </div>
     </footer>
   );

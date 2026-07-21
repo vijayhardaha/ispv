@@ -1,17 +1,7 @@
 import type { HTMLAttributes, JSX } from 'react';
-import { cn } from '@/lib/utils';
 
-type Tone = 'default' | 'saffron' | 'green' | 'navy' | 'sun' | 'pink' | 'lime';
-
-const toneClasses: Record<Tone, string> = {
-  default: 'bg-white',
-  saffron: 'bg-orange-500 text-white',
-  green: 'bg-blue-600 text-white',
-  navy: 'bg-[#0a0a0c] text-white',
-  sun: 'bg-yellow-400 text-black',
-  pink: 'bg-orange-500 text-white',
-  lime: 'bg-yellow-400 text-black',
-};
+import { type Tone, toneMap } from '@/constants/colors';
+import { cn } from '@/lib/cn';
 
 /**
  * Card container with optional tone colour and hover effect.
@@ -34,8 +24,8 @@ export function Card({
   return (
     <div
       className={cn(
-        'shadow-brutal border-[3px] border-black',
-        toneClasses[tone],
+        'shadow-brutal border-2 border-black',
+        toneMap[tone],
         hover && 'hover:shadow-brutal-lg transition-all hover:-translate-x-[2px] hover:-translate-y-[2px]',
         className
       )}

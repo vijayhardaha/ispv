@@ -1,19 +1,23 @@
-import type { HTMLAttributes, JSX } from 'react';
-import { cn } from '@/lib/utils';
+import type { ComponentPropsWithoutRef, JSX } from 'react';
+
+import { cn } from '@/lib/cn';
 
 /**
- * Max-width centered container with consistent horizontal padding.
+ * Centered container with consistent horizontal padding and max-width.
+ * Spreads all additional props to the underlying `<div>`.
  *
- * @param {object} props - Container properties.
+ * @param {object} props - Component properties.
  * @param {string} [props.className] - Additional CSS classes.
  * @param {object} props.children - Container content.
  *
- * @returns {JSX.Element} Rendered container wrapper.
+ * @returns {JSX.Element} Rendered container div.
  */
-export function Container({ className, children, ...props }: HTMLAttributes<HTMLDivElement>): JSX.Element {
+export function Container({ className, children, ...props }: ComponentPropsWithoutRef<'div'>): JSX.Element {
   return (
     <div className={cn('mx-auto max-w-7xl px-4 md:px-6', className)} {...props}>
       {children}
     </div>
   );
 }
+
+Container.displayName = 'Container';

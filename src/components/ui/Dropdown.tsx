@@ -3,12 +3,26 @@ import { forwardRef, type ComponentPropsWithoutRef, type ElementRef } from 'reac
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { Check, ChevronDown } from 'lucide-react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/cn';
 
+/**
+ * Root select component that manages selection state.
+ */
 export const Select = SelectPrimitive.Root;
+
+/**
+ * Groups related select items under an optional label.
+ */
 export const SelectGroup = SelectPrimitive.Group;
+
+/**
+ * Displays the currently selected value inside the trigger.
+ */
 export const SelectValue = SelectPrimitive.Value;
 
+/**
+ * Styled select trigger with border, chevron icon, and focus ring.
+ */
 export const SelectTrigger = forwardRef<
   ElementRef<typeof SelectPrimitive.Trigger>,
   ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
@@ -16,7 +30,7 @@ export const SelectTrigger = forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'font-body flex w-full items-center justify-between gap-2 border-[3px] border-black bg-white px-3 py-2.5 text-left placeholder:text-black/40 focus:ring-2 focus:ring-orange-600 focus:outline-none',
+      'font-body flex w-full items-center justify-between gap-2 border-2 border-black bg-white px-3 py-2.5 text-left placeholder:text-black/40 focus:ring-2 focus:ring-yellow-500 focus:outline-none',
       'data-[placeholder]:text-black/40',
       className
     )}
@@ -24,12 +38,15 @@ export const SelectTrigger = forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 shrink-0" />
+      <ChevronDown className="size-4 shrink-0" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
 SelectTrigger.displayName = 'SelectTrigger';
 
+/**
+ * Dropdown content panel rendered in a portal with snap-in animation.
+ */
 export const SelectContent = forwardRef<
   ElementRef<typeof SelectPrimitive.Content>,
   ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
@@ -40,7 +57,7 @@ export const SelectContent = forwardRef<
       position={position}
       className={cn(
         'relative z-50 max-h-72 min-w-[10rem] overflow-hidden',
-        'shadow-brutal border-[3px] border-black bg-white',
+        'shadow-brutal border-2 border-black bg-white',
         'data-[state=open]:animate-snapIn',
         position === 'popper' && 'data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1',
         className
@@ -53,6 +70,9 @@ export const SelectContent = forwardRef<
 ));
 SelectContent.displayName = 'SelectContent';
 
+/**
+ * Selectable item with check indicator and highlight styling.
+ */
 export const SelectItem = forwardRef<
   ElementRef<typeof SelectPrimitive.Item>,
   ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
@@ -62,7 +82,7 @@ export const SelectItem = forwardRef<
     className={cn(
       'relative flex w-full cursor-pointer items-center gap-2 px-3 py-2 select-none',
       'font-mono text-sm font-bold tracking-wide uppercase outline-none',
-      'data-[highlighted]:bg-orange-500 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white',
+      'data-[highlighted]:bg-yellow-400 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white',
       className
     )}
     {...props}
@@ -70,7 +90,7 @@ export const SelectItem = forwardRef<
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
     <span className="ml-auto">
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4" />
+        <Check className="size-4" />
       </SelectPrimitive.ItemIndicator>
     </span>
   </SelectPrimitive.Item>

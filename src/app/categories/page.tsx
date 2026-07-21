@@ -1,39 +1,32 @@
 'use client';
 
-import { useState, type JSX } from 'react';
+import { type JSX } from 'react';
 
 import { ArrowRight, Grid3x3 } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 
+import { VideoCard } from '@/components/shared/VideoCard';
 import { Button } from '@/components/ui/Button';
-import { ReelPlayer } from '@/components/videos/ReelPlayer';
-import { VideoCard } from '@/components/videos/VideoCard';
-import { CATEGORIES, VIDEOS, type VideoEntry } from '@/data/videos';
-import { cn } from '@/lib/utils';
-
-const toneMap: Record<string, string> = {
-  saffron: 'bg-orange-500',
-  navy: 'bg-[#0a0a0c] text-white',
-  sun: 'bg-yellow-400',
-  hotpink: 'bg-orange-500 text-white',
-  lime: 'bg-yellow-400',
-  indiaGreen: 'bg-blue-600 text-white',
-};
+import { CATEGORIES } from '@/constants/categories';
+import { toneMap } from '@/constants/colors';
+import { VIDEOS } from '@/data/videos';
+import { useReelPlayer } from '@/hooks/useReelPlayer';
+import { cn } from '@/lib/cn';
 
 /**
- * Categories page with category cards, recently added videos, and reel player.
+ * Categories overview page with category cards and recently added videos.
  *
- * @returns {JSX.Element} Rendered categories overview page.
+ * @returns {JSX.Element} Rendered categories page.
  */
 export default function CategoriesPage(): JSX.Element {
-  const [active, setActive] = useState<VideoEntry | null>(null);
+  const { play } = useReelPlayer();
+
   return (
     <div>
       {/* Hero */}
-      <section className="border-b-[3px] border-black bg-[#0a0a0c] py-10 text-white">
+      <section className="border-b-2 border-black bg-black py-10 text-white">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="font-mono text-[10px] tracking-widest text-orange-600 uppercase">/ Categories</div>
+          <div className="font-mono text-[10px] tracking-widest text-yellow-500 uppercase">/ Categories</div>
           <h1 className="font-display mt-2 text-4xl font-extrabold tracking-tight uppercase md:text-6xl">
             Browse by Category
           </h1>
@@ -41,7 +34,7 @@ export default function CategoriesPage(): JSX.Element {
             Six core categories, all peaceful, all searchable. Click into any of them to see the full list, or jump to{' '}
             <Link
               href="/videos"
-              className="decoration-saffron underline decoration-2 underline-offset-4 hover:text-orange-600"
+              className="decoration-saffron underline decoration-2 underline-offset-4 hover:text-yellow-500"
             >
               all videos
             </Link>
@@ -60,9 +53,9 @@ export default function CategoriesPage(): JSX.Element {
                 key={c.id}
                 href={`/categories/${c.id}`}
                 className={cn(
-                  'group shadow-brutal relative block overflow-hidden border-[3px] border-black p-5 transition-all',
+                  'group shadow-brutal relative block overflow-hidden border-2 border-black p-5 transition-all',
                   'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
-                  toneMap[c.color]
+                  toneMap[c.color as keyof typeof toneMap] ?? ''
                 )}
               >
                 <div className="flex items-start justify-between">
@@ -75,13 +68,6 @@ export default function CategoriesPage(): JSX.Element {
                   {c.label}
                 </h2>
                 <p className="mt-2 max-w-xs text-sm opacity-90">{c.description}</p>
-                <div className="mt-5 flex -space-x-2">
-                  {list.slice(0, 4).map((v) => (
-                    <div key={v.id} className="h-12 w-10 overflow-hidden border-2 border-black">
-                      <Image src={v.thumbnail} alt="" width={320} height={180} className="h-full w-full object-cover" />
-                    </div>
-                  ))}
-                </div>
               </Link>
             );
           })}
@@ -89,13 +75,13 @@ export default function CategoriesPage(): JSX.Element {
       </section>
 
       {/* View All CTA */}
-      <section className="border-t-[3px] border-black bg-yellow-400 py-10">
+      <section className="border-t-2 border-black bg-yellow-400 py-10">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-4 px-4 text-center md:px-6">
           <Grid3x3 className="h-10 w-10" />
           <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase">Want the full archive?</h2>
           <Link href="/videos">
             <Button variant="default" size="lg">
-              View All Videos <ArrowRight className="h-4 w-4" />
+              View All Videos <ArrowRight className="size-4" />
             </Button>
           </Link>
         </div>
@@ -105,17 +91,10 @@ export default function CategoriesPage(): JSX.Element {
         <h3 className="font-display text-xl font-extrabold uppercase">Recently added</h3>
         <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
           {VIDEOS.slice(0, 12).map((v) => (
-            <VideoCard key={v.id} video={v} onPlay={setActive} size="sm" />
+            <VideoCard key={v.id} video={v} onPlay={(video) => play(video, VIDEOS)} />
           ))}
         </div>
       </section>
-
-      <ReelPlayer
-        open={!!active}
-        startIndex={active ? VIDEOS.findIndex((v) => v.id === active.id) : 0}
-        videos={VIDEOS}
-        onClose={() => setActive(null)}
-      />
     </div>
   );
 }

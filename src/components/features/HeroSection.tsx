@@ -1,0 +1,106 @@
+import type { JSX } from 'react';
+
+import { ArrowRight, Play, Flag, Sparkles } from 'lucide-react';
+import Link from 'next/link';
+
+import { Chakra } from '@/components/features/FlagStripe';
+import { Button } from '@/components/ui/Button';
+import { Container } from '@/components/ui/Container';
+
+/**
+ * Homepage hero section with headline, call-to-action buttons, and stats.
+ *
+ * @returns {JSX.Element} Rendered hero section.
+ */
+export function HeroSection(): JSX.Element {
+  return (
+    <section className="relative overflow-hidden border-b-2 border-black bg-gray-100">
+      <Container className="grid grid-cols-1 gap-10 py-12 md:grid-cols-12 md:py-20">
+        <div className="md:col-span-7">
+          <div className="shadow-brutal-sm inline-flex items-center gap-2 border-2 border-black bg-yellow-400 px-3 py-1.5 font-mono text-[10px] font-bold tracking-widest uppercase">
+            <Sparkles className="h-3.5 w-3.5" /> People&apos;s Videos • By The People • For The People
+          </div>
+
+          <h1 className="font-display mt-5 text-5xl leading-[0.95] font-extrabold tracking-tight uppercase md:text-7xl">
+            <span className="block">The History Wasn&apos;t Written.</span>
+            <span className="block bg-linear-to-r from-yellow-400 to-yellow-500 bg-clip-text text-transparent">
+              It Was Recorded.
+            </span>
+            <span className="block text-black">By the People.</span>
+          </h1>
+
+          <p className="mt-5 max-w-xl text-base text-black/80 md:text-lg">
+            Every video captures one perspective. Together, they preserve the timeline of student movements across
+            India. This vault organizes publicly shared recordings by event, location, and date, making them easy to
+            discover for years to come.
+          </p>
+
+          <div className="mt-7 flex flex-wrap items-center gap-3">
+            <Link href="/categories">
+              <Button variant="primary" size="lg">
+                <Play className="h-5 w-5" /> Browse Categories
+              </Button>
+            </Link>
+            <Link href="/videos">
+              <Button variant="default-outline" size="lg">
+                <Flag className="h-5 w-5" /> All Videos <ArrowRight className="size-4" />
+              </Button>
+            </Link>
+          </div>
+
+          <div className="mt-8 grid max-w-md grid-cols-3 gap-3">
+            <Stat n="2.4K" label="Reels" />
+            <Stat n="180+" label="Cities" />
+            <Stat n="28" label="States & UTs" />
+          </div>
+        </div>
+
+        <div className="md:col-span-5">
+          <div className="relative">
+            <div className="shadow-brutal absolute -inset-2 -rotate-2 border-2 border-black bg-yellow-400" />
+            <div className="shadow-brutal-lg relative border-2 border-black bg-white p-6">
+              <p className="font-display mt-3 text-2xl leading-tight font-extrabold tracking-tighter uppercase md:text-3xl">
+                Every student who pressed record became a witness to history.
+              </p>
+              <p className="mt-3 text-sm text-black/70">
+                Every archived video is one student&apos;s perspective. Together, they preserve the collective memory of
+                a movement.
+              </p>
+              <div className="mt-5 border-t-2 border-black pt-4">
+                <div className="flex items-center gap-3">
+                  <div className="shadow-brutal-sm flex h-12 w-12 items-center justify-center border-2 border-black bg-yellow-400">
+                    <Chakra className="h-7 w-7 text-black" />
+                  </div>
+                  <div className="leading-tight">
+                    <div className="font-display text-base font-extrabold uppercase">The Vault Collective</div>
+                    <div className="font-mono text-[10px] tracking-widest text-black/60 uppercase">
+                      Independent · Non-partisan
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+/**
+ * Statistic display box with a large number and small label.
+ *
+ * @param {object} props - Component properties.
+ * @param {string} props.n - Statistic value to display.
+ * @param {string} props.label - Descriptive label for the statistic.
+ *
+ * @returns {JSX.Element} Rendered stat box.
+ */
+function Stat({ n, label }: { n: string; label: string }) {
+  return (
+    <div className="shadow-brutal-sm border-2 border-black bg-white p-3">
+      <div className="font-display text-2xl font-extrabold">{n}</div>
+      <div className="font-mono text-[10px] font-bold tracking-widest text-black/60 uppercase">{label}</div>
+    </div>
+  );
+}

@@ -1,28 +1,19 @@
 import { useEffect, useRef, useState, type JSX } from 'react';
 
-import {
-  X,
-  Heart,
-  MessageCircle,
-  Share2,
-  Eye,
-  Volume2,
-  VolumeX,
-  ChevronUp,
-  ChevronDown,
-  ExternalLink,
-} from 'lucide-react';
+import { X, ChevronUp, ChevronDown } from 'lucide-react';
+import Image from 'next/image';
 
 import { getCategoryById, type VideoEntry } from '@/data/videos';
-import { cn, formatNumber, timeAgo, extractInstagramId } from '@/lib/utils';
+import { cn } from '@/lib/cn';
+import { extractInstagramId } from '@/lib/instagram';
 
 /**
  * Props for the ReelPlayer component.
  *
  * @type {ReelPlayerProps}
  * @property {VideoEntry[]} videos - List of videos to play through.
- * @property {number} [startIndex=0] - Index of the video to start on.
- * @property {boolean} open - Whether the player overlay is visible.
+ * @property {number} [startIndex] - Index of the video to start on.
+ * @property {boolean} open - Whether the player is visible.
  * @property {() => void} onClose - Callback to close the player.
  */
 interface ReelPlayerProps {
@@ -33,19 +24,26 @@ interface ReelPlayerProps {
 }
 
 /**
- * Full-screen snap-scroll reel player with keyboard and scroll navigation.
+ * Full-screen reel player with snap scrolling, keyboard navigation, and Instagram embeds.
  *
  * @param {ReelPlayerProps} props - Player properties.
+ * @param {VideoEntry[]} props.videos - List of videos to play through.
+ * @param {number} [props.startIndex] - Index of the video to start on.
+ * @param {boolean} props.open - Whether the player is visible.
+ * @param {() => void} props.onClose - Callback to close the player.
  *
- * @returns {JSX.Element | null} Rendered full-screen overlay, or null when closed.
+ * @returns {JSX.Element | null} Rendered reel player, or null when closed.
  */
 export function ReelPlayer({ videos, startIndex = 0, open, onClose }: ReelPlayerProps): JSX.Element | null {
   const containerRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
   const [active, setActive] = useState(startIndex);
+  const activeRef = useRef(active);
+  activeRef.current = active;
   const [muted, setMuted] = useState(true);
   const [likes, setLikes] = useState<Record<string, boolean>>({});
 
-  // Snap to startIndex when opened
   useEffect(() => {
     if (open && containerRef.current) {
       const top = startIndex * containerRef.current.clientHeight;
@@ -54,7 +52,6 @@ export function ReelPlayer({ videos, startIndex = 0, open, onClose }: ReelPlayer
     }
   }, [open, startIndex]);
 
-  // Track active reel via scroll
   useEffect(() => {
     if (!open) return;
     const el = containerRef.current;
@@ -63,8 +60,9 @@ export function ReelPlayer({ videos, startIndex = 0, open, onClose }: ReelPlayer
     const onScroll = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
+        const current = activeRef.current;
         const i = Math.round(el.scrollTop / el.clientHeight);
-        if (i !== active) setActive(Math.max(0, Math.min(videos.length - 1, i)));
+        if (i !== current) setActive(Math.max(0, Math.min(videos.length - 1, i)));
       });
     };
     el.addEventListener('scroll', onScroll, { passive: true });
@@ -72,14 +70,12 @@ export function ReelPlayer({ videos, startIndex = 0, open, onClose }: ReelPlayer
       el.removeEventListener('scroll', onScroll);
       cancelAnimationFrame(raf);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, videos.length]);
 
-  // Keyboard: arrows + esc
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') onCloseRef.current();
       if (e.key === 'ArrowDown' || e.key === 'j') {
         scrollToIndex(Math.min(active + 1, videos.length - 1));
       }
@@ -90,10 +86,8 @@ export function ReelPlayer({ videos, startIndex = 0, open, onClose }: ReelPlayer
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, active, videos.length]);
 
-  // Lock body scroll
   useEffect(() => {
     if (!open) return;
     const orig = document.body.style.overflow;
@@ -116,37 +110,35 @@ export function ReelPlayer({ videos, startIndex = 0, open, onClose }: ReelPlayer
       <button
         onClick={onClose}
         aria-label="Close player"
-        className="shadow-brutal-sm absolute top-4 right-4 z-20 border-[3px] border-black bg-white p-2 hover:bg-orange-500 hover:text-white"
+        className="shadow-brutal-sm absolute top-4 right-4 z-20 border-2 border-black bg-white p-2 hover:bg-yellow-400 hover:text-white"
       >
         <X className="h-5 w-5" />
       </button>
 
       <div className="relative flex h-full w-full items-stretch justify-center">
-        {/* Side rail — quick scroll on desktop */}
         <div className="absolute top-1/2 left-4 z-20 hidden -translate-y-1/2 flex-col gap-2 md:flex">
           <button
             disabled={active === 0}
             onClick={() => scrollToIndex(active - 1)}
-            className="shadow-brutal-sm border-[3px] border-black bg-orange-500 p-2 transition hover:-translate-y-0.5 disabled:opacity-40"
+            className="shadow-brutal-sm border-2 border-black bg-yellow-400 p-2 transition hover:-translate-y-0.5 disabled:opacity-40"
             aria-label="Previous reel"
           >
             <ChevronUp className="h-5 w-5" />
           </button>
-          <div className="border-[3px] border-black bg-white px-2 py-1 text-center font-mono text-[10px] font-bold">
+          <div className="border-2 border-black bg-white px-2 py-1 text-center font-mono text-[10px] font-bold">
             {active + 1}/{videos.length}
           </div>
           <button
             disabled={active === videos.length - 1}
             onClick={() => scrollToIndex(active + 1)}
-            className="shadow-brutal-sm border-[3px] border-black bg-orange-500 p-2 transition hover:translate-y-0.5 disabled:opacity-40"
+            className="shadow-brutal-sm border-2 border-black bg-yellow-400 p-2 transition hover:translate-y-0.5 disabled:opacity-40"
             aria-label="Next reel"
           >
             <ChevronDown className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Phone-frame container */}
-        <div className="relative h-full w-full max-w-105 bg-black">
+        <div className="relative aspect-9/16 h-full bg-black">
           <div ref={containerRef} className="snap-reel relative h-full w-full">
             {videos.map((v, i) => (
               <ReelItem
@@ -166,6 +158,19 @@ export function ReelPlayer({ videos, startIndex = 0, open, onClose }: ReelPlayer
   );
 }
 
+/**
+ * Single reel item within the snap-scroll player, showing thumbnail, embed, and metadata.
+ *
+ * @param {object} props - Component properties.
+ * @param {VideoEntry} props.video - Video entry to render.
+ * @param {boolean} props.active - Whether this item is currently in view.
+ * @param {boolean} props.liked - Whether the user has liked this video.
+ * @param {boolean} props.muted - Whether audio is muted.
+ * @param {() => void} props.onLike - Callback to toggle like state.
+ * @param {() => void} props.onToggleMute - Callback to toggle mute state.
+ *
+ * @returns {JSX.Element} Rendered reel item.
+ */
 function ReelItem({
   video,
   active,
@@ -180,22 +185,14 @@ function ReelItem({
   const [embedLoaded, setEmbedLoaded] = useState(false);
   const id = extractInstagramId(video.url);
   const cat = getCategoryById(video.category);
-  // We only mount the active reel's iframe so it actually plays.
   return (
     <div className="snap-reel-item relative h-full w-full bg-black">
-      {/* Background thumbnail fills 9:16 */}
-      <img
-        src={video.thumbnail}
-        alt=""
-        className="absolute inset-0 h-full w-full object-cover opacity-90"
-        loading="lazy"
-      />
+      <Image src={video.thumbnail} alt="" fill className="object-cover opacity-90" />
       <div className="from-ink/95 via-ink/40 to-ink/20 absolute inset-0 bg-linear-to-t" />
 
-      {/* Active iframe (only when in view) */}
       {active && id && (
         <iframe
-          title={video.title}
+          title={`Reel ${video.id}`}
           src={`https://www.instagram.com/p/${id}/embed/`}
           allow="autoplay; encrypted-media; picture-in-picture"
           allowFullScreen
@@ -207,10 +204,9 @@ function ReelItem({
         />
       )}
 
-      {/* Top badge bar: full-width with gradient shadow */}
-      <div className="absolute inset-x-0 top-0 z-10 bg-linear-to-b from-black/80 via-black/40 to-transparent pb-8 pt-3 pl-3 pr-3">
+      <div className="absolute inset-x-0 top-0 z-10 bg-linear-to-b from-black via-black/40 to-transparent pt-3 pr-3 pb-8 pl-3">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1 border-2 border-black bg-orange-500 px-2.5 py-0.5 font-mono text-xs font-bold text-black uppercase">
+          <span className="inline-flex items-center gap-1 border-2 border-black bg-yellow-400 px-2.5 py-0.5 font-mono text-xs font-bold text-black uppercase">
             {cat?.label ?? video.category}
           </span>
           <span className="inline-flex items-center gap-1 border-2 border-black bg-white px-2.5 py-0.5 font-mono text-xs font-bold text-black uppercase">

@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 
 import { SLOGANS } from '@/data/slogans';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/cn';
 
 const PLACARD_STYLES = [
   'border-red-500 shadow-brutal-red-600 rotate-placard-1',
@@ -11,9 +11,9 @@ const PLACARD_STYLES = [
 ];
 
 /**
- * Horizontal marquee ticker displaying peaceful protest slogans on rotating placards.
+ * Animated marquee displaying protest slogans on styled placards.
  *
- * @returns {JSX.Element} Rendered scrolling marquee with placard cards.
+ * @returns {JSX.Element} Rendered slogan ticker section.
  */
 export function SloganTicker(): JSX.Element {
   const items = [...SLOGANS, ...SLOGANS];

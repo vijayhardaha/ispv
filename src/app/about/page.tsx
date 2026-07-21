@@ -1,87 +1,215 @@
-'use client';
+import type { JSX } from 'react';
 
-import { ArrowRight, Flag, ShieldCheck, Globe2, Sparkles } from 'lucide-react';
+import { ArrowRight, Check, X, Search, Link2, Eye, BookOpen } from 'lucide-react';
 import Link from 'next/link';
-import type { JSX } from 'react/jsx-runtime';
 
-import { Chakra } from '@/components/flags/FlagStripe';
+import { Chakra } from '@/components/features/FlagStripe';
 import { Button } from '@/components/ui/Button';
+import { Container } from '@/components/ui/Container';
+import { cn } from '@/lib/cn';
+
+const PRINCIPLES = [
+  {
+    icon: <Link2 className="h-6 w-6" />,
+    title: 'Public Recordings',
+    body: 'We archive only videos that have been publicly shared by their original creators. Every video remains embedded from its original Instagram post whenever possible.',
+    color: 'bg-yellow-400',
+  },
+  {
+    icon: <BookOpen className="h-6 w-6" />,
+    title: 'Preservation, Not Persuasion',
+    body: 'This archive exists to organize public recordings, not to promote a political party, endorse opinions, or rewrite events. Every video represents the perspective of the person who recorded it.',
+    color: 'bg-black text-white',
+  },
+  {
+    icon: <Eye className="h-6 w-6" />,
+    title: 'Attribution Matters',
+    body: 'Every embedded video links directly to its original creator. Credit remains with the people who documented the moment.',
+    color: 'bg-blue-600 text-white',
+  },
+  {
+    icon: <Search className="h-6 w-6" />,
+    title: 'Searchable History',
+    body: 'Videos are organized by state, city, event, date, creator, and topic, making it possible to explore a movement from multiple perspectives instead of isolated posts.',
+    color: 'bg-yellow-400',
+  },
+];
+
+const STEPS = [
+  { n: 1, title: 'Discover', body: 'Find a publicly shared Instagram Reel documenting a student protest.' },
+  {
+    n: 2,
+    title: 'Submit',
+    body: 'Paste the public Instagram URL through the submission form and optionally add useful tags or event information.',
+  },
+  {
+    n: 3,
+    title: 'Review',
+    body: 'Each submission is checked to ensure the link works, the content is publicly accessible, and the metadata is accurate.',
+  },
+  {
+    n: 4,
+    title: 'Archive',
+    body: 'Approved videos become part of the archive and can be discovered through search, events, locations, and categories.',
+  },
+];
+
+const INCLUDED = [
+  'Peaceful marches',
+  'Student speeches',
+  'Public meetings',
+  'Press interactions',
+  'Eyewitness recordings',
+  'Campus demonstrations',
+  'Cultural and awareness events related to student movements',
+];
+
+const EXCLUDED = [
+  'Private content',
+  'Videos without a public source',
+  'Edited compilations without attribution',
+  'Spam or duplicate submissions',
+  'Content removed by its original creator',
+];
 
 /**
- * About page explaining the project's principles and how submissions work.
+ * About page explaining the archive's principles, submission process, and mission.
  *
- * @returns {JSX.Element} Rendered about page with principles and how-it-works section.
+ * @returns {JSX.Element} Rendered about page.
  */
 export default function AboutPage(): JSX.Element {
   return (
     <div>
-      <section className="border-b-[3px] border-black bg-black py-14 text-white">
-        <div className="mx-auto max-w-5xl px-4 md:px-6">
-          <div className="font-mono text-[10px] tracking-widest text-orange-600 uppercase">/ About</div>
+      {/* Hero */}
+      <section className="border-b-2 border-black bg-black py-14 text-white">
+        <Container>
+          <div className="font-mono text-[10px] tracking-widest text-yellow-400 uppercase">/ About</div>
           <h1 className="font-display mt-2 text-4xl font-extrabold tracking-tight uppercase md:text-6xl">
-            What is Protest Vault?
+            What is Indian Students Protest Vault?
           </h1>
-          <p className="mt-3 max-w-2xl text-white/80">
-            A small, non-partisan archive of peaceful protest reels from across India. Built for one reason: to keep the
-            record straight.
+          <p className="mt-4 leading-relaxed text-white/80">
+            Indian Students Protest Vault is an independent archive of publicly shared videos documenting student
+            protests across India.
           </p>
-        </div>
+          <p className="mt-3 leading-relaxed text-white/70">
+            Every protest leaves behind thousands of recordings. They are scattered across social media, difficult to
+            search, and often disappear over time. This archive brings those public videos together into one searchable
+            collection, organized by event, location, date, and topic.
+          </p>
+          <p className="mt-3 leading-relaxed text-yellow-400/80">
+            Our purpose is simple: preserve public recordings so they remain easy to discover today and valuable
+            tomorrow.
+          </p>
+        </Container>
       </section>
 
-      <section className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-12 md:grid-cols-2 md:px-6">
-        <Principle icon={<Flag className="h-6 w-6" />} title="Peaceful only" color="bg-orange-500">
-          We index only peaceful, public protest. No incitement, no calls to violence, no communal targeting. If a clip
-          crosses that line, it doesn&apos;t get in.
-        </Principle>
-        <Principle icon={<ShieldCheck className="h-6 w-6" />} title="Source preserved" color="bg-blue-600 text-white">
-          Every embed points back to the original Instagram URL. We don&apos;t host media — we point to it. Credit stays
-          where it belongs.
-        </Principle>
-        <Principle icon={<Globe2 className="h-6 w-6" />} title="Indexed & searchable" color="bg-[#0a0a0c] text-white">
-          By city, state, category, hashtag, and tag. Open the search bar on the archive page and find what you need in
-          two seconds.
-        </Principle>
-        <Principle icon={<Sparkles className="h-6 w-6" />} title="Open to submit" color="bg-orange-500 text-white">
-          Anyone can submit a public reel via the Submit button. We review within 48 hours. If approved, it joins the
-          archive.
-        </Principle>
+      {/* Principles */}
+      <section className="py-12">
+        <Container>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {PRINCIPLES.map((p) => (
+              <Principle key={p.title} icon={p.icon} title={p.title} color={p.color}>
+                {p.body}
+              </Principle>
+            ))}
+          </div>
+        </Container>
       </section>
 
-      <section id="how-it-works" className="border-y-[3px] border-black bg-gray-100 py-12">
-        <div className="mx-auto max-w-4xl px-4 md:px-6">
-          <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase md:text-4xl">How it works</h2>
-          <ol className="mt-6 space-y-4">
-            <Step n={1} title="Find a reel on Instagram">
-              Open a public reel — anything from a march, a candlelight vigil, a mural, a press briefing.
-            </Step>
-            <Step n={2} title="Copy the URL">
-              Tap the share icon → &quot;Copy link&quot; on Instagram.
-            </Step>
-            <Step n={3} title="Submit here">
-              Click the <b>Submit Video</b> button in the header, paste the URL, add a few hashtags, hit submit.
-            </Step>
-            <Step n={4} title="We review & add">
-              We review for peaceful, public content. If approved, it joins the archive within 48 hours.
-            </Step>
-          </ol>
-        </div>
+      {/* How It Works */}
+      <section className="border-y-2 border-black bg-gray-100 py-12">
+        <Container>
+          <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase md:text-4xl">How It Works</h2>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            {STEPS.map((s) => (
+              <Step key={s.n} n={s.n} title={s.title}>
+                {s.body}
+              </Step>
+            ))}
+          </div>
+        </Container>
       </section>
 
-      <section className="bg-orange-500 py-12">
-        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-4 px-4 text-center md:px-6">
-          <Chakra className="h-12 w-12 text-[#0a0a0c]" />
-          <h3 className="font-display text-2xl font-extrabold uppercase">A country is the sum of its quiet voices.</h3>
+      {/* What We Archive / What We Don't */}
+      <section className="py-12">
+        <Container>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <div>
+              <h3 className="font-display text-2xl font-extrabold tracking-tight uppercase">What We Archive</h3>
+              <ul className="mt-4 space-y-2">
+                {INCLUDED.map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <Check className="mt-0.5 size-4 shrink-0 text-green-600" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-display text-2xl font-extrabold tracking-tight uppercase">
+                What We Don&apos;t Archive
+              </h3>
+              <ul className="mt-4 space-y-2">
+                {EXCLUDED.map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <X className="mt-0.5 size-4 shrink-0 text-red-600" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* Why This Matters */}
+      <section className="border-y-2 border-black bg-gray-100 py-12">
+        <Container>
+          <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase md:text-4xl">
+            Why This Matters
+          </h2>
+          <p className="mt-4 leading-relaxed text-black/80">History is rarely experienced from a single camera.</p>
+          <p className="mt-3 leading-relaxed text-black/80">
+            Thousands of students record the same event from different streets, different cities, and different
+            perspectives. Individually, each video captures a moment. Together, they preserve the memory of a movement.
+          </p>
+          <p className="mt-3 leading-relaxed text-black/80">
+            Indian Students Protest Vault exists to ensure those publicly shared recordings remain organized,
+            searchable, and accessible for anyone seeking to understand these moments through the people who witnessed
+            them.
+          </p>
+        </Container>
+      </section>
+
+      {/* Closing CTA */}
+      <section className="bg-yellow-400 py-12">
+        <Container className="flex flex-col items-center gap-4 text-center">
+          <Chakra className="h-12 w-12" />
+          <blockquote className="font-display text-2xl leading-tight font-extrabold uppercase italic">
+            &ldquo;The story wasn&apos;t written. It was recorded.&rdquo;
+          </blockquote>
           <Link href="/videos">
-            <Button variant="default">
-              See the archive <ArrowRight className="h-4 w-4" />
+            <Button variant="default" shadow>
+              Explore the Archive <ArrowRight className="size-4" />
             </Button>
           </Link>
-        </div>
+        </Container>
       </section>
     </div>
   );
 }
 
+/**
+ * Principle card with icon, title, and description body.
+ *
+ * @param {object} root0 - Component properties.
+ * @param {object} root0.icon - Icon element to display.
+ * @param {string} root0.title - Principle title.
+ * @param {object} root0.children - Description body text.
+ * @param {string} root0.color - Tailwind background colour classes.
+ *
+ * @returns {JSX.Element} Rendered principle card.
+ */
 function Principle({
   icon,
   title,
@@ -94,26 +222,36 @@ function Principle({
   color: string;
 }) {
   return (
-    <div className={`shadow-brutal border-[3px] border-black p-5 ${color}`}>
+    <div className={cn('shadow-brutal border-2 border-black p-5', color)}>
       <div className="flex items-center gap-2">
-        <div className="shadow-brutal-sm border-[3px] border-black bg-white p-1.5 text-black">{icon}</div>
+        <div className="shadow-brutal-sm border-2 border-black bg-white p-1.5 text-black">{icon}</div>
         <h3 className="font-display text-2xl font-extrabold uppercase">{title}</h3>
       </div>
-      <p className="mt-3 text-sm leading-relaxed">{children}</p>
+      <p className="mt-3 leading-relaxed">{children}</p>
     </div>
   );
 }
 
+/**
+ * Numbered step card with a step number, title, and description.
+ *
+ * @param {object} root0 - Component properties.
+ * @param {number} root0.n - Step number.
+ * @param {string} root0.title - Step title.
+ * @param {object} root0.children - Step description text.
+ *
+ * @returns {JSX.Element} Rendered step card.
+ */
 function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
   return (
-    <li className="shadow-brutal flex items-start gap-4 border-[3px] border-black bg-white p-4">
-      <div className="font-display shadow-brutal-sm flex h-10 w-10 shrink-0 items-center justify-center border-[3px] border-black bg-orange-500 text-lg font-extrabold">
+    <div className="shadow-brutal flex items-start gap-4 border-2 border-black bg-white p-4">
+      <div className="font-display shadow-brutal-sm flex h-10 w-10 shrink-0 items-center justify-center border-2 border-black bg-yellow-400 text-lg font-extrabold">
         {n}
       </div>
       <div>
         <h4 className="font-display text-lg font-extrabold uppercase">{title}</h4>
-        <p className="mt-1 text-sm text-black/80">{children}</p>
+        <p className="mt-1 text-black/80">{children}</p>
       </div>
-    </li>
+    </div>
   );
 }
