@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://web.resource.org/cc/"
@@ -13,79 +11,7 @@
    id="svg2254"
    sodipodi:version="0.32"
    inkscape:version="0.43"
-   version="1.0"
-   sodipodi:docbase="C:\Documents and Settings\Milind_Joshi01.ITLINFOSYS\Desktop"
-   sodipodi:docname="Ashoka Chakra 2r.svg">
-  <defs
-     id="defs2256" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="0.48593747"
-     inkscape:cx="204.78035"
-     inkscape:cy="212.30832"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer2"
-     inkscape:window-width="1024"
-     inkscape:window-height="719"
-     inkscape:window-x="-4"
-     inkscape:window-y="-4" />
-  <metadata
-     id="metadata2259">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title>Ashoka Chakra</dc:title>
-        <dc:date>17-DEC-2005</dc:date>
-        <dc:creator>
-          <cc:Agent>
-            <dc:title>Milind Joshi</dc:title>
-          </cc:Agent>
-        </dc:creator>
-        <dc:rights>
-          <cc:Agent>
-            <dc:title>Milind Joshi</dc:title>
-          </cc:Agent>
-        </dc:rights>
-        <dc:source>Indian National Flag</dc:source>
-        <dc:description>24 spoke wheel of color Navy (#000080), as dipicted at the center of the Indian National Flag over a white (#FFFFFF) background.</dc:description>
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by/2.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by/2.0/">
-        <cc:permits
-           rdf:resource="http://web.resource.org/cc/Reproduction" />
-        <cc:permits
-           rdf:resource="http://web.resource.org/cc/Distribution" />
-        <cc:requires
-           rdf:resource="http://web.resource.org/cc/Notice" />
-        <cc:requires
-           rdf:resource="http://web.resource.org/cc/Attribution" />
-        <cc:permits
-           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:groupmode="layer"
-     id="layer1"
-     inkscape:label="bg">
-    <rect
-       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-opacity:1"
-       id="rect1332"
-       width="410"
-       height="410"
-       x="0"
-       y="5.6843419e-014" />
-  </g>
+   version="1.0">
   <g
      inkscape:groupmode="layer"
      id="layer4"
@@ -93,7 +19,7 @@
      style="display:inline">
     <path
        sodipodi:type="arc"
-       style="fill:#000080;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-opacity:1"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-opacity:1"
        id="path4138"
        sodipodi:cx="203.21428"
        sodipodi:cy="205"
@@ -250,7 +176,7 @@
      inkscape:label="center dot navy">
     <path
        sodipodi:type="arc"
-       style="fill:#000080;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-opacity:1;display:inline"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-opacity:1;display:inline"
        id="path3198"
        sodipodi:cx="208.91617"
        sodipodi:cy="207.37491"
