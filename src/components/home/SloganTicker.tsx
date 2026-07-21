@@ -1,23 +1,36 @@
-import { SLOGANS } from "@/data/slogans";
+import type { JSX } from 'react';
 
-export function SloganTicker() {
-  // Duplicate the slogans so the marquee loops seamlessly.
+import { SLOGANS } from '@/data/slogans';
+import { cn } from '@/lib/utils';
+
+const PLACARD_STYLES = [
+  'border-red-500 shadow-brutal-red-600 rotate-placard-1',
+  'border-yellow-400 shadow-brutal-yellow-500 rotate-placard-2',
+  'border-blue-600 shadow-brutal-blue-700 rotate-placard-3',
+  'border-green-400 shadow-brutal-green-500 rotate-placard-1',
+];
+
+/**
+ * Horizontal marquee ticker displaying peaceful protest slogans on rotating placards.
+ *
+ * @returns {JSX.Element} Rendered scrolling marquee with placard cards.
+ */
+export function SloganTicker(): JSX.Element {
   const items = [...SLOGANS, ...SLOGANS];
   return (
-    <div className="border-y-3 border-ink bg-navy py-3 text-paper">
-      <div className="mx-auto flex max-w-[100vw] overflow-hidden">
-        <div className="flex shrink-0 animate-marquee items-center gap-8 px-4">
-          {items.map((s, i) => (
-            <span
-              key={i}
-              className="flex shrink-0 items-center gap-3 font-display text-sm font-bold uppercase tracking-wider md:text-base"
-            >
-              <span className="text-saffron">★</span>
-              {s}
-              <span className="text-saffron">★</span>
-            </span>
-          ))}
-        </div>
+    <div className="mx-0 my-0 overflow-hidden bg-black py-8">
+      <div className="animate-marquee flex w-max gap-4">
+        {items.map((s, i) => (
+          <div
+            key={i}
+            className={cn(
+              'font-body shrink-0 border-2 border-solid bg-white px-4 py-2.5 text-lg font-bold whitespace-nowrap',
+              PLACARD_STYLES[i % PLACARD_STYLES.length]
+            )}
+          >
+            {s}
+          </div>
+        ))}
       </div>
     </div>
   );

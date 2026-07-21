@@ -1,4 +1,8 @@
-import { useState, type ReactNode } from "react";
+import { useState, type JSX, type ReactNode } from 'react';
+
+import { Send, Link2, Hash, CheckCircle2, X as XIcon } from 'lucide-react';
+
+import { Button } from '@/components/ui/Button';
 import {
   Dialog,
   DialogContent,
@@ -8,32 +12,44 @@ import {
   DialogTrigger,
   DialogBody,
   DialogFooter,
-} from "@/components/ui/Dialog";
-import { FieldLabel, Input, Textarea } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
-import { Send, Link2, Hash, CheckCircle2, X as XIcon } from "lucide-react";
-import { extractInstagramId } from "@/lib/utils";
+} from '@/components/ui/Dialog';
+import { FieldLabel, Input, Textarea } from '@/components/ui/Input';
+import { extractInstagramId } from '@/lib/utils';
 
+/**
+ * Props for the SubmitVideoDialog component.
+ *
+ * @type {SubmitVideoDialogProps}
+ * @property {ReactNode} trigger - Element that opens the dialog when clicked.
+ * @property {(open: boolean) => void} [onOpenChange] - Callback when dialog open state changes.
+ */
 interface SubmitVideoDialogProps {
   trigger: ReactNode;
   onOpenChange?: (open: boolean) => void;
 }
 
 const HASHTAG_SUGGESTIONS = [
-  "#PeacefulProtest",
-  "#India",
-  "#MarchForJustice",
-  "#CandleVigil",
-  "#ProtestArt",
-  "#Youth",
-  "#Constitution",
-  "#CitizensSpeak",
+  '#PeacefulProtest',
+  '#India',
+  '#MarchForJustice',
+  '#CandleVigil',
+  '#ProtestArt',
+  '#Youth',
+  '#Constitution',
+  '#CitizensSpeak',
 ];
 
-export function SubmitVideoDialog({ trigger, onOpenChange }: SubmitVideoDialogProps) {
+/**
+ * Dialog for submitting an Instagram reel URL with hashtags to the archive.
+ *
+ * @param {SubmitVideoDialogProps} props - Dialog properties.
+ *
+ * @returns {JSX.Element} Rendered dialog with URL input and hashtag suggestions.
+ */
+export function SubmitVideoDialog({ trigger, onOpenChange }: SubmitVideoDialogProps): JSX.Element {
   const [open, setOpen] = useState(false);
-  const [url, setUrl] = useState("");
-  const [hashtags, setHashtags] = useState("");
+  const [url, setUrl] = useState('');
+  const [hashtags, setHashtags] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
@@ -44,15 +60,15 @@ export function SubmitVideoDialog({ trigger, onOpenChange }: SubmitVideoDialogPr
       setTimeout(() => {
         setError(null);
         setSuccess(false);
-        setUrl("");
-        setHashtags("");
+        setUrl('');
+        setHashtags('');
       }, 200);
     }
   };
 
   const addHashtag = (tag: string) => {
     if (hashtags.split(/\s+/).includes(tag)) return;
-    setHashtags((prev) => (prev.trim() + " " + tag).trim());
+    setHashtags((prev) => (prev.trim() + ' ' + tag).trim());
   };
 
   const removeHashtag = (tag: string) => {
@@ -60,7 +76,7 @@ export function SubmitVideoDialog({ trigger, onOpenChange }: SubmitVideoDialogPr
       prev
         .split(/\s+/)
         .filter((t) => t !== tag)
-        .join(" ")
+        .join(' ')
     );
   };
 
@@ -68,11 +84,11 @@ export function SubmitVideoDialog({ trigger, onOpenChange }: SubmitVideoDialogPr
     e.preventDefault();
     setError(null);
     if (!url.trim()) {
-      setError("URL is required.");
+      setError('URL is required.');
       return;
     }
     if (!extractInstagramId(url)) {
-      setError("Please paste a valid Instagram post or reel URL.");
+      setError('Please paste a valid Instagram post or reel URL.');
       return;
     }
     setSuccess(true);
@@ -82,23 +98,23 @@ export function SubmitVideoDialog({ trigger, onOpenChange }: SubmitVideoDialogPr
   const currentTags = hashtags
     .split(/\s+/)
     .map((t) => t.trim())
-    .filter((t) => t.startsWith("#"));
+    .filter((t) => t.startsWith('#'));
 
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent tone="default">
-        <DialogHeader className="bg-saffron">
+        <DialogHeader className="bg-orange-500">
           <DialogTitle className="flex items-center gap-2">
             <Send className="h-5 w-5" /> Submit a Video
           </DialogTitle>
           <DialogDescription>
-            Paste an Instagram reel or post URL. Add a few hashtags. That's it
-            — we'll review and add it to the archive.
+            Paste an Instagram reel or post URL. Add a few hashtags. That&apos;s it — we&apos;ll review and add it to
+            the archive.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={submit}>
-          <DialogBody className="space-y-5 bg-paper">
+          <DialogBody className="space-y-5 bg-gray-100">
             <div className="space-y-2">
               <FieldLabel htmlFor="ig-url" required>
                 <span className="inline-flex items-center gap-1">
@@ -114,7 +130,7 @@ export function SubmitVideoDialog({ trigger, onOpenChange }: SubmitVideoDialogPr
                 invalid={!!error}
                 required
               />
-              <p className="font-mono text-[10px] uppercase tracking-wider text-ink/50">
+              <p className="font-mono text-[10px] tracking-wider text-black/50 uppercase">
                 Reel, post, or IGTV URL — must be public.
               </p>
             </div>
@@ -139,7 +155,7 @@ export function SubmitVideoDialog({ trigger, onOpenChange }: SubmitVideoDialogPr
                       type="button"
                       key={t}
                       onClick={() => removeHashtag(t)}
-                      className="nb-badge bg-saffron hover:bg-hotpink hover:text-paper"
+                      className="inline-flex items-center gap-1 border-2 border-black bg-orange-500 px-2.5 py-0.5 font-mono text-xs font-bold uppercase hover:bg-orange-500 hover:text-white"
                     >
                       {t} <XIcon className="h-3 w-3" />
                     </button>
@@ -147,16 +163,14 @@ export function SubmitVideoDialog({ trigger, onOpenChange }: SubmitVideoDialogPr
                 </div>
               )}
               <div className="space-y-1.5">
-                <p className="font-mono text-[10px] uppercase tracking-wider text-ink/50">
-                  Quick add:
-                </p>
+                <p className="font-mono text-[10px] tracking-wider text-black/50 uppercase">Quick add:</p>
                 <div className="flex flex-wrap gap-1.5">
                   {HASHTAG_SUGGESTIONS.map((t) => (
                     <button
                       type="button"
                       key={t}
                       onClick={() => addHashtag(t)}
-                      className="nb-tag"
+                      className="inline-flex cursor-pointer items-center gap-1 border-2 border-black bg-white px-2.5 py-1 font-mono text-xs font-bold uppercase transition-all hover:-translate-y-px hover:bg-orange-500 hover:text-white"
                     >
                       + {t}
                     </button>
@@ -166,23 +180,18 @@ export function SubmitVideoDialog({ trigger, onOpenChange }: SubmitVideoDialogPr
             </div>
 
             {error && (
-              <div className="border-3 border-ink bg-hotpink/20 px-3 py-2 font-mono text-xs font-bold uppercase text-hotpink">
+              <div className="border-[3px] border-black bg-orange-500/20 px-3 py-2 font-mono text-xs font-bold text-orange-600 uppercase">
                 {error}
               </div>
             )}
             {success && (
-              <div className="flex items-center gap-2 border-3 border-ink bg-indiaGreen px-3 py-2 font-mono text-xs font-bold uppercase text-paper">
-                <CheckCircle2 className="h-4 w-4" /> Submitted — thank you!
-                Closing…
+              <div className="flex items-center gap-2 border-[3px] border-black bg-blue-600 px-3 py-2 font-mono text-xs font-bold text-white uppercase">
+                <CheckCircle2 className="h-4 w-4" /> Submitted — thank you! Closing…
               </div>
             )}
           </DialogBody>
           <DialogFooter>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => handleOpen(false)}
-            >
+            <Button type="button" variant="dark-outline" onClick={() => handleOpen(false)}>
               Cancel
             </Button>
             <Button type="submit" variant="primary" disabled={success}>
