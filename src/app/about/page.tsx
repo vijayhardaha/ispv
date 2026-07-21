@@ -72,7 +72,7 @@ export default function AboutPage(): JSX.Element {
           <Chakra className="h-12 w-12 text-[#0a0a0c]" />
           <h3 className="font-display text-2xl font-extrabold uppercase">A country is the sum of its quiet voices.</h3>
           <Link href="/videos">
-            <Button variant="primary">
+            <Button variant="default">
               See the archive <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>

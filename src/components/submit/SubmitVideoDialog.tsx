@@ -191,10 +191,10 @@ export function SubmitVideoDialog({ trigger, onOpenChange }: SubmitVideoDialogPr
             )}
           </DialogBody>
           <DialogFooter>
-            <Button type="button" variant="dark-outline" onClick={() => handleOpen(false)}>
+            <Button type="button" variant="outline" onClick={() => handleOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" variant="primary" disabled={success}>
+            <Button type="submit" variant="default" disabled={success}>
               <Send className="h-4 w-4" /> Submit for Review
             </Button>
           </DialogFooter>

@@ -3,6 +3,7 @@
 import { useState, type JSX } from 'react';
 
 import { ArrowRight, Grid3x3 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/Button';
@@ -77,7 +78,7 @@ export default function CategoriesPage(): JSX.Element {
                 <div className="mt-5 flex -space-x-2">
                   {list.slice(0, 4).map((v) => (
                     <div key={v.id} className="h-12 w-10 overflow-hidden border-2 border-black">
-                      <img src={v.thumbnail} alt="" className="h-full w-full object-cover" />
+                      <Image src={v.thumbnail} alt="" width={320} height={180} className="h-full w-full object-cover" />
                     </div>
                   ))}
                 </div>
@@ -93,7 +94,7 @@ export default function CategoriesPage(): JSX.Element {
           <Grid3x3 className="h-10 w-10" />
           <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase">Want the full archive?</h2>
           <Link href="/videos">
-            <Button variant="primary" size="lg">
+            <Button variant="default" size="lg">
               View All Videos <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>

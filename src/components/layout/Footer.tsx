@@ -146,7 +146,7 @@ export function Footer(): JSX.Element {
         </div>
 
         <div className="border-t-[3px] border-white/20 bg-black px-4 py-6 md:px-6">
-          <div className="mx-auto flex max-w-7xl flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="mx-auto flex max-w-7xl flex-col items-start gap-6">
             <div className="flex items-start gap-2 text-sm text-white/80">
               <ShieldAlert className="mt-0.5 h-4 w-4 text-orange-600" />
               <p className="max-w-3xl">
@@ -164,6 +164,23 @@ export function Footer(): JSX.Element {
               <span>Made with</span>
               <Heart className="h-4 w-4 fill-orange-600 text-orange-600" />
               <span>in India</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t-4 border-white">
+          <div className="mx-auto flex max-w-7xl flex-col md:flex-row justify-between items-center gap-6 px-4 py-8 md:px-6">
+            <p className="font-bold uppercase tracking-wider text-sm">© 2024 Shelter Structure. All rights reserved.</p>
+            <div className="flex space-x-8">
+              <a className="font-bold uppercase tracking-wider text-sm hover:text-orange-500 transition-colors" href="#" target="_self">
+                Privacy
+              </a>
+              <a className="font-bold uppercase tracking-wider text-sm hover:text-orange-500 transition-colors" href="#" target="_self">
+                Terms
+              </a>
+              <a className="font-bold uppercase tracking-wider text-sm hover:text-orange-500 transition-colors" href="#" target="_self">
+                Sitemap
+              </a>
             </div>
           </div>
         </div>

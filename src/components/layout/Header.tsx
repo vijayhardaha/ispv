@@ -64,7 +64,7 @@ export function Header(): JSX.Element {
           </nav>
 
           <div className="hidden md:block">
-            <SubmitVideoDialog trigger={<Button variant="primary">Submit Video</Button>} />
+            <SubmitVideoDialog trigger={<Button variant="default">Submit Video</Button>} />
           </div>
 
           <button
@@ -94,7 +94,7 @@ export function Header(): JSX.Element {
               ))}
               <SubmitVideoDialog
                 trigger={
-                  <Button variant="primary" className="w-full">
+                  <Button variant="default" className="w-full">
                     Submit Video
                   </Button>
                 }

@@ -1,73 +1,40 @@
-import { forwardRef, type ButtonHTMLAttributes } from 'react';
+import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-type Variant = 'primary' | 'dark' | 'light' | 'primary-outline' | 'dark-outline' | 'light-outline';
-type Size = 'sm' | 'md' | 'lg';
+const buttonVariants = (
+  variant = 'default',
+  size = 'default'
+) => {
+  const base = 'inline-flex items-center justify-center font-semibold uppercase tracking-wider transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-60';
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: Variant;
-  size?: Size;
+  const variants = {
+    default: 'bg-orange-500 text-black border-2 border-black hover:bg-orange-600 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
+    destructive: 'bg-red-600 text-white border-2 border-black hover:bg-red-700 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
+    outline: 'border-2 border-black bg-white text-black hover:bg-zinc-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
+    secondary: 'bg-zinc-900 text-white border-2 border-black hover:bg-zinc-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
+    ghost: 'hover:bg-black/10 border-2 border-transparent',
+    link: 'border-2 border-transparent underline-offset-4 hover:underline',
+  } as const;
+
+  const sizes = {
+    default: 'px-8 py-4 text-sm',
+    sm: 'px-6 py-3 text-xs',
+    lg: 'px-10 py-5 text-base',
+    icon: 'p-2',
+  } as const;
+
+  return cn(base, variants[variant as keyof typeof variants], sizes[size as keyof typeof sizes]);
+};
+
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  size?: 'default' | 'sm' | 'lg' | 'icon';
 }
 
-const sizeClasses: Record<Size, string> = {
-  sm: 'px-6 py-3 text-sm',
-  md: 'px-8 py-4 text-base',
-  lg: 'px-10 py-4 text-lg',
-};
-
-const solids: Record<string, string> = {
-  primary: 'bg-orange-500 text-white hover:bg-orange-500 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
-  dark: 'bg-zinc-900 text-white hover:bg-zinc-800 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
-  light: 'bg-white text-zinc-900 hover:bg-zinc-100 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
-};
-
-const outlines: Record<string, string> = {
-  'primary-outline':
-    'border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
-  'dark-outline':
-    'border-2 border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white hover:shadow-[4px_4px_0px_0px_rgba(234,179,8,1)]',
-  'light-outline':
-    'border-2 border-white text-white hover:bg-white hover:text-zinc-900 hover:shadow-[4px_4px_0px_0px_rgba(234,179,8,1)]',
-};
-
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = 'primary', size = 'md', children, ...props }, ref) => {
-    if (variant.endsWith('-outline')) {
-      return (
-        <button
-          ref={ref}
-          className={cn(
-            'group inline-flex items-center justify-center bg-transparent px-8 py-4 font-bold tracking-wider uppercase transition-all duration-300',
-            outlines[variant],
-            sizeClasses[size],
-            className
-          )}
-          {...props}
-        >
-          {children}
-        </button>
-      );
-    }
-
-    const solid = solids[variant];
-    return (
-      <span className="relative inline-flex">
-        <button
-          ref={ref}
-          className={cn(
-            'group relative inline-flex items-center justify-center overflow-hidden border-2 border-transparent px-8 py-4 font-bold tracking-wider uppercase transition-all duration-300',
-            solid,
-            sizeClasses[size],
-            className
-          )}
-          {...props}
-        >
-          <span className="relative z-10">{children}</span>
-          <span className="absolute inset-0 translate-y-full bg-white/20 transition-transform duration-300 group-hover:translate-y-0" />
-        </button>
-      </span>
-    );
-  }
-);
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({ className, variant = 'default', size = 'default', ...props }, ref) => {
+  return <button className={cn(buttonVariants(variant, size), className)} ref={ref} {...props} />;
+});
 Button.displayName = 'Button';
+
+export { Button, buttonVariants };
