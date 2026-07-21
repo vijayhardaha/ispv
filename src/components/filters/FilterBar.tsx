@@ -2,8 +2,7 @@ import { useMemo, type JSX } from 'react';
 
 import { Search, X, Filter } from 'lucide-react';
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Dropdown';
-import { SORT_OPTIONS, ALL_TAGS, type SortKey, type VideoCategory, CATEGORIES } from '@/data/videos';
+import { ALL_TAGS, type VideoCategory, CATEGORIES } from '@/data/videos';
 import { cn } from '@/lib/utils';
 
 /**
@@ -11,7 +10,6 @@ import { cn } from '@/lib/utils';
  *
  * @type {FilterState}
  * @property {string} query - Search query string.
- * @property {SortKey} sort - Current sort order.
  * @property {VideoCategory} category - Selected category filter.
  * @property {string[]} tags - Active tag filters.
  * @property {number} page - Current page number.
@@ -19,7 +17,6 @@ import { cn } from '@/lib/utils';
  */
 export interface FilterState {
   query: string;
-  sort: SortKey;
   category: VideoCategory;
   tags: string[];
   page: number;
@@ -56,10 +53,10 @@ export function FilterBar({
     );
   }, [state.category]);
 
-  const toggleTag = (tag: string) => {
+  const selectTag = (tag: string) => {
     setState({
       ...state,
-      tags: state.tags.includes(tag) ? state.tags.filter((t) => t !== tag) : [...state.tags, tag],
+      tags: state.tags.includes(tag) ? [] : [tag],
       page: 1,
     });
   };
@@ -89,40 +86,7 @@ export function FilterBar({
           </div>
         </div>
 
-        <div className="md:col-span-3">
-          <label className="font-mono text-[10px] font-bold tracking-widest text-black/60 uppercase">Sort</label>
-          <Select value={state.sort} onValueChange={(v) => setState({ ...state, sort: v as SortKey, page: 1 })}>
-            <SelectTrigger className="mt-1">
-              <SelectValue placeholder="Newest first" />
-            </SelectTrigger>
-            <SelectContent>
-              {SORT_OPTIONS.map((o) => (
-                <SelectItem key={o.value} value={o.value}>
-                  {o.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
 
-        <div className="md:col-span-3">
-          <label className="font-mono text-[10px] font-bold tracking-widest text-black/60 uppercase">Per page</label>
-          <Select
-            value={String(state.perPage)}
-            onValueChange={(v) => setState({ ...state, perPage: Number(v), page: 1 })}
-          >
-            <SelectTrigger className="mt-1">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {[6, 12, 18, 24, 36].map((n) => (
-                <SelectItem key={n} value={String(n)}>
-                  {n} / page
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
       </div>
 
       <div className="mt-4 border-t-[3px] border-black pt-4">
@@ -142,11 +106,12 @@ export function FilterBar({
           {tagChips.map((t) => (
             <button
               key={t}
-              onClick={() => toggleTag(t)}
+              onClick={() => selectTag(t)}
               className={cn(
-                'hover:-translate-y1px inline-flex cursor-pointer items-center gap-1 border-2 border-black bg-white px-2.5 py-1 font-mono text-xs font-bold uppercase transition-all hover:bg-orange-500 hover:text-white',
+                'inline-flex cursor-pointer items-center gap-1 border-2 border-black px-2.5 py-1 font-mono text-xs font-bold uppercase transition-all',
                 state.tags.includes(t)
-                  && 'hover:text-white-active shadow-brutal-sm inline-flex cursor-pointer items-center gap-1 border-2 border-black bg-white px-2.5 py-1 font-mono text-xs font-bold uppercase transition-all hover:-translate-y-px hover:bg-orange-500'
+                  ? 'bg-orange-500 text-black shadow-brutal-sm'
+                  : 'bg-white hover:-translate-y-px hover:bg-orange-500 hover:text-white'
               )}
             >
               #{t}

@@ -5,7 +5,6 @@ export type VideoCategory = 'all' | 'marches' | 'rallies' | 'candlelight' | 'art
  *
  * @type {VideoEntry}
  * @property {string} id - Unique identifier for the video.
- * @property {string} title - Short title of the video.
  * @property {string} description - Longer description or caption.
  * @property {string} url - Original Instagram URL.
  * @property {string} thumbnail - Thumbnail image URL.
@@ -14,16 +13,11 @@ export type VideoCategory = 'all' | 'marches' | 'rallies' | 'candlelight' | 'art
  * @property {Exclude<VideoCategory, 'all'>} category - Protest category.
  * @property {string[]} tags - Searchable tags for filtering.
  * @property {string[]} hashtags - Hashtags associated with the video.
- * @property {string} submittedBy - Handle of the person who submitted it.
- * @property {string} submittedAt - ISO 8601 submission timestamp.
- * @property {number} views - View count.
- * @property {number} likes - Like count.
  * @property {number} duration - Duration in seconds.
  * @property {boolean} [featured] - Whether the video is featured on the homepage.
  */
 export interface VideoEntry {
   id: string;
-  title: string;
   description: string;
   url: string;
   thumbnail: string;
@@ -32,10 +26,6 @@ export interface VideoEntry {
   category: Exclude<VideoCategory, 'all'>;
   tags: string[];
   hashtags: string[];
-  submittedBy: string;
-  submittedAt: string; // ISO
-  views: number;
-  likes: number;
   duration: number; // seconds
   featured?: boolean;
 }
@@ -204,12 +194,10 @@ function buildVideos(): VideoEntry[] {
     date.setHours(6 + (i % 14), (i * 7) % 60);
 
     const meta = CATEGORY_META[cat];
-    const prefix = meta.titles[i % meta.titles.length];
     const featured = i < 6 ? true : undefined;
 
     return {
       id: `reel-${id}`,
-      title: `${cityMeta.city} ${prefix} \u2014 #${id.slice(0, 6)}`,
       description: DESCRIPTIONS[descIdx],
       url: `https://www.instagram.com/reel/${id}/`,
       thumbnail: THUMBNAILS[thumbIdx],
@@ -218,10 +206,6 @@ function buildVideos(): VideoEntry[] {
       category: cat,
       tags: [cityMeta.tag, meta.tag, 'peaceful', 'protest'],
       hashtags: [cityMeta.hashtag, meta.hashtag, '#PeacefulProtest'],
-      submittedBy: SUBMITTERS[submitterIdx],
-      submittedAt: date.toISOString(),
-      views: 10_000 + Math.floor(Math.random() * 200_000),
-      likes: 1_000 + Math.floor(Math.random() * 25_000),
       duration: 20 + (i % 51),
       featured,
     };
@@ -233,17 +217,6 @@ export const VIDEOS: VideoEntry[] = buildVideos();
 export const ALL_TAGS = Array.from(new Set(VIDEOS.flatMap((v) => v.tags))).sort();
 
 export const ALL_HASHTAGS = Array.from(new Set(VIDEOS.flatMap((v) => v.hashtags))).sort();
-
-export type SortKey = 'newest' | 'oldest' | 'most-viewed' | 'most-liked' | 'title-az' | 'title-za';
-
-export const SORT_OPTIONS: { value: SortKey; label: string }[] = [
-  { value: 'newest', label: 'Newest first' },
-  { value: 'oldest', label: 'Oldest first' },
-  { value: 'most-viewed', label: 'Most viewed' },
-  { value: 'most-liked', label: 'Most liked' },
-  { value: 'title-az', label: 'Title A\u2013Z' },
-  { value: 'title-za', label: 'Title Z\u2013A' },
-];
 
 export const getVideoById = (id: string): VideoEntry | undefined =>
   VIDEOS.find((v) => v.id === id);
