@@ -1,4 +1,7 @@
-export type VideoCategory = 'all' | 'marches' | 'rallies' | 'candlelight' | 'art' | 'youth' | 'press';
+import { CATEGORIES, CATEGORY_META, CATEGORY_ORDER } from '@/constants/categories';
+import type { VideoCategory } from '@/constants/categories';
+
+export type { VideoCategory };
 
 /**
  * A single video entry in the protest archive.
@@ -29,40 +32,6 @@ export interface VideoEntry {
   duration: number; // seconds
   featured?: boolean;
 }
-
-export const CATEGORIES: { id: VideoCategory; label: string; color: string; description: string }[] = [
-  {
-    id: 'marches',
-    label: 'Marches',
-    color: 'saffron',
-    description: 'People on the move \u2014 long walks for a long cause.',
-  },
-  {
-    id: 'rallies',
-    label: 'Rallies',
-    color: 'navy',
-    description: 'Voices gathered in public squares and open grounds.',
-  },
-  {
-    id: 'candlelight',
-    label: 'Candlelight',
-    color: 'sun',
-    description: 'Quiet vigils, lit by small flames and steady conviction.',
-  },
-  {
-    id: 'art',
-    label: 'Protest Art',
-    color: 'hotpink',
-    description: 'Murals, posters, performances \u2014 dissent in colour.',
-  },
-  { id: 'youth', label: 'Youth', color: 'lime', description: 'Students and young voices shaping the conversation.' },
-  {
-    id: 'press',
-    label: 'Press',
-    color: 'indiaGreen',
-    description: 'Clips from journalists and independent reporters on the ground.',
-  },
-];
 
 /* Cities used to cycle through when building entries. */
 const CITIES: { city: string; state: string; tag: string; hashtag: string }[] = [
@@ -95,22 +64,27 @@ const CITIES: { city: string; state: string; tag: string; hashtag: string }[] = 
   { city: 'Jodhpur', state: 'Rajasthan', tag: 'jodhpur', hashtag: '#Jodhpur' },
 ];
 
-/* Category-specific title prefixes. */
-const CATEGORY_META: Record<Exclude<VideoCategory, 'all'>, { titles: string[]; tag: string; hashtag: string }> = {
-  marches:    { titles: ['March', 'Walk', 'Procession', 'Foot March', 'Solidarity Walk'], tag: 'march',       hashtag: '#MarchForJustice' },
-  rallies:    { titles: ['Rally', 'Gathering', 'Assembly', 'Public Meet', 'Convention'],  tag: 'rally',       hashtag: '#PeoplesRally' },
-  candlelight:{ titles: ['Candlelight Vigil', 'Lantern Float', 'Diya Ceremony', 'Night Vigil', 'Candle March'], tag: 'vigil', hashtag: '#CandlelightVigil' },
-  art:        { titles: ['Mural', 'Street Art', 'Poster Walk', 'Performance', 'Graffiti'], tag: 'art',        hashtag: '#ProtestArt' },
-  youth:      { titles: ['Students Rally', 'Campus Meet', 'Youth March', 'Student Walkout', 'College Sit-in'], tag: 'youth', hashtag: '#YouthForChange' },
-  press:      { titles: ['Press Briefing', 'Media Meet', 'Interview', 'Reportage', 'Ground Report'], tag: 'press', hashtag: '#PressFreedom' },
-};
-
 const SUBMITTERS = [
-  '@ground.reporter', '@northline.media', '@south.witness', '@eastline.daily',
-  '@desh.ki.awaz', '@campus.voices', '@nadi.ki.baat', '@jhelum.eye',
-  '@ganga.ki.reporter', '@coast.citizen', '@pinkcity.collective', '@gpo.diary',
-  '@brush.collective', '@north.east.daily', '@central.rep', '@kerala.shoreline',
-  '@odisha.diary', '@malwa.youth', '@kalinga.line', '@ganga.source',
+  '@ground.reporter',
+  '@northline.media',
+  '@south.witness',
+  '@eastline.daily',
+  '@desh.ki.awaz',
+  '@campus.voices',
+  '@nadi.ki.baat',
+  '@jhelum.eye',
+  '@ganga.ki.reporter',
+  '@coast.citizen',
+  '@pinkcity.collective',
+  '@gpo.diary',
+  '@brush.collective',
+  '@north.east.daily',
+  '@central.rep',
+  '@kerala.shoreline',
+  '@odisha.diary',
+  '@malwa.youth',
+  '@kalinga.line',
+  '@ganga.source',
 ];
 
 const THUMBNAILS = [
@@ -151,28 +125,83 @@ const DESCRIPTIONS = [
 
 /* ── Build video entries from the real reel URLs ──────────────────── */
 const REEL_IDS = [
-  'Da8EAarT-k2', 'Da9lAORIKCh', 'Da9gt0XEeuO', 'Da8ZUPayqY3',
-  'Da43_-jhkzd', 'Da9yQoLjlSN', 'Da7ZuDeoNXX', 'Da8hCRUvMP-',
-  'Da2jcgAtoTr', 'Da7fg6XTM6L', 'DaLOKU5M8V_', 'Da5wFeuSfNr',
-  'Da-iGB6zu0L', 'Da-azbisSuX', 'Da-RwE2Rkqu', 'DZz9ViPyPY_',
-  'Da7_AKoT29U', 'Dawa-CyNiBa', 'Da-FHMOTf-R', 'Da0Xh7qOInE',
-  'DaFqx23hmZo', 'Da6_9a5PrWr', 'DZ0h3xSjsdC', 'DZWgHAUsabB',
-  'DazWxE-xxXR', 'DaRr1msjKCW', 'DaUU2BLokZp', 'Da-gVnORDiB',
-  'DahQEJpsUAn', 'DalXh9Vv6xX', 'Da5gLnUSJhT', 'DYcOFfdkt2k',
-  'Dak4-DZoCKU', 'DaxwIEBh28g', 'Da9n8cYMS1_', 'Da-zzS5tQUI',
-  'Da9TkC3Tm89', 'Da_DaQrTShu', 'Da_mlQLSOxd', 'Da_QpLoMWU-',
-  'Da7xfGks--s', 'Da-i_gzz0c4', 'Da_Ga1nz3uU', 'Da-bHHMsucc',
-  'Da9ETsbztZC', 'Da7mj3zMRmI', 'Da9ZyKuot7K', 'DaGStUUJZ4E',
-  'Da-VEI8N32w', 'Da-44pdvLuL', 'Da-H_3oBzef', 'DaCZQxfNB74',
-  'Da-0_rBPvEg', 'Da-g2LSoNmg', 'Da-rZDAzVss', 'Da-gXqTo7BM',
-  'Da-gRw2sm6D', 'Da9ZIP8pDi7', 'Da-xp9Uz199', 'Da-hBJyorPW',
-  'Da-pEbwvgsj', 'Da7ucxKJVn5', 'DZ31ITgDAid', 'Da7dZOURsiB',
-  'Da_c6TGz50w', 'Da-nL0hpaxa', 'Da9ydSJNVMv', 'Da-CIIMPBAi',
-  'DZzs047Mqt_', 'Da-aa9Zy2LG', 'Daa4HQzSPd3', 'Da9v1PpTgJt',
-  'DaF34w_vE4b', 'DZ4SbaQyPOh', 'Da-ysoJT-Hl', 'Da-XYteo5zz',
+  'Da8EAarT-k2',
+  'Da9lAORIKCh',
+  'Da9gt0XEeuO',
+  'Da8ZUPayqY3',
+  'Da43_-jhkzd',
+  'Da9yQoLjlSN',
+  'Da7ZuDeoNXX',
+  'Da8hCRUvMP-',
+  'Da2jcgAtoTr',
+  'Da7fg6XTM6L',
+  'DaLOKU5M8V_',
+  'Da5wFeuSfNr',
+  'Da-iGB6zu0L',
+  'Da-azbisSuX',
+  'Da-RwE2Rkqu',
+  'DZz9ViPyPY_',
+  'Da7_AKoT29U',
+  'Dawa-CyNiBa',
+  'Da-FHMOTf-R',
+  'Da0Xh7qOInE',
+  'DaFqx23hmZo',
+  'Da6_9a5PrWr',
+  'DZ0h3xSjsdC',
+  'DZWgHAUsabB',
+  'DazWxE-xxXR',
+  'DaRr1msjKCW',
+  'DaUU2BLokZp',
+  'Da-gVnORDiB',
+  'DahQEJpsUAn',
+  'DalXh9Vv6xX',
+  'Da5gLnUSJhT',
+  'DYcOFfdkt2k',
+  'Dak4-DZoCKU',
+  'DaxwIEBh28g',
+  'Da9n8cYMS1_',
+  'Da-zzS5tQUI',
+  'Da9TkC3Tm89',
+  'Da_DaQrTShu',
+  'Da_mlQLSOxd',
+  'Da_QpLoMWU-',
+  'Da7xfGks--s',
+  'Da-i_gzz0c4',
+  'Da_Ga1nz3uU',
+  'Da-bHHMsucc',
+  'Da9ETsbztZC',
+  'Da7mj3zMRmI',
+  'Da9ZyKuot7K',
+  'DaGStUUJZ4E',
+  'Da-VEI8N32w',
+  'Da-44pdvLuL',
+  'Da-H_3oBzef',
+  'DaCZQxfNB74',
+  'Da-0_rBPvEg',
+  'Da-g2LSoNmg',
+  'Da-rZDAzVss',
+  'Da-gXqTo7BM',
+  'Da-gRw2sm6D',
+  'Da9ZIP8pDi7',
+  'Da-xp9Uz199',
+  'Da-hBJyorPW',
+  'Da-pEbwvgsj',
+  'Da7ucxKJVn5',
+  'DZ31ITgDAid',
+  'Da7dZOURsiB',
+  'Da_c6TGz50w',
+  'Da-nL0hpaxa',
+  'Da9ydSJNVMv',
+  'Da-CIIMPBAi',
+  'DZzs047Mqt_',
+  'Da-aa9Zy2LG',
+  'Daa4HQzSPd3',
+  'Da9v1PpTgJt',
+  'DaF34w_vE4b',
+  'DZ4SbaQyPOh',
+  'Da-ysoJT-Hl',
+  'Da-XYteo5zz',
 ];
-
-const CATEGORY_ORDER: Exclude<VideoCategory, 'all'>[] = ['marches', 'rallies', 'candlelight', 'art', 'youth', 'press'];
 
 function buildVideos(): VideoEntry[] {
   let catIdx = 0;
@@ -212,14 +241,63 @@ function buildVideos(): VideoEntry[] {
   });
 }
 
+/**
+ * All video entries in the protest archive, built from hardcoded reel IDs.
+ */
 export const VIDEOS: VideoEntry[] = buildVideos();
 
+/**
+ * Deduplicated and sorted list of all tags across every video entry.
+ */
 export const ALL_TAGS = Array.from(new Set(VIDEOS.flatMap((v) => v.tags))).sort();
 
+/**
+ * Deduplicated and sorted list of all hashtags across every video entry.
+ */
 export const ALL_HASHTAGS = Array.from(new Set(VIDEOS.flatMap((v) => v.hashtags))).sort();
 
-export const getVideoById = (id: string): VideoEntry | undefined =>
-  VIDEOS.find((v) => v.id === id);
+/**
+ * Finds a video entry by its unique identifier.
+ *
+ * @param {string} id - Video ID to look up.
+ *
+ * @returns {VideoEntry | undefined} Matching video entry, or undefined.
+ */
+export const getVideoById = (id: string): VideoEntry | undefined => VIDEOS.find((v) => v.id === id);
 
+/**
+ * Looks up a category entry by its identifier.
+ *
+ * @param {VideoCategory} id - Category identifier.
+ *
+ * @returns {(typeof CATEGORIES)[number] | undefined} Matching category, or undefined.
+ */
 export const getCategoryById = (id: VideoCategory): (typeof CATEGORIES)[number] | undefined =>
   CATEGORIES.find((c) => c.id === id);
+
+/**
+ * Returns all videos recorded in a specific city (case-insensitive).
+ *
+ * @param {string} city - City name to filter by.
+ *
+ * @returns {VideoEntry[]} Matching video entries.
+ */
+export const getVideosByCity = (city: string): VideoEntry[] =>
+  VIDEOS.filter((v) => v.city.toLowerCase() === city.toLowerCase());
+
+/**
+ * Returns all videos in a specific category.
+ *
+ * @param {Exclude<VideoCategory, 'all'>} category - Category to filter by.
+ *
+ * @returns {VideoEntry[]} Matching video entries.
+ */
+export const getVideosByCategory = (category: Exclude<VideoCategory, 'all'>): VideoEntry[] =>
+  VIDEOS.filter((v) => v.category === category);
+
+/**
+ * Returns a sorted, deduplicated list of all city names from the archive.
+ *
+ * @returns {string[]} Sorted city names.
+ */
+export const getAllCities = (): string[] => Array.from(new Set(VIDEOS.map((v) => v.city))).sort();

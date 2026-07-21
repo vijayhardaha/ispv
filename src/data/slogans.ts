@@ -1,42 +1,138 @@
+/**
+ * Peaceful protest slogans — short, evocative, non-partisan statements
+ * used in the marquee ticker and other UI elements.
+ */
 // Peaceful protest slogans — short, evocative, in the spirit of the
 // movement. Not party-political, not communal. Just human.
 export const SLOGANS: string[] = [
-  'We march, we sing, we stand — but never break a single heart.',
-  'Our voice is the loudest when it is calm.',
-  'The road belongs to no one, and to everyone.',
-  'We hold the constitution in one hand, the candle in the other.',
-  'Satyameva Jayate — truth alone triumphs.',
-  'A flag, a song, a square. That is enough to begin.',
-  'A peaceful protest is a quiet revolution.',
-  'Let the streets be full and the anger be gone.',
-  'We are the many. The many are kind.',
-  'No slogans of hate, only slogans of hope.',
-  'If you are silent, we are not the only ones who will lose.',
-  'The cost of speaking up is smaller than the cost of staying quiet.',
-  'India is the sum of every voice that refused to be afraid.',
-  'A free country is not made by the loud — it is kept by the peaceful.',
-  "We don't need permission to feel. We just need courage to say it.",
-  'Hold the line, hold each other, hold the country together.',
-  'An eye for an eye makes the whole country blind. We choose sight.',
-  'When in doubt, chant. When in fear, sing. When angry, write.',
-  'A placard in the right hand is mightier than a sword in any hand.',
-  'We come unarmed — only with words, with flags, with each other.',
-  'Democracy is a verb. It is something you do with your feet.',
-  'Be the noise that makes the world listen, not the noise that makes it flinch.',
-  'We did not inherit this country to be quiet in it.',
-  'Patriotism is not a flag you wave — it is a right you defend.',
-  'A protest is a country talking to itself in public.',
-  'Sing the national anthem loudly enough to drown the hate.',
-  'Do not ask if the protest will work. Ask if the silence is working.',
-  "A free press is a peaceful protest's oldest friend.",
-  'We are citizens first, strangers last.',
-  "If you can't say it out loud, write it. If you can't write it, show up.",
+  'Freedom survives when ordinary people refuse to look away.',
+  'A nation grows stronger when every voice is free to speak.',
+  'The truest patriot protects the rights of every citizen.',
+  'Our strength is not in fear, but in freedom.',
+  'Democracy lives wherever citizens choose to participate.',
+  'The Constitution belongs to all of us.',
+  'Rights are preserved only when people are willing to defend them.',
+  'The bravest voices are often the peaceful ones.',
+  'A peaceful crowd is one of democracy’s greatest strengths.',
+  'We raise our voices so no one has to raise their fists.',
+  'India was built by courage, not by silence.',
+  'The freedom won yesterday must be protected today.',
+  'Liberty is inherited only when it is defended by every generation.',
+  'Patriotism begins with caring for one another.',
+  'Kindness is not weakness. It is the courage to remain human.',
+  'The flag belongs to every citizen equally.',
+  'The streets remember what history forgets.',
+  'Every generation writes its own chapter of freedom.',
+  'Peace is not passive. It is an act of courage.',
+  'A candle can illuminate what anger never will.',
+  'History remembers those who stood without hatred.',
+  'The future belongs to those who care enough to show up.',
+  'Every citizen has a place in the story of India.',
+  'The voice of the people is part of the strength of the nation.',
+  'Justice begins when people refuse to accept injustice.',
+  'Rights mean little if they are never exercised.',
+  'The Republic is strongest when every citizen is heard.',
+  'Many voices. One Constitution.',
+  'The greatest movements begin with ordinary people.',
+  'India belongs to everyone who believes in its ideals.',
 ];
 
+/**
+ * Notable quotes from Indian leaders and freedom fighters, displayed as pull quotes.
+ */
 export const SLOGANS_PULL_QUOTES = [
-  '“The most powerful weapon of the oppressed is the human spirit.”',
-  "“A nation's greatness is measured by how it treats its weakest voice.”",
-  '“Peace is not the absence of conflict — it is the ability to handle it with grace.”',
-  '“In a gentle way, you can shake the world.”',
-  '“An unjust law is no law at all.”',
+  {
+    quote:
+      'Freedom is not worth having if it does not include the freedom to make mistakes. (स्वतंत्रता का कोई मूल्य नहीं यदि उसमें गलती करने की स्वतंत्रता शामिल न हो।)',
+    person: 'Mahatma Gandhi (महात्मा गांधी)',
+  },
+  {
+    quote: 'In a gentle way, you can shake the world. (कोमलता के साथ भी आप दुनिया को हिला सकते हैं।)',
+    person: 'Mahatma Gandhi (महात्मा गांधी)',
+  },
+  {
+    quote:
+      'The Constitution is not a mere lawyers’ document, it is a vehicle of life. (संविधान केवल वकीलों का दस्तावेज़ नहीं, बल्कि जीवन का एक माध्यम है।)',
+    person: 'Dr. B. R. Ambedkar (डॉ. भीमराव रामजी आंबेडकर)',
+  },
+  {
+    quote: 'Educate, Agitate, Organize. (शिक्षित बनो, संगठित हो, संघर्ष करो।)',
+    person: 'Dr. B. R. Ambedkar (डॉ. भीमराव रामजी आंबेडकर)',
+  },
+  {
+    quote: 'Citizenship consists in the service of the country. (नागरिकता का अर्थ देश की सेवा करना है।)',
+    person: 'Jawaharlal Nehru (जवाहरलाल नेहरू)',
+  },
+  {
+    quote:
+      'Freedom is never dear at any price. It is the breath of life. (स्वतंत्रता किसी भी कीमत से बढ़कर है। यह जीवन की साँस है।)',
+    person: 'Mahatma Gandhi (महात्मा गांधी)',
+  },
+  {
+    quote:
+      'The best way to find yourself is to lose yourself in the service of others. (स्वयं को पाने का सबसे अच्छा तरीका है दूसरों की सेवा में स्वयं को समर्पित कर देना।)',
+    person: 'Mahatma Gandhi (महात्मा गांधी)',
+  },
+  {
+    quote:
+      'Strength does not come from physical capacity. It comes from an indomitable will. (शक्ति शारीरिक क्षमता से नहीं, बल्कि अडिग इच्छाशक्ति से आती है।)',
+    person: 'Mahatma Gandhi (महात्मा गांधी)',
+  },
+  {
+    quote:
+      'Be the change that you wish to see in the world. (वह परिवर्तन स्वयं बनिए जो आप दुनिया में देखना चाहते हैं।)',
+    person: 'Mahatma Gandhi (महात्मा गांधी)',
+  },
+  {
+    quote:
+      'Cultivation of mind should be the ultimate aim of human existence. (मन का विकास ही मानव जीवन का सर्वोच्च उद्देश्य होना चाहिए।)',
+    person: 'Dr. B. R. Ambedkar (डॉ. भीमराव रामजी आंबेडकर)',
+  },
+  {
+    quote: 'Life should be great rather than long. (जीवन लंबा नहीं, महान होना चाहिए।)',
+    person: 'Dr. B. R. Ambedkar (डॉ. भीमराव रामजी आंबेडकर)',
+  },
+  {
+    quote:
+      'A country is known by the way it treats its citizens. (किसी देश की पहचान इस बात से होती है कि वह अपने नागरिकों के साथ कैसा व्यवहार करता है।)',
+    person: 'Jawaharlal Nehru (जवाहरलाल नेहरू)',
+  },
+  {
+    quote:
+      'Democracy and socialism are means to an end, not the end itself. (लोकतंत्र और समाजवाद साधन हैं, स्वयं लक्ष्य नहीं।)',
+    person: 'Jawaharlal Nehru (जवाहरलाल नेहरू)',
+  },
+  {
+    quote: 'Give me blood, and I shall give you freedom! (तुम मुझे खून दो, मैं तुम्हें आज़ादी दूँगा!)',
+    person: 'Subhas Chandra Bose (सुभाष चंद्र बोस)',
+  },
+  {
+    quote:
+      'No real change in history has ever been achieved by discussions. (इतिहास में वास्तविक परिवर्तन केवल चर्चाओं से कभी नहीं आया।)',
+    person: 'Subhas Chandra Bose (सुभाष चंद्र बोस)',
+  },
+  {
+    quote: 'Swaraj is my birthright, and I shall have it! (स्वराज मेरा जन्मसिद्ध अधिकार है और मैं इसे लेकर रहूँगा!)',
+    person: 'Bal Gangadhar Tilak (बाल गंगाधर तिलक)',
+  },
+  {
+    quote:
+      'It is easy to kill individuals but you cannot kill the ideas. (व्यक्तियों को मारना आसान है, विचारों को नहीं।)',
+    person: 'Bhagat Singh (भगत सिंह)',
+  },
+  {
+    quote:
+      'Merciless criticism and independent thinking are the two necessary traits of revolutionary thinking. (निर्दय आलोचना और स्वतंत्र विचार, क्रांतिकारी सोच की दो आवश्यक विशेषताएँ हैं।)',
+    person: 'Bhagat Singh (भगत सिंह)',
+  },
+  {
+    quote:
+      'If yet your blood does not rage, then it is water that flows in your veins. (यदि अब भी तुम्हारा रक्त नहीं उबलता, तो तुम्हारी नसों में रक्त नहीं, पानी बह रहा है।)',
+    person: 'Chandrashekhar Azad (चंद्रशेखर आज़ाद)',
+  },
+  {
+    quote:
+      'Faith is the bird that feels the light and sings when the dawn is still dark. (विश्वास वह पक्षी है जो अंधेरे में भी प्रकाश का आभास पाकर गाना शुरू कर देता है।)',
+    person: 'Rabindranath Tagore (रवीन्द्रनाथ ठाकुर)',
+  },
 ];
