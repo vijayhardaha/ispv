@@ -1,151 +1,227 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap");
+@import "tailwindcss";
+@import "tw-animate-css";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@custom-variant dark (&:is(.dark *));
 
+/* ─── Design tokens ─────────────────────────────────────────────────── */
+@theme inline {
+  --font-body: "Space Grotesk", "system-ui", sans-serif;
+  --font-display: "Poppins", "system-ui", sans-serif;
+  --font-mono: "JetBrains Mono", "ui-monospace", monospace;
+  --font-sans: var(--font-body);
+
+  /* Color tokens — mapped to shadcn CSS variables */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  /* Radius */
+  --radius: 0rem;
+
+  /* Animations */
+  --animate-marquee: marquee 300s linear infinite;
+  --animate-wiggle: wiggle 0.4s ease-in-out;
+  --animate-pulse-ring: pulseRing 1.5s ease-out infinite;
+}
+
+/* ─── Custom utilities (Tailwind v4 @utility syntax) ────────────────── */
+
+/* Coloured placard shadow — shadow-brutal-{color} eg. shadow-brutal-red-600 */
+@utility shadow-brutal-* {
+  box-shadow: 3px 3px 0 0 --value(--color-*);
+}
+
+/* ─── CSS variables (HSL shadcn format) ─────────────────────────────── */
+:root {
+  --background: 210 20% 96%;
+  --foreground: 0 0% 0%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 0%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 0%;
+  --primary: 0 0% 9%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 0 0% 96%;
+  --secondary-foreground: 0 0% 9%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 45%;
+  --accent: 25 94% 53%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 353 100% 45%;
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 0 0% 63%;
+  --chart-1: 25 94% 53%;
+  --chart-2: 174 100% 29%;
+  --chart-3: 196 73% 23%;
+  --chart-4: 44 100% 49%;
+  --chart-5: 35 100% 49%;
+  --radius: 0rem;
+  --sidebar: 0 0% 98%;
+  --sidebar-foreground: 0 0% 4%;
+  --sidebar-primary: 0 0% 9%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 0 0% 96%;
+  --sidebar-accent-foreground: 0 0% 9%;
+  --sidebar-border: 0 0% 90%;
+  --sidebar-ring: 0 0% 63%;
+}
+
+/* ─── Base layer ────────────────────────────────────────────────────── */
 @layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
   :root {
     color-scheme: light;
   }
+
   html,
-  body,
-  #root {
+  body {
     height: 100%;
   }
+
   body {
-    @apply bg-paper text-ink font-body antialiased;
-    background-image:
-      radial-gradient(rgba(10, 10, 10, 0.06) 1px, transparent 1px),
-      radial-gradient(rgba(10, 10, 10, 0.04) 1px, transparent 1px);
-    background-size:
-      22px 22px,
-      11px 11px;
-    background-position:
-      0 0,
-      11px 11px;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+
   *::selection {
-    @apply bg-saffron text-ink;
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
   }
+
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    @apply font-display tracking-tight;
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+    font-weight: 800;
+  }
+
+  *:focus-visible {
+    outline: none;
   }
 }
 
-@layer components {
-  .nb-card {
-    @apply border-3 border-ink bg-white shadow-brutal;
+/* ─── Utility layer ─────────────────────────────────────────────────── */
+@layer utilities {
+  /* Brutal shadows */
+  .shadow-brutal {
+    box-shadow: 4px 4px 0 0 hsl(var(--foreground));
   }
-  .nb-card-saffron {
-    @apply border-3 border-ink bg-saffron shadow-brutal;
+  .shadow-brutal-sm {
+    box-shadow: 2px 2px 0 0 hsl(var(--foreground));
   }
-  .nb-card-green {
-    @apply border-3 border-ink bg-indiaGreen text-paper shadow-brutal;
+  .shadow-brutal-lg {
+    box-shadow: 6px 6px 0 0 hsl(var(--foreground));
   }
-  .nb-card-navy {
-    @apply border-3 border-ink bg-navy text-paper shadow-brutal;
+  .shadow-brutal-xl {
+    box-shadow: 8px 8px 0 0 hsl(var(--foreground));
   }
-  .nb-card-lime {
-    @apply border-3 border-ink bg-lime shadow-brutal;
+  .shadow-brutal-2xl {
+    box-shadow: 12px 12px 0 0 hsl(var(--foreground));
   }
-  .nb-card-pink {
-    @apply border-3 border-ink bg-hotpink text-paper shadow-brutal;
+  .shadow-brutal-press {
+    box-shadow: 0 0 0 0 hsl(var(--foreground));
   }
-  .nb-card-sun {
-    @apply border-3 border-ink bg-sun shadow-brutal;
+
+  /* Placard rotations */
+  .rotate-placard-1 {
+    transform: rotate(-2deg);
   }
-  .nb-btn {
-    @apply inline-flex items-center justify-center gap-2 border-3 border-ink
-      bg-white px-5 py-2.5 font-display font-bold uppercase tracking-wide
-      shadow-brutal transition-all duration-100
-      hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-brutal-lg
-      active:translate-x-[2px] active:translate-y-[2px] active:shadow-brutal-press
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saffron
-      disabled:opacity-50 disabled:pointer-events-none;
+  .rotate-placard-2 {
+    transform: rotate(1.5deg);
   }
-  .nb-btn-primary {
-    @apply nb-btn bg-saffron;
+  .rotate-placard-3 {
+    transform: rotate(-1deg);
   }
-  .nb-btn-success {
-    @apply nb-btn bg-indiaGreen text-paper;
+
+  /* Scrollbar hiding */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
-  .nb-btn-info {
-    @apply nb-btn bg-navy text-paper;
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
-  .nb-btn-warn {
-    @apply nb-btn bg-sun;
+
+  /* Snap-scroll reel container */
+  .snap-reel {
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+    scrollbar-width: none;
   }
-  .nb-btn-danger {
-    @apply nb-btn bg-hotpink text-paper;
+  .snap-reel::-webkit-scrollbar {
+    display: none;
   }
-  .nb-btn-ghost {
-    @apply nb-btn bg-transparent;
-  }
-  .nb-input {
-    @apply w-full border-3 border-ink bg-white px-3 py-2.5 font-body
-      placeholder:text-ink/40 focus:outline-none focus:ring-2 focus:ring-saffron;
-  }
-  .nb-badge {
-    @apply inline-flex items-center gap-1 border-2 border-ink bg-white
-      px-2.5 py-0.5 text-xs font-mono font-bold uppercase;
-  }
-  .nb-tag {
-    @apply inline-flex items-center gap-1 cursor-pointer border-2 border-ink
-      bg-white px-2.5 py-1 text-xs font-mono font-bold uppercase
-      transition-all hover:bg-saffron hover:-translate-y-[1px];
-  }
-  .nb-tag-active {
-    @apply bg-saffron text-ink;
-  }
-  .nb-divider {
-    @apply h-1.5 w-full bg-ink;
-  }
-  .nb-chip {
-    @apply inline-flex items-center gap-1 border-2 border-ink bg-paper
-      px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider;
-  }
-  .nb-section-title {
-    @apply font-display font-extrabold uppercase tracking-tight;
-  }
-  .grid-noise {
-    background-image:
-      linear-gradient(rgba(10, 10, 10, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(10, 10, 10, 0.04) 1px, transparent 1px);
-    background-size: 28px 28px;
+  .snap-reel > .snap-reel-item {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    height: 100%;
   }
 }
 
-/* Hide scrollbars where needed */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* Snap scroll container for reel player */
-.snap-reel {
-  scroll-snap-type: y mandatory;
-  overflow-y: scroll;
-  scrollbar-width: none;
-}
-.snap-reel::-webkit-scrollbar {
-  display: none;
-}
-.snap-reel > .snap-reel-item {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-  height: 100%;
+/* ─── Keyframes ─────────────────────────────────────────────────────── */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
-/* Smooth focus ring */
-*:focus-visible {
-  outline: none;
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+@keyframes pulseRing {
+  0% {
+    box-shadow: 0 0 0 0 hsl(var(--accent) / 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 14px hsl(var(--accent) / 0);
+  }
 }
