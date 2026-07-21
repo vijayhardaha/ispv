@@ -100,7 +100,7 @@ src/
 - **Tailwind v4** with `@import "tailwindcss"` syntax
 - Design tokens in `@theme inline` block in `index.css`
 - shadcn-style CSS variables in HSL format
-- Brutalist conventions: `border-[3px]`, `border-2`, `shadow-brutal-*`, uppercase tracking-wider text, bold fonts
+- Brutalist conventions: `border-2`, `border-2`, `shadow-brutal-*`, uppercase tracking-wider text, bold fonts
 - Custom utilities defined with `@utility` and `@layer utilities`
 - No CSS modules — all styling inline via Tailwind utilities
 
