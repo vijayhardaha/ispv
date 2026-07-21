@@ -1,0 +1,57 @@
+# =======================================================================
+# Vercel Ignore — API (Allowlist)
+# =======================================================================
+# Purpose: Ignore everything by default, then explicitly allow only the
+#          files and directories needed for the Next.js build.
+# Scope:   Next.js App Router + Supabase (api package)
+# Docs:    https://vercel.com/docs/deployments/vercelignore
+# =======================================================================
+
+# ----------------------------------------------------------------------
+# Deny Everything — Root Level
+# ----------------------------------------------------------------------
+# Start by ignoring all files and directories at the package root.
+# Explicit negations below re-allow what's required for the build.
+/*
+
+# ----------------------------------------------------------------------
+# Source Code
+# ----------------------------------------------------------------------
+!src
+!public
+!package.json
+!bun.lock
+!bun.lockb
+!package-lock.json
+!pnpm-lock.yaml
+!yarn.lock
+
+# ----------------------------------------------------------------------
+# Build Toolchain
+# ----------------------------------------------------------------------
+# Next.js, TypeScript, PostCSS, and ESLint configs needed at build time.
+!next.config.ts
+!tsconfig.json
+!postcss.config.mjs
+!eslint.config.mjs
+!next-sitemap.config.js
+
+# ----------------------------------------------------------------------
+# Vercel Project Metadata
+# ----------------------------------------------------------------------
+# Project configuration used during deployment.
+!.vercel
+!vercel.json
+
+# ----------------------------------------------------------------------
+# Test Artifacts — Global (Any Depth)
+# ----------------------------------------------------------------------
+# Exclude test files even inside allowed directories.
+__tests__/
+*.test.ts
+*.test.tsx
+
+# ----------------------------------------------------------------------
+# System Junk — Global (Any Depth)
+# ----------------------------------------------------------------------
+.DS_Store
