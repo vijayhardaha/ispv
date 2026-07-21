@@ -1,7 +1,8 @@
-import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
-import { forwardRef, type ComponentPropsWithoutRef, type ElementRef } from "react";
-import { cn } from "@/lib/utils";
+import { forwardRef, type ComponentPropsWithoutRef, type ComponentRef, type JSX } from 'react';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { X } from 'lucide-react';
+
+import { cn } from '@/lib/utils';
 
 export const Dialog = DialogPrimitive.Root;
 export const DialogTrigger = DialogPrimitive.Trigger;
@@ -9,36 +10,36 @@ export const DialogClose = DialogPrimitive.Close;
 export const DialogPortal = DialogPrimitive.Portal;
 
 export const DialogOverlay = forwardRef<
-  ElementRef<typeof DialogPrimitive.Overlay>,
+  ComponentRef<typeof DialogPrimitive.Overlay>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm",
-      "data-[state=open]:animate-in data-[state=closed]:animate-out",
-      "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      'fixed inset-0 z-50 bg-black/60 backdrop-blur-sm',
+      'data-[state=open]:animate-in data-[state=closed]:animate-out',
+      'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
       className
     )}
     {...props}
   />
 ));
-DialogOverlay.displayName = "DialogOverlay";
+DialogOverlay.displayName = 'DialogOverlay';
 
 export const DialogContent = forwardRef<
-  ElementRef<typeof DialogPrimitive.Content>,
+  ComponentRef<typeof DialogPrimitive.Content>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
-    tone?: "default" | "saffron" | "green" | "navy" | "sun" | "pink" | "lime";
+    tone?: 'default' | 'saffron' | 'green' | 'navy' | 'sun' | 'pink' | 'lime';
   }
->(({ className, children, tone = "default", ...props }, ref) => {
+>(({ className, children, tone = 'default', ...props }, ref) => {
   const toneBg: Record<string, string> = {
-    default: "bg-paper",
-    saffron: "bg-saffron",
-    green: "bg-indiaGreen text-paper",
-    navy: "bg-navy text-paper",
-    sun: "bg-sun",
-    pink: "bg-hotpink text-paper",
-    lime: "bg-lime",
+    default: 'bg-gray-100',
+    saffron: 'bg-orange-500',
+    green: 'bg-blue-600 text-white',
+    navy: 'bg-[#0a0a0c] text-white',
+    sun: 'bg-yellow-400',
+    pink: 'bg-orange-500 text-white',
+    lime: 'bg-yellow-400',
   };
   return (
     <DialogPortal>
@@ -46,10 +47,10 @@ export const DialogContent = forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 w-[95vw] max-w-2xl -translate-x-1/2 -translate-y-1/2",
-          "border-3 border-ink shadow-brutal-xl",
-          "max-h-[90vh] overflow-y-auto",
-          "animate-snapIn",
+          'fixed top-1/2 left-1/2 z-50 w-[95vw] max-w-2xl -translate-x-1/2 -translate-y-1/2',
+          'shadow-brutal-xl border-[3px] border-black',
+          'max-h-[90vh] overflow-y-auto',
+          'animate-snapIn',
           toneBg[tone],
           className
         )}
@@ -57,8 +58,7 @@ export const DialogContent = forwardRef<
       >
         {children}
         <DialogPrimitive.Close
-          className="absolute right-3 top-3 border-3 border-ink bg-white p-1.5 shadow-brutal-sm
-            hover:bg-hotpink hover:text-paper transition-colors"
+          className="shadow-brutal-sm absolute top-3 right-3 border-[3px] border-black bg-white p-1.5 transition-colors hover:bg-orange-500 hover:text-white"
           aria-label="Close"
         >
           <X className="h-4 w-4" />
@@ -67,61 +67,76 @@ export const DialogContent = forwardRef<
     </DialogPortal>
   );
 });
-DialogContent.displayName = "DialogContent";
+DialogContent.displayName = 'DialogContent';
 
-export const DialogHeader = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn("border-b-3 border-ink px-6 py-4", className)}
-    {...props}
-  />
-);
+/**
+ * Header section of the dialog with bottom border styling.
+ *
+ * @param {object} root0 - DialogHeader properties.
+ * @param {string} [root0.className] - Additional CSS classes.
+ *
+ * @returns {JSX.Element} Rendered dialog header.
+ */
+export function DialogHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
+  return (
+    <div className={cn('border-b-[3px] border-black px-6 py-4', className)} {...props} />
+  );
+}
 
 export const DialogTitle = forwardRef<
-  ElementRef<typeof DialogPrimitive.Title>,
+  ComponentRef<typeof DialogPrimitive.Title>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn(
-      "font-display text-2xl font-extrabold uppercase tracking-tight",
-      className
-    )}
+    className={cn('font-display text-2xl font-extrabold tracking-tight uppercase', className)}
     {...props}
   />
 ));
-DialogTitle.displayName = "DialogTitle";
+DialogTitle.displayName = 'DialogTitle';
 
 export const DialogDescription = forwardRef<
-  ElementRef<typeof DialogPrimitive.Description>,
+  ComponentRef<typeof DialogPrimitive.Description>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn("font-mono text-xs uppercase tracking-wide opacity-80", className)}
+    className={cn('font-mono text-xs tracking-wide uppercase opacity-80', className)}
     {...props}
   />
 ));
-DialogDescription.displayName = "DialogDescription";
+DialogDescription.displayName = 'DialogDescription';
 
-export const DialogBody = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("px-6 py-5", className)} {...props} />
-);
+/**
+ * Body content area of the dialog.
+ *
+ * @param {object} root0 - DialogBody properties.
+ * @param {string} [root0.className] - Additional CSS classes.
+ *
+ * @returns {JSX.Element} Rendered dialog body.
+ */
+export function DialogBody({ className, ...props }: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
+  return (
+    <div className={cn('px-6 py-5', className)} {...props} />
+  );
+}
 
-export const DialogFooter = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      "flex flex-wrap items-center justify-end gap-3 border-t-3 border-ink px-6 py-4 bg-white",
-      className
-    )}
-    {...props}
-  />
-);
+/**
+ * Footer section of the dialog with top border and action alignment.
+ *
+ * @param {object} root0 - DialogFooter properties.
+ * @param {string} [root0.className] - Additional CSS classes.
+ *
+ * @returns {JSX.Element} Rendered dialog footer.
+ */
+export function DialogFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
+  return (
+    <div
+      className={cn(
+        'flex flex-wrap items-center justify-end gap-3 border-t-[3px] border-black bg-white px-6 py-4',
+        className
+      )}
+      {...props}
+    />
+  );
+}
