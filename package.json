@@ -8,8 +8,7 @@
     "lint:fix": "eslint --fix .",
     "format": "prettier --write --log-level error .",
     "format:check": "prettier --check .",
-    "tsc": "tsc --noEmit",
-    "prepare": "husky"
+    "tsc": "tsc --noEmit"
   },
   "author": {
     "name": "Vijay Hardaha",
@@ -27,6 +26,7 @@
     "lucide-react": "^1.25.0",
     "next": "^16.2.10",
     "postcss": "^8.5.20",
+    "radix-ui": "^1.6.4",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "tailwind-merge": "^3.6.0",
