@@ -1,8 +1,7 @@
 CREATE TABLE public.categories (
   id           uuid PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
-  slug         text NOT NULL UNIQUE,
   value        text NOT NULL UNIQUE,
-  label        text NOT NULL,
+  name         text NOT NULL,
   color        text NOT NULL,
   description  text,
   seo_title       text,
@@ -11,9 +10,8 @@ CREATE TABLE public.categories (
 
 CREATE TABLE public.locations (
   id           uuid PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
-  slug         text NOT NULL UNIQUE,
   value        text NOT NULL UNIQUE,
-  label        text NOT NULL UNIQUE,
+  name         text NOT NULL,
   description  text,
   seo_title       text,
   seo_description text

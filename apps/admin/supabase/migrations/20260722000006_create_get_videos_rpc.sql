@@ -17,7 +17,7 @@ BEGIN
       v.description, v.thumbnail_url, v.ig_post_date,
       v.status, v.created_at, v.updated_at,
       v.submitted_tags, v.submitted_category, v.submitted_state, v.submitted_city,
-      c.label AS category_label, c.color AS category_color,
+      c.name AS category_name, c.color AS category_color,
       COUNT(*) OVER() AS total_count
     FROM public.videos v
     LEFT JOIN public.categories c ON c.value = v.category
@@ -29,3 +29,5 @@ BEGIN
   RETURN result;
 END;
 $$;
+
+GRANT EXECUTE ON FUNCTION public.get_videos_for_api TO authenticated, anon;

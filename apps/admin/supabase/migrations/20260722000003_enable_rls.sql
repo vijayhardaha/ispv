@@ -19,3 +19,12 @@ CREATE POLICY "auth_all_categories" ON public.categories
   FOR ALL TO authenticated USING (TRUE) WITH CHECK (TRUE);
 CREATE POLICY "auth_all_locations" ON public.locations
   FOR ALL TO authenticated USING (TRUE) WITH CHECK (TRUE);
+
+-- Table-level privileges (required for RLS to function)
+GRANT SELECT ON public.categories TO anon, authenticated;
+GRANT SELECT ON public.locations TO anon, authenticated;
+GRANT SELECT ON public.videos TO anon;
+
+GRANT ALL ON public.categories TO authenticated;
+GRANT ALL ON public.locations TO authenticated;
+GRANT ALL ON public.videos TO authenticated;
