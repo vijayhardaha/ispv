@@ -73,7 +73,7 @@ export function FieldLabel({
   hint?: string;
 }): JSX.Element {
   return (
-    <label htmlFor={htmlFor} className="block font-mono text-[11px] font-bold tracking-wider text-black/70 uppercase">
+    <label htmlFor={htmlFor} className="flex items-center gap-1 text-sm font-bold">
       {children}
       {required && <span className="text-yellow-500"> *</span>}
       {hint && <span className="ml-2 font-normal text-black/50 normal-case">{hint}</span>}

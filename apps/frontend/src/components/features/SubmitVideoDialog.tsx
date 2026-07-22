@@ -1,6 +1,6 @@
 import { useState, type JSX, type ReactNode } from 'react';
 
-import { Send, Link2, Hash, CheckCircle2, X as XIcon } from 'lucide-react';
+import { Send, Link2, Hash, MapPin, Building2, CheckCircle2, X as XIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/Button';
 import {
@@ -13,8 +13,32 @@ import {
   DialogBody,
   DialogFooter,
 } from '@/components/ui/Dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Dropdown';
 import { FieldLabel, Input, Textarea } from '@/components/ui/Input';
 import { extractInstagramId } from '@/lib/instagram';
+
+const LOCATIONS = [
+  'Andhra Pradesh',
+  'Assam',
+  'Bihar',
+  'Chandigarh',
+  'Delhi',
+  'Gujarat',
+  'Jammu & Kashmir',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Odisha',
+  'Punjab',
+  'Rajasthan',
+  'Tamil Nadu',
+  'Telangana',
+  'Uttar Pradesh',
+  'Uttarakhand',
+  'West Bengal',
+] as const;
 
 const SUGGESTED_HASHTAGS = [
   '#PeacefulProtest',
@@ -43,6 +67,8 @@ export function SubmitVideoDialog({
 }): JSX.Element {
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState('');
+  const [location, setLocation] = useState('');
+  const [city, setCity] = useState('');
   const [hashtags, setHashtags] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -50,9 +76,13 @@ export function SubmitVideoDialog({
   const currentTags = Array.from(
     new Set(
       hashtags
-        .split(',')
+        .split(/\s+/)
         .map((h) => h.trim())
         .filter(Boolean)
+        .map((h) => {
+          const match = h.match(/^#+(.+)/);
+          return match ? `#${match[1]}` : h;
+        })
     )
   );
 
@@ -61,6 +91,8 @@ export function SubmitVideoDialog({
     if (!next)
       setTimeout(() => {
         setUrl('');
+        setLocation('');
+        setCity('');
         setHashtags('');
         setError(null);
         setSuccess(false);
@@ -105,7 +137,7 @@ export function SubmitVideoDialog({
         ) : (
           <form onSubmit={handleSubmit}>
             <DialogBody className="space-y-4">
-              <div>
+              <div className="space-y-1">
                 <FieldLabel htmlFor="reel-url" required>
                   <Link2 className="h-3.5 w-3.5" /> Instagram Reel URL
                 </FieldLabel>
@@ -116,10 +148,41 @@ export function SubmitVideoDialog({
                   placeholder="https://www.instagram.com/reel/..."
                   invalid={!!error}
                 />
-                {error && <p className="mt-1 font-mono text-[10px] font-bold text-red-600 uppercase">{error}</p>}
+                {error && <p className="mt-1 text-xs font-semibold text-red-600">{error}</p>}
               </div>
 
-              <div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <FieldLabel htmlFor="reel-location">
+                    <MapPin className="h-3.5 w-3.5" /> Location
+                  </FieldLabel>
+                  <Select value={location} onValueChange={setLocation}>
+                    <SelectTrigger id="reel-location">
+                      <SelectValue placeholder="Select state" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {LOCATIONS.map((loc) => (
+                        <SelectItem key={loc} value={loc}>
+                          {loc}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <FieldLabel htmlFor="reel-city">
+                    <Building2 className="h-3.5 w-3.5" /> City
+                  </FieldLabel>
+                  <Input
+                    id="reel-city"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="e.g. Mumbai"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
                 <FieldLabel htmlFor="reel-hashtags">
                   <Hash className="h-3.5 w-3.5" /> Hashtags
                 </FieldLabel>
@@ -127,7 +190,7 @@ export function SubmitVideoDialog({
                   id="reel-hashtags"
                   value={hashtags}
                   onChange={(e) => setHashtags(e.target.value)}
-                  placeholder="#PeacefulProtest, #YourCity, ..."
+                  placeholder="#PeacefulProtest #YourCity #Demo"
                   rows={2}
                 />
               </div>
@@ -145,12 +208,12 @@ export function SubmitVideoDialog({
                         onClick={() =>
                           setHashtags(
                             hashtags
-                              .split(',')
+                              .split(/\s+/)
                               .filter((h) => h.trim() !== t)
-                              .join(', ')
+                              .join(' ')
                           )
                         }
-                        className="hover:text-red-600"
+                        className="cursor-pointer hover:text-red-600"
                         aria-label={`Remove ${t}`}
                       >
                         <XIcon className="h-3 w-3" />
@@ -160,26 +223,28 @@ export function SubmitVideoDialog({
                 </div>
               )}
 
-              <div>
-                <p className="mb-1 font-mono text-[10px] font-bold tracking-widest text-black/50 uppercase">
-                  Suggestions
-                </p>
-                <div className="flex flex-wrap gap-1">
-                  {SUGGESTED_HASHTAGS.filter((h) => !currentTags.includes(h)).map((h) => (
-                    <button
-                      key={h}
-                      type="button"
-                      onClick={() => setHashtags(hashtags ? `${hashtags}, ${h}` : h)}
-                      className="inline-flex items-center gap-1 border-2 border-black bg-white px-2 py-0.5 font-mono text-[10px] font-bold uppercase transition-colors hover:bg-yellow-400"
-                    >
-                      + {h}
-                    </button>
-                  ))}
+              {SUGGESTED_HASHTAGS.filter((h) => !currentTags.includes(h)).length > 0 && (
+                <div>
+                  <p className="mb-1 font-mono text-[10px] font-bold tracking-widest text-black/50 uppercase">
+                    Suggestions
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {SUGGESTED_HASHTAGS.filter((h) => !currentTags.includes(h)).map((h) => (
+                      <button
+                        key={h}
+                        type="button"
+                        onClick={() => setHashtags(hashtags ? `${hashtags} ${h}` : h)}
+                        className="inline-flex items-center gap-1 border-2 border-black bg-white px-2 py-0.5 font-mono text-[10px] font-bold uppercase transition-colors hover:bg-yellow-400"
+                      >
+                        + {h}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <DialogFooter>
-                <Button type="submit" variant="default">
+                <Button type="submit" variant="default" shadow>
                   <Send className="size-4" /> Submit Reel
                 </Button>
               </DialogFooter>
