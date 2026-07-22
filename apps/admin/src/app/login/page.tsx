@@ -2,6 +2,7 @@
 
 import { useState, type JSX } from 'react';
 
+import { Button } from '@/components/ui/Button';
 import { createClient } from '@/lib/supabase';
 
 /**
@@ -27,8 +28,8 @@ export default function LoginPage(): JSX.Element {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
-      <div className="w-full max-w-sm border-2 border-black bg-white p-6 shadow-[8px_8px_0px_0px_#18181b]">
+    <main className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
+      <article className="w-full max-w-sm border-2 border-black bg-white p-6 shadow-[8px_8px_0px_0px_#18181b]">
         <h1 className="font-display mb-6 text-center text-2xl font-extrabold uppercase">Admin Login</h1>
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
@@ -58,14 +59,11 @@ export default function LoginPage(): JSX.Element {
             />
           </div>
           {error && <p className="text-xs font-bold text-red-600 uppercase">{error}</p>}
-          <button
-            type="submit"
-            className="w-full border-2 border-black bg-yellow-400 px-4 py-2 text-sm font-bold uppercase transition-colors hover:bg-yellow-300"
-          >
+          <Button type="submit" className="w-full">
             Sign In
-          </button>
+          </Button>
         </form>
-      </div>
-    </div>
+      </article>
+    </main>
   );
 }

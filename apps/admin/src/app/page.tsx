@@ -42,17 +42,19 @@ export default async function DashboardPage(): Promise<JSX.Element> {
   ];
 
   return (
-    <div className="p-6">
-      <h1 className="mb-8 text-3xl font-extrabold uppercase">Dashboard</h1>
+    <section className="p-6" aria-labelledby="dashboard-heading">
+      <h1 id="dashboard-heading" className="mb-8 text-3xl font-extrabold uppercase">
+        Dashboard
+      </h1>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
         {stats.map((s) => (
-          <div key={s.label} className="border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_#18181b]">
+          <article key={s.label} className="border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_#18181b]">
             <div className={`mb-2 h-3 w-3 ${s.color}`} />
             <div className="text-3xl font-extrabold">{s.count}</div>
             <div className="text-xs font-bold uppercase">{s.label}</div>
-          </div>
+          </article>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
