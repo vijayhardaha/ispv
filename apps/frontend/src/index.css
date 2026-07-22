@@ -1,0 +1,201 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─── Design tokens ─────────────────────────────────────────────────── */
+@theme inline {
+  --font-body: "Space Grotesk", "system-ui", sans-serif;
+  --font-display: "Poppins", "system-ui", sans-serif;
+  --font-mono: "JetBrains Mono", "ui-monospace", monospace;
+  --font-sans: var(--font-body);
+
+  --color-background: #f0f4f8;
+  --color-foreground: #000000;
+  --color-card: #ffffff;
+  --color-card-foreground: #000000;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #000000;
+  --color-primary: #fdc700;
+  --color-primary-foreground: #000000;
+  --color-secondary: #171717;
+  --color-secondary-foreground: #f5f5f5;
+  --color-muted: #f5f5f5;
+  --color-muted-foreground: #737373;
+  --color-accent: #fdc700;
+  --color-accent-foreground: #171717;
+  --color-destructive: #e6001b;
+  --color-border: #e5e5e5;
+  --color-input: #e5e5e5;
+  --color-ring: #a1a1a1;
+
+  --radius: 0rem;
+
+  --animate-marquee: marquee 300s linear infinite;
+  --animate-wiggle: wiggle 0.4s ease-in-out;
+  --animate-pulse-ring: pulseRing 1.5s ease-out infinite;
+}
+
+/* ─── Custom utilities (Tailwind v4 @utility syntax) ────────────────── */
+
+@utility shadow-brutal-* {
+  box-shadow: 3px 3px 0 0 --value(--color-*);
+}
+
+/* ─── CSS variables (Tailwind CSS variables) ────────────────────────── */
+:root {
+  --background: var(--color-gray-100);
+  --foreground: var(--color-black);
+  --card: var(--color-white);
+  --card-foreground: var(--color-black);
+  --popover: var(--color-white);
+  --popover-foreground: var(--color-black);
+  --primary: var(--color-neutral-900);
+  --primary-foreground: var(--color-neutral-50);
+  --secondary: var(--color-neutral-100);
+  --secondary-foreground: var(--color-neutral-900);
+  --muted: var(--color-neutral-100);
+  --muted-foreground: var(--color-neutral-500);
+  --accent: var(--color-yellow-400);
+  --accent-foreground: var(--color-neutral-900);
+  --destructive: var(--color-red-600);
+  --border: var(--color-neutral-200);
+  --input: var(--color-neutral-200);
+  --ring: var(--color-neutral-400);
+  --chart-1: var(--color-yellow-400);
+  --chart-2: var(--color-teal-600);
+  --chart-3: var(--color-cyan-800);
+  --chart-4: var(--color-amber-400);
+  --chart-5: var(--color-yellow-500);
+  --radius: 0rem;
+  --sidebar: var(--color-neutral-50);
+  --sidebar-foreground: var(--color-neutral-950);
+  --sidebar-primary: var(--color-neutral-900);
+  --sidebar-primary-foreground: var(--color-neutral-50);
+  --sidebar-accent: var(--color-neutral-100);
+  --sidebar-accent-foreground: var(--color-neutral-900);
+  --sidebar-border: var(--color-neutral-200);
+  --sidebar-ring: var(--color-neutral-400);
+}
+
+/* ─── Base layer ────────────────────────────────────────────────────── */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  :root {
+    color-scheme: light;
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+    font-weight: 700;
+  }
+
+  *:focus-visible {
+    outline: none;
+  }
+}
+
+/* ─── Utility layer ─────────────────────────────────────────────────── */
+@layer utilities {
+  .shadow-brutal {
+    box-shadow: 4px 4px 0 0 var(--foreground);
+  }
+  .shadow-brutal-sm {
+    box-shadow: 2px 2px 0 0 var(--foreground);
+  }
+  .shadow-brutal-lg {
+    box-shadow: 6px 6px 0 0 var(--foreground);
+  }
+  .shadow-brutal-xl {
+    box-shadow: 8px 8px 0 0 var(--foreground);
+  }
+  .shadow-brutal-2xl {
+    box-shadow: 12px 12px 0 0 var(--foreground);
+  }
+  .shadow-brutal-press {
+    box-shadow: 0 0 0 0 var(--foreground);
+  }
+
+  .rotate-placard-1 {
+    transform: rotate(-2deg);
+  }
+  .rotate-placard-2 {
+    transform: rotate(1.5deg);
+  }
+  .rotate-placard-3 {
+    transform: rotate(-1deg);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .snap-reel {
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+    scrollbar-width: none;
+  }
+  .snap-reel::-webkit-scrollbar {
+    display: none;
+  }
+  .snap-reel > .snap-reel-item {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    height: 100%;
+  }
+}
+
+/* ─── Keyframes ─────────────────────────────────────────────────────── */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+@keyframes pulseRing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgba(250, 204, 21, 0);
+  }
+}
