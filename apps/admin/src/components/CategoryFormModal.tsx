@@ -9,11 +9,14 @@ import type { CategoryRecord } from '@/lib/types';
 const COLORS = ['yellow', 'black', 'blue', 'red', 'green', 'white'];
 
 /**
+ * Modal form for creating or editing a category.
  *
- * @param root0
- * @param root0.category
- * @param root0.onClose
- * @param root0.onSaved
+ * @param {{ category?: CategoryRecord | null; onClose: () => void; onSaved: () => void }} props - Component properties.
+ * @param {CategoryRecord | null} [props.category] - Existing category to edit, or null for new.
+ * @param {() => void} props.onClose - Callback to close the modal.
+ * @param {() => void} props.onSaved - Callback after successful save.
+ *
+ * @returns {JSX.Element} Rendered modal form.
  */
 export function CategoryFormModal({
   category,

@@ -3,26 +3,29 @@
 import { useState, type JSX } from 'react';
 
 import { useToast } from '@/components/Toast';
-import type { CategoryRecord, StateRecord, VideoRecord } from '@/lib/types';
+import type { CategoryRecord, LocationRecord, VideoRecord } from '@/lib/types';
 
 interface VideoFormModalProps {
   video?: VideoRecord | null;
   categories: CategoryRecord[];
-  states: StateRecord[];
+  locations: LocationRecord[];
   onClose: () => void;
   onSaved: () => void;
 }
 
 /**
+ * Modal form for creating or editing a video.
  *
- * @param root0
- * @param root0.video
- * @param root0.categories
- * @param root0.states
- * @param root0.onClose
- * @param root0.onSaved
+ * @param {VideoFormModalProps} props - Component properties.
+ * @param {VideoRecord | null} [props.video] - Existing video to edit, or null for new.
+ * @param {CategoryRecord[]} props.categories - Available category options.
+ * @param {LocationRecord[]} props.locations - Available location options.
+ * @param {() => void} props.onClose - Callback to close the modal.
+ * @param {() => void} props.onSaved - Callback after successful save.
+ *
+ * @returns {JSX.Element} Rendered modal form.
  */
-export function VideoFormModal({ video, categories, states, onClose, onSaved }: VideoFormModalProps): JSX.Element {
+export function VideoFormModal({ video, categories, locations, onClose, onSaved }: VideoFormModalProps): JSX.Element {
   const [igUrl, setIgUrl] = useState(video?.ig_url ?? '');
   const [category, setCategory] = useState(video?.category ?? '');
   const [state, setState] = useState(video?.state ?? '');
@@ -103,7 +106,7 @@ export function VideoFormModal({ video, categories, states, onClose, onSaved }: 
                 className="w-full border-2 border-black px-3 py-2 text-sm"
               >
                 <option value="">—</option>
-                {states.map((s) => (
+                {locations.map((s) => (
                   <option key={s.id} value={s.value}>
                     {s.label}
                   </option>

@@ -19,9 +19,12 @@ const ToastContext = createContext<ToastContextValue>({ toast: () => {} });
 let nextId = 0;
 
 /**
+ * Provides toast notification context to child components.
  *
- * @param root0
- * @param root0.children
+ * @param {{ children: ReactNode }} props - Component properties.
+ * @param {ReactNode} props.children - Child components to wrap.
+ *
+ * @returns {JSX.Element} Wrapped component tree.
  */
 export function ToastProvider({ children }: { children: ReactNode }): JSX.Element {
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -54,7 +57,9 @@ export function ToastProvider({ children }: { children: ReactNode }): JSX.Elemen
 }
 
 /**
+ * Hook to access the toast notification function.
  *
+ * @returns {ToastContextValue} Object with toast function.
  */
 export function useToast(): ToastContextValue {
   return useContext(ToastContext);
