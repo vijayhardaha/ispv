@@ -2,7 +2,9 @@
 
 ## Project Overview
 
-- **Name**: `indian-students-protest-vault` — a Next.js static archive site
+- **Name**: `@reel-vault/frontend` — a Next.js static archive site (part of `reel-vault-monorepo`)
+- **Admin**: `@reel-vault/admin` — Next.js admin panel at `apps/admin/`
+- **Extension**: `@reel-vault/extension` — Chrome extension at `chrome-extension/`
 - **Purpose**: Indexes peaceful Indian protest Instagram reels, organised by city, category, and hashtag
 - **Version**: 0.0.0
 - **License**: MIT
@@ -13,6 +15,7 @@
 
 | Layer           | Choice                                                      |
 | --------------- | ----------------------------------------------------------- |
+| Monorepo        | Bun workspaces                                              |
 | Framework       | Next.js ^16.2.10 (App Router, Turbopack)                    |
 | Language        | TypeScript ^6.0.3, React ^19.2.7                            |
 | Styling         | Tailwind CSS ^4.3.3 with `@tailwindcss/postcss`             |
@@ -27,54 +30,54 @@
 
 ## Essential Commands
 
-| Command                | Action                                 |
-| ---------------------- | -------------------------------------- |
-| `bun run dev`          | Dev server with Turbopack              |
-| `bun run build`        | Production build                       |
-| `bun run lint`         | ESLint check (all files)               |
-| `bun run lint:fix`     | ESLint auto-fix                        |
-| `bun run format`       | Prettier format all                    |
-| `bun run format:check` | Prettier check                         |
-| `bun run tsc`          | TypeScript type-check (`tsc --noEmit`) |
+| Command                | Action                                        |
+| ---------------------- | --------------------------------------------- |
+| `bun run dev`          | Start both frontend (:3000) and admin (:3001) |
+| `bun run dev:frontend` | Frontend dev server with Turbopack            |
+| `bun run dev:admin`    | Admin dev server on port 3001                 |
+| `bun run build`        | Production build for both apps                |
+| `bun run lint`         | ESLint check across all workspaces            |
+| `bun run lint:fix`     | ESLint auto-fix                               |
+| `bun run format`       | Prettier format all                           |
+| `bun run format:check` | Prettier check                                |
+| `bun run tsc`          | TypeScript type-check (`tsc --noEmit`)        |
 
-Always run lint + tsc after making changes: `bun run lint:fix && bun run tsc`.
+Always run lint + tsc after making changes: `bun run lint && bun run tsc`.
 
 ## Project Structure
 
 ```
-src/
-├── app/                  # Next.js App Router pages
-│   ├── layout.tsx        # Root layout (Header + Footer + fonts)
-│   ├── page.tsx          # Homepage
-│   ├── about/page.tsx
-│   ├── categories/page.tsx
-│   ├── categories/[id]/page.tsx
-│   ├── videos/page.tsx
-│   └── not-found.tsx
-├── components/           # React components
-│   ├── filters/          # FilterBar, Pagination
-│   ├── flags/            # FlagStripe
-│   ├── home/             # HeroSection, SloganTicker, FeaturedVideos, CategorySection, CitiesMap
-│   ├── layout/           # Header, Footer
-│   ├── submit/           # SubmitVideoDialog
-│   ├── ui/               # Button, Card, Dialog, Input, Badge, Dropdown, Container
-│   └── videos/           # VideoCard, ReelPlayer
-├── data/
-│   ├── slogans.ts        # Peaceful protest slogans
-│   └── videos.ts         # Hardcoded video entries, categories, cities, helpers
-├── hooks/                # (empty — custom hooks go here)
-├── lib/
-│   └── utils.ts          # cn(), formatNumber(), timeAgo(), extractInstagramId(), instagramEmbedUrl()
-└── index.css             # Global styles (Tailwind v4 + shadcn CSS vars)
+apps/
+├── frontend/             # @reel-vault/frontend — public site
+│   ├── src/
+│   │   ├── app/          # Next.js App Router pages
+│   │   ├── components/   # React components
+│   │   ├── data/         # Hardcoded video entries
+│   │   ├── hooks/
+│   │   └── lib/
+│   ├── public/
+│   ├── next.config.ts
+│   └── package.json
+└── admin/                # @reel-vault/admin — admin panel
+    ├── src/
+    │   ├── app/          # Pages + API routes
+    │   ├── components/   # Form modals
+    │   └── lib/          # Supabase client + types
+    ├── supabase/migrations/
+    └── package.json
+chrome-extension/         # @reel-vault/extension
+├── manifest.json
+├── content.js
+├── icons/
+└── package.json
 ```
 
 ## Key paths
 
-- `@/*` maps to `./src/*`
-- Components: `@/components/...`
-- Utilities: `@/lib/utils`
-- Data: `@/data/...`
-- Global CSS: `@/index.css`
+- Frontend `@/*` maps to `apps/frontend/src/*`
+- Admin `@/*` maps to `apps/admin/src/*`
+- Root shared configs at repo root
+- Supabase migrations at `apps/admin/supabase/migrations/`
 
 ## Coding Conventions
 
