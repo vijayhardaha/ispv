@@ -1,11 +1,17 @@
 'use client';
 
-import { useState, useEffect, useCallback, type JSX } from 'react';
+import { useState, useEffect, useCallback, Suspense, type JSX } from 'react';
+
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
 import { CategoryFormModal } from '@/components/CategoryFormModal';
 import { useToast } from '@/components/Toast';
+import { Button } from '@/components/ui/Button';
 import { createClient } from '@/lib/supabase';
 import type { CategoryRecord } from '@/lib/types';
+
+/** Number of items per page for pagination. */
+const PER_PAGE = 15;
 
 /**
  * Categories management page with CRUD operations.
@@ -13,22 +19,61 @@ import type { CategoryRecord } from '@/lib/types';
  * @returns {JSX.Element} Rendered categories page.
  */
 export default function CategoriesPage(): JSX.Element {
+  return (
+    <Suspense fallback={<div className="p-6 text-sm">Loading...</div>}>
+      <CategoriesPageContent />
+    </Suspense>
+  );
+}
+
+/**
+ * Inner component that uses useSearchParams for URL-based pagination.
+ *
+ * @returns {JSX.Element} Rendered categories page.
+ */
+function CategoriesPageContent(): JSX.Element {
   const [items, setItems] = useState<CategoryRecord[]>([]);
   const [editItem, setEditItem] = useState<CategoryRecord | null>(null);
   const [showAdd, setShowAdd] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const supabase = createClient();
   const { toast } = useToast();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const page = Number(searchParams.get('page')) || 1;
 
   const load = useCallback(async () => {
-    const { data } = await supabase.from('categories').select('*').order('slug');
+    const from = (page - 1) * PER_PAGE;
+    const to = from + PER_PAGE - 1;
+    const { data, count } = await supabase
+      .from('categories')
+      .select('*', { count: 'exact' })
+      .order('value')
+      .range(from, to);
     if (data) setItems(data);
-  }, [supabase]);
+    if (count !== null) setTotalCount(count);
+  }, [supabase, page]);
 
   useEffect(() => {
     const timer = setTimeout(() => load(), 0);
     return () => clearTimeout(timer);
   }, [load]);
+
+  const goToPage = useCallback(
+    (newPage: number) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (newPage <= 1) {
+        params.delete('page');
+      } else {
+        params.set('page', String(newPage));
+      }
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname);
+    },
+    [router, pathname, searchParams]
+  );
 
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from('categories').delete().eq('id', id);
@@ -41,25 +86,24 @@ export default function CategoriesPage(): JSX.Element {
     }
   };
 
+  const totalPages = Math.min(Math.ceil(totalCount / PER_PAGE), 3);
+
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-extrabold uppercase">Categories</h1>
-        <button
-          onClick={() => setShowAdd(true)}
-          className="border-2 border-black bg-yellow-400 px-4 py-2 text-sm font-bold uppercase hover:bg-yellow-300"
-        >
-          + Add
-        </button>
-      </div>
+    <section className="p-6" aria-labelledby="categories-heading">
+      <header className="mb-6 flex items-center justify-between">
+        <h1 id="categories-heading" className="text-3xl font-extrabold uppercase">
+          Categories
+        </h1>
+        <Button onClick={() => setShowAdd(true)}>+ Add</Button>
+      </header>
       <div className="overflow-x-auto border-2 border-black bg-white">
         <table className="w-full text-left text-sm">
           <thead className="border-b-2 border-black bg-gray-100">
             <tr>
-              <th className="px-3 py-2 text-xs font-bold uppercase">Slug</th>
               <th className="px-3 py-2 text-xs font-bold uppercase">Value</th>
-              <th className="px-3 py-2 text-xs font-bold uppercase">Label</th>
+              <th className="px-3 py-2 text-xs font-bold uppercase">Name</th>
               <th className="px-3 py-2 text-xs font-bold uppercase">Color</th>
+              <th className="px-3 py-2 text-xs font-bold uppercase">Description</th>
               <th className="px-3 py-2 text-xs font-bold uppercase">Actions</th>
             </tr>
           </thead>
@@ -73,9 +117,8 @@ export default function CategoriesPage(): JSX.Element {
             ) : (
               items.map((item) => (
                 <tr key={item.id} className="border-b border-black/10 hover:bg-yellow-50">
-                  <td className="px-3 py-2 font-mono text-xs">{item.slug}</td>
-                  <td className="px-3 py-2 font-mono text-xs">{item.value}</td>
-                  <td className="px-3 py-2">{item.label}</td>
+                  <td className="px-3 py-2">{item.value}</td>
+                  <td className="px-3 py-2">{item.name}</td>
                   <td className="px-3 py-2">
                     <span
                       className="inline-block border border-black px-2 py-0.5 text-xs font-bold uppercase"
@@ -87,18 +130,12 @@ export default function CategoriesPage(): JSX.Element {
                   <td className="px-3 py-2 text-xs">{item.description}</td>
                   <td className="px-3 py-2">
                     <div className="flex gap-1">
-                      <button
-                        onClick={() => setEditItem(item)}
-                        className="border border-black px-2 py-1 text-xs font-bold uppercase hover:bg-gray-100"
-                      >
+                      <Button onClick={() => setEditItem(item)} variant="secondary" size="xs">
                         Edit
-                      </button>
-                      <button
-                        onClick={() => setDeleteConfirm(item.id)}
-                        className="border border-black bg-red-50 px-2 py-1 text-xs font-bold text-red-600 uppercase hover:bg-red-100"
-                      >
+                      </Button>
+                      <Button onClick={() => setDeleteConfirm(item.id)} variant="danger-ghost" size="xs">
                         Delete
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>
@@ -107,6 +144,20 @@ export default function CategoriesPage(): JSX.Element {
           </tbody>
         </table>
       </div>
+
+      {totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-center gap-3">
+          <Button disabled={page <= 1} onClick={() => goToPage(page - 1)} variant="secondary" size="sm">
+            Prev
+          </Button>
+          <span className="text-xs font-bold">
+            Page {page} of {totalPages}
+          </span>
+          <Button disabled={page >= totalPages} onClick={() => goToPage(page + 1)} variant="secondary" size="sm">
+            Next
+          </Button>
+        </div>
+      )}
 
       {deleteConfirm && (
         <div
@@ -120,18 +171,12 @@ export default function CategoriesPage(): JSX.Element {
             <h2 className="mb-2 text-lg font-extrabold uppercase">Delete Category?</h2>
             <p className="mb-4 text-sm text-black/70">This action cannot be undone.</p>
             <div className="flex justify-end gap-2">
-              <button
-                onClick={() => setDeleteConfirm(null)}
-                className="border-2 border-black px-4 py-2 text-sm font-bold uppercase hover:bg-gray-100"
-              >
+              <Button onClick={() => setDeleteConfirm(null)} variant="secondary">
                 Cancel
-              </button>
-              <button
-                onClick={() => handleDelete(deleteConfirm)}
-                className="border-2 border-black bg-red-500 px-4 py-2 text-sm font-bold text-white uppercase hover:bg-red-600"
-              >
+              </Button>
+              <Button onClick={() => handleDelete(deleteConfirm)} variant="danger">
                 Delete
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -156,6 +201,6 @@ export default function CategoriesPage(): JSX.Element {
           }}
         />
       )}
-    </div>
+    </section>
   );
 }
