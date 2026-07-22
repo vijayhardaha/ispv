@@ -301,8 +301,8 @@ coverage.txt
 .xai
 .gh-cache
 
-# ----------------------------------------------------------------------
-# Seo & Generated Data
+# Local upload fallback (when BLOB_READ_WRITE_TOKEN not set)
+apps/admin/public/uploads/
 # ----------------------------------------------------------------------
 # Auto-generated files that don't need version control.
 *public/robots.txt
