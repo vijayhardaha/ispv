@@ -7,6 +7,9 @@ import { useToast } from '@/components/Toast';
 import { createClient } from '@/lib/supabase';
 import type { CategoryRecord } from '@/lib/types';
 
+/**
+ *
+ */
 export default function CategoriesPage(): JSX.Element {
   const [items, setItems] = useState<CategoryRecord[]>([]);
   const [editItem, setEditItem] = useState<CategoryRecord | null>(null);

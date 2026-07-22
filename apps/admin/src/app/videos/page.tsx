@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback, type JSX } from 'react';
 
-import { VideoFormModal } from '@/components/VideoFormModal';
 import { useToast } from '@/components/Toast';
+import { VideoFormModal } from '@/components/VideoFormModal';
 import { createClient } from '@/lib/supabase';
 import type { CategoryRecord, StateRecord, VideoRecord } from '@/lib/types';
 
@@ -17,6 +17,9 @@ const STATUS_LABELS: Record<string, string> = {
 };
 const PER_PAGE = 20;
 
+/**
+ *
+ */
 export default function VideosPage(): JSX.Element {
   const [videos, setVideos] = useState<VideoRecord[]>([]);
   const [categories, setCategories] = useState<CategoryRecord[]>([]);

@@ -7,6 +7,9 @@ import { useToast } from '@/components/Toast';
 import { createClient } from '@/lib/supabase';
 import type { StateRecord } from '@/lib/types';
 
+/**
+ *
+ */
 export default function StatesPage(): JSX.Element {
   const [items, setItems] = useState<StateRecord[]>([]);
   const [editItem, setEditItem] = useState<StateRecord | null>(null);

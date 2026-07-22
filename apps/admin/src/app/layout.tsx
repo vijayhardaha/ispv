@@ -1,13 +1,19 @@
-import type { JSX, ReactNode } from "react";
+import type { JSX, ReactNode } from 'react';
 
-import { createServerSupabase } from "@/lib/supabase";
-import { Providers } from "./Providers";
-import "./globals.css";
+import { createServerSupabase } from '@/lib/supabase-server';
 
+import { Providers } from './Providers';
+import './globals.css';
+
+/**
+ *
+ * @param root0
+ * @param root0.children
+ */
 export default async function RootLayout({ children }: { children: ReactNode }): Promise<JSX.Element> {
   const supabase = await createServerSupabase();
   const {
-    data: { user }
+    data: { user },
   } = await supabase.auth.getUser();
 
   return (

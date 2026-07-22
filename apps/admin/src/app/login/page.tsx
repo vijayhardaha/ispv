@@ -1,12 +1,15 @@
-"use client";
+'use client';
 
-import { useState, type JSX } from "react";
+import { useState, type JSX } from 'react';
 
-import { createClient } from "@/lib/supabase";
+import { createClient } from '@/lib/supabase';
 
+/**
+ *
+ */
 export default function LoginPage(): JSX.Element {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
 
@@ -17,7 +20,7 @@ export default function LoginPage(): JSX.Element {
     if (authError) {
       setError(authError.message);
     } else {
-      window.location.href = "/";
+      window.location.href = '/';
     }
   };
 
