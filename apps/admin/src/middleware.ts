@@ -1,0 +1,58 @@
+import { type NextRequest, NextResponse } from "next/server";
+
+import { createServerClient } from "@supabase/ssr";
+
+/**
+ * Middleware that enforces authentication on all routes except /login and public API endpoints.
+ *
+ * - Page routes (non-API): redirect to /login if unauthenticated
+ * - API routes: return 401 JSON if unauthenticated
+ * - /api/submit, /api/enrich, /api/views: public (bypass auth check)
+ */
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  // Allow public endpoints through without auth
+  const PUBLIC_PATHS = ["/login", "/api/submit", "/api/enrich", "/api/views"];
+  if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
+    return NextResponse.next();
+  }
+
+  // Allow static assets
+  if (pathname.startsWith("/_next") || pathname.startsWith("/favicon")) {
+    return NextResponse.next();
+  }
+
+  // Check for Supabase session
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return req.cookies.getAll();
+        },
+        setAll() {
+          // middleware cannot set cookies (handled by server actions)
+        },
+      },
+    },
+  );
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+};
