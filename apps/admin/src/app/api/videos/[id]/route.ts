@@ -3,10 +3,12 @@ import { NextResponse } from 'next/server';
 import { createServerSupabase } from '@/lib/supabase-server';
 
 /**
+ * Updates an existing video record by ID.
  *
- * @param req
- * @param root0
- * @param root0.params
+ * @param {Request} req - Incoming request with updated video data.
+ * @param {{ params: Promise<{ id: string }> }} context - Route context containing the video ID.
+ *
+ * @returns {Promise<NextResponse>} JSON response with the updated video.
  */
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -18,10 +20,12 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 }
 
 /**
+ * Deletes a video record by ID.
  *
- * @param _req
- * @param root0
- * @param root0.params
+ * @param {Request} _req - Incoming delete request (unused).
+ * @param {{ params: Promise<{ id: string }> }} context - Route context containing the video ID.
+ *
+ * @returns {Promise<NextResponse>} JSON response confirming deletion.
  */
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

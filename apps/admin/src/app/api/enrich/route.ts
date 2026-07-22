@@ -3,8 +3,11 @@ import { NextResponse } from 'next/server';
 import { createServerSupabase } from '@/lib/supabase-server';
 
 /**
+ * Handles enriching video data from Instagram URLs.
  *
- * @param req
+ * @param {Request} req - Incoming request with ig_url and ig_post_date.
+ *
+ * @returns {Promise<NextResponse>} JSON response confirming enrichment.
  */
 export async function POST(req: Request) {
   const token = req.headers.get('authorization')?.replace('Bearer ', '');

@@ -2,8 +2,11 @@ import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
 
 /**
+ * Handles file upload to Vercel Blob storage.
  *
- * @param req
+ * @param {Request} req - Incoming multipart form data with a file.
+ *
+ * @returns {Promise<NextResponse>} JSON response with the uploaded blob URL.
  */
 export async function POST(req: Request) {
   const form = await req.formData();

@@ -3,7 +3,9 @@ import { NextResponse } from 'next/server';
 import { createServerSupabase } from '@/lib/supabase-server';
 
 /**
+ * Retrieves all videos with category data, ordered by creation date.
  *
+ * @returns {Promise<NextResponse>} JSON response with the video list.
  */
 export async function GET() {
   const supabase = await createServerSupabase();
@@ -16,8 +18,11 @@ export async function GET() {
 }
 
 /**
+ * Creates a new video record.
  *
- * @param req
+ * @param {Request} req - Incoming request with video data.
+ *
+ * @returns {Promise<NextResponse>} JSON response with the created video.
  */
 export async function POST(req: Request) {
   const supabase = await createServerSupabase();

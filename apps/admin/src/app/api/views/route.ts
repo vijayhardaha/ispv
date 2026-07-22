@@ -3,8 +3,11 @@ import { NextResponse } from 'next/server';
 import { createServerSupabase } from '@/lib/supabase-server';
 
 /**
+ * Increments the view count for a specific video.
  *
- * @param req
+ * @param {Request} req - Incoming request with video_id.
+ *
+ * @returns {Promise<NextResponse>} JSON response confirming the view update.
  */
 export async function POST(req: Request) {
   const { video_id } = await req.json();

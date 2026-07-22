@@ -3,8 +3,11 @@ import { NextResponse } from 'next/server';
 import { createServerSupabase } from '@/lib/supabase-server';
 
 /**
+ * Handles public video submission via RPC call.
  *
- * @param req
+ * @param {Request} req - Incoming request with video metadata.
+ *
+ * @returns {Promise<NextResponse>} JSON response with submitted data.
  */
 export async function POST(req: Request) {
   const { ig_url, tags, category, state, city } = await req.json();
