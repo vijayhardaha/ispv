@@ -20,6 +20,8 @@ CREATE TABLE public.locations (
 CREATE TABLE public.videos (
   id                uuid PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   ig_url            text NOT NULL UNIQUE,
+  ig_id             text UNIQUE,
+  src               text NOT NULL DEFAULT 'instagram',
   submitted_tags    text,
   submitted_category text,
   submitted_state   text,

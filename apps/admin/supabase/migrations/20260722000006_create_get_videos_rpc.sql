@@ -13,7 +13,7 @@ BEGIN
   SELECT COALESCE(JSONB_AGG(row_to_json(t)), '[]'::jsonb) INTO result
   FROM (
     SELECT
-      v.id, v.ig_url, v.category, v.state, v.city, v.tags,
+      v.id, v.ig_url, v.ig_id, v.src, v.category, v.state, v.city, v.tags,
       v.description, v.thumbnail_url, v.ig_post_date,
       v.status, v.created_at, v.updated_at,
       v.submitted_tags, v.submitted_category, v.submitted_state, v.submitted_city,
