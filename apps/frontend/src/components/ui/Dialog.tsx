@@ -82,7 +82,7 @@ DialogContent.displayName = 'DialogContent';
  *
  * @param {object} props - Component properties.
  * @param {string} [props.className] - Additional CSS classes.
- * @param {ReactNode} props.children - Dialog header content.
+ * @param {object} props.children - Dialog header content.
  *
  * @returns {JSX.Element} Rendered dialog header.
  */
