@@ -3,6 +3,7 @@
 import { useState, type JSX } from 'react';
 
 import { useToast } from '@/components/Toast';
+import { Button } from '@/components/ui/Button';
 import type { CategoryRecord, LocationRecord, VideoRecord } from '@/lib/types';
 
 interface VideoFormModalProps {
@@ -164,19 +165,10 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
             </select>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="border-2 border-black px-4 py-2 text-sm font-bold uppercase hover:bg-gray-100"
-            >
+            <Button type="button" variant="secondary" onClick={onClose}>
               Cancel
-            </button>
-            <button
-              type="submit"
-              className="border-2 border-black bg-yellow-400 px-4 py-2 text-sm font-bold uppercase hover:bg-yellow-300"
-            >
-              Save
-            </button>
+            </Button>
+            <Button type="submit">Save</Button>
           </div>
         </form>
       </div>
