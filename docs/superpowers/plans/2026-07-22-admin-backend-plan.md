@@ -353,6 +353,7 @@ $$;
 - [ ] **Step 7: Create submit_video RPC**
 
 `api/supabase/migrations/20260722000007_create_submit_video_rpc.sql`:
+
 ```sql
 CREATE OR REPLACE FUNCTION public.submit_video(
   p_ig_url text,
@@ -399,6 +400,7 @@ GRANT EXECUTE ON FUNCTION public.submit_video TO anon;
 - [ ] **Step 8: Create increment view RPC**
 
 `api/supabase/migrations/20260722000008_create_increment_view_rpc.sql`:
+
 ```sql
 CREATE OR REPLACE FUNCTION public.increment_video_view(p_video_id uuid)
 RETURNS void
@@ -634,11 +636,23 @@ export default async function DashboardPage(): Promise<JSX.Element> {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { count: total } = await supabase.from('videos').select('*', { count: 'exact', head: true });
-  const { count: draft } = await supabase.from('videos').select('*', { count: 'exact', head: true }).eq('status', 'draft');
-  const { count: pending } = await supabase.from('videos').select('*', { count: 'exact', head: true }).eq('status', 'pending_review');
-  const { count: published } = await supabase.from('videos').select('*', { count: 'exact', head: true }).eq('status', 'published');
-  const { count: rejected } = await supabase.from('videos').select('*', { count: 'exact', head: true }).eq('status', 'rejected');
+  const { count: total } = await supabase.from("videos").select("*", { count: "exact", head: true });
+  const { count: draft } = await supabase
+    .from("videos")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "draft");
+  const { count: pending } = await supabase
+    .from("videos")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "pending_review");
+  const { count: published } = await supabase
+    .from("videos")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "published");
+  const { count: rejected } = await supabase
+    .from("videos")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "rejected");
   const stats = [
     { label: "Total", color: "bg-black", count: 0 },
     { label: "Draft", color: "bg-gray-400", count: 0 },
@@ -663,7 +677,6 @@ export default async function DashboardPage(): Promise<JSX.Element> {
   );
 }
 ```
-
 
 - [ ] **Step 2: Commit**
 
@@ -1707,26 +1720,29 @@ git commit -m "chore: add .env.example with required vars"
 ### Task 12: Update ReelPlayer to call increment view RPC
 
 **Files:**
+
 - Modify: `apps/admin/src/app/api/views/route.ts` (Create)
 - Modify: `src/components/shared/ReelPlayer.tsx` (in frontend app)
 
 **Interfaces:**
+
 - Produces: View count increments when a reel is played
 
 - [ ] **Step 1: Create view count API route**
 
 `apps/admin/src/app/api/views/route.ts`:
-```ts
-import { NextResponse } from 'next/server';
 
-import { createServerSupabase } from '@/lib/supabase';
+```ts
+import { NextResponse } from "next/server";
+
+import { createServerSupabase } from "@/lib/supabase";
 
 export async function POST(req: Request) {
   const { video_id } = await req.json();
-  if (!video_id) return NextResponse.json({ error: 'video_id required' }, { status: 400 });
+  if (!video_id) return NextResponse.json({ error: "video_id required" }, { status: 400 });
 
   const supabase = await createServerSupabase();
-  const { error } = await supabase.rpc('increment_video_view', { p_video_id: video_id });
+  const { error } = await supabase.rpc("increment_video_view", { p_video_id: video_id });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({ ok: true });
