@@ -2,11 +2,11 @@
 
 import { useState, useEffect, useCallback, Suspense, type JSX } from 'react';
 
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-
 import { CategoryFormModal } from '@/components/CategoryFormModal';
 import { useToast } from '@/components/Toast';
 import { Button } from '@/components/ui/Button';
+import { Pagination } from '@/components/ui/Pagination';
+import { usePagination } from '@/hooks/usePagination';
 import { createClient } from '@/lib/supabase';
 import type { CategoryRecord } from '@/lib/types';
 
@@ -39,10 +39,7 @@ function CategoriesPageContent(): JSX.Element {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const supabase = createClient();
   const { toast } = useToast();
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const page = Number(searchParams.get('page')) || 1;
+  const { page, goToPage } = usePagination();
 
   const load = useCallback(async () => {
     const from = (page - 1) * PER_PAGE;
@@ -61,20 +58,6 @@ function CategoriesPageContent(): JSX.Element {
     return () => clearTimeout(timer);
   }, [load]);
 
-  const goToPage = useCallback(
-    (newPage: number) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (newPage <= 1) {
-        params.delete('page');
-      } else {
-        params.set('page', String(newPage));
-      }
-      const qs = params.toString();
-      router.replace(qs ? `${pathname}?${qs}` : pathname);
-    },
-    [router, pathname, searchParams]
-  );
-
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from('categories').delete().eq('id', id);
     if (error) {
@@ -86,10 +69,10 @@ function CategoriesPageContent(): JSX.Element {
     }
   };
 
-  const totalPages = Math.min(Math.ceil(totalCount / PER_PAGE), 3);
+  const totalPages = Math.ceil(totalCount / PER_PAGE);
 
   return (
-    <section className="p-6" aria-labelledby="categories-heading">
+    <section className="py-8" aria-labelledby="categories-heading">
       <header className="mb-6 flex items-center justify-between">
         <h1 id="categories-heading" className="text-3xl font-extrabold uppercase">
           Categories
@@ -145,19 +128,7 @@ function CategoriesPageContent(): JSX.Element {
         </table>
       </div>
 
-      {totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-center gap-3">
-          <Button disabled={page <= 1} onClick={() => goToPage(page - 1)} variant="secondary" size="sm">
-            Prev
-          </Button>
-          <span className="text-xs font-bold">
-            Page {page} of {totalPages}
-          </span>
-          <Button disabled={page >= totalPages} onClick={() => goToPage(page + 1)} variant="secondary" size="sm">
-            Next
-          </Button>
-        </div>
-      )}
+      <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} />
 
       {deleteConfirm && (
         <div

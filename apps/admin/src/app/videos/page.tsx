@@ -2,12 +2,14 @@
 
 import { useState, useEffect, useCallback, Suspense, type JSX } from 'react';
 
-import Image from 'next/image';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
 import { useToast } from '@/components/Toast';
 import { Button } from '@/components/ui/Button';
+import { Pagination } from '@/components/ui/Pagination';
 import { VideoFormModal } from '@/components/VideoFormModal';
+import { usePagination } from '@/hooks/usePagination';
+import { displayVideoUrl } from '@/lib/instagram';
 import { createClient } from '@/lib/supabase';
 import type { CategoryRecord, LocationRecord, VideoRecord } from '@/lib/types';
 
@@ -38,60 +40,54 @@ function VideosPageContent(): JSX.Element {
   const [videos, setVideos] = useState<VideoRecord[]>([]);
   const [categories, setCategories] = useState<CategoryRecord[]>([]);
   const [states, setStates] = useState<LocationRecord[]>([]);
-  const [statusFilter, setStatusFilter] = useState('');
   const [editVideo, setEditVideo] = useState<VideoRecord | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const supabase = createClient();
   const { toast } = useToast();
+  const { page, goToPage } = usePagination();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const page = Number(searchParams.get('page')) || 1;
+  const status = searchParams.get('status') || '';
 
-  const loadData = useCallback(async () => {
-    const [catsRes, stsRes] = await Promise.all([
-      supabase.from('categories').select('*').order('value'),
-      supabase.from('locations').select('*').order('label'),
-    ]);
-    if (catsRes.data) setCategories(catsRes.data);
-    if (stsRes.data) setStates(stsRes.data);
-
-    const { data } = await supabase.rpc('get_videos_for_api', {
-      filters: { status: statusFilter || null, page, per_page: PER_PAGE },
-    });
-    if (data) {
-      setVideos(data);
-      if (data.length > 0) setTotalCount(data[0].total_count ?? 0);
-    }
-  }, [statusFilter, page, supabase]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => loadData(), 0);
-    return () => clearTimeout(timer);
-  }, [loadData]);
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete('page');
-    const qs = params.toString();
-    router.replace(qs ? `${pathname}?${qs}` : pathname);
-  }, [statusFilter]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const goToPage = useCallback(
-    (newPage: number) => {
+  const setStatus = useCallback(
+    (newStatus: string) => {
       const params = new URLSearchParams(searchParams.toString());
-      if (newPage <= 1) {
-        params.delete('page');
+      if (newStatus) {
+        params.set('status', newStatus);
       } else {
-        params.set('page', String(newPage));
+        params.delete('status');
       }
+      params.delete('page');
       const qs = params.toString();
       router.replace(qs ? `${pathname}?${qs}` : pathname);
     },
     [router, pathname, searchParams]
   );
+
+  const loadData = useCallback(async () => {
+    const [catsRes, stsRes] = await Promise.all([
+      supabase.from('categories').select('*').order('value'),
+      supabase.from('locations').select('*').order('name'),
+    ]);
+    if (catsRes.data) setCategories(catsRes.data);
+    if (stsRes.data) setStates(stsRes.data);
+
+    const { data } = await supabase.rpc('get_videos_for_api', {
+      filters: { status: status || null, page, per_page: PER_PAGE },
+    });
+    if (data) {
+      setVideos(data);
+      if (data.length > 0) setTotalCount(data[0].total_count ?? 0);
+    }
+  }, [status, page, supabase]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => loadData(), 0);
+    return () => clearTimeout(timer);
+  }, [loadData]);
 
   const handleDelete = async (id: string) => {
     const res = await fetch(`/api/videos/${id}`, { method: 'DELETE' });
@@ -104,10 +100,10 @@ function VideosPageContent(): JSX.Element {
     }
   };
 
-  const totalPages = Math.min(Math.ceil(totalCount / PER_PAGE), 3);
+  const totalPages = Math.ceil(totalCount / PER_PAGE);
 
   return (
-    <section className="p-6" aria-labelledby="videos-heading">
+    <section className="py-8" aria-labelledby="videos-heading">
       <header className="mb-6 flex items-center justify-between">
         <h1 id="videos-heading" className="text-3xl font-extrabold uppercase">
           Videos
@@ -117,12 +113,7 @@ function VideosPageContent(): JSX.Element {
 
       <nav className="mb-4 flex flex-wrap gap-2" aria-label="Status filter">
         {STATUSES.map((s) => (
-          <Button
-            key={s}
-            onClick={() => setStatusFilter(s)}
-            variant={statusFilter === s ? 'primary' : 'secondary'}
-            size="sm"
-          >
+          <Button key={s} onClick={() => setStatus(s)} variant={status === s ? 'primary' : 'secondary'} size="sm">
             {STATUS_LABELS[s]}
           </Button>
         ))}
@@ -132,12 +123,13 @@ function VideosPageContent(): JSX.Element {
         <table className="w-full text-left text-sm">
           <thead className="border-b-2 border-black bg-gray-100">
             <tr>
+              <th className="w-16 px-3 py-2 text-xs font-bold uppercase">Thumb</th>
               <th className="px-3 py-2 text-xs font-bold uppercase">URL</th>
-              <th className="px-3 py-2 text-xs font-bold uppercase">City</th>
-              <th className="px-3 py-2 text-xs font-bold uppercase">Category</th>
-              <th className="px-3 py-2 text-xs font-bold uppercase">Status</th>
-              <th className="px-3 py-2 text-xs font-bold uppercase">Date</th>
-              <th className="px-3 py-2 text-xs font-bold uppercase">Actions</th>
+              <th className="w-28 px-3 py-2 text-xs font-bold uppercase">City</th>
+              <th className="w-28 px-3 py-2 text-xs font-bold uppercase">Category</th>
+              <th className="w-24 px-3 py-2 text-xs font-bold uppercase">Status</th>
+              <th className="w-28 px-3 py-2 text-xs font-bold uppercase">Date</th>
+              <th className="w-28 px-3 py-2 text-xs font-bold uppercase">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -151,27 +143,37 @@ function VideosPageContent(): JSX.Element {
               videos.map((v) => (
                 <tr key={v.id} className="border-b border-black/10 hover:bg-yellow-50">
                   <td className="px-3 py-2">
-                    {v.ig_url ? (
-                      <Image
-                        src={v.thumbnail_url}
-                        alt=""
-                        width={40}
-                        height={40}
-                        className="h-10 w-10 border border-black object-cover"
-                      />
-                    ) : null}
+                    {v.thumbnail_url ? (
+                      <img src={v.thumbnail_url} alt="" className="h-10 w-10 border border-black object-cover" />
+                    ) : (
+                      <div className="h-10 w-10 border border-black bg-gray-200" />
+                    )}
+                  </td>
+                  <td className="max-w-50 truncate px-3 py-2 font-mono text-xs">
+                    <a
+                      href={displayVideoUrl(v)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-yellow-500"
+                    >
+                      {v.ig_id ?? v.ig_url}
+                    </a>
                   </td>
                   <td className="px-3 py-2">{v.city}</td>
                   <td className="px-3 py-2">
-                    <span
-                      className="inline-block border border-black px-2 py-0.5 text-xs font-bold uppercase"
-                      style={{
-                        backgroundColor: v.category_color ?? '#ccc',
-                        color: v.category_color === 'white' ? '#000' : '#fff',
-                      }}
-                    >
-                      {v.category_label}
-                    </span>
+                    {v.category ? (
+                      <span
+                        className="inline-block border border-black px-2 py-0.5 text-xs font-bold uppercase"
+                        style={{
+                          backgroundColor: v.category_color ?? '#ccc',
+                          color: v.category_color === 'white' ? '#000' : '#fff',
+                        }}
+                      >
+                        {v.category_name}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-black/40">—</span>
+                    )}
                   </td>
                   <td className="px-3 py-2">
                     <span
@@ -206,20 +208,7 @@ function VideosPageContent(): JSX.Element {
         </table>
       </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-center gap-3">
-          <Button disabled={page <= 1} onClick={() => goToPage(page - 1)} variant="secondary" size="sm">
-            Prev
-          </Button>
-          <span className="text-xs font-bold">
-            Page {page} of {totalPages}
-          </span>
-          <Button disabled={page >= totalPages} onClick={() => goToPage(page + 1)} variant="secondary" size="sm">
-            Next
-          </Button>
-        </div>
-      )}
+      <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} />
 
       {/* Delete confirmation dialog */}
       {deleteConfirm && (

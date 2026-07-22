@@ -2,12 +2,15 @@
 
 import { useState, type JSX } from 'react';
 
+import latinize from 'latinize';
+import slugify from 'slugify';
+
 import { useToast } from '@/components/Toast';
-import { Button } from '@/components/ui/Button';
+import { Field, Input, ModalActions, ModalOverlay, ModalTitle, Select, Textarea } from '@/components/ui/Modal';
 import { createClient } from '@/lib/supabase';
 import type { CategoryRecord } from '@/lib/types';
 
-const COLORS = ['yellow', 'black', 'blue', 'red', 'green', 'white'];
+const COLORS = ['yellow', 'black', 'blue', 'red', 'green', 'white'] as const;
 
 /**
  * Modal form for creating or editing a category.
@@ -28,9 +31,7 @@ export function CategoryFormModal({
   onClose: () => void;
   onSaved: () => void;
 }): JSX.Element {
-  const [slug] = useState(category?.slug ?? '');
-  const [value, setValue] = useState(category?.value ?? '');
-  const [label, setLabel] = useState(category?.label ?? '');
+  const [name, setName] = useState(category?.name ?? '');
   const [color, setColor] = useState(category?.color ?? 'yellow');
   const [description, setDescription] = useState(category?.description ?? '');
   const [seoTitle, setSeoTitle] = useState(category?.seo_title ?? '');
@@ -40,7 +41,8 @@ export function CategoryFormModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const payload = { slug, value, label, color, description, seo_title: seoTitle, seo_description: seoDescription };
+    const value = category?.value ?? slugify(latinize(name), { lower: true, strict: true });
+    const payload = { value, name, color, description, seo_title: seoTitle, seo_description: seoDescription };
     if (category) {
       const { error } = await supabase.from('categories').update(payload).eq('id', category.id);
       if (error) {
@@ -59,82 +61,37 @@ export function CategoryFormModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={onClose}>
-      <div
-        className="w-full max-w-md border-2 border-black bg-white p-6 shadow-[8px_8px_0px_0px_#18181b]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="mb-4 text-xl font-extrabold uppercase">{category ? 'Edit' : 'Add'} Category</h2>
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="mb-1 block text-xs font-bold uppercase">Value</label>
-              <input
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                className="w-full border-2 border-black px-3 py-2 text-sm"
-                required
-                disabled={!!category}
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-bold uppercase">Name</label>
-              <input
-                value={label}
-                onChange={(e) => setLabel(e.target.value)}
-                className="w-full border-2 border-black px-3 py-2 text-sm"
-                required
-              />
-            </div>
-          </div>
-          <div>
-            <label className="mb-1 block text-xs font-bold uppercase">Color</label>
-            <select
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
-              className="w-full border-2 border-black px-3 py-2 text-sm"
-            >
-              {COLORS.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-xs font-bold uppercase">Description</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={2}
-              className="w-full border-2 border-black px-3 py-2 text-sm"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-xs font-bold uppercase">SEO Title</label>
-            <input
-              value={seoTitle}
-              onChange={(e) => setSeoTitle(e.target.value)}
-              className="w-full border-2 border-black px-3 py-2 text-sm"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-xs font-bold uppercase">SEO Description</label>
-            <textarea
-              value={seoDescription}
-              onChange={(e) => setSeoDescription(e.target.value)}
-              rows={2}
-              className="w-full border-2 border-black px-3 py-2 text-sm"
-            />
-          </div>
-          <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="secondary" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit">Save</Button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <ModalOverlay onClose={onClose}>
+      <ModalTitle editing={!!category}>Category</ModalTitle>
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <Field label="Name">
+          <Input value={name} onChange={(e) => setName(e.target.value)} required />
+        </Field>
+
+        <Field label="Color">
+          <Select value={color} onChange={(e) => setColor(e.target.value)}>
+            {COLORS.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </Select>
+        </Field>
+
+        <Field label="Description">
+          <Textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+        </Field>
+
+        <Field label="SEO Title">
+          <Input value={seoTitle} onChange={(e) => setSeoTitle(e.target.value)} />
+        </Field>
+
+        <Field label="SEO Description">
+          <Textarea value={seoDescription} onChange={(e) => setSeoDescription(e.target.value)} />
+        </Field>
+
+        <ModalActions onClose={onClose} />
+      </form>
+    </ModalOverlay>
   );
 }
