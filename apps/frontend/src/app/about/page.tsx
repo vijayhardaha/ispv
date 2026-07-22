@@ -200,11 +200,11 @@ export default function AboutPage(): JSX.Element {
 /**
  * Principle card with icon, title, and description body.
  *
- * @param {object} root0 - Component properties.
- * @param {object} root0.icon - Icon element to display.
- * @param {string} root0.title - Principle title.
- * @param {object} root0.children - Description body text.
- * @param {string} root0.color - Tailwind background colour classes.
+ * @param {object} props - Component properties.
+ * @param {object} props.icon - Icon element to display.
+ * @param {string} props.title - Principle title.
+ * @param {object} props.children - Description body text.
+ * @param {string} props.color - Tailwind background colour classes.
  *
  * @returns {JSX.Element} Rendered principle card.
  */
@@ -233,10 +233,10 @@ function Principle({
 /**
  * Numbered step card with a step number, title, and description.
  *
- * @param {object} root0 - Component properties.
- * @param {number} root0.n - Step number.
- * @param {string} root0.title - Step title.
- * @param {object} root0.children - Step description text.
+ * @param {object} props - Component properties.
+ * @param {number} props.n - Step number.
+ * @param {string} props.title - Step title.
+ * @param {object} props.children - Step description text.
  *
  * @returns {JSX.Element} Rendered step card.
  */
