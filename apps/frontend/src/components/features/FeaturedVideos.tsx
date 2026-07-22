@@ -86,7 +86,7 @@ function FeaturedCard({ video, onPlay }: { video: VideoEntry; onPlay: () => void
           {video.hashtags.map((t) => (
             <span
               key={t}
-              className="inline-flex items-center gap-1 border-2 border-black bg-yellow-400 px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider uppercase"
+              className="inline-flex items-center gap-1 border-2 border-black bg-yellow-400 px-2 py-0.5 font-mono text-[10px] font-bold tracking-tight uppercase"
             >
               {t}
             </span>

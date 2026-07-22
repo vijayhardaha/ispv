@@ -49,7 +49,7 @@ export function CitiesMap(): JSX.Element {
                 className="shadow-brutal-sm group flex items-center justify-between border-2 border-black bg-white px-3 py-2 transition-all hover:-translate-x-0.5 hover:-translate-y-0.5"
               >
                 <span className="font-display text-sm font-bold uppercase">{city}</span>
-                <span className="font-mono text-[10px] font-bold tracking-wider text-black/60">{count}</span>
+                <span className="font-mono text-[10px] font-bold tracking-tight text-black/60">{count}</span>
               </Link>
             ))}
           </div>

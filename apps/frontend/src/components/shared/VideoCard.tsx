@@ -92,7 +92,7 @@ export function VideoCard({
       </div>
 
       <div className="absolute inset-x-0 bottom-0 z-10 p-3">
-        <div className="mt-1 font-mono text-[10px] tracking-wider text-white/80 uppercase">
+        <div className="mt-1 font-mono text-[10px] tracking-tight text-white/80 uppercase">
           <span className="flex items-center gap-1">
             <MapPin className="h-3 w-3" />
             {video.city}

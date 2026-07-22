@@ -135,7 +135,7 @@ function ResourceLinkList({ links }: { links: ResourceLink[] }): JSX.Element {
  */
 function WidgetTitle({ children }: { children: React.ReactNode }): JSX.Element {
   return (
-    <h4 className="font-display mb-6 text-sm font-extrabold tracking-wider text-white uppercase">
+    <h4 className="font-display mb-6 text-sm font-extrabold tracking-tight text-white uppercase">
       <span className="border-b-2 border-yellow-400 pb-1">{children}</span>
     </h4>
   );
@@ -209,14 +209,14 @@ export function Footer(): JSX.Element {
 
         <Container>
           <div className="flex flex-col items-center justify-between gap-6 border-t-2 border-zinc-800 py-8 text-zinc-400 md:flex-row">
-            <p className="text-sm font-bold tracking-wider uppercase">
+            <p className="text-sm font-bold tracking-tight uppercase">
               © 2026 Indian Students Protest Vault. All rights reserved.
             </p>
             <div className="flex space-x-8">
               {bottomLinks.map((link) => (
                 <a
                   key={link.label}
-                  className="text-sm font-bold tracking-wider uppercase transition-colors hover:text-yellow-400"
+                  className="text-sm font-bold tracking-tight uppercase transition-colors hover:text-yellow-400"
                   href={link.href}
                   target="_self"
                 >

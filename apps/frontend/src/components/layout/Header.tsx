@@ -50,7 +50,7 @@ export function Header(): JSX.Element {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    'font-display px-4 py-2 text-sm font-semibold tracking-wider uppercase underline-offset-4 transition-colors',
+                    'font-display px-4 py-2 text-sm font-semibold tracking-tight uppercase underline-offset-4 transition-colors',
                     isActive(link.href) ? 'border-black bg-yellow-400' : 'text-black hover:text-yellow-400'
                   )}
                 >
@@ -91,7 +91,7 @@ export function Header(): JSX.Element {
                     href={link.href}
                     onClick={() => setMobileOpen(false)}
                     className={cn(
-                      'font-display block border-2 border-transparent px-4 py-3 text-base font-bold tracking-wider uppercase transition-colors hover:border-black hover:bg-yellow-400',
+                      'font-display block border-2 border-transparent px-4 py-3 text-base font-bold tracking-tight uppercase transition-colors hover:border-black hover:bg-yellow-400',
                       isActive(link.href) ? 'border-black bg-yellow-400' : 'text-black'
                     )}
                   >
