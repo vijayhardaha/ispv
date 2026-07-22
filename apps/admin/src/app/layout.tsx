@@ -1,14 +1,19 @@
 import type { JSX, ReactNode } from 'react';
 
+import Link from 'next/link';
+
 import { createServerSupabase } from '@/lib/supabase-server';
 
-import { Providers } from './Providers';
 import './globals.css';
+import { Providers } from './Providers';
 
 /**
+ * Root layout with authentication-aware navigation bar.
  *
- * @param root0
- * @param root0.children
+ * @param {{ children: ReactNode }} props - Component properties.
+ * @param {ReactNode} props.children - Page content to render.
+ *
+ * @returns {Promise<JSX.Element>} Rendered layout.
  */
 export default async function RootLayout({ children }: { children: ReactNode }): Promise<JSX.Element> {
   const supabase = await createServerSupabase();
@@ -24,17 +29,17 @@ export default async function RootLayout({ children }: { children: ReactNode }):
             <div className="mx-auto flex max-w-7xl items-center justify-between">
               <div className="flex items-center gap-6">
                 <span className="font-display text-sm font-extrabold uppercase">Reel Vault Admin</span>
-                <a href="/" className="text-xs font-bold uppercase hover:text-yellow-500">
+                <Link href="/" className="text-xs font-bold uppercase hover:text-yellow-500">
                   Dashboard
-                </a>
+                </Link>
                 <a href="/videos" className="text-xs font-bold uppercase hover:text-yellow-500">
                   Videos
                 </a>
                 <a href="/categories" className="text-xs font-bold uppercase hover:text-yellow-500">
                   Categories
                 </a>
-                <a href="/states" className="text-xs font-bold uppercase hover:text-yellow-500">
-                  States
+                <a href="/locations" className="text-xs font-bold uppercase hover:text-yellow-500">
+                  Locations
                 </a>
               </div>
               <form action="/api/logout" method="post">

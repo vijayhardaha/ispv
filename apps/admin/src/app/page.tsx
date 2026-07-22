@@ -5,7 +5,9 @@ import { redirect } from 'next/navigation';
 import { createServerSupabase } from '@/lib/supabase-server';
 
 /**
+ * Dashboard page displaying video status statistics.
  *
+ * @returns {Promise<JSX.Element>} Rendered dashboard.
  */
 export default async function DashboardPage(): Promise<JSX.Element> {
   const supabase = await createServerSupabase();

@@ -1,7 +1,9 @@
 import type { JSX } from 'react';
 
 /**
+ * Loading state displayed while page content is being fetched.
  *
+ * @returns {JSX.Element} Rendered loading spinner.
  */
 export default function Loading(): JSX.Element {
   return (

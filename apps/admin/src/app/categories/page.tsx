@@ -8,7 +8,9 @@ import { createClient } from '@/lib/supabase';
 import type { CategoryRecord } from '@/lib/types';
 
 /**
+ * Categories management page with CRUD operations.
  *
+ * @returns {JSX.Element} Rendered categories page.
  */
 export default function CategoriesPage(): JSX.Element {
   const [items, setItems] = useState<CategoryRecord[]>([]);
@@ -24,7 +26,8 @@ export default function CategoriesPage(): JSX.Element {
   }, [supabase]);
 
   useEffect(() => {
-    load();
+    const timer = setTimeout(() => load(), 0);
+    return () => clearTimeout(timer);
   }, [load]);
 
   const handleDelete = async (id: string) => {

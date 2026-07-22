@@ -2,10 +2,12 @@
 
 import { useState, useEffect, useCallback, type JSX } from 'react';
 
+import Image from 'next/image';
+
 import { useToast } from '@/components/Toast';
 import { VideoFormModal } from '@/components/VideoFormModal';
 import { createClient } from '@/lib/supabase';
-import type { CategoryRecord, StateRecord, VideoRecord } from '@/lib/types';
+import type { CategoryRecord, LocationRecord, VideoRecord } from '@/lib/types';
 
 const STATUSES = ['', 'draft', 'pending_review', 'published', 'rejected'] as const;
 const STATUS_LABELS: Record<string, string> = {
@@ -18,12 +20,14 @@ const STATUS_LABELS: Record<string, string> = {
 const PER_PAGE = 20;
 
 /**
+ * Videos management page with filtering, pagination, and CRUD operations.
  *
+ * @returns {JSX.Element} Rendered videos page.
  */
 export default function VideosPage(): JSX.Element {
   const [videos, setVideos] = useState<VideoRecord[]>([]);
   const [categories, setCategories] = useState<CategoryRecord[]>([]);
-  const [states, setStates] = useState<StateRecord[]>([]);
+  const [states, setStates] = useState<LocationRecord[]>([]);
   const [statusFilter, setStatusFilter] = useState('');
   const [editVideo, setEditVideo] = useState<VideoRecord | null>(null);
   const [showAdd, setShowAdd] = useState(false);
@@ -36,7 +40,7 @@ export default function VideosPage(): JSX.Element {
   const loadData = useCallback(async () => {
     const [catsRes, stsRes] = await Promise.all([
       supabase.from('categories').select('*').order('slug'),
-      supabase.from('states').select('*').order('label'),
+      supabase.from('locations').select('*').order('label'),
     ]);
     if (catsRes.data) setCategories(catsRes.data);
     if (stsRes.data) setStates(stsRes.data);
@@ -51,11 +55,13 @@ export default function VideosPage(): JSX.Element {
   }, [statusFilter, page, supabase]);
 
   useEffect(() => {
-    loadData();
+    const timer = setTimeout(() => loadData(), 0);
+    return () => clearTimeout(timer);
   }, [loadData]);
 
   useEffect(() => {
-    setPage(1);
+    const timer = setTimeout(() => setPage(1), 0);
+    return () => clearTimeout(timer);
   }, [statusFilter]);
 
   const handleDelete = async (id: string) => {
@@ -120,7 +126,13 @@ export default function VideosPage(): JSX.Element {
                 <tr key={v.id} className="border-b border-black/10 hover:bg-yellow-50">
                   <td className="px-3 py-2">
                     {v.thumbnail_url ? (
-                      <img src={v.thumbnail_url} alt="" className="h-10 w-10 border border-black object-cover" />
+                      <Image
+                        src={v.thumbnail_url}
+                        alt=""
+                        width={40}
+                        height={40}
+                        className="h-10 w-10 border border-black object-cover"
+                      />
                     ) : (
                       <div className="h-10 w-10 border border-black bg-gray-200" />
                     )}
@@ -233,7 +245,7 @@ export default function VideosPage(): JSX.Element {
       {showAdd && (
         <VideoFormModal
           categories={categories}
-          states={states}
+          locations={states}
           onClose={() => setShowAdd(false)}
           onSaved={() => {
             setShowAdd(false);
@@ -245,7 +257,7 @@ export default function VideosPage(): JSX.Element {
         <VideoFormModal
           video={editVideo}
           categories={categories}
-          states={states}
+          locations={states}
           onClose={() => setEditVideo(null)}
           onSaved={() => {
             setEditVideo(null);

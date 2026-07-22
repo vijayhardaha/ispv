@@ -5,7 +5,9 @@ import { useState, type JSX } from 'react';
 import { createClient } from '@/lib/supabase';
 
 /**
+ * Login page with email and password authentication form.
  *
+ * @returns {JSX.Element} Rendered login form.
  */
 export default function LoginPage(): JSX.Element {
   const [email, setEmail] = useState('');

@@ -3,10 +3,13 @@
 import type { JSX } from 'react';
 
 /**
+ * Error boundary page displayed when an unhandled exception occurs.
  *
- * @param root0
- * @param root0.error
- * @param root0.reset
+ * @param {{ error: Error & { digest?: string }; reset: () => void }} props - Component properties.
+ * @param {Error & { digest?: string }} props.error - The error that was thrown.
+ * @param {() => void} props.reset - Function to retry rendering.
+ *
+ * @returns {JSX.Element} Rendered error page.
  */
 export default function Error({
   error,
