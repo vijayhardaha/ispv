@@ -8,6 +8,13 @@ import type { CategoryRecord } from '@/lib/types';
 
 const COLORS = ['yellow', 'black', 'blue', 'red', 'green', 'white'];
 
+/**
+ *
+ * @param root0
+ * @param root0.category
+ * @param root0.onClose
+ * @param root0.onSaved
+ */
 export function CategoryFormModal({
   category,
   onClose,

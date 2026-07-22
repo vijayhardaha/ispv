@@ -6,6 +6,13 @@ import { useToast } from '@/components/Toast';
 import { createClient } from '@/lib/supabase';
 import type { StateRecord } from '@/lib/types';
 
+/**
+ *
+ * @param root0
+ * @param root0.state
+ * @param root0.onClose
+ * @param root0.onSaved
+ */
 export function StateFormModal({
   state: item,
   onClose,

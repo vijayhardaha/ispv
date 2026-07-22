@@ -13,6 +13,15 @@ interface VideoFormModalProps {
   onSaved: () => void;
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.video
+ * @param root0.categories
+ * @param root0.states
+ * @param root0.onClose
+ * @param root0.onSaved
+ */
 export function VideoFormModal({ video, categories, states, onClose, onSaved }: VideoFormModalProps): JSX.Element {
   const [igUrl, setIgUrl] = useState(video?.ig_url ?? '');
   const [category, setCategory] = useState(video?.category ?? '');

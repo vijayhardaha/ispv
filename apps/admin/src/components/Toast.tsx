@@ -1,15 +1,8 @@
-"use client";
+'use client';
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useState,
-  type JSX,
-  type ReactNode,
-} from "react";
+import { createContext, useCallback, useContext, useState, type JSX, type ReactNode } from 'react';
 
-type ToastType = "success" | "error";
+type ToastType = 'success' | 'error';
 
 interface Toast {
   id: number;
@@ -25,10 +18,15 @@ const ToastContext = createContext<ToastContextValue>({ toast: () => {} });
 
 let nextId = 0;
 
+/**
+ *
+ * @param root0
+ * @param root0.children
+ */
 export function ToastProvider({ children }: { children: ReactNode }): JSX.Element {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const addToast = useCallback((message: string, type: ToastType = "success") => {
+  const addToast = useCallback((message: string, type: ToastType = 'success') => {
     const id = nextId++;
     setToasts((prev) => [...prev, { id, message, type }]);
     setTimeout(() => {
@@ -44,7 +42,7 @@ export function ToastProvider({ children }: { children: ReactNode }): JSX.Elemen
           <div
             key={t.id}
             className={`animate-slide-up border-2 border-black px-4 py-2 text-sm font-bold uppercase shadow-[4px_4px_0px_0px_#18181b] ${
-              t.type === "success" ? "bg-green-400 text-black" : "bg-red-400 text-white"
+              t.type === 'success' ? 'bg-green-400 text-black' : 'bg-red-400 text-white'
             }`}
           >
             {t.message}
@@ -55,6 +53,9 @@ export function ToastProvider({ children }: { children: ReactNode }): JSX.Elemen
   );
 }
 
+/**
+ *
+ */
 export function useToast(): ToastContextValue {
   return useContext(ToastContext);
 }
