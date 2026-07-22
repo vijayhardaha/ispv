@@ -1,4 +1,4 @@
-import { forwardRef, type ComponentPropsWithoutRef, type ElementRef } from 'react';
+import { forwardRef, type ComponentPropsWithoutRef, type ComponentRef, type ElementRef } from 'react';
 
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { Check, ChevronDown } from 'lucide-react';
@@ -31,7 +31,7 @@ export const SelectTrigger = forwardRef<
     ref={ref}
     className={cn(
       'font-body flex w-full items-center justify-between gap-2 border-2 border-black bg-white px-3 py-2.5 text-left placeholder:text-black/40 focus:ring-2 focus:ring-yellow-500 focus:outline-none',
-      'data-[placeholder]:text-black/40',
+      'data-placeholder:text-black/40',
       className
     )}
     {...props}
@@ -56,7 +56,7 @@ export const SelectContent = forwardRef<
       ref={ref}
       position={position}
       className={cn(
-        'relative z-50 max-h-72 min-w-[10rem] overflow-hidden',
+        'relative z-50 max-h-72 min-w-40 overflow-hidden',
         'shadow-brutal border-2 border-black bg-white',
         'data-[state=open]:animate-snapIn',
         position === 'popper' && 'data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1',
@@ -74,15 +74,15 @@ SelectContent.displayName = 'SelectContent';
  * Selectable item with check indicator and highlight styling.
  */
 export const SelectItem = forwardRef<
-  ElementRef<typeof SelectPrimitive.Item>,
+  ComponentRef<typeof SelectPrimitive.Item>,
   ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
 >(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
       'relative flex w-full cursor-pointer items-center gap-2 px-3 py-2 select-none',
-      'font-mono text-sm font-bold tracking-wide uppercase outline-none',
-      'data-[highlighted]:bg-yellow-400 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white',
+      'text-sm outline-none',
+      'data-highlighted:bg-yellow-400 data-[state=checked]:bg-yellow-400 data-[state=checked]:text-black',
       className
     )}
     {...props}
