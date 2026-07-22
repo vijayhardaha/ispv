@@ -1,9 +1,10 @@
 import type { JSX, ReactNode } from 'react';
 
+import type { Metadata } from 'next';
 import { JetBrains_Mono, Poppins, Space_Grotesk } from 'next/font/google';
 import Link from 'next/link';
 
-import { Button } from '@/components/ui/Button';
+import { LogoutButton } from '@/components/LogoutButton';
 import { Container } from '@/components/ui/Container';
 import { createServerSupabase } from '@/lib/supabase-server';
 
@@ -22,6 +23,14 @@ const poppins = Poppins({
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
 
 /**
+ * Default metadata for all admin pages.
+ */
+export const metadata: Metadata = {
+  title: { default: 'Reel Vault Admin', template: '%s - Reel Vault Admin' },
+  description: 'Admin panel for managing the Indian Students Protest Vault archive.',
+};
+
+/**
  * Root layout with authentication-aware navigation bar.
  *
  * @param {{ children: ReactNode }} props - Component properties.
@@ -37,7 +46,7 @@ export default async function RootLayout({ children }: { children: ReactNode }):
 
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${poppins.variable} ${jetbrainsMono.variable}`}>
-      <body className="font-body min-h-screen bg-gray-100 text-black antialiased">
+      <body className="font-body flex min-h-screen flex-col bg-gray-100 text-black antialiased">
         {user && (
           <header>
             <nav className="border-b-2 border-black bg-white py-3" aria-label="Main navigation">
@@ -57,20 +66,23 @@ export default async function RootLayout({ children }: { children: ReactNode }):
                     Locations
                   </Link>
                 </div>
-                <form action="/api/logout" method="post">
-                  <Button type="submit" variant="ghost" size="sm">
-                    Logout
-                  </Button>
-                </form>
+                <LogoutButton />
               </Container>
             </nav>
           </header>
         )}
-        <main className="py-8">
+        <main className="flex-1">
           <Container>
             <Providers>{children}</Providers>
           </Container>
         </main>
+
+        <footer className="border-t-2 border-black bg-white">
+          <Container className="flex items-center justify-between py-4">
+            <span className="font-display text-xs font-extrabold tracking-tight uppercase">Reel Vault Admin</span>
+            <p className="text-xs text-black/50">&copy; {new Date().getFullYear()} Indian Students Protest Vault</p>
+          </Container>
+        </footer>
       </body>
     </html>
   );
