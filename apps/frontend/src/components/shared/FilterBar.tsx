@@ -1,11 +1,10 @@
 'use client';
 
-import { useMemo, type JSX } from 'react';
+import { type JSX } from 'react';
 
 import { Search, X, Filter } from 'lucide-react';
 
-import { CATEGORIES, type VideoCategory } from '@/constants/categories';
-import { ALL_TAGS } from '@/data/videos';
+import type { VideoCategory } from '@/constants/categories';
 import { cn } from '@/lib/cn';
 
 /**
@@ -33,6 +32,7 @@ export interface FilterState {
  * @param {FilterState} props.state - Current filter state.
  * @param {(s: FilterState) => void} props.setState - Callback to update filter state.
  * @param {number} props.total - Total number of filtered results.
+ * @param {string[]} props.allTags - All available tags for the filter chips.
  *
  * @returns {JSX.Element} Rendered filter bar.
  */
@@ -40,15 +40,14 @@ export function FilterBar({
   state,
   setState,
   total,
+  allTags,
 }: {
   state: FilterState;
   setState: (s: FilterState) => void;
   total: number;
+  allTags: string[];
 }): JSX.Element {
-  const tagChips = useMemo(() => {
-    if (state.category === 'all') return ALL_TAGS;
-    return Array.from(new Set(CATEGORIES.find((c) => c.id === state.category) ? ALL_TAGS : ALL_TAGS));
-  }, [state.category]);
+  const tagChips = allTags;
 
   const selectTag = (tag: string) => {
     setState({ ...state, tags: state.tags.includes(tag) ? [] : [tag], page: 1 });

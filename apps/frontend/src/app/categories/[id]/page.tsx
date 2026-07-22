@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, type JSX } from 'react';
+import { useEffect, useState, type JSX } from 'react';
 
 import { ArrowLeft, Grid3x3 } from 'lucide-react';
 import Link from 'next/link';
@@ -12,7 +12,7 @@ import { Pagination } from '@/components/shared/Pagination';
 import { VideoCard } from '@/components/shared/VideoCard';
 import { Button } from '@/components/ui/Button';
 import { CATEGORIES } from '@/constants/categories';
-import { VIDEOS, type VideoCategory } from '@/data/videos';
+import { getAllVideosFromDb, type VideoCategory, type VideoEntry } from '@/data/videos';
 import { useFilterState } from '@/hooks/useFilterState';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 
@@ -25,9 +25,17 @@ export default function CategoryPage(): JSX.Element {
   const params = useParams<{ id: VideoCategory }>();
   const id = params?.id;
   const cat = CATEGORIES.find((c) => c.id === id);
+  const [allVideos, setAllVideos] = useState<VideoEntry[]>([]);
   const { play } = useReelPlayer();
 
-  const all = cat ? VIDEOS.filter((v) => v.category === cat.id) : [];
+  useEffect(() => {
+    getAllVideosFromDb().then((data) => {
+      setAllVideos(data);
+    });
+  }, []);
+
+  const all = cat ? allVideos.filter((v) => v.category === cat.id) : [];
+  const allTags = Array.from(new Set(allVideos.flatMap((v) => v.tags))).sort();
   const { state, setState, filtered } = useFilterState({
     videos: all,
     defaults: { category: id ?? 'all', perPage: 12 },
@@ -89,7 +97,7 @@ export default function CategoryPage(): JSX.Element {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-8 md:px-6">
-        <FilterBar state={state} setState={setState} total={filtered.length} />
+        <FilterBar state={state} setState={setState} total={filtered.length} allTags={allTags} />
         <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
           {paged.map((v) => (
             <VideoCard key={v.id} video={v} onPlay={(video) => play(video, paged)} />

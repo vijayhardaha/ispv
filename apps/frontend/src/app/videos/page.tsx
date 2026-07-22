@@ -1,11 +1,11 @@
 'use client';
 
-import { Suspense, type JSX } from 'react';
+import { Suspense, useEffect, useMemo, useState, type JSX } from 'react';
 
 import { FilterBar } from '@/components/shared/FilterBar';
 import { Pagination } from '@/components/shared/Pagination';
 import { VideoCard } from '@/components/shared/VideoCard';
-import { VIDEOS } from '@/data/videos';
+import { getAllVideosFromDb, type VideoEntry } from '@/data/videos';
 import { useFilterState } from '@/hooks/useFilterState';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 
@@ -23,8 +23,20 @@ export default function VideosPage(): JSX.Element {
 }
 
 function VideosPageInner() {
-  const { state, setState, filtered } = useFilterState({ videos: VIDEOS });
+  const [videos, setVideos] = useState<VideoEntry[]>([]);
+  const [loading, setLoading] = useState(true);
   const { play } = useReelPlayer();
+
+  useEffect(() => {
+    getAllVideosFromDb().then((data) => {
+      setVideos(data);
+      setLoading(false);
+    });
+  }, []);
+
+  const allTags = useMemo(() => Array.from(new Set(videos.flatMap((v) => v.tags))).sort(), [videos]);
+
+  const { state, setState, filtered } = useFilterState({ videos });
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / state.perPage));
   const safePage = Math.min(state.page, totalPages);
@@ -45,35 +57,43 @@ function VideosPageInner() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-8 md:px-6">
-        <FilterBar state={state} setState={setState} total={filtered.length} />
+        <FilterBar state={state} setState={setState} total={filtered.length} allTags={allTags} />
 
-        <div className="mt-6 flex items-center justify-between">
-          <div className="font-mono text-[10px] tracking-widest text-black/60 uppercase">
-            Page {safePage} of {totalPages} · {filtered.length} videos
-          </div>
-        </div>
-
-        {paged.length === 0 ? (
-          <div className="mt-10 border-2 border-dashed border-black/40 p-12 text-center">
-            <div className="font-display text-2xl font-extrabold uppercase">Nothing matched</div>
-            <p className="mt-1 text-black/60">Try a different search term or fewer tags.</p>
+        {loading ? (
+          <div className="mt-10 flex items-center justify-center py-20">
+            <div className="font-mono text-xs font-bold text-black/50 uppercase">Loading videos...</div>
           </div>
         ) : (
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
-            {paged.map((v) => (
-              <VideoCard key={v.id} video={v} onPlay={(video) => play(video, paged)} />
-            ))}
-          </div>
-        )}
+          <>
+            <div className="mt-6 flex items-center justify-between">
+              <div className="font-mono text-[10px] tracking-widest text-black/60 uppercase">
+                Page {safePage} of {totalPages} · {filtered.length} videos
+              </div>
+            </div>
 
-        <Pagination
-          page={safePage}
-          totalPages={totalPages}
-          onChange={(p) => {
-            setState({ ...state, page: p });
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-        />
+            {paged.length === 0 ? (
+              <div className="mt-10 border-2 border-dashed border-black/40 p-12 text-center">
+                <div className="font-display text-2xl font-extrabold uppercase">Nothing matched</div>
+                <p className="mt-1 text-black/60">Try a different search term or fewer tags.</p>
+              </div>
+            ) : (
+              <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+                {paged.map((v) => (
+                  <VideoCard key={v.id} video={v} onPlay={(video) => play(video, paged)} />
+                ))}
+              </div>
+            )}
+
+            <Pagination
+              page={safePage}
+              totalPages={totalPages}
+              onChange={(p) => {
+                setState({ ...state, page: p });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
+          </>
+        )}
       </section>
     </div>
   );

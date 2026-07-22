@@ -1,5 +1,7 @@
 import { CATEGORIES, CATEGORY_META, CATEGORY_ORDER } from '@/constants/categories';
 import type { VideoCategory } from '@/constants/categories';
+import { dbRowsToVideoEntries } from '@/lib/adapt';
+import { supabase } from '@/lib/supabase';
 
 export type { VideoCategory };
 
@@ -228,7 +230,7 @@ function buildVideos(): VideoEntry[] {
     return {
       id: `reel-${id}`,
       description: DESCRIPTIONS[descIdx],
-      url: `https://www.instagram.com/reel/${id}/`,
+      url: `https://www.instagram.com/reels/${id}/`,
       thumbnail: THUMBNAILS[thumbIdx],
       city: cityMeta.city,
       state: cityMeta.state,
@@ -301,3 +303,37 @@ export const getVideosByCategory = (category: Exclude<VideoCategory, 'all'>): Vi
  * @returns {string[]} Sorted city names.
  */
 export const getAllCities = (): string[] => Array.from(new Set(VIDEOS.map((v) => v.city))).sort();
+
+/* ── Async Supabase-backed functions ─────────────────────────────── */
+
+/**
+ * Fetches all published videos from Supabase, mapped to VideoEntry format.
+ * Falls back to hardcoded VIDEOS if Supabase is unavailable or returns empty.
+ *
+ * @returns {Promise<VideoEntry[]>} Published video entries.
+ */
+export async function getAllVideosFromDb(): Promise<VideoEntry[]> {
+  const { data, error } = await supabase
+    .from('videos')
+    .select('*')
+    .eq('status', 'published')
+    .order('created_at', { ascending: false });
+
+  if (error || !data || data.length === 0) {
+    console.warn('[videos] Supabase fetch failed or empty, using hardcoded fallback:', error?.message);
+    return VIDEOS;
+  }
+
+  return dbRowsToVideoEntries(data);
+}
+
+/**
+ * Fetches all unique tags from published videos via Supabase.
+ * Falls back to ALL_TAGS if Supabase fails.
+ *
+ * @returns {Promise<string[]>} Sorted deduplicated tags.
+ */
+export async function getAllTagsFromDb(): Promise<string[]> {
+  const videos = await getAllVideosFromDb();
+  return Array.from(new Set(videos.flatMap((v) => v.tags))).sort();
+}

@@ -6,15 +6,18 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 import { Tag } from '@/components/ui/Tag';
-import { VIDEOS } from '@/data/videos';
+import type { VideoEntry } from '@/data/videos';
 
 /**
  * Interactive map of India with clickable city markers and a sidebar city list.
  *
+ * @param {object} props - Component properties.
+ * @param {VideoEntry[]} props.videos - Video entries to compute city counts from.
+ *
  * @returns {JSX.Element} Rendered cities map section.
  */
-export function CitiesMap(): JSX.Element {
-  const cityCounts = VIDEOS.reduce<Record<string, number>>((acc, v) => {
+export function CitiesMap({ videos }: { videos: VideoEntry[] }): JSX.Element {
+  const cityCounts = videos.reduce<Record<string, number>>((acc, v) => {
     acc[v.city] = (acc[v.city] || 0) + 1;
     return acc;
   }, {});

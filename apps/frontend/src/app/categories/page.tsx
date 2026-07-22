@@ -1,6 +1,6 @@
 'use client';
 
-import { type JSX } from 'react';
+import { useEffect, useState, type JSX } from 'react';
 
 import { ArrowRight, Grid3x3 } from 'lucide-react';
 import Link from 'next/link';
@@ -9,7 +9,7 @@ import { VideoCard } from '@/components/shared/VideoCard';
 import { Button } from '@/components/ui/Button';
 import { CATEGORIES } from '@/constants/categories';
 import { toneMap } from '@/constants/colors';
-import { VIDEOS } from '@/data/videos';
+import { getAllVideosFromDb, type VideoEntry } from '@/data/videos';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 import { cn } from '@/lib/cn';
 
@@ -19,7 +19,24 @@ import { cn } from '@/lib/cn';
  * @returns {JSX.Element} Rendered categories page.
  */
 export default function CategoriesPage(): JSX.Element {
+  const [videos, setVideos] = useState<VideoEntry[]>([]);
+  const [loading, setLoading] = useState(true);
   const { play } = useReelPlayer();
+
+  useEffect(() => {
+    getAllVideosFromDb().then((data) => {
+      setVideos(data);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-100">
+        <div className="font-mono text-xs font-bold text-black/50 uppercase">Loading categories...</div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -47,7 +64,7 @@ export default function CategoriesPage(): JSX.Element {
       <section className="mx-auto max-w-7xl px-4 py-10 md:px-6">
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {CATEGORIES.map((c) => {
-            const list = VIDEOS.filter((v) => v.category === c.id);
+            const list = videos.filter((v) => v.category === c.id);
             return (
               <Link
                 key={c.id}
@@ -90,8 +107,8 @@ export default function CategoriesPage(): JSX.Element {
       <section className="mx-auto max-w-7xl px-4 py-10 md:px-6">
         <h3 className="font-display text-xl font-extrabold uppercase">Recently added</h3>
         <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
-          {VIDEOS.slice(0, 12).map((v) => (
-            <VideoCard key={v.id} video={v} onPlay={(video) => play(video, VIDEOS)} />
+          {videos.slice(0, 12).map((v) => (
+            <VideoCard key={v.id} video={v} onPlay={(video) => play(video, videos)} />
           ))}
         </div>
       </section>
