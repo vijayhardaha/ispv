@@ -18,7 +18,21 @@ export async function proxy(req: NextRequest) {
   // Allow public endpoints through without auth
   const PUBLIC_PATHS = ['/login', '/api/submit', '/api/enrich', '/api/views'];
   if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
-    return NextResponse.next();
+    if (req.method === 'OPTIONS') {
+      return new NextResponse(null, {
+        status: 204,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        },
+      });
+    }
+    const res = NextResponse.next();
+    res.headers.set('Access-Control-Allow-Origin', '*');
+    res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    return res;
   }
 
   // Allow static assets
@@ -56,4 +70,7 @@ export async function proxy(req: NextRequest) {
   return NextResponse.next();
 }
 
+/**
+ * Next.js middleware matcher config — runs on all routes except static assets.
+ */
 export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'] };
