@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
 
-import { createServerSupabase } from '@/lib/supabase';
+import { createServerSupabase } from '@/lib/supabase-server';
 
+/**
+ *
+ * @param req
+ */
 export async function POST(req: Request) {
   const { video_id } = await req.json();
   if (!video_id) return NextResponse.json({ error: 'video_id required' }, { status: 400 });
