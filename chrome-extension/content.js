@@ -61,17 +61,17 @@
     const data = { ig_url: window.location.href, og_image: ogImage, ig_post_date: datetime };
 
     try {
-      const res = await fetch("https://your-admin-app.vercel.app/api/enrich", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: "Bearer " + "YOUR_API_TOKEN" },
-        body: JSON.stringify(data)
+      const res = await fetch('https://your-admin-app.vercel.app/api/enrich', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + 'YOUR_API_TOKEN' },
+        body: JSON.stringify(data),
       });
       const result = await res.json();
-      console.log("[Reel Vault] Enriched:", result);
-      alert("✅ Submitted to Reel Vault");
+      console.log('[Reel Vault] Enriched:', result);
+      alert('✅ Submitted to Reel Vault');
     } catch (err) {
-      console.error("[Reel Vault] Error:", err);
-      alert("❌ Failed to submit");
+      console.error('[Reel Vault] Error:', err);
+      alert('❌ Failed to submit');
     }
   }
 
