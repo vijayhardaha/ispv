@@ -1,0 +1,9 @@
+{
+  "manifest_version": 3,
+  "name": "Reel Vault Collector",
+  "version": "1.0.0",
+  "description": "Collect metadata from Instagram reels to submit to the Indian Students Protest Vault.",
+  "permissions": ["activeTab"],
+  "content_scripts": [{ "matches": ["https://www.instagram.com/p/*"], "js": ["content.js"] }],
+  "icons": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" }
+}
