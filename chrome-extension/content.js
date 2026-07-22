@@ -61,9 +61,9 @@
     const data = { ig_url: window.location.href, og_image: ogImage, ig_post_date: datetime };
 
     try {
-      const res = await fetch('https://your-admin-app.vercel.app/api/enrich', {
+      const res = await fetch('http://localhost:3001/api/enrich', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + 'YOUR_API_TOKEN' },
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + 'IJdf1kBXLxnW2AO8rG8rVZT4j8JZL6A3' },
         body: JSON.stringify(data),
       });
       const result = await res.json();
