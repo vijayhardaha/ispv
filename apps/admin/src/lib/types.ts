@@ -35,8 +35,8 @@ export interface CategoryRecord {
   seo_description: string | null;
 }
 
-/** State record from Supabase `states` table. */
-export interface StateRecord {
+/** Location record from Supabase `locations` table. */
+export interface LocationRecord {
   id: string;
   slug: string;
   value: string;

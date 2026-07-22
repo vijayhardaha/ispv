@@ -9,7 +9,7 @@ CREATE TABLE public.categories (
   seo_description text
 );
 
-CREATE TABLE public.states (
+CREATE TABLE public.locations (
   id           uuid PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   slug         text NOT NULL UNIQUE,
   value        text NOT NULL UNIQUE,
