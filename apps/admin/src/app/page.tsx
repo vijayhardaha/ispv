@@ -1,6 +1,12 @@
 import type { JSX } from 'react';
 
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
+
+/**
+ * Page title for the admin dashboard.
+ */
+export const metadata: Metadata = { title: 'Dashboard' };
 
 import { createServerSupabase } from '@/lib/supabase-server';
 
@@ -42,7 +48,7 @@ export default async function DashboardPage(): Promise<JSX.Element> {
   ];
 
   return (
-    <section className="p-6" aria-labelledby="dashboard-heading">
+    <section className="py-8" aria-labelledby="dashboard-heading">
       <h1 id="dashboard-heading" className="mb-8 text-3xl font-extrabold uppercase">
         Dashboard
       </h1>

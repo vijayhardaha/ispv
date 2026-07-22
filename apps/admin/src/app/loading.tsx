@@ -1,5 +1,12 @@
 import type { JSX } from 'react';
 
+import type { Metadata } from 'next';
+
+/**
+ * Loading title used with the root layout template.
+ */
+export const metadata: Metadata = { title: 'Loading' };
+
 /**
  * Loading state displayed while page content is being fetched.
  *
