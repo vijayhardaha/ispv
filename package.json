@@ -19,6 +19,7 @@
   "devDependencies": {
     "@eslint/compat": "^2.1.0",
     "@prettier/plugin-xml": "^3.4.2",
+    "@types/latinize": "^0.2.18",
     "@vijayhardaha/dev-config": "^2.2.0",
     "eslint": "^10.7.0",
     "eslint-config-next": "^16.2.10",
