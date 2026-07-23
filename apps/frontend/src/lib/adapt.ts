@@ -1,7 +1,8 @@
+import { CATEGORIES } from '@/constants/categories';
 import type { VideoEntry } from '@/lib/videos';
 
 /**
- * Raw video row shape from the Supabase videos table with joined category data.
+ * Raw video row shape from the Supabase videos table.
  *
  * @type {VideoRow}
  * @property {string} id - Unique identifier for the video.
@@ -19,7 +20,6 @@ import type { VideoEntry } from '@/lib/videos';
  * @property {string} status - Moderation status.
  * @property {string} created_at - Timestamp of record creation.
  * @property {string} updated_at - Timestamp of last update.
- * @property {{ name: string; color: string } | null} categories - Joined category name and colour.
  */
 export interface VideoRow {
   id: string;
@@ -37,11 +37,11 @@ export interface VideoRow {
   status: string;
   created_at: string;
   updated_at: string;
-  categories: { name: string; color: string } | null;
 }
 
 /**
- * Maps a raw Supabase video row (with joined category data) to a VideoEntry.
+ * Maps a raw Supabase video row to a VideoEntry, resolving the category
+ * display name from the hardcoded CATEGORIES constant.
  *
  * @param {VideoRow} row - Raw row from the videos table.
  *
@@ -52,6 +52,7 @@ export function dbRowToVideoEntry(row: VideoRow): VideoEntry {
   const hashtags = Array.from(
     new Set([...tags.map((t: string) => `#${t}`), row.city ? `#${row.city.replace(/\s+/g, '')}` : ''].filter(Boolean))
   );
+  const matchedCategory = CATEGORIES.find((c) => c.slug === row.category);
 
   return {
     id: row.id,
@@ -61,10 +62,11 @@ export function dbRowToVideoEntry(row: VideoRow): VideoEntry {
     city: row.city ?? '',
     location: row.location ?? '',
     category: row.category ?? '',
-    categoryName: row.categories?.name ?? row.category ?? '',
+    categoryName: matchedCategory?.name ?? row.category ?? '',
     tags,
     hashtags,
     duration: 0,
+    viewCount: row.view_count ?? 0,
     featured: (row.view_count ?? 0) > 1000,
   };
 }
