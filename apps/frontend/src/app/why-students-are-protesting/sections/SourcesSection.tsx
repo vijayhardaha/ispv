@@ -5,10 +5,12 @@ import { type JSX } from 'react';
 import { ExternalLink } from 'lucide-react';
 
 import { Container } from '@/components/ui/Container';
-import { SOURCES } from '@/constants/whyProtestContent';
+import { SOURCES } from '@/constants/why-protest-data';
 
 /**
+ * Lists external sources and references for the protest information.
  *
+ * @returns {JSX.Element} Rendered sources section.
  */
 export function SourcesSection(): JSX.Element {
   return (
