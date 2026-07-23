@@ -10,7 +10,8 @@ import { type NextRequest, NextResponse } from 'next/server';
  *
  * - Page routes (non-API): redirect to /login if unauthenticated
  * - API routes: return 401 JSON if unauthenticated
- * - /api/submit, /api/enrich, /api/views: public (bypass auth check)
+ * - /api/public/*: public (bypass auth check)
+ * - /api/auth/enrich: public (self-authenticates via Bearer token)
  *
  * @param {NextRequest} req - Incoming request to evaluate.
  *
@@ -96,7 +97,7 @@ export async function proxy(req: NextRequest) {
 /**
  * Routes that bypass authentication entirely.
  */
-const PUBLIC_PATHS = ['/login', '/api/submit', '/api/enrich', '/api/views'];
+const PUBLIC_PATHS = ['/login', '/api/public', '/api/auth/enrich'];
 
 /**
  * Next.js middleware matcher config — runs on all routes except static assets.
