@@ -70,7 +70,7 @@ const spanVariants = cva(
     // positioning
     'relative z-10 inline-flex items-center justify-center gap-1.5 whitespace-nowrap border-2',
     // typography
-    'font-display uppercase font-semibold text-sm',
+    'font-display uppercase font-bold text-sm',
     // icons
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   ].join(' '),

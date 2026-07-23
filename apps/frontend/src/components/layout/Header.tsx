@@ -43,7 +43,7 @@ export function Header(): JSX.Element {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    'font-display px-4 py-2 text-sm font-semibold tracking-tight uppercase underline-offset-4 transition-colors',
+                    'font-display px-4 py-2 text-sm font-bold tracking-tight uppercase underline-offset-4 transition-colors',
                     isActive(link.href) ? 'border-black bg-yellow-400' : 'text-black hover:text-yellow-400'
                   )}
                 >
