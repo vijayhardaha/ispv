@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type JSX } from 'react';
+import { useEffect, useState, type JSX } from 'react';
 
 import { Box } from '@/components/ui/Box';
 import { Button } from '@/components/ui/Button';
@@ -30,6 +30,18 @@ export function DeleteConfirmDialog({
 }): JSX.Element {
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onCancel();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onCancel]);
+
   const handleConfirm = async () => {
     setLoading(true);
     try {
@@ -51,11 +63,8 @@ export function DeleteConfirmDialog({
   const buttonLabel = isRestore ? 'Restore' : isTrash ? 'Trash' : loading ? 'Deleting…' : 'Delete';
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
-      onClick={onCancel}
-    >
-      <Box className="w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <Box className="w-full max-w-sm p-6">
         <h2 className="mb-2 text-lg font-extrabold uppercase">{title}</h2>
         <p className="mb-4 text-sm text-black/70">{message}</p>
         <div className="flex justify-end gap-2">

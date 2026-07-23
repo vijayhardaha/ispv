@@ -42,7 +42,7 @@ export function SubmitVideoDialog({
   return (
     <Dialog open={form.open} onOpenChange={form.setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent tone="white">
+      <DialogContent tone="white" onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Submit a Reel</DialogTitle>
           <DialogDescription>

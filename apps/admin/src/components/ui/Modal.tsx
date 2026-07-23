@@ -1,6 +1,6 @@
 'use client';
 
-import type { ComponentPropsWithoutRef, JSX, ReactNode } from 'react';
+import { useEffect, type ComponentPropsWithoutRef, type JSX, type ReactNode } from 'react';
 
 import { Box } from '@/components/ui/Box';
 import { Button } from '@/components/ui/Button';
@@ -27,11 +27,21 @@ export function ModalOverlay({
   onClose: () => void;
   className?: string;
 }): JSX.Element {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={onClose}>
-      <Box className={cn('w-full max-w-2xl p-6', className)} onClick={(e) => e.stopPropagation()}>
-        {children}
-      </Box>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <Box className={cn('w-full max-w-2xl p-6', className)}>{children}</Box>
     </div>
   );
 }
