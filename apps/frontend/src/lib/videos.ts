@@ -16,6 +16,7 @@ import { supabase } from '@/lib/supabase';
  * @property {string[]} tags - Searchable tags.
  * @property {string[]} hashtags - Hashtags with hash prefix.
  * @property {number} duration - Video duration in seconds.
+ * @property {number} viewCount - Number of video views.
  * @property {boolean} [featured] - Whether the video is featured on the homepage.
  */
 export interface VideoEntry {
@@ -30,6 +31,7 @@ export interface VideoEntry {
   tags: string[];
   hashtags: string[];
   duration: number;
+  viewCount: number;
   featured?: boolean;
 }
 
@@ -41,8 +43,9 @@ export interface VideoEntry {
 export async function getAllVideosFromDb(): Promise<VideoEntry[]> {
   const { data, error } = await supabase
     .from('videos')
-    .select('*, categories(name, color)')
+    .select('*')
     .eq('status', 'published')
+    .order('video_post_date', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false });
 
   if (error || !data) {
