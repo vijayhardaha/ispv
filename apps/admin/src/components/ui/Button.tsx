@@ -8,7 +8,8 @@ const variantStyles = {
   primary: 'border-2 border-black bg-yellow-400 text-black hover:bg-yellow-300',
   secondary: 'border-2 border-black bg-white text-black hover:bg-gray-100',
   danger: 'border-2 border-black bg-red-500 text-white hover:bg-red-600',
-  'danger-ghost': 'border border-black bg-red-500 text-white hover:bg-red-600',
+  'danger-ghost': 'border-2 border-black bg-red-500 text-white hover:bg-red-600',
+  'danger-outline': 'border-2 border-red-500 bg-transparent text-red-500 hover:bg-red-500 hover:text-white',
   ghost: 'text-black hover:text-red-500',
 } as const;
 
