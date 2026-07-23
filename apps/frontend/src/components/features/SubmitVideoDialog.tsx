@@ -42,7 +42,7 @@ export function SubmitVideoDialog({
   return (
     <Dialog open={form.open} onOpenChange={form.setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent tone="default">
+      <DialogContent tone="white">
         <DialogHeader>
           <DialogTitle>Submit a Reel</DialogTitle>
           <DialogDescription>
@@ -90,7 +90,7 @@ export function SubmitVideoDialog({
                     </SelectTrigger>
                     <SelectContent>
                       {form.locations.map((loc) => (
-                        <SelectItem key={loc.value} value={loc.name}>
+                        <SelectItem key={loc.slug} value={loc.name}>
                           {loc.name}
                         </SelectItem>
                       ))}
@@ -118,6 +118,22 @@ export function SubmitVideoDialog({
               </div>
 
               <HashtagArea hashtags={form.hashtags} setHashtags={form.setHashtags} disabled={form.submitting} />
+
+              <p className="text-sm leading-relaxed text-black/80">
+                Add keywords like{' '}
+                <span className="font-bold text-black/90 underline decoration-yellow-400 decoration-2 underline-offset-2">
+                  person names
+                </span>
+                ,{' '}
+                <span className="font-bold text-black/90 underline decoration-yellow-400 decoration-2 underline-offset-2">
+                  location names
+                </span>
+                , or{' '}
+                <span className="font-bold text-black/90 underline decoration-yellow-400 decoration-2 underline-offset-2">
+                  special keywords
+                </span>{' '}
+                so others can find this video easily.
+              </p>
 
               <DialogFooter>
                 <Button type="submit" variant="default" shadow loading={form.submitting}>
