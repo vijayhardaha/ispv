@@ -19,6 +19,13 @@ export interface VideoRow {
   categories: { name: string; color: string } | null;
 }
 
+/**
+ * Maps a raw Supabase video row (with joined category data) to a VideoEntry.
+ *
+ * @param {VideoRow} row - Raw row from the videos table.
+ *
+ * @returns {VideoEntry} Normalized video entry for the frontend.
+ */
 export function dbRowToVideoEntry(row: VideoRow): VideoEntry {
   const tags = row.tags ?? [];
   const hashtags = Array.from(
@@ -41,6 +48,13 @@ export function dbRowToVideoEntry(row: VideoRow): VideoEntry {
   };
 }
 
+/**
+ * Maps an array of raw Supabase video rows to VideoEntry objects.
+ *
+ * @param {VideoRow[]} rows - Raw rows from the videos table.
+ *
+ * @returns {VideoEntry[]} Normalized video entries for the frontend.
+ */
 export function dbRowsToVideoEntries(rows: VideoRow[]): VideoEntry[] {
   return rows.map(dbRowToVideoEntry);
 }
