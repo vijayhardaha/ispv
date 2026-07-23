@@ -7,10 +7,9 @@ import slugify from 'slugify';
 
 import { useToast } from '@/components/Toast';
 import { Field, Input, ModalActions, ModalOverlay, ModalTitle, Select, Textarea } from '@/components/ui/Modal';
+import { COLORS } from '@/constants/colors';
 import { createClient } from '@/lib/supabase';
 import type { CategoryRecord } from '@/lib/types';
-
-const COLORS = ['yellow', 'black', 'blue', 'red', 'green', 'white'] as const;
 
 /**
  * Modal form for creating or editing a category.
@@ -38,24 +37,29 @@ export function CategoryFormModal({
   const [seoDescription, setSeoDescription] = useState(category?.seo_description ?? '');
   const supabase = createClient();
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     const value = category?.value ?? slugify(latinize(name), { lower: true, strict: true });
     const payload = { value, name, color, description, seo_title: seoTitle, seo_description: seoDescription };
     if (category) {
       const { error } = await supabase.from('categories').update(payload).eq('id', category.id);
       if (error) {
+        setLoading(false);
         toast(error.message, 'error');
         return;
       }
     } else {
       const { error } = await supabase.from('categories').insert(payload);
       if (error) {
+        setLoading(false);
         toast(error.message, 'error');
         return;
       }
     }
+    setLoading(false);
     toast(category ? 'Category updated' : 'Category created', 'success');
     onSaved();
   };
@@ -90,7 +94,7 @@ export function CategoryFormModal({
           <Textarea value={seoDescription} onChange={(e) => setSeoDescription(e.target.value)} />
         </Field>
 
-        <ModalActions onClose={onClose} />
+        <ModalActions onClose={onClose} loading={loading} />
       </form>
     </ModalOverlay>
   );

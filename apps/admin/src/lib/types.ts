@@ -12,6 +12,7 @@
  * @property {string | null} description - Video description text.
  * @property {string | null} thumbnail_url - Thumbnail image URL.
  * @property {string | null} ig_post_date - Post date from Instagram.
+ * @property {string | null} color - Custom colour override for the video chip.
  * @property {string} status - Moderation status (draft, pending_review, published, rejected).
  * @property {string} created_at - Timestamp of record creation.
  * @property {string} updated_at - Timestamp of last update.
@@ -36,6 +37,7 @@ export interface VideoRecord {
   description: string | null;
   thumbnail_url: string | null;
   ig_post_date: string | null;
+  color: string | null;
   status: 'draft' | 'pending_review' | 'published' | 'rejected';
   created_at: string;
   updated_at: string;
