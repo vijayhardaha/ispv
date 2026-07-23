@@ -27,7 +27,7 @@ type AnyObject = Record<string, any>;
 /**
  * Determine whether a value is a plain object (not null and not an array).
  *
- * @param {AnyObject} value - Value to test.
+ * @param {unknown} value - Value to test.
  *
  * @returns {value is AnyObject} True when the value is a plain object.
  */
