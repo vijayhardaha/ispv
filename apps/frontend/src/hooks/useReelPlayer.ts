@@ -39,6 +39,8 @@ export const ReelPlayerContext = createContext<ReelPlayerContextValue>({
  */
 export function useReelPlayer(): ReelPlayerContextValue {
   const ctx = useContext(ReelPlayerContext);
-  if (!ctx) throw new Error('useReelPlayer must be used within ReelPlayerProvider');
+  if (!ctx) {
+    throw new Error('useReelPlayer must be used within ReelPlayerProvider');
+  }
   return ctx;
 }
