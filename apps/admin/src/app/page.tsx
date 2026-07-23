@@ -8,10 +8,21 @@ import { redirect } from 'next/navigation';
  */
 export const metadata: Metadata = { title: 'Dashboard' };
 
+import { TAG_VARIANTS, type TagVariant } from '@/constants/colors';
+import { cn } from '@/lib/cn';
 import { createServerSupabase } from '@/lib/supabase-server';
+import type { CategoryRecord, LocationRecord } from '@/lib/types';
+
+interface CategoryWithCount extends CategoryRecord {
+  video_count: number;
+}
+
+interface LocationWithCount extends LocationRecord {
+  video_count: number;
+}
 
 /**
- * Dashboard page displaying video status statistics.
+ * Dashboard page displaying video status statistics, categories with counts, and locations with counts.
  *
  * @returns {Promise<JSX.Element>} Rendered dashboard.
  */
@@ -22,6 +33,7 @@ export default async function DashboardPage(): Promise<JSX.Element> {
   } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
+  // Status counts
   const { count: total } = await supabase.from('videos').select('*', { count: 'exact', head: true });
   const { count: draft } = await supabase
     .from('videos')
@@ -39,6 +51,31 @@ export default async function DashboardPage(): Promise<JSX.Element> {
     .from('videos')
     .select('*', { count: 'exact', head: true })
     .eq('status', 'rejected');
+
+  // Categories with video counts
+  const { data: categories } = await supabase.from('categories').select('*').order('name');
+  const categoryCounts = await Promise.all(
+    (categories ?? []).map(async (cat) => {
+      const { count } = await supabase
+        .from('videos')
+        .select('*', { count: 'exact', head: true })
+        .eq('category', cat.value);
+      return { ...cat, video_count: count ?? 0 } as CategoryWithCount;
+    })
+  );
+
+  // Locations with video counts
+  const { data: locations } = await supabase.from('locations').select('*').order('name');
+  const locationCounts = await Promise.all(
+    (locations ?? []).map(async (loc) => {
+      const { count } = await supabase
+        .from('videos')
+        .select('*', { count: 'exact', head: true })
+        .eq('state', loc.value);
+      return { ...loc, video_count: count ?? 0 } as LocationWithCount;
+    })
+  );
+
   const stats = [
     { label: 'Total', color: 'bg-black', count: total ?? 0 },
     { label: 'Draft', color: 'bg-gray-400', count: draft ?? 0 },
@@ -47,11 +84,16 @@ export default async function DashboardPage(): Promise<JSX.Element> {
     { label: 'Rejected', color: 'bg-red-500', count: rejected ?? 0 },
   ];
 
+  const totalCategoryVideos = categoryCounts.reduce((sum, c) => sum + c.video_count, 0);
+  const totalLocationVideos = locationCounts.reduce((sum, l) => sum + l.video_count, 0);
+
   return (
     <section className="py-8" aria-labelledby="dashboard-heading">
       <h1 id="dashboard-heading" className="mb-8 text-3xl font-extrabold uppercase">
         Dashboard
       </h1>
+
+      {/* Status cards */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
         {stats.map((s) => (
           <article key={s.label} className="border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_#18181b]">
@@ -60,6 +102,50 @@ export default async function DashboardPage(): Promise<JSX.Element> {
             <div className="text-xs font-bold uppercase">{s.label}</div>
           </article>
         ))}
+      </div>
+
+      {/* Categories section */}
+      <h2 className="mt-10 mb-4 text-2xl font-extrabold uppercase">
+        Categories ({categoryCounts.length}) &middot; {totalCategoryVideos} videos
+      </h2>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {categoryCounts.map((cat) => (
+          <article key={cat.id} className="border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_#18181b]">
+            <div className="mb-2 flex items-center justify-between">
+              <span
+                className={cn(
+                  'inline-block border border-black px-2 py-0.5 text-xs font-bold uppercase',
+                  TAG_VARIANTS[cat.color as TagVariant] ?? 'bg-gray-200 text-black'
+                )}
+              >
+                {cat.name}
+              </span>
+              <span className="text-2xl font-extrabold">{cat.video_count}</span>
+            </div>
+            <p className="text-xs text-black/60">{cat.description ?? '—'}</p>
+          </article>
+        ))}
+        {categoryCounts.length === 0 && <p className="col-span-full text-sm text-black/50">No categories found.</p>}
+      </div>
+
+      {/* Locations section */}
+      <h2 className="mt-10 mb-4 text-2xl font-extrabold uppercase">
+        Locations ({locationCounts.length}) &middot; {totalLocationVideos} videos
+      </h2>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {locationCounts.map((loc) => (
+          <article
+            key={loc.id}
+            className="flex items-center justify-between border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_#18181b]"
+          >
+            <div>
+              <div className="text-sm font-bold uppercase">{loc.name}</div>
+              {loc.description && <div className="mt-0.5 text-xs text-black/50">{loc.description}</div>}
+            </div>
+            <span className="text-2xl font-extrabold">{loc.video_count}</span>
+          </article>
+        ))}
+        {locationCounts.length === 0 && <p className="col-span-full text-sm text-black/50">No locations found.</p>}
       </div>
     </section>
   );
