@@ -64,7 +64,9 @@ export async function getFeaturedCategories(): Promise<DbCategory[]> {
  */
 export async function getTags(): Promise<string[]> {
   const { data, error } = await supabase.rpc('get_tags');
-  if (error || !data) return [];
+  if (error || !data) {
+    return [];
+  }
   return data.map((r: { tag: string }) => r.tag);
 }
 
@@ -77,12 +79,16 @@ export async function getTags(): Promise<string[]> {
  */
 export async function checkVideoExists(url: string): Promise<boolean> {
   const videoId = extractInstagramId(url);
-  if (!videoId) return false;
+  if (!videoId) {
+    return false;
+  }
 
   const byUrl = supabase.from('videos').select('id').eq('video_url', url).maybeSingle();
   const byId = supabase.from('videos').select('id').eq('video_id', videoId).maybeSingle();
   const [urlResult, idResult] = await Promise.all([byUrl, byId]);
 
-  if (urlResult.data || idResult.data) return true;
+  if (urlResult.data || idResult.data) {
+    return true;
+  }
   return false;
 }
