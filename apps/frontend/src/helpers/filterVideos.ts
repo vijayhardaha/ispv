@@ -1,4 +1,4 @@
-import type { FilterState } from '@/lib/schemas';
+import type { FilterState } from '@/lib/frontend-schemas';
 import type { VideoEntry } from '@/lib/videos';
 
 /**
