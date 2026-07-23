@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, Suspense, type JSX } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense, type JSX } from 'react';
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
@@ -14,8 +14,10 @@ import { TAG_VARIANTS, type TagVariant } from '@/constants/colors';
 import { usePagination } from '@/hooks/usePagination';
 import { cn } from '@/lib/cn';
 import { displayVideoUrl } from '@/lib/instagram';
+import { getVideosForApi } from '@/lib/rpc';
 import { createClient } from '@/lib/supabase';
-import type { CategoryRecord, LocationRecord, VideoRecord } from '@/lib/types';
+import { CATEGORIES, LOCATIONS } from '@/lib/types';
+import type { VideoRecord } from '@/lib/types';
 
 const STATUSES = ['', 'draft', 'pending_review', 'published', 'rejected'] as const;
 const STATUS_LABELS: Record<string, string> = {
@@ -27,8 +29,11 @@ const STATUS_LABELS: Record<string, string> = {
 };
 const PER_PAGE = 15;
 
+/** Valid status values for bulk updates, in display order. */
+const BULK_STATUS_OPTIONS = ['draft', 'pending_review', 'published', 'rejected'] as const;
+
 /**
- * Videos management page with filtering, pagination, and CRUD operations.
+ * Videos management page with filtering, pagination, bulk operations, and CRUD.
  *
  * @returns {JSX.Element} Rendered videos page.
  */
@@ -47,12 +52,17 @@ export default function VideosPage(): JSX.Element {
  */
 function VideosPageContent(): JSX.Element {
   const [videos, setVideos] = useState<VideoRecord[]>([]);
-  const [categories, setCategories] = useState<CategoryRecord[]>([]);
-  const [states, setStates] = useState<LocationRecord[]>([]);
+  const [categories] = useState(CATEGORIES);
+  const [states] = useState(LOCATIONS);
   const [editVideo, setEditVideo] = useState<VideoRecord | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkLoading, setBulkLoading] = useState(false);
+  const [bulkAction, setBulkAction] = useState<string>('');
+  const [changingStatus, setChangingStatus] = useState<Set<string>>(new Set());
+  const selectAllRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
   const { toast } = useToast();
   const { page, goToPage } = usePagination();
@@ -78,26 +88,113 @@ function VideosPageContent(): JSX.Element {
   );
 
   const loadData = useCallback(async () => {
-    const [catsRes, stsRes] = await Promise.all([
-      supabase.from('categories').select('*').order('value'),
-      supabase.from('locations').select('*').order('name'),
-    ]);
-    if (catsRes.data) setCategories(catsRes.data);
-    if (stsRes.data) setStates(stsRes.data);
-
-    const { data } = await supabase.rpc('get_videos_for_api', {
-      filters: { status: status || null, search: search || null, page, per_page: PER_PAGE },
+    const response = await getVideosForApi(supabase, {
+      status: status || null,
+      search: search || null,
+      page,
+      per_page: PER_PAGE,
     });
-    if (data) {
-      setVideos(data);
-      if (data.length > 0) setTotalCount(data[0].total_count ?? 0);
+
+    if (response) {
+      setVideos(response.data);
+      setTotalCount(response.pagination.total_count);
     }
+    setSelectedIds(new Set());
   }, [status, search, page, supabase]);
 
   useEffect(() => {
     const timer = setTimeout(() => loadData(), 0);
     return () => clearTimeout(timer);
   }, [loadData]);
+
+  /** Update the indeterminate state of the select-all checkbox. */
+  useEffect(() => {
+    const el = selectAllRef.current;
+    if (!el) return;
+    const someSelected = selectedIds.size > 0 && selectedIds.size < videos.length;
+    el.indeterminate = someSelected;
+  }, [selectedIds, videos.length]);
+
+  const handleSelectAll = useCallback(
+    (checked: boolean) => {
+      if (checked) {
+        setSelectedIds(new Set(videos.map((v) => v.id)));
+      } else {
+        setSelectedIds(new Set());
+      }
+    },
+    [videos]
+  );
+
+  const handleSelectOne = useCallback((id: string, checked: boolean) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (checked) {
+        next.add(id);
+      } else {
+        next.delete(id);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleApplyBulk = useCallback(async () => {
+    setBulkLoading(true);
+    const ids = Array.from(selectedIds);
+    setBulkAction('');
+
+    let action: string;
+    let body: Record<string, unknown>;
+
+    if (bulkAction === 'delete') {
+      action = 'delete';
+      body = { action, ids };
+    } else {
+      action = 'update_status';
+      body = { action, ids, status: bulkAction };
+    }
+
+    const res = await fetch('/api/videos/bulk', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    setBulkLoading(false);
+
+    if (res.ok) {
+      const label = bulkAction === 'delete' ? 'deleted' : `updated to ${STATUS_LABELS[bulkAction] ?? bulkAction}`;
+      toast(`${ids.length} video(s) ${label}`, 'success');
+      setSelectedIds(new Set());
+      loadData();
+    } else {
+      const err = await res.json().catch(() => ({ error: 'Bulk operation failed' }));
+      toast(err.error || 'Bulk operation failed', 'error');
+    }
+  }, [selectedIds, bulkAction, toast, loadData]);
+
+  const handleInlineStatusChange = useCallback(
+    async (id: string, newStatus: string) => {
+      setChangingStatus((prev) => new Set(prev).add(id));
+      const res = await fetch(`/api/videos/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      setChangingStatus((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+      if (res.ok) {
+        toast(`Status updated to ${STATUS_LABELS[newStatus] ?? newStatus}`, 'success');
+        loadData();
+      } else {
+        const err = await res.json().catch(() => ({ error: 'Failed to update status' }));
+        toast(err.error || 'Failed to update status', 'error');
+      }
+    },
+    [toast, loadData]
+  );
 
   const handleDelete = async (id: string) => {
     const res = await fetch(`/api/videos/${id}`, { method: 'DELETE' });
@@ -110,6 +207,7 @@ function VideosPageContent(): JSX.Element {
     }
   };
 
+  const allSelected = videos.length > 0 && selectedIds.size === videos.length;
   const totalPages = Math.ceil(totalCount / PER_PAGE);
 
   return (
@@ -123,19 +221,74 @@ function VideosPageContent(): JSX.Element {
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <SearchInput placeholder="Search videos…" />
-        <nav className="flex flex-wrap gap-2" aria-label="Status filter">
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          className="border-2 border-black bg-white px-3 py-1.5 text-xs font-bold uppercase"
+          aria-label="Status filter"
+        >
           {STATUSES.map((s) => (
-            <Button key={s} onClick={() => setStatus(s)} variant={status === s ? 'primary' : 'secondary'} size="sm">
+            <option key={s} value={s}>
               {STATUS_LABELS[s]}
-            </Button>
+            </option>
           ))}
-        </nav>
+        </select>
       </div>
+
+      {/* Bulk actions toolbar */}
+      {selectedIds.size > 0 && (
+        <div className="mb-4 flex flex-wrap items-center gap-3 border-2 border-black bg-yellow-100 px-4 py-3">
+          <span className="text-sm font-bold uppercase">{selectedIds.size} selected</span>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              value={bulkAction}
+              onChange={(e) => setBulkAction(e.target.value)}
+              className="border-2 border-black bg-white px-2 py-1 text-xs font-bold uppercase"
+              disabled={bulkLoading}
+            >
+              <option value="">Bulk action…</option>
+              <option value="delete">Delete</option>
+              <optgroup label="Change status to…">
+                {BULK_STATUS_OPTIONS.map((s) => (
+                  <option key={s} value={s}>
+                    {STATUS_LABELS[s]}
+                  </option>
+                ))}
+              </optgroup>
+            </select>
+
+            <Button
+              size="sm"
+              variant={bulkAction === 'delete' ? 'danger' : 'primary'}
+              disabled={!bulkAction || bulkLoading}
+              loading={bulkLoading}
+              onClick={handleApplyBulk}
+            >
+              Apply
+            </Button>
+
+            <Button size="sm" variant="secondary" disabled={bulkLoading} onClick={() => setSelectedIds(new Set())}>
+              Clear
+            </Button>
+          </div>
+        </div>
+      )}
 
       <div className="overflow-x-auto border-2 border-black bg-white">
         <table className="w-full text-left text-sm">
           <thead className="border-b-2 border-black bg-gray-100">
             <tr>
+              <th className="w-10 px-3 py-2">
+                <input
+                  ref={selectAllRef}
+                  type="checkbox"
+                  className="h-4 w-4 cursor-pointer accent-yellow-500"
+                  checked={allSelected}
+                  onChange={(e) => handleSelectAll(e.target.checked)}
+                  aria-label="Select all videos"
+                />
+              </th>
               <th className="w-16 px-3 py-2 text-xs font-bold uppercase">Thumb</th>
               <th className="px-3 py-2 text-xs font-bold uppercase">URL</th>
               <th className="w-28 px-3 py-2 text-xs font-bold uppercase">City</th>
@@ -148,13 +301,28 @@ function VideosPageContent(): JSX.Element {
           <tbody>
             {videos.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-3 py-8 text-center text-sm text-black/50">
+                <td colSpan={8} className="px-3 py-8 text-center text-sm text-black/50">
                   No videos found
                 </td>
               </tr>
             ) : (
               videos.map((v) => (
-                <tr key={v.id} className="border-b border-black/10 hover:bg-yellow-50">
+                <tr
+                  key={v.id}
+                  className={cn(
+                    'border-b border-black/10 hover:bg-yellow-50',
+                    selectedIds.has(v.id) && 'bg-yellow-100'
+                  )}
+                >
+                  <td className="px-3 py-2">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 cursor-pointer accent-yellow-500"
+                      checked={selectedIds.has(v.id)}
+                      onChange={(e) => handleSelectOne(v.id, e.target.checked)}
+                      aria-label={`Select video ${v.video_id ?? v.video_url}`}
+                    />
+                  </td>
                   <td className="px-3 py-2">
                     {v.thumbnail_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -189,8 +357,12 @@ function VideosPageContent(): JSX.Element {
                     )}
                   </td>
                   <td className="px-3 py-2">
-                    <span
-                      className={`inline-block border border-black px-2 py-0.5 text-xs font-bold uppercase ${
+                    <select
+                      value={v.status}
+                      disabled={changingStatus.has(v.id)}
+                      className={cn(
+                        'border border-black px-1.5 py-0.5 text-xs font-bold uppercase',
+                        'disabled:pointer-events-none disabled:opacity-50',
                         v.status === 'published'
                           ? 'bg-green-500 text-white'
                           : v.status === 'draft'
@@ -198,10 +370,15 @@ function VideosPageContent(): JSX.Element {
                             : v.status === 'rejected'
                               ? 'bg-red-500 text-white'
                               : 'bg-yellow-400'
-                      }`}
+                      )}
+                      onChange={(e) => handleInlineStatusChange(v.id, e.target.value)}
                     >
-                      {v.status}
-                    </span>
+                      {BULK_STATUS_OPTIONS.map((s) => (
+                        <option key={s} value={s} className="bg-white text-black">
+                          {STATUS_LABELS[s]}
+                        </option>
+                      ))}
+                    </select>
                   </td>
                   <td className="px-3 py-2 text-xs">{v.video_post_date?.slice(0, 10)}</td>
                   <td className="px-3 py-2">

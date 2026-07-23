@@ -49,7 +49,7 @@ export default async function RootLayout({ children }: { children: ReactNode }):
         {user && (
           <header>
             <nav className="border-b-2 border-black bg-white py-3" aria-label="Main navigation">
-              <Container className="flex items-center justify-between">
+              <Container className="flex items-center justify-center">
                 <div className="flex items-center gap-6">
                   <span className="font-display text-sm font-extrabold uppercase">ISPV Admin</span>
                   {HEADER_NAV_LINKS.map((link) => (
@@ -62,7 +62,9 @@ export default async function RootLayout({ children }: { children: ReactNode }):
                     </Link>
                   ))}
                 </div>
-                <LogoutButton />
+                <div className="ml-auto">
+                  <LogoutButton />
+                </div>
               </Container>
             </nav>
           </header>

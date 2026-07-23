@@ -11,6 +11,7 @@ export const metadata: Metadata = { title: 'Dashboard' };
 import { TAG_VARIANTS, type TagVariant } from '@/constants/colors';
 import { cn } from '@/lib/cn';
 import { createServerSupabase } from '@/lib/supabase-server';
+import { CATEGORIES, LOCATIONS } from '@/lib/types';
 import type { CategoryRecord, LocationRecord } from '@/lib/types';
 
 interface CategoryWithCount extends CategoryRecord {
@@ -53,9 +54,8 @@ export default async function DashboardPage(): Promise<JSX.Element> {
     .eq('status', 'rejected');
 
   // Categories with video counts
-  const { data: categories } = await supabase.from('categories').select('*').order('name');
   const categoryCounts = await Promise.all(
-    (categories ?? []).map(async (cat) => {
+    CATEGORIES.map(async (cat) => {
       const { count } = await supabase
         .from('videos')
         .select('*', { count: 'exact', head: true })
@@ -65,9 +65,8 @@ export default async function DashboardPage(): Promise<JSX.Element> {
   );
 
   // Locations with video counts
-  const { data: locations } = await supabase.from('locations').select('*').order('name');
   const locationCounts = await Promise.all(
-    (locations ?? []).map(async (loc) => {
+    LOCATIONS.map(async (loc) => {
       const { count } = await supabase
         .from('videos')
         .select('*', { count: 'exact', head: true })
