@@ -1,11 +1,31 @@
 import type { JSX } from 'react';
 
+import { breadcrumbSchema, webPageSchema } from '@vijayhardaha/schema-builder';
+import { JsonLd } from '@vijayhardaha/schema-builder/react';
 import { ArrowRight, BookOpen, CheckCircle, ExternalLink, Globe, Heart, Shield, Users } from 'lucide-react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 import { cn } from '@/lib/cn';
+import { buildMetadata } from '@/utils/meta';
+import { buildBreadcrumbs, globalSchema } from '@/utils/schema';
+import { siteUrl } from '@/utils/seo';
+
+const title = 'Why Students Are Protesting — Understanding the Movement';
+const description =
+  'Understand why Indian students are protesting — the origins, demands, timeline, and purpose behind the student movement documented in the Indian Students Protest Vault archive.';
+const path = '/why-students-are-protesting';
+const rootUrl = siteUrl();
+
+export const metadata: Metadata = buildMetadata({ title, description, path, postfix: true });
+
+const schemaData = [
+  ...globalSchema(),
+  webPageSchema({ rootUrl, path, breadcrumb: true }, { name: title, description }),
+  breadcrumbSchema({ rootUrl, items: buildBreadcrumbs(path, 'Why Students Are Protesting') }),
+];
 
 const DEMANDS = [
   {
@@ -100,6 +120,7 @@ const SOURCES = [
 export default function MovementPage(): JSX.Element {
   return (
     <div>
+      <JsonLd data={schemaData} />
       {/* Hero */}
       <section className="border-b-2 border-black bg-black py-14 text-white">
         <Container>

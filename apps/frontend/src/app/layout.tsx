@@ -1,6 +1,5 @@
 import type { ReactNode, JSX } from 'react';
 
-import { JsonLd } from '@vijayhardaha/schema-builder/react';
 import type { Metadata } from 'next';
 import { Space_Grotesk, Poppins, JetBrains_Mono } from 'next/font/google';
 
@@ -10,7 +9,6 @@ import { GoogleAnalytics } from '@/components/shared/GoogleAnalytics';
 import { ReelPlayerProvider } from '@/components/shared/ReelPlayerProvider';
 import { SITE_METADATA } from '@/constants/seo';
 import '@/index.css';
-import { globalSchema } from '@/utils/schema';
 
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
 
@@ -47,7 +45,6 @@ export default function RootLayout({ children }: { children: ReactNode }): JSX.E
             <Footer />
           </ReelPlayerProvider>
         </div>
-        <JsonLd data={globalSchema()} />
         <GoogleAnalytics />
       </body>
     </html>

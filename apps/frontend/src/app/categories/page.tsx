@@ -2,6 +2,8 @@
 
 import { useEffect, useState, type JSX } from 'react';
 
+import { breadcrumbSchema, collectionPageSchema } from '@vijayhardaha/schema-builder';
+import { JsonLd } from '@vijayhardaha/schema-builder/react';
 import { ArrowRight, Grid3x3 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -11,6 +13,20 @@ import { getAllVideosFromDb, type VideoEntry } from '@/data/videos';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 import { cn } from '@/lib/cn';
 import { getCategories, type DbCategory } from '@/lib/db';
+import { buildBreadcrumbs, globalSchema } from '@/utils/schema';
+import { siteUrl } from '@/utils/seo';
+
+const title = 'Categories — Browse by Category';
+const description =
+  'Browse all categories in the Indian Students Protest Vault archive. Explore protest marches, police conduct, Gen Z movement, acts of kindness, women leading, and more.';
+const path = '/categories';
+const rootUrl = siteUrl();
+
+const schemaData = [
+  ...globalSchema(),
+  collectionPageSchema({ rootUrl, path }, { name: title, description }),
+  breadcrumbSchema({ rootUrl, items: buildBreadcrumbs(path, 'Categories') }),
+];
 
 /**
  * Categories listing page — shows all categories with video counts and recently added videos.
@@ -41,6 +57,7 @@ export default function CategoriesPage(): JSX.Element {
 
   return (
     <div>
+      <JsonLd data={schemaData} />
       <section className="border-b-2 border-black bg-black py-10 text-white">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="font-mono text-[10px] tracking-widest text-yellow-500 uppercase">/ Categories</div>

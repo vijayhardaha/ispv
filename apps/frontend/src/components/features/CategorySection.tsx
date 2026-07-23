@@ -9,10 +9,19 @@ import { VideoCard } from '@/components/shared/VideoCard';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 import { Tag, type TagVariant } from '@/components/ui/Tag';
-import type { DbCategory } from '@/lib/db';
 import type { VideoEntry } from '@/data/videos';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
+import type { DbCategory } from '@/lib/db';
 
+/**
+ * Displays a category heading with up to 6 video cards and a link to the full category page.
+ *
+ * @param {object} props - Component props.
+ * @param {DbCategory} props.cat - Category metadata from the database.
+ * @param {VideoEntry[]} props.videos - Videos belonging to this category.
+ *
+ * @returns {JSX.Element} Rendered section with video cards.
+ */
 export function CategorySection({ cat, videos }: { cat: DbCategory; videos: VideoEntry[] }): JSX.Element {
   const { play } = useReelPlayer();
 
@@ -25,7 +34,7 @@ export function CategorySection({ cat, videos }: { cat: DbCategory; videos: Vide
           <div>
             <Tag variant={cat.color as TagVariant} text={cat.name} icon={<Grid3x3 className="inline h-3 w-3" />} />
             <h2 className="text-4xl font-bold tracking-tighter uppercase md:text-5xl">{cat.name}</h2>
-            <p className="mt-2 max-w-sm text-sm text-zinc-700">{cat.description}</p>
+            <p className="mt-2 text-zinc-700">{cat.description}</p>
           </div>
           <div className="mt-2 flex shrink-0 justify-start md:justify-end">
             <Link href={`/categories/${cat.value}`}>

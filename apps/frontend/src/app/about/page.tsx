@@ -1,11 +1,31 @@
 import type { JSX } from 'react';
 
+import { aboutPageSchema, breadcrumbSchema } from '@vijayhardaha/schema-builder';
+import { JsonLd } from '@vijayhardaha/schema-builder/react';
 import { ArrowRight, Check, X, Search, Link2, Eye, BookOpen } from 'lucide-react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 import { cn } from '@/lib/cn';
+import { buildMetadata } from '@/utils/meta';
+import { buildBreadcrumbs, globalSchema } from '@/utils/schema';
+import { siteUrl } from '@/utils/seo';
+
+const title = 'About — Indian Students Protest Vault';
+const description =
+  'Learn about the Indian Students Protest Vault — an independent archive of publicly shared videos documenting student protests across India. Our principles, submission process, and mission.';
+const path = '/about';
+const rootUrl = siteUrl();
+
+export const metadata: Metadata = buildMetadata({ title, description, path });
+
+const schemaData = [
+  ...globalSchema(),
+  aboutPageSchema({ rootUrl, path, breadcrumb: true }, { name: title, description }),
+  breadcrumbSchema({ rootUrl, items: buildBreadcrumbs(path, 'About') }),
+];
 
 const PRINCIPLES = [
   {
@@ -79,6 +99,7 @@ const EXCLUDED = [
 export default function AboutPage(): JSX.Element {
   return (
     <div>
+      <JsonLd data={schemaData} />
       {/* Hero */}
       <section className="border-b-2 border-black bg-black py-14 text-white">
         <Container>

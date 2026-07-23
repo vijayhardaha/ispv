@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState, type JSX } from 'react';
 
+import { breadcrumbSchema, webPageSchema } from '@vijayhardaha/schema-builder';
+import { JsonLd } from '@vijayhardaha/schema-builder/react';
 import { ArrowLeft, Grid3x3 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -15,6 +17,11 @@ import { getAllVideosFromDb, type VideoEntry } from '@/data/videos';
 import { useFilterState } from '@/hooks/useFilterState';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 import { getCategoryByValue, getLocations, type DbCategory } from '@/lib/db';
+import { buildBreadcrumbs, globalSchema } from '@/utils/schema';
+import { siteUrl } from '@/utils/seo';
+
+const rootUrl = siteUrl();
+const pathPrefix = '/categories';
 
 /**
  * Individual category page with filtered videos, search, and pagination.
@@ -82,8 +89,21 @@ export default function CategoryPage(): JSX.Element {
   const safePage = Math.min(state.page, totalPages);
   const paged = filtered.slice((safePage - 1) * state.perPage, safePage * state.perPage);
 
+  const catPath = `${pathPrefix}/${value}`;
+  const schemaData = cat
+    ? [
+        ...globalSchema(),
+        webPageSchema(
+          { rootUrl, path: catPath, breadcrumb: true },
+          { name: cat.name, description: cat.description ?? '' }
+        ),
+        breadcrumbSchema({ rootUrl, items: buildBreadcrumbs(catPath, cat.name) }),
+      ]
+    : [];
+
   return (
     <div>
+      {schemaData.length > 0 && <JsonLd data={schemaData} />}
       <section className="border-b-2 border-black bg-gray-100 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <Link

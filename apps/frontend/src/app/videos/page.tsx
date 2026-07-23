@@ -2,6 +2,9 @@
 
 import { Suspense, useEffect, useState, type JSX } from 'react';
 
+import { breadcrumbSchema, collectionPageSchema } from '@vijayhardaha/schema-builder';
+import { JsonLd } from '@vijayhardaha/schema-builder/react';
+
 import { FilterBar } from '@/components/shared/FilterBar';
 import { Pagination } from '@/components/shared/Pagination';
 import { VideoCard } from '@/components/shared/VideoCard';
@@ -9,6 +12,20 @@ import { getAllVideosFromDb, type VideoEntry } from '@/data/videos';
 import { useFilterState } from '@/hooks/useFilterState';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 import { getLocations, getTags } from '@/lib/db';
+import { buildBreadcrumbs, globalSchema } from '@/utils/schema';
+import { siteUrl } from '@/utils/seo';
+
+const title = 'All Videos — Full Archive';
+const description =
+  'Browse every reel in the Indian Students Protest Vault archive. Search by city, category, or hashtag and filter to find specific protest recordings.';
+const path = '/videos';
+const rootUrl = siteUrl();
+
+const schemaData = [
+  ...globalSchema(),
+  collectionPageSchema({ rootUrl, path }, { name: title, description }),
+  breadcrumbSchema({ rootUrl, items: buildBreadcrumbs(path, 'All Videos') }),
+];
 
 /**
  * Full video archive page with search, filtering, pagination, and reel player.
@@ -52,6 +69,7 @@ function VideosPageInner(): JSX.Element {
 
   return (
     <div className="bg-gray-100">
+      <JsonLd data={schemaData} />
       <section className="border-b-2 border-black bg-black py-10 text-white">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="font-mono text-[10px] tracking-widest text-yellow-500 uppercase">/ All Videos</div>
