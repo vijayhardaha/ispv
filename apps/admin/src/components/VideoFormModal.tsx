@@ -3,7 +3,8 @@
 import { useState, type JSX } from 'react';
 
 import { useToast } from '@/components/Toast';
-import { Field, Input, ModalActions, ModalOverlay, ModalTitle, Select, Textarea } from '@/components/ui/Modal';
+import { Field, Input, ModalActions, ModalOverlay, ModalTitle, Textarea } from '@/components/ui/Modal';
+import { Select } from '@/components/ui/Select';
 import type { CategoryRecord } from '@/constants/categories';
 import type { LocationRecord } from '@/constants/locations';
 import { extractIgId, reconstructIgUrl, detectSource } from '@/lib/instagram';
@@ -96,7 +97,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
       return;
     }
 
-    const res = await fetch(video ? `/api/videos/${video.id}` : '/api/videos', {
+    const res = await fetch(video ? `/api/auth/videos/${video.id}` : '/api/auth/videos', {
       method: video ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
