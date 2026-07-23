@@ -49,16 +49,22 @@ export function ReelPlayer({ videos, startIndex = 0, open, onClose }: ReelPlayer
   }, [open, startIndex]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
     const el = containerRef.current;
-    if (!el) return;
+    if (!el) {
+      return;
+    }
     let raf = 0;
     const onScroll = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
         const current = activeRef.current;
         const i = Math.round(el.scrollTop / el.clientHeight);
-        if (i !== current) setActive(Math.max(0, Math.min(videos.length - 1, i)));
+        if (i !== current) {
+          setActive(Math.max(0, Math.min(videos.length - 1, i)));
+        }
       });
     };
     el.addEventListener('scroll', onScroll, { passive: true });
@@ -76,9 +82,13 @@ export function ReelPlayer({ videos, startIndex = 0, open, onClose }: ReelPlayer
   );
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onCloseRef.current();
+      if (e.key === 'Escape') {
+        onCloseRef.current();
+      }
       if (e.key === 'ArrowDown' || e.key === 'j') {
         scrollToIndex(getNextIndex(1));
       }
@@ -91,7 +101,9 @@ export function ReelPlayer({ videos, startIndex = 0, open, onClose }: ReelPlayer
   }, [open, getNextIndex]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
     const orig = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
@@ -101,11 +113,15 @@ export function ReelPlayer({ videos, startIndex = 0, open, onClose }: ReelPlayer
 
   function scrollToIndex(i: number) {
     const el = containerRef.current;
-    if (!el) return;
+    if (!el) {
+      return;
+    }
     el.scrollTo({ top: i * el.clientHeight, behavior: 'smooth' });
   }
 
-  if (!open) return null;
+  if (!open) {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md">
