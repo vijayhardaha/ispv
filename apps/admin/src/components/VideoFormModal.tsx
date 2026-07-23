@@ -42,7 +42,9 @@ interface VideoFormModalProps {
  * @returns {JSX.Element} Rendered modal form.
  */
 export function VideoFormModal({ video, categories, locations, onClose, onSaved }: VideoFormModalProps): JSX.Element {
-  const [videoUrl] = useState(video?.video_id ? reconstructIgUrl(video.video_id) : (video?.video_url ?? ''));
+  const [videoUrl, setVideoUrl] = useState(
+    video?.video_id ? reconstructIgUrl(video.video_id) : (video?.video_url ?? '')
+  );
   const [category, setCategory] = useState(video?.category ?? categories[0]?.value ?? '');
   const [location, setLocation] = useState(video?.location ?? 'delhi');
   const [city, setCity] = useState(video?.city ?? '');
@@ -117,7 +119,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
       <ModalTitle editing={!!video}>Video</ModalTitle>
       <form onSubmit={handleSubmit} className="space-y-3">
         <Field label="Instagram URL">
-          <Input value={videoUrl} onChange={() => {}} required disabled={!!video} />
+          <Input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} required disabled={!!video} />
         </Field>
 
         <div className="grid grid-cols-2 gap-3">
