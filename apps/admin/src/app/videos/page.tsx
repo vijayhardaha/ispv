@@ -4,10 +4,14 @@ import { useState, useEffect, useCallback, Suspense, type JSX } from 'react';
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
+import { cn } from '@/lib/cn';
 import { useToast } from '@/components/Toast';
 import { Button } from '@/components/ui/Button';
+import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { Pagination } from '@/components/ui/Pagination';
+import { SearchInput } from '@/components/ui/SearchInput';
 import { VideoFormModal } from '@/components/VideoFormModal';
+import { TAG_VARIANTS, type TagVariant } from '@/constants/colors';
 import { usePagination } from '@/hooks/usePagination';
 import { displayVideoUrl } from '@/lib/instagram';
 import { createClient } from '@/lib/supabase';
@@ -36,6 +40,11 @@ export default function VideosPage(): JSX.Element {
   );
 }
 
+/**
+ * Inner component that uses URL-based search params for status filtering and pagination.
+ *
+ * @returns {JSX.Element} Rendered videos page content with table, filters, and modals.
+ */
 function VideosPageContent(): JSX.Element {
   const [videos, setVideos] = useState<VideoRecord[]>([]);
   const [categories, setCategories] = useState<CategoryRecord[]>([]);
@@ -51,6 +60,7 @@ function VideosPageContent(): JSX.Element {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const status = searchParams.get('status') || '';
+  const search = searchParams.get('q') || '';
 
   const setStatus = useCallback(
     (newStatus: string) => {
@@ -76,13 +86,13 @@ function VideosPageContent(): JSX.Element {
     if (stsRes.data) setStates(stsRes.data);
 
     const { data } = await supabase.rpc('get_videos_for_api', {
-      filters: { status: status || null, page, per_page: PER_PAGE },
+      filters: { status: status || null, search: search || null, page, per_page: PER_PAGE },
     });
     if (data) {
       setVideos(data);
       if (data.length > 0) setTotalCount(data[0].total_count ?? 0);
     }
-  }, [status, page, supabase]);
+  }, [status, search, page, supabase]);
 
   useEffect(() => {
     const timer = setTimeout(() => loadData(), 0);
@@ -111,13 +121,16 @@ function VideosPageContent(): JSX.Element {
         <Button onClick={() => setShowAdd(true)}>+ Add</Button>
       </header>
 
-      <nav className="mb-4 flex flex-wrap gap-2" aria-label="Status filter">
-        {STATUSES.map((s) => (
-          <Button key={s} onClick={() => setStatus(s)} variant={status === s ? 'primary' : 'secondary'} size="sm">
-            {STATUS_LABELS[s]}
-          </Button>
-        ))}
-      </nav>
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <SearchInput placeholder="Search videos…" />
+        <nav className="flex flex-wrap gap-2" aria-label="Status filter">
+          {STATUSES.map((s) => (
+            <Button key={s} onClick={() => setStatus(s)} variant={status === s ? 'primary' : 'secondary'} size="sm">
+              {STATUS_LABELS[s]}
+            </Button>
+          ))}
+        </nav>
+      </div>
 
       <div className="overflow-x-auto border-2 border-black bg-white">
         <table className="w-full text-left text-sm">
@@ -144,6 +157,7 @@ function VideosPageContent(): JSX.Element {
                 <tr key={v.id} className="border-b border-black/10 hover:bg-yellow-50">
                   <td className="px-3 py-2">
                     {v.thumbnail_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img src={v.thumbnail_url} alt="" className="h-10 w-10 border border-black object-cover" />
                     ) : (
                       <div className="h-10 w-10 border border-black bg-gray-200" />
@@ -163,11 +177,10 @@ function VideosPageContent(): JSX.Element {
                   <td className="px-3 py-2">
                     {v.category ? (
                       <span
-                        className="inline-block border border-black px-2 py-0.5 text-xs font-bold uppercase"
-                        style={{
-                          backgroundColor: v.category_color ?? '#ccc',
-                          color: v.category_color === 'white' ? '#000' : '#fff',
-                        }}
+                        className={cn(
+                          'inline-block border border-black px-2 py-0.5 text-xs font-bold uppercase',
+                          TAG_VARIANTS[v.category_color as TagVariant] ?? 'bg-gray-200 text-black'
+                        )}
                       >
                         {v.category_name}
                       </span>
@@ -212,26 +225,11 @@ function VideosPageContent(): JSX.Element {
 
       {/* Delete confirmation dialog */}
       {deleteConfirm && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
-          onClick={() => setDeleteConfirm(null)}
-        >
-          <div
-            className="w-full max-w-sm border-2 border-black bg-white p-6 shadow-[8px_8px_0px_0px_#18181b]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="mb-2 text-lg font-extrabold uppercase">Delete Video?</h2>
-            <p className="mb-4 text-sm text-black/70">This action cannot be undone.</p>
-            <div className="flex justify-end gap-2">
-              <Button onClick={() => setDeleteConfirm(null)} variant="secondary">
-                Cancel
-              </Button>
-              <Button onClick={() => handleDelete(deleteConfirm)} variant="danger">
-                Delete
-              </Button>
-            </div>
-          </div>
-        </div>
+        <DeleteConfirmDialog
+          label="Video"
+          onCancel={() => setDeleteConfirm(null)}
+          onConfirm={() => handleDelete(deleteConfirm)}
+        />
       )}
 
       {showAdd && (

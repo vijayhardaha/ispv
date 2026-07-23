@@ -2,11 +2,17 @@
 
 import { useState, useEffect, useCallback, Suspense, type JSX } from 'react';
 
+import { useSearchParams } from 'next/navigation';
+
 import { CategoryFormModal } from '@/components/CategoryFormModal';
 import { useToast } from '@/components/Toast';
 import { Button } from '@/components/ui/Button';
+import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { Pagination } from '@/components/ui/Pagination';
+import { SearchInput } from '@/components/ui/SearchInput';
+import { TAG_VARIANTS, type TagVariant } from '@/constants/colors';
 import { usePagination } from '@/hooks/usePagination';
+import { cn } from '@/lib/cn';
 import { createClient } from '@/lib/supabase';
 import type { CategoryRecord } from '@/lib/types';
 
@@ -40,18 +46,20 @@ function CategoriesPageContent(): JSX.Element {
   const supabase = createClient();
   const { toast } = useToast();
   const { page, goToPage } = usePagination();
+  const searchParams = useSearchParams();
+  const search = searchParams.get('q') || '';
 
   const load = useCallback(async () => {
     const from = (page - 1) * PER_PAGE;
     const to = from + PER_PAGE - 1;
-    const { data, count } = await supabase
-      .from('categories')
-      .select('*', { count: 'exact' })
-      .order('value')
-      .range(from, to);
+    let query = supabase.from('categories').select('*', { count: 'exact' }).order('value');
+    if (search) {
+      query = query.or(`name.ilike.%${search}%,value.ilike.%${search}%,description.ilike.%${search}%`);
+    }
+    const { data, count } = await query.range(from, to);
     if (data) setItems(data);
     if (count !== null) setTotalCount(count);
-  }, [supabase, page]);
+  }, [supabase, page, search]);
 
   useEffect(() => {
     const timer = setTimeout(() => load(), 0);
@@ -79,6 +87,11 @@ function CategoriesPageContent(): JSX.Element {
         </h1>
         <Button onClick={() => setShowAdd(true)}>+ Add</Button>
       </header>
+
+      <div className="mb-4">
+        <SearchInput placeholder="Search categories…" />
+      </div>
+
       <div className="overflow-x-auto border-2 border-black bg-white">
         <table className="w-full text-left text-sm">
           <thead className="border-b-2 border-black bg-gray-100">
@@ -104,8 +117,10 @@ function CategoriesPageContent(): JSX.Element {
                   <td className="px-3 py-2">{item.name}</td>
                   <td className="px-3 py-2">
                     <span
-                      className="inline-block border border-black px-2 py-0.5 text-xs font-bold uppercase"
-                      style={{ backgroundColor: item.color }}
+                      className={cn(
+                        'inline-block border border-black px-2 py-0.5 text-xs font-bold uppercase',
+                        TAG_VARIANTS[item.color as TagVariant] ?? ''
+                      )}
                     >
                       {item.color}
                     </span>
@@ -131,26 +146,11 @@ function CategoriesPageContent(): JSX.Element {
       <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} />
 
       {deleteConfirm && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
-          onClick={() => setDeleteConfirm(null)}
-        >
-          <div
-            className="w-full max-w-sm border-2 border-black bg-white p-6 shadow-[8px_8px_0px_0px_#18181b]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="mb-2 text-lg font-extrabold uppercase">Delete Category?</h2>
-            <p className="mb-4 text-sm text-black/70">This action cannot be undone.</p>
-            <div className="flex justify-end gap-2">
-              <Button onClick={() => setDeleteConfirm(null)} variant="secondary">
-                Cancel
-              </Button>
-              <Button onClick={() => handleDelete(deleteConfirm)} variant="danger">
-                Delete
-              </Button>
-            </div>
-          </div>
-        </div>
+        <DeleteConfirmDialog
+          label="Category"
+          onCancel={() => setDeleteConfirm(null)}
+          onConfirm={() => handleDelete(deleteConfirm)}
+        />
       )}
 
       {showAdd && (
