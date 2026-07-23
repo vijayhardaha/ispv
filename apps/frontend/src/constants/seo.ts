@@ -8,11 +8,16 @@ import type { Metadata } from 'next';
 export const GOOGLE_ANALYTICS_ID = '';
 
 /**
+ * Google Search Console verification code for the site.
+ */
+const GOOGLE_SITE_VERIFICATION = '4CyrCxZi9TWgvS-GzB1QUhgEl0bKoIzT36368e_vlx0';
+
+/**
  * Site-wide configuration values for SEO and metadata.
  */
 export const SITE_CONFIG = {
   name: 'Indian Students Protest Vault',
-  title: 'A Peaceful Protest Archive — Indian Students Protest Vault',
+  title: 'Indian Students Protest Vault — A Peaceful Protest Archive',
   url: 'https://ispv.vercel.app',
   description:
     'A peaceful, non-partisan archive of Indian protest reels from Instagram. Browse by city, category, or hashtag. Preserving publicly shared videos documenting student protests across India.',
@@ -54,8 +59,8 @@ const SEO_KEYWORDS = [
  * Default image metadata for Open Graph and Twitter cards.
  */
 const seoImage = {
-  url: '/preview.png',
-  secureUrl: '/preview.png',
+  url: '/og/preview.png',
+  secureUrl: '/og/preview.png',
   alt: 'Indian Students Protest Vault Thumbnail',
   width: 1200,
   height: 630,
@@ -80,6 +85,7 @@ export const SITE_METADATA: Metadata = {
   robots: { index: true, follow: true },
   category: SITE_CONFIG.category,
   classification: SITE_CONFIG.classification,
+  verification: { google: GOOGLE_SITE_VERIFICATION },
   icons: {
     icon: [
       { url: '/icon.svg', type: 'image/svg+xml' },
