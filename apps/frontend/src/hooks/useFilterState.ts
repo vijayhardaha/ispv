@@ -8,6 +8,9 @@ import { filterVideos } from '@/helpers/filterVideos';
 import type { FilterState } from '@/lib/schemas';
 import type { VideoEntry } from '@/lib/videos';
 
+/**
+ * Default filter state used when no URL params or overrides are provided.
+ */
 const DEFAULT_STATE: FilterState = { query: '', category: 'all', location: 'all', tags: [], page: 1, perPage: 36 };
 
 /**
