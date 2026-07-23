@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, Suspense, type JSX } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense, type ComponentPropsWithoutRef, type JSX } from 'react';
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
@@ -22,9 +22,9 @@ import { createClient } from '@/lib/supabase';
 import type { VideoRecord } from '@/lib/types';
 
 /**
- * All possible video statuses for filtering, including empty string for "All".
+ * All possible video statuses for filtering, including empty string for "All" and "trashed".
  */
-const STATUSES = ['', 'draft', 'pending_review', 'published', 'rejected'] as const;
+const STATUSES = ['', 'draft', 'pending_review', 'published', 'rejected', 'trashed'] as const;
 
 /**
  * Human-readable labels for each video status value.
@@ -35,6 +35,7 @@ const STATUS_LABELS: Record<string, string> = {
   pending_review: 'Pending',
   published: 'Published',
   rejected: 'Rejected',
+  trashed: 'Trashed',
 };
 
 /**
@@ -58,6 +59,461 @@ export default function VideosPage(): JSX.Element {
   );
 }
 
+// ─── Sub-components ─────────────────────────────────────────────────────────
+
+/**
+ * Page header with title and Add Video button.
+ *
+ * @param {object} props - Component properties.
+ * @param {boolean} props.isTrashed - Whether the trashed filter is active.
+ * @param {() => void} props.onAdd - Callback to open the add-video modal.
+ *
+ * @returns {JSX.Element} Rendered header section.
+ */
+function VideosPageHeader({ isTrashed, onAdd }: { isTrashed: boolean; onAdd: () => void }): JSX.Element {
+  return (
+    <header className="mb-6 flex items-center justify-between">
+      <h1 id="videos-heading" className="text-3xl font-extrabold uppercase">
+        Videos
+      </h1>
+      <Button onClick={onAdd} disabled={isTrashed}>
+        + Add Video
+      </Button>
+    </header>
+  );
+}
+
+/**
+ * Filter bar with search input, status select, and reset button.
+ *
+ * @param {object} props - Component properties.
+ * @param {string} props.status - Currently selected status filter value.
+ * @param {(newStatus: string) => void} props.onStatusChange - Callback when status filter changes.
+ * @param {() => void} props.onReset - Callback to clear all filters.
+ *
+ * @returns {JSX.Element} Rendered filter bar.
+ */
+function VideosFilterBar({
+  status,
+  onStatusChange,
+  onReset,
+}: {
+  status: string;
+  onStatusChange: (newStatus: string) => void;
+  onReset: () => void;
+}): JSX.Element {
+  return (
+    <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-row items-center gap-3">
+        <SearchInput placeholder="Search videos…" />
+        <Select
+          variant="filter"
+          value={status}
+          onChange={(e) => onStatusChange(e.target.value)}
+          aria-label="Status filter"
+          options={STATUSES.map((s) => ({ value: s, label: STATUS_LABELS[s] }))}
+        />
+      </div>
+      <Button onClick={onReset} variant="danger-outline">
+        Reset
+      </Button>
+    </div>
+  );
+}
+
+/**
+ * Bulk actions toolbar shown when one or more videos are selected.
+ *
+ * @param {object} props - Component properties.
+ * @param {number} props.selectedCount - Number of currently selected videos.
+ * @param {string} props.bulkAction - Currently selected bulk action value.
+ * @param {boolean} props.bulkLoading - Whether a bulk operation is in progress.
+ * @param {boolean} props.isTrashed - Whether the trashed filter is active.
+ * @param {(action: string) => void} props.onBulkActionChange - Callback when bulk action selection changes.
+ * @param {() => void} props.onApplyBulk - Callback to execute the selected bulk action.
+ * @param {() => void} props.onClear - Callback to clear all selections.
+ *
+ * @returns {JSX.Element} Rendered bulk actions toolbar.
+ */
+function BulkActionsToolbar({
+  selectedCount,
+  bulkAction,
+  bulkLoading,
+  isTrashed,
+  onBulkActionChange,
+  onApplyBulk,
+  onClear,
+}: {
+  selectedCount: number;
+  bulkAction: string;
+  bulkLoading: boolean;
+  isTrashed: boolean;
+  onBulkActionChange: (action: string) => void;
+  onApplyBulk: () => void;
+  onClear: () => void;
+}): JSX.Element {
+  return (
+    <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-2 border-black bg-yellow-100 px-4 py-3">
+      <span className="text-sm font-bold uppercase">{selectedCount} selected</span>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <Select
+          variant="bulk"
+          value={bulkAction}
+          onChange={(e) => onBulkActionChange(e.target.value)}
+          disabled={bulkLoading}
+        >
+          <option value="">Bulk action…</option>
+          {isTrashed ? (
+            <>
+              <option value="restore">Restore</option>
+              <option value="delete">Permanently Delete</option>
+            </>
+          ) : (
+            <>
+              <option value="trash">Trash</option>
+              <optgroup label="Change status to…">
+                {BULK_STATUS_OPTIONS.map((s) => (
+                  <option key={s} value={s}>
+                    {STATUS_LABELS[s]}
+                  </option>
+                ))}
+              </optgroup>
+            </>
+          )}
+        </Select>
+
+        <Button
+          size="sm"
+          variant={bulkAction === 'delete' || bulkAction === 'trash' ? 'danger' : 'primary'}
+          disabled={!bulkAction || bulkLoading}
+          loading={bulkLoading}
+          onClick={onApplyBulk}
+        >
+          Apply
+        </Button>
+
+        <Button size="sm" variant="secondary" disabled={bulkLoading} onClick={onClear}>
+          Clear
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Category badge with colour chip.
+ *
+ * @param {object} props - Component properties.
+ * @param {string | null} props.category - Category value reference.
+ *
+ * @returns {JSX.Element} Rendered category badge or en-dash fallback.
+ */
+function CategoryBadge({ category }: { category: string | null }): JSX.Element {
+  const cat = CATEGORIES.find((c) => c.value === category);
+  if (!cat) {
+    return <span className="text-sm text-black/40">–</span>;
+  }
+  return (
+    <span
+      className={cn(
+        'inline-block border border-black px-2 py-0.5 text-sm font-bold uppercase',
+        TAG_VARIANTS[cat.color as TagVariant] ?? 'bg-gray-200 text-black'
+      )}
+    >
+      {cat.name}
+    </span>
+  );
+}
+
+/**
+ * Status cell — inline dropdown for active videos, static badge for trashed.
+ *
+ * @param {object} props - Component properties.
+ * @param {VideoRecord} props.video - The video record.
+ * @param {boolean} props.isTrashed - Whether the trashed filter is active.
+ * @param {Set<string>} props.changingStatus - Set of video IDs whose status is being updated.
+ * @param {(id: string, newStatus: string) => void} props.onChange - Callback when status changes.
+ *
+ * @returns {JSX.Element} Rendered status cell.
+ */
+function StatusCell({
+  video,
+  isTrashed,
+  changingStatus,
+  onChange,
+}: {
+  video: VideoRecord;
+  isTrashed: boolean;
+  changingStatus: Set<string>;
+  onChange: (id: string, newStatus: string) => void;
+}): JSX.Element {
+  if (isTrashed) {
+    return (
+      <span className="inline-block border border-black bg-gray-800 px-2 py-0.5 text-sm font-bold text-white uppercase">
+        Trashed
+      </span>
+    );
+  }
+
+  return (
+    <Select
+      variant="inline"
+      value={video.status}
+      disabled={changingStatus.has(video.id)}
+      className={cn(
+        video.status === 'published'
+          ? 'bg-green-500 text-white'
+          : video.status === 'draft'
+            ? 'bg-gray-400'
+            : video.status === 'rejected'
+              ? 'bg-red-500 text-white'
+              : 'bg-yellow-400'
+      )}
+      onChange={(e) => onChange(video.id, e.target.value)}
+    >
+      {BULK_STATUS_OPTIONS.map((s) => (
+        <option key={s} value={s} className="bg-white text-black">
+          {STATUS_LABELS[s]}
+        </option>
+      ))}
+    </Select>
+  );
+}
+
+/**
+ * Action buttons for a video row — Edit/Trash in active view, Restore/Purge in trashed view.
+ *
+ * @param {object} props - Component properties.
+ * @param {VideoRecord} props.video - The video record.
+ * @param {boolean} props.isTrashed - Whether the trashed filter is active.
+ * @param {(video: VideoRecord) => void} props.onEdit - Callback to open edit modal.
+ * @param {(id: string, action: 'trash' | 'restore' | 'delete') => void} props.onAction - Callback for trash/restore/delete actions.
+ *
+ * @returns {JSX.Element} Rendered action buttons.
+ */
+function VideoActions({
+  video,
+  isTrashed,
+  onEdit,
+  onAction,
+}: {
+  video: VideoRecord;
+  isTrashed: boolean;
+  onEdit: (video: VideoRecord) => void;
+  onAction: (id: string, action: 'trash' | 'restore' | 'delete') => void;
+}): JSX.Element {
+  if (isTrashed) {
+    return (
+      <div className="flex gap-1">
+        <Button onClick={() => onAction(video.id, 'restore')} variant="secondary" size="xs">
+          Restore
+        </Button>
+        <Button onClick={() => onAction(video.id, 'delete')} variant="danger-ghost" size="xs">
+          Purge
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex gap-1">
+      <Button onClick={() => onEdit(video)} variant="secondary" size="xs">
+        Edit
+      </Button>
+      <Button onClick={() => onAction(video.id, 'trash')} variant="danger-ghost" size="xs">
+        Trash
+      </Button>
+    </div>
+  );
+}
+
+/**
+ * Formats an ISO date string to a 12-hour display (e.g., "12 May 2024 \u004011:30 AM").
+ *
+ * @param {string | null | undefined} dateStr - The ISO date string to format.
+ *
+ * @returns {string} The formatted date, or en-dash if the input is null/undefined.
+ */
+function formatDate(dateStr: string | null | undefined): string {
+  if (!dateStr) {
+    return '\u2013';
+  }
+  try {
+    const d = new Date(dateStr);
+    const datePart = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).format(d);
+    const timePart = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).format(d);
+    return `${datePart} @${timePart}`;
+  } catch {
+    return '\u2013';
+  }
+}
+
+/**
+ * Table cell with consistent padding and font size.
+ *
+ * @param {object} props - Component properties.
+ * @param {string} [props.className] - Additional CSS classes to extend.
+ * @param {import('react').ReactNode} [props.children] - Cell content.
+ *
+ * @returns {JSX.Element} Rendered table cell.
+ */
+function Td({ className, children, ...props }: ComponentPropsWithoutRef<'td'>): JSX.Element {
+  return (
+    <td className={cn('px-3 py-2 text-sm', className)} {...props}>
+      {children}
+    </td>
+  );
+}
+
+/**
+ * Full videos table with header and body rows.
+ *
+ * @param {object} props - Component properties.
+ * @param {VideoRecord[]} props.videos - Videos to display.
+ * @param {boolean} props.isTrashed - Whether the trashed filter is active.
+ * @param {boolean} props.allSelected - Whether all visible videos are selected.
+ * @param {Set<string>} props.selectedIds - Set of selected video IDs.
+ * @param {{ current: HTMLInputElement | null }} props.selectAllRef - Ref object for the select-all checkbox.
+ * @param {Set<string>} props.changingStatus - Set of video IDs whose status is being updated.
+ * @param {(checked: boolean) => void} props.onSelectAll - Callback when select-all checkbox toggles.
+ * @param {(id: string, checked: boolean) => void} props.onSelectOne - Callback when a single checkbox toggles.
+ * @param {(video: VideoRecord) => void} props.onEdit - Callback to open edit modal.
+ * @param {(id: string, action: 'trash' | 'restore' | 'delete') => void} props.onAction - Callback for trash/restore/delete.
+ * @param {(id: string, newStatus: string) => void} props.onInlineStatusChange - Callback for inline status change.
+ *
+ * @returns {JSX.Element} Rendered table.
+ */
+function VideosTable({
+  videos,
+  isTrashed,
+  allSelected,
+  selectedIds,
+  selectAllRef,
+  changingStatus,
+  onSelectAll,
+  onSelectOne,
+  onEdit,
+  onAction,
+  onInlineStatusChange,
+}: {
+  videos: VideoRecord[];
+  isTrashed: boolean;
+  allSelected: boolean;
+  selectedIds: Set<string>;
+  selectAllRef: { current: HTMLInputElement | null };
+  changingStatus: Set<string>;
+  onSelectAll: (checked: boolean) => void;
+  onSelectOne: (id: string, checked: boolean) => void;
+  onEdit: (video: VideoRecord) => void;
+  onAction: (id: string, action: 'trash' | 'restore' | 'delete') => void;
+  onInlineStatusChange: (id: string, newStatus: string) => void;
+}): JSX.Element {
+  const colCount = isTrashed ? 12 : 11;
+
+  return (
+    <div className="overflow-x-auto border-2 border-black bg-white">
+      <table className="w-full text-left text-sm">
+        <thead className="border-b-2 border-black bg-gray-100">
+          <tr>
+            <th className="w-10 px-3 py-2">
+              <input
+                ref={selectAllRef}
+                type="checkbox"
+                className="h-4 w-4 cursor-pointer accent-yellow-500"
+                checked={allSelected}
+                onChange={(e) => onSelectAll(e.target.checked)}
+                aria-label="Select all videos"
+              />
+            </th>
+            <th className="w-16 px-3 py-2 text-sm font-bold uppercase">Thumb</th>
+            <th className="px-3 py-2 text-sm font-bold uppercase">URL</th>
+            <th className="w-28 px-3 py-2 text-sm font-bold uppercase">City</th>
+            <th className="px-3 py-2 text-sm font-bold uppercase">Category</th>
+            <th className="px-3 py-2 text-sm font-bold uppercase">Tags</th>
+            <th className="w-24 px-3 py-2 text-sm font-bold uppercase">Status</th>
+            <th className="w-28 px-3 py-2 text-sm font-bold uppercase">Created</th>
+            <th className="w-28 px-3 py-2 text-sm font-bold uppercase">Updated</th>
+            <th className="w-28 px-3 py-2 text-sm font-bold uppercase">Posted</th>
+            {isTrashed && <th className="w-32 px-3 py-2 text-sm font-bold uppercase">Trashed At</th>}
+            <th className="w-36 px-3 py-2 text-sm font-bold uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {videos.length === 0 ? (
+            <tr>
+              <Td colSpan={colCount} className="py-8 text-center text-black/50">
+                {isTrashed ? 'No trashed videos' : 'No videos found'}
+              </Td>
+            </tr>
+          ) : (
+            videos.map((v) => (
+              <tr
+                key={v.id}
+                className={cn(
+                  'border-b border-black/10 hover:bg-yellow-50',
+                  selectedIds.has(v.id) && 'bg-yellow-100',
+                  isTrashed && 'opacity-80'
+                )}
+              >
+                <Td>
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 cursor-pointer accent-yellow-500"
+                    checked={selectedIds.has(v.id)}
+                    onChange={(e) => onSelectOne(v.id, e.target.checked)}
+                    aria-label={`Select video ${v.video_id ?? v.video_url}`}
+                  />
+                </Td>
+                <Td>
+                  {v.thumbnail_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={v.thumbnail_url} alt="" className="h-10 w-10 border border-black object-cover" />
+                  ) : (
+                    <div className="h-10 w-10 border border-black bg-gray-200" />
+                  )}
+                </Td>
+                <Td className="max-w-50 truncate font-bold">
+                  <a
+                    href={displayVideoUrl(v)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-yellow-500"
+                  >
+                    {v.video_id ?? '–'}
+                  </a>
+                </Td>
+                <Td>{v.city ?? '–'}</Td>
+                <Td>
+                  <CategoryBadge category={v.category} />
+                </Td>
+                <Td className="max-w-40 truncate">{v.tags?.length ? v.tags.join(', ') : '–'}</Td>
+                <Td>
+                  <StatusCell
+                    video={v}
+                    isTrashed={isTrashed}
+                    changingStatus={changingStatus}
+                    onChange={onInlineStatusChange}
+                  />
+                </Td>
+                <Td>{formatDate(v.created_at)}</Td>
+                <Td>{formatDate(v.updated_at)}</Td>
+                <Td>{formatDate(v.video_post_date)}</Td>
+                {isTrashed && <Td className="text-black/60">{formatDate(v.trashed_at)}</Td>}
+                <Td>
+                  <VideoActions video={v} isTrashed={isTrashed} onEdit={onEdit} onAction={onAction} />
+                </Td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ─── Main page content ───────────────────────────────────────────────────────
+
 /**
  * Inner component that uses URL-based search params for status filtering and pagination.
  *
@@ -65,15 +521,16 @@ export default function VideosPage(): JSX.Element {
  */
 function VideosPageContent(): JSX.Element {
   const [videos, setVideos] = useState<VideoRecord[]>([]);
-  const [categories] = useState(CATEGORIES);
-  const [states] = useState(LOCATIONS);
   const [editVideo, setEditVideo] = useState<VideoRecord | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [actionConfirm, setActionConfirm] = useState<{ id: string; action: 'trash' | 'restore' | 'delete' } | null>(
+    null
+  );
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkLoading, setBulkLoading] = useState(false);
   const [bulkAction, setBulkAction] = useState<string>('');
+  const [bulkConfirm, setBulkConfirm] = useState<{ action: string } | null>(null);
   const [changingStatus, setChangingStatus] = useState<Set<string>>(new Set());
   const selectAllRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
@@ -84,6 +541,7 @@ function VideosPageContent(): JSX.Element {
   const searchParams = useSearchParams();
   const status = searchParams.get('status') || '';
   const search = searchParams.get('q') || '';
+  const isTrashed = status === 'trashed';
 
   const setStatus = useCallback(
     (newStatus: string) => {
@@ -100,20 +558,35 @@ function VideosPageContent(): JSX.Element {
     [router, pathname, searchParams]
   );
 
-  const loadData = useCallback(async () => {
-    const response = await getVideosForApi(supabase, {
-      status: status || null,
-      search: search || null,
-      page,
-      per_page: PER_PAGE,
-    });
+  const handleReset = useCallback(() => {
+    router.replace(pathname);
+  }, [router, pathname]);
 
-    if (response) {
-      setVideos(response.data);
-      setTotalCount(response.pagination.total_count);
+  const loadData = useCallback(async () => {
+    if (isTrashed) {
+      const { data } = await supabase
+        .from('videos')
+        .select('*')
+        .not('trashed_at', 'is', null)
+        .order('trashed_at', { ascending: false });
+
+      setVideos((data ?? []) as VideoRecord[]);
+      setTotalCount(data?.length ?? 0);
+    } else {
+      const response = await getVideosForApi(supabase, {
+        status: status || null,
+        search: search || null,
+        page,
+        per_page: PER_PAGE,
+      });
+
+      if (response) {
+        setVideos(response.data);
+        setTotalCount(response.pagination.total_count);
+      }
     }
     setSelectedIds(new Set());
-  }, [status, search, page, supabase]);
+  }, [isTrashed, status, search, page, supabase]);
 
   useEffect(() => {
     const timer = setTimeout(() => loadData(), 0);
@@ -153,39 +626,80 @@ function VideosPageContent(): JSX.Element {
     });
   }, []);
 
-  const handleApplyBulk = useCallback(async () => {
-    setBulkLoading(true);
-    const ids = Array.from(selectedIds);
-    setBulkAction('');
+  const handleSingleAction = useCallback(
+    async (id: string, action: 'trash' | 'restore' | 'delete') => {
+      const res = await fetch(`/api/auth/videos/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action }),
+      });
 
-    let action: string;
-    let body: Record<string, unknown>;
+      setActionConfirm(null);
 
-    if (bulkAction === 'delete') {
-      action = 'delete';
-      body = { action, ids };
+      if (res.ok) {
+        const label = action === 'trash' ? 'trashed' : action === 'restore' ? 'restored' : 'permanently deleted';
+        toast(`Video ${label}`, 'success');
+        loadData();
+      } else {
+        const err = await res.json().catch(() => ({ error: 'Action failed' }));
+        toast(err.error || 'Action failed', 'error');
+      }
+    },
+    [toast, loadData]
+  );
+
+  const executeBulkAction = useCallback(
+    async (action: string) => {
+      setBulkLoading(true);
+      const ids = Array.from(selectedIds);
+      setBulkAction('');
+
+      let body: Record<string, unknown>;
+
+      if (action === 'trash' || action === 'restore' || action === 'delete') {
+        body = { action, ids };
+      } else {
+        body = { action: 'update_status', ids, status: action };
+      }
+
+      const res = await fetch('/api/auth/videos/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      setBulkLoading(false);
+
+      if (res.ok) {
+        const labels: Record<string, string> = { trash: 'trashed', restore: 'restored', delete: 'permanently deleted' };
+        const label = labels[action] ?? `updated to ${STATUS_LABELS[action] ?? action}`;
+        toast(`${ids.length} video(s) ${label}`, 'success');
+        setSelectedIds(new Set());
+        loadData();
+      } else {
+        const err = await res.json().catch(() => ({ error: 'Bulk operation failed' }));
+        toast(err.error || 'Bulk operation failed', 'error');
+      }
+    },
+    [selectedIds, toast, loadData]
+  );
+
+  const handleApplyBulk = useCallback(() => {
+    if (bulkAction === 'trash' || bulkAction === 'delete') {
+      // Show confirmation for destructive actions
+      setBulkConfirm({ action: bulkAction });
     } else {
-      action = 'update_status';
-      body = { action, ids, status: bulkAction };
+      // Execute non-destructive actions immediately
+      executeBulkAction(bulkAction);
     }
+  }, [bulkAction, executeBulkAction]);
 
-    const res = await fetch('/api/auth/videos/bulk', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    setBulkLoading(false);
-
-    if (res.ok) {
-      const label = bulkAction === 'delete' ? 'deleted' : `updated to ${STATUS_LABELS[bulkAction] ?? bulkAction}`;
-      toast(`${ids.length} video(s) ${label}`, 'success');
-      setSelectedIds(new Set());
-      loadData();
-    } else {
-      const err = await res.json().catch(() => ({ error: 'Bulk operation failed' }));
-      toast(err.error || 'Bulk operation failed', 'error');
+  const handleConfirmBulk = useCallback(async () => {
+    if (!bulkConfirm) {
+      return;
     }
-  }, [selectedIds, bulkAction, toast, loadData]);
+    setBulkConfirm(null);
+    await executeBulkAction(bulkConfirm.action);
+  }, [bulkConfirm, executeBulkAction]);
 
   const handleInlineStatusChange = useCallback(
     async (id: string, newStatus: string) => {
@@ -211,220 +725,72 @@ function VideosPageContent(): JSX.Element {
     [toast, loadData]
   );
 
-  const handleDelete = async (id: string) => {
-    const res = await fetch(`/api/auth/videos/${id}`, { method: 'DELETE' });
-    if (res.ok) {
-      toast('Video deleted', 'success');
-      setDeleteConfirm(null);
-      loadData();
-    } else {
-      toast('Failed to delete video', 'error');
-    }
-  };
-
   const allSelected = videos.length > 0 && selectedIds.size === videos.length;
-  const totalPages = Math.ceil(totalCount / PER_PAGE);
+  const totalPages = isTrashed ? 1 : Math.ceil(totalCount / PER_PAGE);
+
+  const actionConfirmLabel =
+    actionConfirm?.action === 'trash'
+      ? 'Trash'
+      : actionConfirm?.action === 'restore'
+        ? 'Restore'
+        : 'Permanently Delete';
 
   return (
     <section className="py-8" aria-labelledby="videos-heading">
-      <header className="mb-6 flex items-center justify-between">
-        <h1 id="videos-heading" className="text-3xl font-extrabold uppercase">
-          Videos
-        </h1>
-        <Button onClick={() => setShowAdd(true)}>+ Add</Button>
-      </header>
+      <VideosPageHeader isTrashed={isTrashed} onAdd={() => setShowAdd(true)} />
 
-      <div className="mb-4 flex flex-wrap items-center gap-3">
-        <SearchInput placeholder="Search videos…" />
-        <Select
-          variant="filter"
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          aria-label="Status filter"
-          options={STATUSES.map((s) => ({ value: s, label: STATUS_LABELS[s] }))}
-        />
-      </div>
+      <VideosFilterBar status={status} onStatusChange={setStatus} onReset={handleReset} />
 
-      {/* Bulk actions toolbar */}
       {selectedIds.size > 0 && (
-        <div className="mb-4 flex flex-wrap items-center gap-3 border-2 border-black bg-yellow-100 px-4 py-3">
-          <span className="text-sm font-bold uppercase">{selectedIds.size} selected</span>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <Select
-              variant="bulk"
-              value={bulkAction}
-              onChange={(e) => setBulkAction(e.target.value)}
-              disabled={bulkLoading}
-            >
-              <option value="">Bulk action…</option>
-              <option value="delete">Delete</option>
-              <optgroup label="Change status to…">
-                {BULK_STATUS_OPTIONS.map((s) => (
-                  <option key={s} value={s}>
-                    {STATUS_LABELS[s]}
-                  </option>
-                ))}
-              </optgroup>
-            </Select>
-
-            <Button
-              size="sm"
-              variant={bulkAction === 'delete' ? 'danger' : 'primary'}
-              disabled={!bulkAction || bulkLoading}
-              loading={bulkLoading}
-              onClick={handleApplyBulk}
-            >
-              Apply
-            </Button>
-
-            <Button size="sm" variant="secondary" disabled={bulkLoading} onClick={() => setSelectedIds(new Set())}>
-              Clear
-            </Button>
-          </div>
-        </div>
+        <BulkActionsToolbar
+          selectedCount={selectedIds.size}
+          bulkAction={bulkAction}
+          bulkLoading={bulkLoading}
+          isTrashed={isTrashed}
+          onBulkActionChange={(action) => setBulkAction(action)}
+          onApplyBulk={handleApplyBulk}
+          onClear={() => setSelectedIds(new Set())}
+        />
       )}
 
-      <div className="overflow-x-auto border-2 border-black bg-white">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b-2 border-black bg-gray-100">
-            <tr>
-              <th className="w-10 px-3 py-2">
-                <input
-                  ref={selectAllRef}
-                  type="checkbox"
-                  className="h-4 w-4 cursor-pointer accent-yellow-500"
-                  checked={allSelected}
-                  onChange={(e) => handleSelectAll(e.target.checked)}
-                  aria-label="Select all videos"
-                />
-              </th>
-              <th className="w-16 px-3 py-2 text-xs font-bold uppercase">Thumb</th>
-              <th className="px-3 py-2 text-xs font-bold uppercase">URL</th>
-              <th className="w-28 px-3 py-2 text-xs font-bold uppercase">City</th>
-              <th className="w-28 px-3 py-2 text-xs font-bold uppercase">Category</th>
-              <th className="w-24 px-3 py-2 text-xs font-bold uppercase">Status</th>
-              <th className="w-28 px-3 py-2 text-xs font-bold uppercase">Date</th>
-              <th className="w-28 px-3 py-2 text-xs font-bold uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {videos.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="px-3 py-8 text-center text-sm text-black/50">
-                  No videos found
-                </td>
-              </tr>
-            ) : (
-              videos.map((v) => (
-                <tr
-                  key={v.id}
-                  className={cn(
-                    'border-b border-black/10 hover:bg-yellow-50',
-                    selectedIds.has(v.id) && 'bg-yellow-100'
-                  )}
-                >
-                  <td className="px-3 py-2">
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4 cursor-pointer accent-yellow-500"
-                      checked={selectedIds.has(v.id)}
-                      onChange={(e) => handleSelectOne(v.id, e.target.checked)}
-                      aria-label={`Select video ${v.video_id ?? v.video_url}`}
-                    />
-                  </td>
-                  <td className="px-3 py-2">
-                    {v.thumbnail_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={v.thumbnail_url} alt="" className="h-10 w-10 border border-black object-cover" />
-                    ) : (
-                      <div className="h-10 w-10 border border-black bg-gray-200" />
-                    )}
-                  </td>
-                  <td className="max-w-50 truncate px-3 py-2 font-mono text-xs">
-                    <a
-                      href={displayVideoUrl(v)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline hover:text-yellow-500"
-                    >
-                      {v.video_id ?? v.video_url}
-                    </a>
-                  </td>
-                  <td className="px-3 py-2">{v.city}</td>
-                  <td className="px-3 py-2">
-                    {(() => {
-                      const cat = categories.find((c) => c.value === v.category);
-                      return cat ? (
-                        <span
-                          className={cn(
-                            'inline-block border border-black px-2 py-0.5 text-xs font-bold uppercase',
-                            TAG_VARIANTS[cat.color as TagVariant] ?? 'bg-gray-200 text-black'
-                          )}
-                        >
-                          {cat.name}
-                        </span>
-                      ) : (
-                        <span className="text-xs text-black/40">—</span>
-                      );
-                    })()}
-                  </td>
-                  <td className="px-3 py-2">
-                    <Select
-                      variant="inline"
-                      value={v.status}
-                      disabled={changingStatus.has(v.id)}
-                      className={cn(
-                        v.status === 'published'
-                          ? 'bg-green-500 text-white'
-                          : v.status === 'draft'
-                            ? 'bg-gray-400'
-                            : v.status === 'rejected'
-                              ? 'bg-red-500 text-white'
-                              : 'bg-yellow-400'
-                      )}
-                      onChange={(e) => handleInlineStatusChange(v.id, e.target.value)}
-                    >
-                      {BULK_STATUS_OPTIONS.map((s) => (
-                        <option key={s} value={s} className="bg-white text-black">
-                          {STATUS_LABELS[s]}
-                        </option>
-                      ))}
-                    </Select>
-                  </td>
-                  <td className="px-3 py-2 text-xs">{v.video_post_date?.slice(0, 10)}</td>
-                  <td className="px-3 py-2">
-                    <div className="flex gap-1">
-                      <Button onClick={() => setEditVideo(v)} variant="secondary" size="xs">
-                        Edit
-                      </Button>
-                      <Button onClick={() => setDeleteConfirm(v.id)} variant="danger-ghost" size="xs">
-                        Delete
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <VideosTable
+        videos={videos}
+        isTrashed={isTrashed}
+        allSelected={allSelected}
+        selectedIds={selectedIds}
+        selectAllRef={selectAllRef}
+        changingStatus={changingStatus}
+        onSelectAll={handleSelectAll}
+        onSelectOne={handleSelectOne}
+        onEdit={(video) => setEditVideo(video)}
+        onAction={(id, action) => setActionConfirm({ id, action })}
+        onInlineStatusChange={handleInlineStatusChange}
+      />
 
-      <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} />
+      {!isTrashed && <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} />}
 
-      {/* Delete confirmation dialog */}
-      {deleteConfirm && (
+      {actionConfirm && (
         <DeleteConfirmDialog
-          label="Video"
-          onCancel={() => setDeleteConfirm(null)}
-          onConfirm={() => handleDelete(deleteConfirm)}
+          label={actionConfirmLabel}
+          action={actionConfirm.action}
+          onCancel={() => setActionConfirm(null)}
+          onConfirm={() => handleSingleAction(actionConfirm.id, actionConfirm.action)}
+        />
+      )}
+
+      {bulkConfirm && (
+        <DeleteConfirmDialog
+          label={bulkConfirm.action === 'delete' ? 'Permanently Delete' : bulkConfirm.action === 'trash' ? 'Trash' : ''}
+          action={bulkConfirm.action as 'trash' | 'delete'}
+          onCancel={() => setBulkConfirm(null)}
+          onConfirm={handleConfirmBulk}
         />
       )}
 
       {showAdd && (
         <VideoFormModal
-          categories={categories}
-          locations={states}
+          categories={CATEGORIES}
+          locations={LOCATIONS}
           onClose={() => setShowAdd(false)}
           onSaved={() => {
             setShowAdd(false);
@@ -436,8 +802,8 @@ function VideosPageContent(): JSX.Element {
       {editVideo && (
         <VideoFormModal
           video={editVideo}
-          categories={categories}
-          locations={states}
+          categories={CATEGORIES}
+          locations={LOCATIONS}
           onClose={() => setEditVideo(null)}
           onSaved={() => {
             setEditVideo(null);
