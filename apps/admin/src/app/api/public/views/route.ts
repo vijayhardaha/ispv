@@ -36,7 +36,9 @@ function checkInMemoryLimit(key: string, limit: number, windowSec: number): bool
     inMemoryViews.set(key, { count: 1, resetAt: now + windowSec * 1000 });
     return true;
   }
-  if (entry.count >= limit) return false;
+  if (entry.count >= limit) {
+    return false;
+  }
   entry.count += 1;
   return true;
 }
@@ -55,7 +57,9 @@ async function checkRateLimit(req: Request, limit: number, windowSec: number): P
   const key = `views:${ip}`;
 
   const upstashAllowed = await tryUseUpstashRateLimit(key, limit, windowSec);
-  if (upstashAllowed) return true;
+  if (upstashAllowed) {
+    return true;
+  }
 
   return checkInMemoryLimit(key, limit, windowSec);
 }
@@ -71,20 +75,28 @@ async function checkRateLimit(req: Request, limit: number, windowSec: number): P
 export async function POST(req: Request) {
   try {
     const { video_id } = await req.json();
-    if (!video_id) return NextResponse.json({ error: 'video_id required' }, { status: 400 });
+    if (!video_id) {
+      return NextResponse.json({ error: 'video_id required' }, { status: 400 });
+    }
 
     // Allow high view increments — users skip videos fast
     const allowed = await checkRateLimit(req, 120, 60); // 120 increments per minute per IP
-    if (!allowed) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    if (!allowed) {
+      return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!supabaseUrl || !serviceKey) return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+    if (!supabaseUrl || !serviceKey) {
+      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+    }
 
     const sb = createClient(supabaseUrl, serviceKey, { "global": { fetch } } as any);
 
     const { error } = await sb.rpc('increment_video_view', { p_video_id: video_id });
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (e) {
