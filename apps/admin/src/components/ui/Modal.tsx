@@ -2,6 +2,7 @@
 
 import type { ComponentPropsWithoutRef, JSX, ReactNode } from 'react';
 
+import { Box } from '@/components/ui/Box';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/cn';
 
@@ -28,15 +29,9 @@ export function ModalOverlay({
 }): JSX.Element {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={onClose}>
-      <div
-        className={cn(
-          'w-full max-w-2xl border-2 border-black bg-white p-6 shadow-[8px_8px_0px_0px_#18181b]',
-          className
-        )}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <Box className={cn('w-full max-w-2xl p-6', className)} onClick={(e) => e.stopPropagation()}>
         {children}
-      </div>
+      </Box>
     </div>
   );
 }
