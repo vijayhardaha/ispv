@@ -23,6 +23,7 @@
     "@eslint/compat": "^2.1.0",
     "@prettier/plugin-xml": "^3.4.2",
     "@types/latinize": "^0.2.18",
+    "@upstash/redis": "^1.38.0",
     "@vijayhardaha/dev-config": "^2.2.0",
     "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^10.7.0",
