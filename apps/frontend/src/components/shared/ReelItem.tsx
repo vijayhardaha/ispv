@@ -9,15 +9,11 @@ import { extractInstagramId } from '@/lib/instagram';
 import type { VideoEntry } from '@/lib/videos';
 
 /**
- * Props for the ReelItem component.
+ * Single reel item displaying an embedded Instagram video with thumbnail overlay.
  *
  * @param {object} props - Component properties.
  * @param {VideoEntry} props.video - Video entry to render.
  * @param {boolean} props.active - Whether this item is currently in view.
- * @param {boolean} props.liked - Whether the user has liked this video.
- * @param {boolean} props.muted - Whether audio is muted.
- * @param {() => void} props.onLike - Callback to toggle like state.
- * @param {() => void} props.onToggleMute - Callback to toggle mute state.
  *
  * @returns {JSX.Element} Rendered reel item.
  */
@@ -38,8 +34,9 @@ export function ReelItem({ video, active }: { video: VideoEntry; active: boolean
           allowFullScreen
           onLoad={() => {
             setEmbedLoaded(true);
-            // Increment view count
-            fetch('https://admin-app.vercel.app/api/views', {
+            // Increment view count via admin public endpoint
+            const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://admin-app.vercel.app';
+            fetch(`${adminUrl}/api/public/views`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ video_id: video.id }),
