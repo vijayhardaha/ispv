@@ -21,7 +21,9 @@ import type { VideoEntry } from '@/lib/videos';
 export function LocationsMap({ locations, videos }: { locations: DbLocation[]; videos: VideoEntry[] }): JSX.Element {
   const stateCounts = videos.reduce<Record<string, number>>((acc, v) => {
     const loc = (v.location ?? '').trim().toLowerCase();
-    if (!loc) return acc;
+    if (!loc) {
+      return acc;
+    }
     acc[loc] = (acc[loc] || 0) + 1;
     return acc;
   }, {});
