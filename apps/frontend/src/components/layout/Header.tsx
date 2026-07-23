@@ -9,15 +9,8 @@ import { usePathname } from 'next/navigation';
 import { SubmitVideoDialog } from '@/components/features/SubmitVideoDialog';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
+import { HEADER_NAV_LINKS } from '@/constants/navlinks';
 import { cn } from '@/lib/cn';
-
-const NAV_LINKS = [
-  { href: '/', label: 'Home' },
-  { href: '/videos', label: 'All Videos' },
-  { href: '/why-students-are-protesting', label: 'Why Protest' },
-  { href: '/categories', label: 'Categories' },
-  { href: '/about', label: 'About' },
-];
 
 /**
  * Site-wide sticky header with navigation, branding, and mobile menu.
@@ -45,7 +38,7 @@ export function Header(): JSX.Element {
 
           <div className="hidden items-center gap-4 lg:flex">
             <nav className="flex items-center gap-2">
-              {NAV_LINKS.map((link) => (
+              {HEADER_NAV_LINKS.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -85,7 +78,7 @@ export function Header(): JSX.Element {
                 </Button>
               </div>
               <nav className="flex-1 space-y-1 overflow-y-auto px-4 py-4">
-                {NAV_LINKS.map((link) => (
+                {HEADER_NAV_LINKS.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
