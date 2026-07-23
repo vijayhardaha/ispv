@@ -148,3 +148,12 @@
 - **Description:** Browse videos discussing, comparing, or analyzing media coverage, reporting styles, public criticism, and journalism related to student protests.
 - **SEO Title:** Student Protest Media Analysis
 - **SEO Description:** Browse videos discussing, comparing, or analyzing media coverage, reporting styles, public criticism, and journalism related to student protests.
+
+---
+
+## Other
+
+- **Optimized Name:** Other
+- **Description:** Videos that do not fit into any other category — includes miscellaneous content related to student protests across India.
+- **SEO Title:** Other Student Protest Videos
+- **SEO Description:** Videos that do not fit into any other category — includes miscellaneous content related to student protests across India.
