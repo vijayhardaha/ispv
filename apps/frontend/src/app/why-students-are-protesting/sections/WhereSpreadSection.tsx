@@ -9,7 +9,9 @@ import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 
 /**
+ * Shows where the protest movement has spread with a call-to-action.
  *
+ * @returns {JSX.Element} Rendered geographic spread section.
  */
 export function WhereSpreadSection(): JSX.Element {
   return (
