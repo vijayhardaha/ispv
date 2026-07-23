@@ -24,7 +24,9 @@ export function Pagination({
   totalPages: number;
   onChange: (p: number) => void;
 }): JSX.Element | null {
-  if (totalPages <= 1) return null;
+  if (totalPages <= 1) {
+    return null;
+  }
   const pages = buildPageList(page, totalPages);
   return (
     <nav className="mt-8 flex flex-wrap items-center justify-center gap-2" aria-label="Pagination">
