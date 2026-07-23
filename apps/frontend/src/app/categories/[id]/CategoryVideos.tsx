@@ -8,6 +8,21 @@ import { VideoCard } from '@/components/shared/VideoCard';
 import type { FilterState } from '@/lib/schemas';
 import type { VideoEntry } from '@/lib/videos';
 
+/**
+ * Props for the category videos grid with filter and pagination controls.
+ *
+ * @type {CategoryVideosProps}
+ * @property {FilterState} state - Current filter values.
+ * @property {(state: FilterState) => void} setState - Updates the filter state.
+ * @property {number} total - Total number of filtered videos.
+ * @property {string[]} allTags - Available tags for filtering.
+ * @property {string[]} allLocations - Available locations for filtering.
+ * @property {VideoEntry[]} paged - Videos for the current page.
+ * @property {number} totalPages - Total number of pages.
+ * @property {number} safePage - Current page clamped to valid range.
+ * @property {(video: VideoEntry, playlist: VideoEntry[]) => void} onPlay - Opens the reel player.
+ * @property {(page: number) => void} onChangePage - Navigates to a different page.
+ */
 export interface CategoryVideosProps {
   state: FilterState;
   setState: (state: FilterState) => void;
@@ -22,18 +37,11 @@ export interface CategoryVideosProps {
 }
 
 /**
+ * Video grid with filter bar and pagination for a single category.
  *
- * @param props
- * @param props.state
- * @param props.setState
- * @param props.total
- * @param props.allTags
- * @param props.allLocations
- * @param props.paged
- * @param props.totalPages
- * @param props.safePage
- * @param props.onPlay
- * @param props.onChangePage
+ * @param {CategoryVideosProps} props - Filter state, video data, and callbacks.
+ *
+ * @returns {JSX.Element} Rendered video grid section.
  */
 export function CategoryVideos({
   state,
