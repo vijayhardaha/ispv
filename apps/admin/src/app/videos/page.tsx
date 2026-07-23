@@ -466,12 +466,18 @@ function VideosTable({
                   />
                 </Td>
                 <Td>
-                  {v.thumbnail_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={v.thumbnail_url} alt="" className="h-10 w-10 border border-black object-cover" />
-                  ) : (
-                    <div className="h-10 w-10 border border-black bg-gray-200" />
-                  )}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={v.thumbnail_url ?? '/sample.svg'}
+                    alt=""
+                    className="h-10 w-10 border border-black object-cover"
+                    onError={(e) => {
+                      const el = e.target as HTMLImageElement;
+                      if (!el.src.endsWith('/sample.svg')) {
+                        el.src = '/sample.svg';
+                      }
+                    }}
+                  />
                 </Td>
                 <Td className="max-w-50 truncate font-bold">
                   <a
