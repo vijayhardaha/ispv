@@ -15,10 +15,10 @@ import { Container } from '@/components/ui/Container';
  */
 export function ClosingCtaSection(): JSX.Element {
   return (
-    <section className="bg-black py-12">
+    <section className="bg-yellow-400 py-12">
       <Container className="flex flex-col items-center gap-4 text-center">
         <blockquote className="font-display text-2xl leading-tight font-extrabold text-white uppercase italic">
-          &ldquo;Every recording is a piece of the story.&rdquo;
+          &ldquo;Every video recording is a piece of the story.&rdquo;
         </blockquote>
         <Link href="/videos">
           <Button variant="light" shadow>
