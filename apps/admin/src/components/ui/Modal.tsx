@@ -97,18 +97,6 @@ export function Input({ className, ...props }: ComponentPropsWithoutRef<'input'>
 }
 
 /**
- * Styled select dropdown for admin forms.
- *
- * @param {object} props - Component properties.
- * @param {string} [props.className] - Additional CSS classes.
- *
- * @returns {JSX.Element} Rendered select.
- */
-export function Select({ className, ...props }: ComponentPropsWithoutRef<'select'>): JSX.Element {
-  return <select className={cn(inputBase, className)} {...props} />;
-}
-
-/**
  * Styled textarea for admin forms.
  *
  * @param {object} props - Component properties.
