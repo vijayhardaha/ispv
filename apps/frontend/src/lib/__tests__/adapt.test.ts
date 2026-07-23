@@ -24,7 +24,6 @@ const makeRow = (overrides: Partial<VideoRow> = {}): VideoRow => ({
   status: 'published',
   created_at: '2026-07-01T10:00:00Z',
   updated_at: '2026-07-01T10:00:00Z',
-  categories: { name: 'Protest Marches', color: 'blue' },
   ...overrides,
 });
 
@@ -84,11 +83,18 @@ describe('dbRowToVideoEntry', () => {
     expect(entry.thumbnail).toBe('');
   });
 
-  it('handles null categories (falls back to category value)', () => {
-    const row = makeRow({ categories: null, category: 'human-rights' });
+  it('resolves category name from CATEGORIES constant', () => {
+    const row = makeRow({ category: 'protest-marches' });
     const entry = dbRowToVideoEntry(row);
 
-    expect(entry.categoryName).toBe('human-rights');
+    expect(entry.categoryName).toBe('Protest Marches');
+  });
+
+  it('falls back to category value when not found in CATEGORIES', () => {
+    const row = makeRow({ category: 'unknown-category' });
+    const entry = dbRowToVideoEntry(row);
+
+    expect(entry.categoryName).toBe('unknown-category');
   });
 
   it('determines featured based on view_count > 1000', () => {
