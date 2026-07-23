@@ -8,6 +8,16 @@ import { getCategoryByValue, getLocations, type DbCategory } from '@/lib/db';
 import type { FilterState } from '@/lib/schemas';
 import { getAllVideosFromDb, type VideoEntry } from '@/lib/videos';
 
+/**
+ * Data shape for the category page, including category metadata and filter options.
+ *
+ * @type {CategoryPageData}
+ * @property {string} value - Category slug from the URL.
+ * @property {DbCategory | null} cat - Category record from the database.
+ * @property {string[]} allLocations - All available location names for filtering.
+ * @property {string[]} allTags - All unique tags across videos for filtering.
+ * @property {boolean} loading - Whether data is still being fetched.
+ */
 export interface CategoryPageData {
   value: string;
   cat: DbCategory | null;
@@ -16,6 +26,17 @@ export interface CategoryPageData {
   loading: boolean;
 }
 
+/**
+ * Filter state and pagination data for the category page video grid.
+ *
+ * @type {CategoryPageFilter}
+ * @property {FilterState} state - Current filter values.
+ * @property {(value: FilterState | ((prev: FilterState) => FilterState)) => void} setState - Updates the filter state.
+ * @property {number} total - Total number of filtered videos.
+ * @property {number} totalPages - Total number of paginated pages.
+ * @property {number} safePage - Current page clamped to valid range.
+ * @property {VideoEntry[]} paged - Videos for the current page slice.
+ */
 export interface CategoryPageFilter {
   state: FilterState;
   setState: React.Dispatch<React.SetStateAction<FilterState>>;
@@ -26,8 +47,11 @@ export interface CategoryPageFilter {
 }
 
 /**
+ * Manages category page data fetching, filtering, and pagination state.
  *
- * @param value
+ * @param {string} value - Category slug from the URL.
+ *
+ * @returns {CategoryPageData & { filters: CategoryPageFilter; play: ReturnType<typeof useReelPlayer>['play'] }} Category data, filter state, and reel player.
  */
 export function useCategoryPage(
   value: string
