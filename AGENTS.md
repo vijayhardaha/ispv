@@ -30,19 +30,22 @@
 
 ## Essential Commands
 
-| Command                | Action                                        |
-| ---------------------- | --------------------------------------------- |
-| `bun run dev`          | Start both frontend (:3000) and admin (:3001) |
-| `bun run dev:frontend` | Frontend dev server with Turbopack            |
-| `bun run dev:admin`    | Admin dev server on port 3001                 |
-| `bun run build`        | Production build for both apps                |
-| `bun run lint`         | ESLint check across all workspaces            |
-| `bun run lint:fix`     | ESLint auto-fix                               |
-| `bun run format`       | Prettier format all                           |
-| `bun run format:check` | Prettier check                                |
-| `bun run tsc`          | TypeScript type-check (`tsc --noEmit`)        |
+| Command                 | Action                                        |
+| ----------------------- | --------------------------------------------- |
+| `bun run dev`           | Start both frontend (:3000) and admin (:3001) |
+| `bun run dev:frontend`  | Frontend dev server with Turbopack            |
+| `bun run dev:admin`     | Admin dev server on port 3001                 |
+| `bun run build`         | Production build for both apps                |
+| `bun run lint`          | ESLint check across all workspaces            |
+| `bun run lint:fix`      | ESLint auto-fix                               |
+| `bun run format`        | Prettier format all                           |
+| `bun run format:check`  | Prettier check                                |
+| `bun run tsc`           | TypeScript type-check (`tsc --noEmit`)        |
+| `bun run test`          | Run all tests (Vitest) across workspaces      |
+| `bun run test:watch`    | Watch mode for tests                          |
+| `bun run test:coverage` | Run tests with coverage report                |
 
-Always run lint + tsc after making changes: `bun run lint && bun run tsc`.
+Always run lint + tsc after making changes: `bun run lint && bun run tsc`. Also run `bun run test` to verify no regressions.
 
 ## Frontend Knowledge Base
 
@@ -124,9 +127,8 @@ All video data is stored in Supabase (`videos`, `categories`, `locations` tables
 
 Key types:
 
-- `VideoEntry` — full video record (id, description, url, thumbnail, city, state, category, categoryName, tags, hashtags, duration, featured?)
-- `VideoCategory` — `string`
-- `DbCategory` — `{ id, value, name, color, description?, seo_title?, seo_description? }`
+- `VideoEntry` — full video record (id, description, url, thumbnail, city, location, category, categoryName, tags, hashtags, duration, featured?)
+- `DbCategory` — `{ id, value, name, color, description? }`
 - `DbLocation` — `{ id, value, name, description? }`
 - Helper functions: `getAllVideosFromDb()`, `getCategories()`, `getLocations()`, `getTags()`, `getCategoryByValue()`
 
@@ -142,7 +144,7 @@ Key types:
 
 ## Project state
 
-- **No test framework** configured
+- **Vitest ^4.1.10** configured per-app with 8 test files, 104 tests total
 - **No env files** exist (no `.env.example` either)
 - **No CI/CD** (no `.github/` directory)
 - **No analytics, no i18n, no PWA, no service worker**

@@ -27,25 +27,25 @@ Frontend → supabase.from('videos').select().eq('status', 'published')
 
 Only the `videos` table is consumed by the frontend. Filtered to `status = 'published'`.
 
-### videos table (admin migration `20260722000002_create_tables.sql`)
+### videos table (see `apps/admin/supabase/migrations/20260723000001_initial_schema.sql` for canonical DDL)
 
-| Column        | Type        | Used by frontend | Notes                       |
-| ------------- | ----------- | ---------------- | --------------------------- |
-| id            | uuid        | Yes              | Mapped to VideoEntry.id     |
-| ig_url        | text        | Yes              | Mapped to VideoEntry.url    |
-| ig_id         | text        | No               | Internal                    |
-| src           | text        | No               | Source platform             |
-| category      | text        | Yes              | FK to categories.value      |
-| state         | text        | Yes              | Mapped to VideoEntry.state  |
-| city          | text        | Yes              | Mapped to VideoEntry.city   |
-| tags          | text[]      | Yes              | Mapped to VideoEntry.tags   |
-| description   | text        | Yes              | Mapped to VideoEntry.desc   |
-| thumbnail_url | text        | Yes              | Mapped to VideoEntry.thumb  |
-| ig_post_date  | timestamptz | No               | Display only                |
-| view_count    | integer     | Yes              | Used for featured heuristic |
-| status        | text        | Yes              | Filter: `published` only    |
-| color         | text        | No               | Admin UI chip colour        |
-| created_at    | timestamptz | No               | Ordering                    |
+| Column          | Type        | Used by frontend | Notes                       |
+| --------------- | ----------- | ---------------- | --------------------------- |
+| id              | uuid        | Yes              | Mapped to VideoEntry.id     |
+| video_url       | text        | Yes              | Mapped to VideoEntry.url    |
+| video_id        | text        | No               | Internal                    |
+| video_src       | text        | No               | Source platform             |
+| category        | text        | Yes              | Category value               |
+| location        | text        | Yes              | Mapped to VideoEntry.state  |
+| city            | text        | Yes              | Mapped to VideoEntry.city   |
+| tags            | text[]      | Yes              | Mapped to VideoEntry.tags   |
+| description     | text        | Yes              | Mapped to VideoEntry.desc   |
+| thumbnail_url   | text        | Yes              | Mapped to VideoEntry.thumb  |
+| video_post_date | timestamptz | No               | Display only                |
+| view_count      | integer     | Yes              | Used for featured heuristic |
+| status          | text        | Yes              | Filter: `published` only    |
+| trashed_at      | timestamptz | No               | Soft-delete support         |
+| created_at      | timestamptz | No               | Ordering                    |
 
 ### categories table
 
@@ -70,6 +70,9 @@ No pagination, no filtering. For a large archive this will be slow.
 The frontend has no `supabase/` directory or migration files. All schema lives in `apps/admin/supabase/migrations/`.
 
 **Fix:** Create a shared migration workflow — admin migrations are authoritative. Frontend should document which admin migrations it depends on rather than duplicating them.
+
+> **Note:** All old incremental migrations have been consolidated into a single file:
+> `apps/admin/supabase/migrations/20260723000001_initial_schema.sql`
 
 ### 4. `VideoEntry.duration` field is deprecated
 
@@ -235,11 +238,13 @@ export async function trackVideoView(videoId: string): Promise<void> {
 | `apps/frontend/src/components/features/FilterBar.tsx` | Use RPC for filtering                 |
 | `apps/frontend/src/components/shared/Pagination.tsx`  | Use RPC total count                   |
 
-## Migration Files to Add (in `apps/admin/supabase/migrations/`)
+## Migration Files to Add
 
-| File                                                 | Purpose                     |
-| ---------------------------------------------------- | --------------------------- |
-| `20260722000011_create_get_published_videos_rpc.sql` | Frontend read-optimized RPC |
+| Location                                           | Purpose                     |
+| -------------------------------------------------- | --------------------------- |
+| `apps/admin/supabase/migrations/`                  | Frontend read-optimized RPC |
+
+All schema is consolidated into a single file: `apps/admin/supabase/migrations/20260723000001_initial_schema.sql`.
 
 ## Rollout Order
 

@@ -23,6 +23,10 @@ src/
 │   ├── not-found.tsx
 │   ├── about/page.tsx
 │   ├── categories/page.tsx, categories/[id]/page.tsx
+│   ├── dmca/page.tsx
+│   ├── privacy/page.tsx
+│   ├── sitemap/page.tsx
+│   ├── terms/page.tsx
 │   ├── videos/page.tsx
 │   └── why-students-are-protesting/page.tsx
 ├── components/
@@ -30,7 +34,7 @@ src/
 │   ├── layout/       # Header, Footer
 │   ├── shared/       # FilterBar, VideoCard, ReelPlayer, Pagination, GoogleAnalytics, VercelAnalytics
 │   └── ui/           # Primitives (Button, Dialog, Dropdown, Input, Badge, Card, Container, Tag)
-├── constants/        # seo.ts, colors.ts, categories.ts, navlinks.ts
+├── constants/        # seo.ts, colors.ts, navlinks.ts
 ├── data/             # videos.ts (VideoEntry + getAllVideosFromDb), slogans.ts
 ├── helpers/          # filterVideos.ts + tests
 ├── hooks/            # useFilterState.ts, useReelPlayer.ts
