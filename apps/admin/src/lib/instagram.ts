@@ -31,16 +31,16 @@ export function detectSource(url: string): string {
  * Builds the best available display URL for a video record.
  *
  * @param {object} v - Video record.
- * @param {string} v.src - Source platform.
- * @param {string|null} [v.ig_id] - Extracted Instagram media ID.
- * @param {string} [v.ig_url] - Original Instagram URL.
+ * @param {string} v.video_src - Source platform.
+ * @param {string|null} [v.video_id] - Extracted Instagram media ID.
+ * @param {string} [v.video_url] - Original Instagram URL.
  *
  * @returns {string} Clickable URL for the video.
  */
-export function displayVideoUrl(v: { src: string; ig_id?: string | null; ig_url?: string }): string {
-  if (v.src === 'youtube') return v.ig_url ?? '';
-  if (v.ig_id) return `https://www.instagram.com/p/${v.ig_id}/`;
-  return v.ig_url ?? '';
+export function displayVideoUrl(v: { video_src: string; video_id?: string | null; video_url?: string }): string {
+  if (v.video_src === 'youtube') return v.video_url ?? '';
+  if (v.video_id) return `https://www.instagram.com/p/${v.video_id}/`;
+  return v.video_url ?? '';
 }
 
 /**
