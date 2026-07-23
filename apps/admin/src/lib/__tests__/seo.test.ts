@@ -5,7 +5,7 @@
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { siteUrl } from '@/utils/seo';
+import { siteUrl } from '@/lib/seo';
 
 describe('siteUrl', () => {
   const originalEnv = process.env;
