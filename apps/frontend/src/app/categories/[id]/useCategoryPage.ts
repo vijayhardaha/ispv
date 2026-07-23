@@ -64,7 +64,9 @@ export function useCategoryPage(
   const loaded = useRef(false);
 
   useEffect(() => {
-    if (loaded.current) return;
+    if (loaded.current) {
+      return;
+    }
     loaded.current = true;
     Promise.all([getAllVideosFromDb(), getCategoryByValue(value), getLocations()]).then(([v, c, locs]) => {
       setAllVideos(v);
