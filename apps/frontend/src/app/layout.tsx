@@ -9,7 +9,7 @@ import { GoogleAnalytics } from '@/components/shared/GoogleAnalytics';
 import { ReelPlayerProvider } from '@/components/shared/ReelPlayerProvider';
 import { VercelAnalytics } from '@/components/shared/VercelAnalytics';
 import { SITE_METADATA } from '@/constants/seo';
-import '@/index.css';
+import '@/globals.css';
 
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
 
