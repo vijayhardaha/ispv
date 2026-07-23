@@ -86,7 +86,9 @@ export function Pagination({
   totalPages: number;
   onPageChange: (n: number) => void;
 }): JSX.Element | null {
-  if (totalPages <= 1) return null;
+  if (totalPages <= 1) {
+    return null;
+  }
 
   return (
     <nav className="mt-4 flex items-center justify-center gap-1" aria-label="Pagination">
