@@ -11,21 +11,21 @@ import { createServerSupabase } from '@/lib/supabase-server';
  * @returns {Promise<NextResponse>} JSON response with submitted data.
  */
 export async function POST(req: Request) {
-  const { ig_url, tags, category, state, city } = await req.json();
-  if (!ig_url) return NextResponse.json({ error: 'ig_url required' }, { status: 400 });
+  const { video_url, tags, category, location, city } = await req.json();
+  if (!video_url) return NextResponse.json({ error: 'video_url required' }, { status: 400 });
 
-  const ig_id = extractIgId(ig_url);
-  const src = detectSource(ig_url);
-  if (!ig_id) return NextResponse.json({ error: 'invalid instagram url' }, { status: 400 });
+  const video_id = extractIgId(video_url);
+  const video_src = detectSource(video_url);
+  if (!video_id) return NextResponse.json({ error: 'invalid instagram url' }, { status: 400 });
 
   const supabase = await createServerSupabase();
   const { data, error } = await supabase.rpc('submit_video', {
-    p_ig_url: ig_url,
-    p_ig_id: ig_id,
-    p_src: src,
+    p_video_url: video_url,
+    p_video_id: video_id,
+    p_video_src: video_src,
     p_tags: tags || null,
     p_category: category || null,
-    p_state: state || null,
+    p_location: location || null,
     p_city: city || null,
   });
 

@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { createServerSupabase } from '@/lib/supabase-server';
 
 /**
- * Updates an existing video record by ID.
+ * Updates an existing video record by ID with duplicate validation.
  *
  * @param {Request} req - Incoming request with updated video data.
  * @param {{ params: Promise<{ id: string }> }} context - Route context containing the video ID.
@@ -14,6 +14,27 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   const { id } = await params;
   const supabase = await createServerSupabase();
   const body = await req.json();
+
+  if (body.video_url) {
+    const { data: existing } = await supabase
+      .from('videos')
+      .select('id')
+      .eq('video_url', body.video_url)
+      .neq('id', id)
+      .maybeSingle();
+    if (existing) return NextResponse.json({ error: 'Another video with this URL already exists' }, { status: 409 });
+  }
+
+  if (body.video_id) {
+    const { data: existing } = await supabase
+      .from('videos')
+      .select('id')
+      .eq('video_id', body.video_id)
+      .neq('id', id)
+      .maybeSingle();
+    if (existing) return NextResponse.json({ error: 'Another video with this ID already exists' }, { status: 409 });
+  }
+
   const { data, error } = await supabase.from('videos').update(body).eq('id', id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data);

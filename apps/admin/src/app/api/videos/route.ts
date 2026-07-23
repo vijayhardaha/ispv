@@ -18,7 +18,7 @@ export async function GET() {
 }
 
 /**
- * Creates a new video record.
+ * Creates a new video record with duplicate validation.
  *
  * @param {Request} req - Incoming request with video data.
  *
@@ -27,6 +27,17 @@ export async function GET() {
 export async function POST(req: Request) {
   const supabase = await createServerSupabase();
   const body = await req.json();
+
+  if (body.video_url) {
+    const { data: existing } = await supabase.from('videos').select('id').eq('video_url', body.video_url).maybeSingle();
+    if (existing) return NextResponse.json({ error: 'A video with this URL already exists' }, { status: 409 });
+  }
+
+  if (body.video_id) {
+    const { data: existing } = await supabase.from('videos').select('id').eq('video_id', body.video_id).maybeSingle();
+    if (existing) return NextResponse.json({ error: 'A video with this ID already exists' }, { status: 409 });
+  }
+
   const { data, error } = await supabase.from('videos').insert(body).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data);
