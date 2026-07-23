@@ -69,10 +69,7 @@ describe('detectSource', () => {
 
 describe('displayVideoUrl', () => {
   it('returns ig_url for youtube source', () => {
-    const result = displayVideoUrl({
-      src: 'youtube',
-      ig_url: 'https://youtu.be/abc123',
-    });
+    const result = displayVideoUrl({ src: 'youtube', ig_url: 'https://youtu.be/abc123' });
     expect(result).toBe('https://youtu.be/abc123');
   });
 
@@ -82,19 +79,12 @@ describe('displayVideoUrl', () => {
   });
 
   it('reconstructs Instagram URL from ig_id', () => {
-    const result = displayVideoUrl({
-      src: 'instagram',
-      ig_id: 'ABC123xyz',
-    });
+    const result = displayVideoUrl({ src: 'instagram', ig_id: 'ABC123xyz' });
     expect(result).toBe('https://www.instagram.com/p/ABC123xyz/');
   });
 
   it('falls back to ig_url when no ig_id', () => {
-    const result = displayVideoUrl({
-      src: 'instagram',
-      ig_id: null,
-      ig_url: 'https://www.instagram.com/p/ABC123xyz/',
-    });
+    const result = displayVideoUrl({ src: 'instagram', ig_id: null, ig_url: 'https://www.instagram.com/p/ABC123xyz/' });
     expect(result).toBe('https://www.instagram.com/p/ABC123xyz/');
   });
 
