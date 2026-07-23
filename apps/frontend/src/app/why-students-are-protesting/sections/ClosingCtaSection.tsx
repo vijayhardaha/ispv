@@ -9,7 +9,9 @@ import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 
 /**
+ * Closing call-to-action encouraging visitors to explore the archive.
  *
+ * @returns {JSX.Element} Rendered CTA section.
  */
 export function ClosingCtaSection(): JSX.Element {
   return (
