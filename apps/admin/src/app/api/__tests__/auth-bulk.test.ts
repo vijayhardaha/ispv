@@ -22,21 +22,21 @@ const mockFromDataQueue: unknown[] = [];
  * Each method logs calls to its corresponding mock and returns the chain.
  * `await chain` consumes and resolves to the next value in `mockFromDataQueue`.
  *
- * @returns {{ then: Function, update: Function, delete: Function, in: Function }} Thenable chain.
+ * @returns {Record<string, (...args: unknown[]) => unknown>} Thenable chain.
  */
 function makeChain() {
-  const chain = {
+  const chain: Record<string, any> = {
     then: (resolve: (v: unknown) => void) => resolve(mockFromDataQueue.shift() ?? { error: null }),
-    update: (...a: unknown[]) => {
-      mockUpdate(...a);
+    update: (..._a: unknown[]) => {
+      mockUpdate(..._a);
       return chain;
     },
-    delete: (...a: unknown[]) => {
-      mockDelete(...a);
+    delete: (..._a: unknown[]) => {
+      mockDelete(..._a);
       return chain;
     },
-    in: (...a: unknown[]) => {
-      mockIn(...a);
+    in: (..._a: unknown[]) => {
+      mockIn(..._a);
       return chain;
     },
     select: () => chain,

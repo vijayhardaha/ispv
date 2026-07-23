@@ -27,37 +27,37 @@ const mockFromDataQueue: unknown[] = [];
  * Each method logs calls to its corresponding mock and returns the chain.
  * `await chain` consumes and resolves to the next value in `mockFromDataQueue`.
  *
- * @returns {{ then: Function, select: Function, eq: Function, neq: Function, update: Function, delete: Function, single: Function, maybeSingle: Function }} Thenable chain.
+ * @returns {Record<string, (...args: unknown[]) => unknown>} Thenable chain.
  */
 function makeChain() {
-  const chain = {
+  const chain: Record<string, any> = {
     then: (resolve: (v: unknown) => void) => resolve(mockFromDataQueue.shift() ?? { data: null, error: null }),
-    select: (...a: unknown[]) => {
-      mockSelect(...a);
+    select: (..._a: unknown[]) => {
+      mockSelect(..._a);
       return chain;
     },
-    eq: (...a: unknown[]) => {
-      mockEq(...a);
+    eq: (..._a: unknown[]) => {
+      mockEq(..._a);
       return chain;
     },
-    neq: (...a: unknown[]) => {
-      mockEq(...a);
+    neq: (..._a: unknown[]) => {
+      mockEq(..._a);
       return chain;
     },
-    update: (...a: unknown[]) => {
-      mockUpdate(...a);
+    update: (..._a: unknown[]) => {
+      mockUpdate(..._a);
       return chain;
     },
-    delete: (...a: unknown[]) => {
-      mockDelete(...a);
+    delete: (..._a: unknown[]) => {
+      mockDelete(..._a);
       return chain;
     },
-    single: (...a: unknown[]) => {
-      mockSingle(...a);
+    single: (..._a: unknown[]) => {
+      mockSingle(..._a);
       return chain;
     },
-    maybeSingle: (...a: unknown[]) => {
-      mockMaybeSingle(...a);
+    maybeSingle: (..._a: unknown[]) => {
+      mockMaybeSingle(..._a);
       return chain;
     },
   };
@@ -124,11 +124,8 @@ describe('PUT /api/auth/videos/[id]', () => {
   });
 
   it('updates a video successfully', async () => {
-    mockFromDataQueue.push(
-      { data: null, error: null }, // URL duplicate check
-      { data: null, error: null }, // ID duplicate check
-      { data: mockVideo, error: null } // Update result
-    );
+    // No video_url or video_id in body — duplicate checks are skipped
+    mockFromDataQueue.push({ data: mockVideo, error: null });
 
     const req = new Request('http://localhost:3001/api/auth/videos/vid-1', {
       method: 'PUT',

@@ -29,33 +29,33 @@ const mockFromDataQueue: unknown[] = [];
  * and returns the same chain object. `await chain` consumes and resolves
  * to the next value in `mockFromDataQueue`.
  *
- * @returns {{ then: Function, select: Function, eq: Function, order: Function, insert: Function, single: Function, maybeSingle: Function }} Thenable chain.
+ * @returns {Record<string, (...args: unknown[]) => unknown>} Thenable chain.
  */
 function makeChain() {
-  const chain = {
+  const chain: Record<string, any> = {
     then: (resolve: (v: unknown) => void) => resolve(mockFromDataQueue.shift() ?? { data: null, error: null }),
-    select: (...a: unknown[]) => {
-      mockSelect(...a);
+    select: (..._a: unknown[]) => {
+      mockSelect(..._a);
       return chain;
     },
-    eq: (...a: unknown[]) => {
-      mockEq(...a);
+    eq: (..._a: unknown[]) => {
+      mockEq(..._a);
       return chain;
     },
-    order: (...a: unknown[]) => {
-      mockOrder(...a);
+    order: (..._a: unknown[]) => {
+      mockOrder(..._a);
       return chain;
     },
-    insert: (...a: unknown[]) => {
-      mockInsert(...a);
+    insert: (..._a: unknown[]) => {
+      mockInsert(..._a);
       return chain;
     },
-    single: (...a: unknown[]) => {
-      mockSingle(...a);
+    single: (..._a: unknown[]) => {
+      mockSingle(..._a);
       return chain;
     },
-    maybeSingle: (...a: unknown[]) => {
-      mockMaybeSingle(...a);
+    maybeSingle: (..._a: unknown[]) => {
+      mockMaybeSingle(..._a);
       return chain;
     },
   };
@@ -183,12 +183,10 @@ describe('POST /api/auth/videos', () => {
     const res = await POST(makeRequest({ status: 'invalid-status' }));
     expect(res.status).toBe(400);
   });
-
   it('handles database insert errors', async () => {
     mockFromDataQueue.push(
       { data: null, error: null }, // URL duplicate check
-      { data: null, error: null }, // ID duplicate check (video_id missing but route still checks)
-      { data: null, error: { message: 'Insert failed' } } // Insert error
+      { data: null, error: { message: 'Insert failed' } } // Insert error (no video_id in body)
     );
 
     const res = await POST(makeRequest({ video_url: 'https://www.instagram.com/reel/ABC123xyz/' }));

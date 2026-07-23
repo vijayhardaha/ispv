@@ -50,7 +50,7 @@ describe('POST /api/public/submit', () => {
     const res = await POST(makeRequest({ video_url: '' }));
     expect(res.status).toBe(400);
     const body = await res.json();
-    expect(body.error).toMatch(/invalid/i);
+    expect(body.error).toMatch(/required/i);
   });
 
   it('rejects non-Instagram URLs', async () => {
