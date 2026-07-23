@@ -41,7 +41,9 @@ function checkInMemoryLimit(key: string, limit: number, windowSec: number): bool
     inMemoryStore.set(key, { count: 1, resetAt: now + windowSec * 1000 });
     return true;
   }
-  if (entry.count >= limit) return false;
+  if (entry.count >= limit) {
+    return false;
+  }
   entry.count += 1;
   return true;
 }
@@ -60,7 +62,9 @@ async function checkRateLimit(req: Request, limit: number, windowSec: number): P
   const key = `rl:${ip}`;
 
   const upstashAllowed = await tryUseUpstashRateLimit(key, limit, windowSec);
-  if (upstashAllowed) return true;
+  if (upstashAllowed) {
+    return true;
+  }
 
   return checkInMemoryLimit(key, limit, windowSec);
 }
@@ -77,7 +81,9 @@ export async function POST(req: Request) {
   try {
     // Rate limit: 5 submissions per minute per IP
     const allowed = await checkRateLimit(req, 5, 60); // 5 submissions per minute per IP
-    if (!allowed) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    if (!allowed) {
+      return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    }
 
     const body = await req.json();
     const parsed = submitVideoBodySchema.safeParse({
@@ -88,17 +94,23 @@ export async function POST(req: Request) {
       city: body.city ?? null,
     });
 
-    if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid request' }, { status: 400 });
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid request' }, { status: 400 });
+    }
 
     const video_url = parsed.data.video_url as string;
     const video_id = extractIgId(video_url);
     const video_src = detectSource(video_url);
-    if (!video_id) return NextResponse.json({ error: 'Invalid instagram url' }, { status: 400 });
+    if (!video_id) {
+      return NextResponse.json({ error: 'Invalid instagram url' }, { status: 400 });
+    }
 
     // Use server-only service role key
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!supabaseUrl || !serviceKey) return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+    if (!supabaseUrl || !serviceKey) {
+      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+    }
 
     const sb = createClient(supabaseUrl, serviceKey, { "global": { fetch } } as any);
 
@@ -112,7 +124,9 @@ export async function POST(req: Request) {
       p_city: parsed.data.city ?? null,
     });
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
     return NextResponse.json(data ?? { ok: true });
   } catch (e) {
     return NextResponse.json({ error: e instanceof Error ? e.message : 'Internal error' }, { status: 500 });
