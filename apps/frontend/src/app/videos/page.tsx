@@ -48,7 +48,7 @@ export default function VideosPage(): JSX.Element {
 function VideosPageInner(): JSX.Element {
   const [videos, setVideos] = useState<VideoEntry[]>([]);
   const [allTags, setAllTags] = useState<string[]>([]);
-  const [allLocations, setAllLocations] = useState<string[]>([]);
+  const [allLocations, setAllLocations] = useState<{ slug: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const { play } = useReelPlayer();
 
@@ -56,7 +56,7 @@ function VideosPageInner(): JSX.Element {
     Promise.all([getAllVideosFromDb(), getTags(), getLocations()]).then(([data, tags, locs]) => {
       setVideos(data);
       setAllTags(tags);
-      setAllLocations(locs.map((l) => l.name));
+      setAllLocations(locs.map((l) => ({ slug: l.slug, name: l.name })));
       setLoading(false);
     });
   }, []);
@@ -76,7 +76,7 @@ function VideosPageInner(): JSX.Element {
           <h1 className="font-display mt-2 text-4xl font-extrabold tracking-tight uppercase md:text-6xl">
             The Full Archive
           </h1>
-          <p className="mt-2 max-w-2xl text-white/80">
+          <p className="mt-2 text-white/80">
             Every reel we have on file. Use the search, tags, and category filters to narrow it down.
           </p>
         </div>
@@ -93,12 +93,12 @@ function VideosPageInner(): JSX.Element {
 
         {loading ? (
           <div className="mt-10 flex items-center justify-center py-20">
-            <div className="font-mono text-xs font-bold text-black/50 uppercase">Loading videos...</div>
+            <div className="text-sm font-bold text-black/50 uppercase">Loading videos...</div>
           </div>
         ) : (
           <>
             <div className="mt-6 flex items-center justify-between">
-              <div className="font-mono text-[10px] tracking-widest text-black/60 uppercase">
+              <div className="text-[10px] tracking-widest text-black/60 uppercase">
                 Page {safePage} of {totalPages} · {filtered.length} videos
               </div>
             </div>
