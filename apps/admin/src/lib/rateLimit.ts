@@ -28,7 +28,9 @@ if (upstashUrl && upstashToken) {
  * @returns {Promise<boolean>} True if the request is allowed.
  */
 export async function tryUseUpstashRateLimit(key: string, limit: number, windowSec: number): Promise<boolean> {
-  if (!redis) return false;
+  if (!redis) {
+    return false;
+  }
   try {
     const value = await redis.incr(key);
     if (value === 1) {
