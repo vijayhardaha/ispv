@@ -4,6 +4,7 @@ import { useState, type JSX } from 'react';
 
 import { useToast } from '@/components/Toast';
 import { Field, Input, ModalActions, ModalOverlay, ModalTitle, Select, Textarea } from '@/components/ui/Modal';
+import { COLORS } from '@/constants/colors';
 import { extractIgId, reconstructIgUrl, detectSource } from '@/lib/instagram';
 import type { CategoryRecord, LocationRecord, VideoRecord } from '@/lib/types';
 
@@ -34,11 +35,14 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
   const [city, setCity] = useState(video?.city ?? '');
   const [tags, setTags] = useState<string>(video?.tags?.join(', ') ?? '');
   const [description, setDescription] = useState(video?.description ?? '');
+  const [color, setColor] = useState<string>(video?.color ?? '');
   const [status, setStatus] = useState<string>(video?.status ?? 'draft');
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     const ig_id = extractIgId(igUrl) ?? undefined;
     const src = detectSource(igUrl);
     const body = {
@@ -53,6 +57,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
         .map((t) => t.trim())
         .filter(Boolean),
       description: description || null,
+      color: color || null,
       status,
     };
 
@@ -61,6 +66,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
+    setLoading(false);
     if (res.ok) {
       toast(video ? 'Video updated' : 'Video created', 'success');
       onSaved();
@@ -121,7 +127,18 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
           </Select>
         </Field>
 
-        <ModalActions onClose={onClose} />
+        <Field label="Color">
+          <Select value={color} onChange={(e) => setColor(e.target.value)}>
+            <option value="">—</option>
+            {COLORS.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </Select>
+        </Field>
+
+        <ModalActions onClose={onClose} loading={loading} />
       </form>
     </ModalOverlay>
   );

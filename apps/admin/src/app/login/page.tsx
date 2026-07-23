@@ -13,13 +13,16 @@ import { createClient } from '@/lib/supabase';
 export default function LoginPage(): JSX.Element {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     setError(null);
     const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
     if (authError) {
       setError(authError.message);
     } else {
@@ -59,8 +62,8 @@ export default function LoginPage(): JSX.Element {
             />
           </div>
           {error && <p className="text-xs font-bold text-red-600 uppercase">{error}</p>}
-          <Button type="submit" className="w-full">
-            Sign In
+          <Button type="submit" className="w-full" loading={loading}>
+            {loading ? 'Signing In…' : 'Sign In'}
           </Button>
         </form>
       </article>

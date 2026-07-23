@@ -24,6 +24,8 @@ type ButtonSize = keyof typeof sizeStyles;
  * @param {string} [props.className] - Additional CSS classes.
  * @param {ButtonVariant} [props.variant] - Visual variant.
  * @param {ButtonSize} [props.size] - Size variant.
+ * @param {boolean} [props.loading] - Show loading spinner and disable.
+ * @param {boolean} [props.disabled] - Native disabled attribute.
  * @param {import('react').ReactNode} [props.children] - Button content.
  *
  * @returns {JSX.Element} Rendered button element.
@@ -32,9 +34,15 @@ export function Button({
   className,
   variant = 'primary',
   size = 'default',
+  loading = false,
   children,
+  disabled,
   ...props
-}: React.ComponentPropsWithoutRef<'button'> & { variant?: ButtonVariant; size?: ButtonSize }): JSX.Element {
+}: React.ComponentPropsWithoutRef<'button'> & {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  loading?: boolean;
+}): JSX.Element {
   return (
     <button
       className={cn(
@@ -44,8 +52,15 @@ export function Button({
         sizeStyles[size],
         className
       )}
+      disabled={disabled || loading}
       {...props}
     >
+      {loading && (
+        <span
+          className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-r-transparent"
+          aria-hidden="true"
+        />
+      )}
       {children}
     </button>
   );

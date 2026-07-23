@@ -63,16 +63,19 @@ export function ModalTitle({ editing = false, children }: { editing?: boolean; c
  *
  * @param {object} props - Component properties.
  * @param {() => void} props.onClose - Cancel handler.
+ * @param {boolean} [props.loading] - Show loading spinner on Save button.
  *
  * @returns {JSX.Element} Rendered action buttons.
  */
-export function ModalActions({ onClose }: { onClose: () => void }): JSX.Element {
+export function ModalActions({ onClose, loading = false }: { onClose: () => void; loading?: boolean }): JSX.Element {
   return (
     <div className="flex justify-end gap-2 pt-2">
-      <Button type="button" variant="secondary" onClick={onClose}>
+      <Button type="button" variant="secondary" onClick={onClose} disabled={loading}>
         Cancel
       </Button>
-      <Button type="submit">Save</Button>
+      <Button type="submit" loading={loading}>
+        {loading ? 'Saving…' : 'Save'}
+      </Button>
     </div>
   );
 }

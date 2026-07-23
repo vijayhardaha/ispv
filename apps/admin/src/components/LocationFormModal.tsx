@@ -35,24 +35,29 @@ export function LocationFormModal({
   const [seoDescription, setSeoDescription] = useState(item?.seo_description ?? '');
   const supabase = createClient();
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     const value = item?.value ?? slugify(latinize(name), { lower: true, strict: true });
     const payload = { value, name, description, seo_title: seoTitle, seo_description: seoDescription };
     if (item) {
       const { error } = await supabase.from('locations').update(payload).eq('id', item.id);
       if (error) {
+        setLoading(false);
         toast(error.message, 'error');
         return;
       }
     } else {
       const { error } = await supabase.from('locations').insert(payload);
       if (error) {
+        setLoading(false);
         toast(error.message, 'error');
         return;
       }
     }
+    setLoading(false);
     toast(item ? 'Location updated' : 'Location created', 'success');
     onSaved();
   };
@@ -77,7 +82,7 @@ export function LocationFormModal({
           <Textarea value={seoDescription} onChange={(e) => setSeoDescription(e.target.value)} />
         </Field>
 
-        <ModalActions onClose={onClose} />
+        <ModalActions onClose={onClose} loading={loading} />
       </form>
     </ModalOverlay>
   );
