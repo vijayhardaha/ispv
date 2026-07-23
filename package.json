@@ -14,6 +14,9 @@
     "lint:fix": "bun run --filter './apps/*' lint:fix",
     "format": "prettier --write --log-level error .",
     "format:check": "prettier --check --log-level error .",
+    "test": "bun run --filter './apps/*' test",
+    "test:watch": "bun run --filter './apps/*' test:watch",
+    "test:coverage": "bun run --filter './apps/*' test:coverage",
     "tsc": "bun run --filter './apps/*' tsc"
   },
   "devDependencies": {
@@ -45,5 +48,8 @@
   "trustedDependencies": [
     "sharp",
     "unrs-resolver"
-  ]
+  ],
+  "dependencies": {
+    "zod": "^4.4.3"
+  }
 }
