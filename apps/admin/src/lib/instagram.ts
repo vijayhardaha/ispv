@@ -22,8 +22,12 @@ export function extractIgId(url: string): string | null {
  * @returns {string} Platform name ("youtube" or "instagram").
  */
 export function detectSource(url: string): string {
-  if (/youtube\.com|youtu\.be/i.test(url)) return 'youtube';
-  if (/instagram\.com/i.test(url)) return 'instagram';
+  if (/youtube\.com|youtu\.be/i.test(url)) {
+    return 'youtube';
+  }
+  if (/instagram\.com/i.test(url)) {
+    return 'instagram';
+  }
   return 'instagram';
 }
 
@@ -38,8 +42,12 @@ export function detectSource(url: string): string {
  * @returns {string} Clickable URL for the video.
  */
 export function displayVideoUrl(v: { video_src: string; video_id?: string | null; video_url?: string }): string {
-  if (v.video_src === 'youtube') return v.video_url ?? '';
-  if (v.video_id) return `https://www.instagram.com/p/${v.video_id}/`;
+  if (v.video_src === 'youtube') {
+    return v.video_url ?? '';
+  }
+  if (v.video_id) {
+    return `https://www.instagram.com/p/${v.video_id}/`;
+  }
   return v.video_url ?? '';
 }
 
