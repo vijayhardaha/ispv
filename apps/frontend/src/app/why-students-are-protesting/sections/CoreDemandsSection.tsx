@@ -3,11 +3,13 @@
 import { type JSX } from 'react';
 
 import { Container } from '@/components/ui/Container';
-import { DEMANDS } from '@/constants/whyProtestContent';
+import { DEMANDS } from '@/constants/why-protest-data';
 import { cn } from '@/lib/cn';
 
 /**
+ * Displays the core demands of the student protest movement as a card grid.
  *
+ * @returns {JSX.Element} Rendered demands section.
  */
 export function CoreDemandsSection(): JSX.Element {
   return (
