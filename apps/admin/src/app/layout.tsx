@@ -46,18 +46,24 @@ export default async function RootLayout({ children }: { children: ReactNode }):
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${poppins.variable} ${jetbrainsMono.variable}`}>
       <body className="font-body flex min-h-screen flex-col bg-gray-100 text-black antialiased">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-[100] focus:border-2 focus:border-black focus:bg-yellow-400 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-black focus:uppercase"
+        >
+          Skip to content
+        </a>
         {user && (
           <header>
             <nav className="border-b-2 border-black bg-white py-3" aria-label="Main navigation">
               <Container className="flex items-center justify-between gap-6 text-lg">
                 <p className="font-display text-2xl font-extrabold uppercase">ISPV Admin</p>
-                <nav className="flex items-center gap-4">
+                <div className="flex items-center gap-4">
                   {HEADER_NAV_LINKS.map((link) => (
                     <Link key={link.href} href={link.href} className="font-bold uppercase hover:text-yellow-500">
                       {link.label}
                     </Link>
                   ))}
-                </nav>
+                </div>
                 <div>
                   <LogoutButton />
                 </div>
@@ -65,7 +71,7 @@ export default async function RootLayout({ children }: { children: ReactNode }):
             </nav>
           </header>
         )}
-        <main className="flex-1">
+        <main id="main-content" tabIndex={-1} className="flex-1">
           <Container>
             <Providers>{children}</Providers>
           </Container>

@@ -39,7 +39,13 @@ export default function RootLayout({ children }: { children: ReactNode }): JSX.E
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${poppins.variable} ${jetbrainsMono.variable}`}>
       <body className="font-body bg-gray-100 text-black antialiased">
-        <div className="flex min-h-screen flex-col">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-[100] focus:border-2 focus:border-black focus:bg-yellow-400 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-black focus:uppercase"
+        >
+          Skip to content
+        </a>
+        <div id="main-content" tabIndex={-1} className="flex min-h-screen flex-col">
           <ReelPlayerProvider>
             <Header />
             <main className="flex-1">{children}</main>
