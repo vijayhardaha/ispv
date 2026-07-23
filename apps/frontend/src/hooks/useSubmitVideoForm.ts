@@ -7,11 +7,42 @@ import { checkVideoExists, getLocations } from '@/lib/db';
 import { extractInstagramId } from '@/lib/instagram';
 import { submitVideoFormSchema, type SubmitVideoForm } from '@/lib/schemas';
 
+/**
+ * Optional configuration for the useSubmitVideoForm hook.
+ *
+ * @type {UseSubmitVideoFormOptions}
+ * @property {(open: boolean) => void} [onOpenChange] - Callback when the dialog open state changes.
+ * @property {() => void} [onSuccess] - Callback invoked after a successful video submission.
+ */
 export interface UseSubmitVideoFormOptions {
   onOpenChange?: (open: boolean) => void;
   onSuccess?: () => void;
 }
 
+/**
+ * Return type of the useSubmitVideoForm hook containing form state and handlers.
+ *
+ * @type {UseSubmitVideoFormReturn}
+ * @property {boolean} open - Whether the submission dialog is open.
+ * @property {(open: boolean) => void} setOpen - Sets dialog open state.
+ * @property {string} url - Current Instagram URL value.
+ * @property {(url: string) => void} setUrl - Sets the URL value.
+ * @property {string} location - Selected location value.
+ * @property {(location: string) => void} setLocation - Sets the location value.
+ * @property {string} city - Current city input value.
+ * @property {(city: string) => void} setCity - Sets the city value.
+ * @property {string} hashtags - Current hashtags input value.
+ * @property {(hashtags: string) => void} setHashtags - Sets the hashtags value.
+ * @property {string | null} error - Current validation error message.
+ * @property {(error: string | null) => void} setError - Sets the error message.
+ * @property {boolean} success - Whether the submission succeeded.
+ * @property {boolean} submitting - Whether a submission is in progress.
+ * @property {boolean} checkingUrl - Whether a duplicate URL check is running.
+ * @property {DbLocation[]} locations - Available location options.
+ * @property {() => void} handleBlur - URL blur handler for duplicate check.
+ * @property {(e: FormEvent<HTMLFormElement>) => void} handleSubmit - Form submit handler.
+ * @property {() => void} resetForm - Resets all form state to defaults.
+ */
 export interface UseSubmitVideoFormReturn {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -35,10 +66,13 @@ export interface UseSubmitVideoFormReturn {
 }
 
 /**
+ * Manages video submission form state, validation, and API interaction.
  *
- * @param props
- * @param props.onOpenChange
- * @param props.onSuccess
+ * @param {UseSubmitVideoFormOptions} [options] - Optional callbacks.
+ * @param {(open: boolean) => void} [options.onOpenChange] - Callback when dialog opens or closes.
+ * @param {() => void} [options.onSuccess] - Callback after a successful submission.
+ *
+ * @returns {UseSubmitVideoFormReturn} Form state and action handlers.
  */
 export function useSubmitVideoForm({
   onOpenChange,
@@ -108,7 +142,8 @@ export function useSubmitVideoForm({
   };
 
   const submitVideo = async () => {
-    const response = await fetch('/api/submit-video', {
+    const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://admin-app.vercel.app';
+    const response = await fetch(`${adminUrl}/api/public/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url, location, city, hashtags }),
