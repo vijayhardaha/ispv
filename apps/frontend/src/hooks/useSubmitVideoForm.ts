@@ -107,14 +107,18 @@ export function useSubmitVideoForm({
   };
 
   const handleOpen = (next: boolean) => {
-    if (!next) setTimeout(resetForm, 200);
+    if (!next) {
+      setTimeout(resetForm, 200);
+    }
     setOpen(next);
     onOpenChange?.(next);
   };
 
   const checkForDuplicate = async (val: string) => {
     const igId = extractInstagramId(val);
-    if (!igId) return;
+    if (!igId) {
+      return;
+    }
 
     setCheckingUrl(true);
     const exists = await checkVideoExists(val);
