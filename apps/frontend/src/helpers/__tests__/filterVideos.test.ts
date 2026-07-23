@@ -15,7 +15,7 @@ const makeVideo = (overrides: Partial<VideoEntry> = {}): VideoEntry => ({
   url: 'https://instagram.com/p/abc123/',
   thumbnail: 'https://example.com/thumb.jpg',
   city: 'Delhi',
-  state: 'Delhi',
+  location: 'Delhi',
   category: 'protest-marches',
   categoryName: 'Protest Marches',
   tags: ['peaceful', 'students', 'delhi'],
@@ -60,14 +60,14 @@ describe('filterVideos', () => {
 
   describe('location filter', () => {
     it('filters by state/location (case-insensitive)', () => {
-      const videos = [makeVideo({ id: '1', state: 'Delhi' }), makeVideo({ id: '2', state: 'Maharashtra' })];
+      const videos = [makeVideo({ id: '1', location: 'Delhi' }), makeVideo({ id: '2', location: 'Maharashtra' })];
       const result = filterVideos(videos, { ...baseState, location: 'delhi' });
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe('1');
     });
 
     it('passes all videos when location is "all"', () => {
-      const videos = [makeVideo({ id: '1', state: 'Delhi' }), makeVideo({ id: '2', state: 'Maharashtra' })];
+      const videos = [makeVideo({ id: '1', location: 'Delhi' }), makeVideo({ id: '2', location: 'Maharashtra' })];
       expect(filterVideos(videos, { ...baseState, location: 'all' })).toHaveLength(2);
     });
   });
@@ -122,7 +122,7 @@ describe('filterVideos', () => {
     });
 
     it('matches state name', () => {
-      const videos = [makeVideo({ id: '1', state: 'Delhi' }), makeVideo({ id: '2', state: 'Maharashtra' })];
+      const videos = [makeVideo({ id: '1', location: 'Delhi' }), makeVideo({ id: '2', location: 'Maharashtra' })];
       const result = filterVideos(videos, { ...baseState, query: 'maharashtra' });
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe('2');
@@ -172,9 +172,9 @@ describe('filterVideos', () => {
 
   it('combines multiple filters (AND logic)', () => {
     const videos = [
-      makeVideo({ id: '1', category: 'protest-marches', state: 'Delhi', tags: ['peaceful'] }),
-      makeVideo({ id: '2', category: 'human-rights', state: 'Delhi', tags: ['peaceful'] }),
-      makeVideo({ id: '3', category: 'protest-marches', state: 'Maharashtra', tags: ['peaceful'] }),
+      makeVideo({ id: '1', category: 'protest-marches', location: 'Delhi', tags: ['peaceful'] }),
+      makeVideo({ id: '2', category: 'human-rights', location: 'Delhi', tags: ['peaceful'] }),
+      makeVideo({ id: '3', category: 'protest-marches', location: 'Maharashtra', tags: ['peaceful'] }),
     ];
     const result = filterVideos(videos, {
       ...baseState,

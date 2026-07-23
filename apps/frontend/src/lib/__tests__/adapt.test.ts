@@ -10,16 +10,16 @@ import type { VideoRow } from '@/lib/adapt';
 
 const makeRow = (overrides: Partial<VideoRow> = {}): VideoRow => ({
   id: 'abc-123',
-  ig_url: 'https://www.instagram.com/p/DEF456/',
-  ig_id: 'DEF456',
-  src: 'instagram',
+  video_url: 'https://www.instagram.com/p/DEF456/',
+  video_id: 'DEF456',
+  video_src: 'instagram',
   category: 'protest-marches',
-  state: 'Delhi',
+  location: 'Delhi',
   city: 'New Delhi',
   tags: ['peaceful', 'students'],
   description: 'Students marching peacefully in New Delhi',
   thumbnail_url: 'https://example.com/thumb.jpg',
-  ig_post_date: '2026-07-01T10:00:00Z',
+  video_post_date: '2026-07-01T10:00:00Z',
   view_count: 500,
   status: 'published',
   created_at: '2026-07-01T10:00:00Z',
@@ -37,7 +37,7 @@ describe('dbRowToVideoEntry', () => {
     expect(entry.url).toBe('https://www.instagram.com/p/DEF456/');
     expect(entry.thumbnail).toBe('https://example.com/thumb.jpg');
     expect(entry.city).toBe('New Delhi');
-    expect(entry.state).toBe('Delhi');
+    expect(entry.location).toBe('Delhi');
     expect(entry.category).toBe('protest-marches');
     expect(entry.categoryName).toBe('Protest Marches');
     expect(entry.description).toBe('Students marching peacefully in New Delhi');

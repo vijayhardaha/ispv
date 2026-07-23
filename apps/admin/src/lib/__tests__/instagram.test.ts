@@ -68,36 +68,40 @@ describe('detectSource', () => {
 });
 
 describe('displayVideoUrl', () => {
-  it('returns ig_url for youtube source', () => {
-    const result = displayVideoUrl({ src: 'youtube', ig_url: 'https://youtu.be/abc123' });
+  it('returns video_url for youtube source', () => {
+    const result = displayVideoUrl({ video_src: 'youtube', video_url: 'https://youtu.be/abc123' });
     expect(result).toBe('https://youtu.be/abc123');
   });
 
-  it('returns empty string for youtube source without ig_url', () => {
-    const result = displayVideoUrl({ src: 'youtube' });
+  it('returns empty string for youtube source without video_url', () => {
+    const result = displayVideoUrl({ video_src: 'youtube' });
     expect(result).toBe('');
   });
 
-  it('reconstructs Instagram URL from ig_id', () => {
-    const result = displayVideoUrl({ src: 'instagram', ig_id: 'ABC123xyz' });
+  it('reconstructs Instagram URL from video_id', () => {
+    const result = displayVideoUrl({ video_src: 'instagram', video_id: 'ABC123xyz' });
     expect(result).toBe('https://www.instagram.com/p/ABC123xyz/');
   });
 
-  it('falls back to ig_url when no ig_id', () => {
-    const result = displayVideoUrl({ src: 'instagram', ig_id: null, ig_url: 'https://www.instagram.com/p/ABC123xyz/' });
-    expect(result).toBe('https://www.instagram.com/p/ABC123xyz/');
-  });
-
-  it('returns empty string when neither ig_id nor ig_url', () => {
-    const result = displayVideoUrl({ src: 'instagram' });
-    expect(result).toBe('');
-  });
-
-  it('prefers ig_id over ig_url for instagram source', () => {
+  it('falls back to video_url when no video_id', () => {
     const result = displayVideoUrl({
-      src: 'instagram',
-      ig_id: 'ID_FROM_ID',
-      ig_url: 'https://www.instagram.com/p/ID_FROM_URL/',
+      video_src: 'instagram',
+      video_id: null,
+      video_url: 'https://www.instagram.com/p/ABC123xyz/',
+    });
+    expect(result).toBe('https://www.instagram.com/p/ABC123xyz/');
+  });
+
+  it('returns empty string when neither video_id nor video_url', () => {
+    const result = displayVideoUrl({ video_src: 'instagram' });
+    expect(result).toBe('');
+  });
+
+  it('prefers video_id over video_url for instagram source', () => {
+    const result = displayVideoUrl({
+      video_src: 'instagram',
+      video_id: 'ID_FROM_ID',
+      video_url: 'https://www.instagram.com/p/ID_FROM_URL/',
     });
     expect(result).toBe('https://www.instagram.com/p/ID_FROM_ID/');
   });
