@@ -10,9 +10,11 @@ import { FAQSection } from '@/components/features/FAQSection';
 import { FeaturedVideos } from '@/components/features/FeaturedVideos';
 import { HeroSection } from '@/components/features/HeroSection';
 import { LocationsMap } from '@/components/features/LocationsMap';
+import { PullQuoteSection } from '@/components/features/PullQuoteSection';
 import { ShareSection } from '@/components/features/ShareSection';
 import { SloganTicker } from '@/components/features/SloganTicker';
 import { SITE_CONFIG } from '@/constants/seo';
+import { SLOGANS_PULL_QUOTES } from '@/constants/slogans';
 import { getCategories, getFeaturedCategories, getLocations } from '@/lib/db';
 import { buildMetadata } from '@/lib/meta';
 import { globalSchema } from '@/lib/schema';
@@ -41,7 +43,7 @@ export default async function HomePage(): Promise<JSX.Element> {
     getLocations(),
   ]);
 
-  const byCategory = Object.fromEntries(categories.map((c) => [c.value, videos.filter((v) => v.category === c.value)]));
+  const byCategory = Object.fromEntries(categories.map((c) => [c.slug, videos.filter((v) => v.category === c.slug)]));
 
   const totalCities = new Set(videos.map((v) => v.city).filter(Boolean)).size;
   const totalStates = new Set(videos.map((v) => v.location).filter(Boolean)).size;
@@ -53,11 +55,17 @@ export default async function HomePage(): Promise<JSX.Element> {
       <SloganTicker />
       <ShareSection />
       <FeaturedVideos categories={featuredCategories} />
-      {categories
-        .filter((c) => c.value !== 'other')
-        .map((c) => (
-          <CategorySection key={c.value} cat={c} videos={byCategory[c.value] ?? []} />
-        ))}
+      {(() => {
+        const filtered = categories.filter((c) => c.slug !== 'other');
+        return filtered.flatMap((c, i) => {
+          const sections: JSX.Element[] = [<CategorySection key={c.slug} cat={c} videos={byCategory[c.slug] ?? []} />];
+          if (i < filtered.length - 1) {
+            const quote = SLOGANS_PULL_QUOTES[i % SLOGANS_PULL_QUOTES.length];
+            sections.push(<PullQuoteSection key={`quote-${i}`} quote={quote.quote} person={quote.person} index={i} />);
+          }
+          return sections;
+        });
+      })()}
       <LocationsMap locations={locations} videos={videos} />
       <FAQSection />
       <CTASection />
