@@ -78,7 +78,7 @@ function LocationsPageContent(): JSX.Element {
   const totalPages = Math.ceil(totalCount / PER_PAGE);
 
   return (
-    <section aria-labelledby="locations-heading">
+    <section className="py-8" aria-labelledby="locations-heading">
       <header className="mb-6 flex items-center justify-between">
         <h1 id="locations-heading" className="text-3xl font-extrabold uppercase">
           Locations

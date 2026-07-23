@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, Suspense, type JSX } from 'react';
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
-import { cn } from '@/lib/cn';
 import { useToast } from '@/components/Toast';
 import { Button } from '@/components/ui/Button';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
@@ -13,6 +12,7 @@ import { SearchInput } from '@/components/ui/SearchInput';
 import { VideoFormModal } from '@/components/VideoFormModal';
 import { TAG_VARIANTS, type TagVariant } from '@/constants/colors';
 import { usePagination } from '@/hooks/usePagination';
+import { cn } from '@/lib/cn';
 import { displayVideoUrl } from '@/lib/instagram';
 import { createClient } from '@/lib/supabase';
 import type { CategoryRecord, LocationRecord, VideoRecord } from '@/lib/types';
