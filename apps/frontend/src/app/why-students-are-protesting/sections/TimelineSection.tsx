@@ -6,10 +6,12 @@ import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 import { Container } from '@/components/ui/Container';
-import { TIMELINE_ITEMS } from '@/constants/whyProtestContent';
+import { TIMELINE_ITEMS } from '@/constants/why-protest-data';
 
 /**
+ * Renders a chronological timeline of key protest events.
  *
+ * @returns {JSX.Element} Rendered timeline section.
  */
 export function TimelineSection(): JSX.Element {
   return (
