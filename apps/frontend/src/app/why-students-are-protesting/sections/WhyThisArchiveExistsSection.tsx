@@ -25,14 +25,14 @@ export function WhyThisArchiveExistsSection(): JSX.Element {
           perspective, together they form a visual record of the movement. Indian Students Protest Vault organises these
           publicly shared videos by event, city, date, and topic so they remain easy to discover and explore.
         </p>
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-6 flex flex-wrap gap-6">
           <Link href="/videos">
             <Button variant="default" shadow>
               Explore the Archive <ArrowRight className="size-4" />
             </Button>
           </Link>
           <Link href="/about">
-            <Button variant="default-outline">
+            <Button variant="light" shadow>
               Learn More <ArrowRight className="size-4" />
             </Button>
           </Link>
