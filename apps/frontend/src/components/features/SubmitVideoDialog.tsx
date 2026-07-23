@@ -105,11 +105,6 @@ export function SubmitVideoDialog({
                     id="reel-city"
                     value={form.city}
                     onChange={(e) => form.setCity(e.target.value.slice(0, 30))}
-                    onPaste={(e) => {
-                      e.preventDefault();
-                      const text = e.clipboardData.getData('text').trim().slice(0, 30);
-                      form.setCity(text);
-                    }}
                     placeholder="e.g. Mumbai"
                     maxLength={30}
                     disabled={form.submitting}

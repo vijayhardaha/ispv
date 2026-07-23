@@ -38,7 +38,7 @@ function getPageNumbers(current: number, total: number, onChange: (n: number) =>
   const addEllipsis = (key: string) => {
     items.push(
       <span key={key} className="px-1 text-xs font-bold text-black/40">
-        ...
+        …
       </span>
     );
   };

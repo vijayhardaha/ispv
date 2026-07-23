@@ -470,6 +470,7 @@ function VideosTable({
                   <img
                     src={v.thumbnail_url ?? '/sample.svg'}
                     alt=""
+                    loading="lazy"
                     className="h-10 w-10 border border-black object-cover"
                     onError={(e) => {
                       const el = e.target as HTMLImageElement;

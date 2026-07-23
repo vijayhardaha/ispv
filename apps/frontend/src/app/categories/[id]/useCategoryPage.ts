@@ -80,7 +80,7 @@ export function useCategoryPage(
 
   const allTags = useMemo(() => Array.from(new Set(allVideos.flatMap((v) => v.tags))).sort(), [allVideos]);
 
-  const { state, setState, filtered } = useFilterState({ videos: all, defaults: { category: value, perPage: 12 } });
+  const { state, setState, filtered } = useFilterState({ videos: all, defaults: { category: value, perPage: 72 } });
 
   useEffect(() => {
     if (value && value !== state.category) {
