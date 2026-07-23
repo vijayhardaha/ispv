@@ -221,7 +221,7 @@ BEGIN
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION public.submit_video TO anon;
+GRANT EXECUTE ON FUNCTION public.submit_video TO authenticated;
 
 -- 4c. increment_video_view
 CREATE OR REPLACE FUNCTION public.increment_video_view(p_video_id uuid)
@@ -235,7 +235,7 @@ BEGIN
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION public.increment_video_view TO anon;
+GRANT EXECUTE ON FUNCTION public.increment_video_view TO authenticated;
 
 -- 4d. get_tags – published video tags with counts
 CREATE OR REPLACE FUNCTION public.get_tags()
