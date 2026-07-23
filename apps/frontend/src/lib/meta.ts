@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+
 import { SITE_METADATA, SITE_CONFIG } from '@/constants/seo';
 import { siteUrl, getPermaLink } from '@/lib/seo';
 
@@ -108,12 +110,13 @@ const buildSeoTitle = (title: string = '', postfix: boolean): string => {
  * @example
  * const meta = buildMetadata({ title: 'Videos', description: 'Browse the archive', path: 'videos' });
  */
-export const buildMetadata = ({ title = '', description = '', path = '', postfix = false }: SeoProps) => {
+export const buildMetadata = ({ title = '', description = '', path = '', postfix = false }: SeoProps): Metadata => {
   const canonical = getPermaLink(path);
   const titleAndDescription = {
     title: buildSeoTitle(title, postfix),
     description: description || SITE_CONFIG.description,
   };
+
   const newMetadata = mergeDeep(SITE_METADATA, {
     ...titleAndDescription,
     metadataBase: new URL(siteUrl()),
@@ -121,5 +124,6 @@ export const buildMetadata = ({ title = '', description = '', path = '', postfix
     openGraph: { ...titleAndDescription, url: canonical },
     twitter: { ...titleAndDescription },
   });
+
   return newMetadata;
 };
