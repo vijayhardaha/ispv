@@ -3,71 +3,24 @@ import Link from 'next/link';
 import type { JSX } from 'react/jsx-runtime';
 
 import { Container } from '@/components/ui/Container';
-
-/**
- * Internal navigation link with optional anchor support.
- *
- * @type {InfoLink}
- * @augments LinkProps
- * @property {boolean} [isAnchor] - Whether to render as plain anchor instead of Next Link.
- */
-interface InfoLink extends LinkProps {
-  isAnchor?: boolean;
-}
-
-/**
- * External link entry used across navigation link lists.
- *
- * @type {LinkProps}
- * @property {string} label - Link display text.
- * @property {string} href - Full external URL.
- */
-interface LinkProps {
-  label: string;
-  href: string;
-}
-
-const infoLinks: InfoLink[] = [
-  { label: 'About the project', href: '/about' },
-  { label: 'Browse categories', href: '/categories' },
-  { label: 'All videos', href: '/videos' },
-  { label: 'Sitemap', href: '/sitemap' },
-  { label: 'DMCA', href: '/dmca' },
-  { label: 'Privacy Policy', href: '/privacy' },
-  { label: 'Terms of Service', href: '/terms' },
-];
-
-const usefulLinks: LinkProps[] = [
-  { label: 'CJP (Cockroach Janta Party) Instagram', href: 'https://www.instagram.com/cockroachjantaparty/' },
-  { label: 'BBC Search: CJP', href: 'https://www.bbc.com/search?q=cjp' },
-  { label: 'The News Pinch on YouTube', href: 'https://www.youtube.com/@TheNewsPinch/videos' },
-  { label: 'Bolta Hindustan on YouTube', href: 'https://www.youtube.com/@BoltaHindustan/videos' },
-  { label: 'Scroll.in search: protest', href: 'https://scroll.in/search?q=protest&page=1' },
-];
-
-const resourceLinks: LinkProps[] = [
-  { label: 'Know India — Government of India', href: 'https://knowindia.india.gov.in/' },
-  { label: 'Freedom of speech in India', href: 'https://en.wikipedia.org/wiki/Freedom_of_speech_in_India' },
-  { label: 'CJP Official Website', href: 'https://cockroachjanata.org/' },
-  { label: 'Ministry of Education, Government of India', href: 'https://www.education.gov.in' },
-];
-
-const bottomLinks: LinkProps[] = [
-  { label: 'Sitemap', href: '/sitemap' },
-  { label: 'DMCA', href: '/dmca' },
-  { label: 'Privacy', href: '/privacy' },
-  { label: 'Terms', href: '/terms' },
-];
+import {
+  FOOTER_BOTTOM_LINKS,
+  FOOTER_INFO_LINKS,
+  FOOTER_RESOURCE_LINKS,
+  FOOTER_USEFUL_LINKS,
+  type FooterInfoLink,
+  type NavLink,
+} from '@/constants/navlinks';
 
 /**
  * Renders a list of external links with anchor tags.
  *
  * @param {object} props - Component properties.
- * @param {LinkProps[]} props.links - External link entries.
+ * @param {NavLink[]} props.links - External link entries.
  *
  * @returns {JSX.Element} Rendered external link list.
  */
-function ExternalLinkList({ links }: { links: LinkProps[] }): JSX.Element {
+function ExternalLinkList({ links }: { links: NavLink[] }): JSX.Element {
   return (
     <ul className="mt-3 space-y-2 text-sm">
       {links.map((link) => (
@@ -85,11 +38,11 @@ function ExternalLinkList({ links }: { links: LinkProps[] }): JSX.Element {
  * Renders a list of internal navigation links with optional anchor support.
  *
  * @param {object} props - Component properties.
- * @param {InfoLink[]} props.links - Internal link entries.
+ * @param {FooterInfoLink[]} props.links - Internal link entries.
  *
  * @returns {JSX.Element} Rendered internal link list.
  */
-function InternalLinkList({ links }: { links: InfoLink[] }): JSX.Element {
+function InternalLinkList({ links }: { links: FooterInfoLink[] }): JSX.Element {
   return (
     <ul className="mt-3 space-y-2 text-sm">
       {links.map((link) => (
@@ -113,11 +66,11 @@ function InternalLinkList({ links }: { links: InfoLink[] }): JSX.Element {
  * Renders a list of resource links with leading icons.
  *
  * @param {object} props - Component properties.
- * @param {LinkProps[]} props.links - Resource link entries with icons.
+ * @param {NavLink[]} props.links - Resource link entries with icons.
  *
  * @returns {JSX.Element} Rendered resource link list.
  */
-function ResourceLinkList({ links }: { links: LinkProps[] }): JSX.Element {
+function ResourceLinkList({ links }: { links: NavLink[] }): JSX.Element {
   return (
     <ul className="mt-3 space-y-2 text-sm">
       {links.map((link) => (
@@ -175,19 +128,19 @@ export function Footer(): JSX.Element {
             {/* Info */}
             <div>
               <WidgetTitle>Info</WidgetTitle>
-              <InternalLinkList links={infoLinks} />
+              <InternalLinkList links={FOOTER_INFO_LINKS} />
             </div>
 
             {/* Useful links */}
             <div>
               <WidgetTitle>Useful Links</WidgetTitle>
-              <ExternalLinkList links={usefulLinks} />
+              <ExternalLinkList links={FOOTER_USEFUL_LINKS} />
             </div>
 
             {/* Resources */}
             <div>
               <WidgetTitle>Resources</WidgetTitle>
-              <ResourceLinkList links={resourceLinks} />
+              <ResourceLinkList links={FOOTER_RESOURCE_LINKS} />
             </div>
           </div>
         </Container>
@@ -234,7 +187,7 @@ export function Footer(): JSX.Element {
               . All rights reserved.
             </p>
             <div className="flex space-x-8">
-              {bottomLinks.map((link) => (
+              {FOOTER_BOTTOM_LINKS.map((link) => (
                 <a
                   key={link.label}
                   className="text-sm font-bold tracking-tight uppercase transition-colors hover:text-yellow-400"
