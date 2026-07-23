@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { Pagination } from '@/components/ui/Pagination';
 import { SearchInput } from '@/components/ui/SearchInput';
+import { Select } from '@/components/ui/Select';
 import { VideoFormModal } from '@/components/VideoFormModal';
 import { CATEGORIES } from '@/constants/categories';
 import { TAG_VARIANTS, type TagVariant } from '@/constants/colors';
@@ -166,7 +167,7 @@ function VideosPageContent(): JSX.Element {
       body = { action, ids, status: bulkAction };
     }
 
-    const res = await fetch('/api/videos/bulk', {
+    const res = await fetch('/api/auth/videos/bulk', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -187,7 +188,7 @@ function VideosPageContent(): JSX.Element {
   const handleInlineStatusChange = useCallback(
     async (id: string, newStatus: string) => {
       setChangingStatus((prev) => new Set(prev).add(id));
-      const res = await fetch(`/api/videos/${id}`, {
+      const res = await fetch(`/api/auth/videos/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
@@ -209,7 +210,7 @@ function VideosPageContent(): JSX.Element {
   );
 
   const handleDelete = async (id: string) => {
-    const res = await fetch(`/api/videos/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/auth/videos/${id}`, { method: 'DELETE' });
     if (res.ok) {
       toast('Video deleted', 'success');
       setDeleteConfirm(null);
@@ -233,18 +234,13 @@ function VideosPageContent(): JSX.Element {
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <SearchInput placeholder="Search videos…" />
-        <select
+        <Select
+          variant="filter"
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="border-2 border-black bg-white px-3 py-1.5 text-xs font-bold uppercase"
           aria-label="Status filter"
-        >
-          {STATUSES.map((s) => (
-            <option key={s} value={s}>
-              {STATUS_LABELS[s]}
-            </option>
-          ))}
-        </select>
+          options={STATUSES.map((s) => ({ value: s, label: STATUS_LABELS[s] }))}
+        />
       </div>
 
       {/* Bulk actions toolbar */}
@@ -253,10 +249,10 @@ function VideosPageContent(): JSX.Element {
           <span className="text-sm font-bold uppercase">{selectedIds.size} selected</span>
 
           <div className="flex flex-wrap items-center gap-2">
-            <select
+            <Select
+              variant="bulk"
               value={bulkAction}
               onChange={(e) => setBulkAction(e.target.value)}
-              className="border-2 border-black bg-white px-2 py-1 text-xs font-bold uppercase"
               disabled={bulkLoading}
             >
               <option value="">Bulk action…</option>
@@ -268,7 +264,7 @@ function VideosPageContent(): JSX.Element {
                   </option>
                 ))}
               </optgroup>
-            </select>
+            </Select>
 
             <Button
               size="sm"
@@ -372,12 +368,11 @@ function VideosPageContent(): JSX.Element {
                     })()}
                   </td>
                   <td className="px-3 py-2">
-                    <select
+                    <Select
+                      variant="inline"
                       value={v.status}
                       disabled={changingStatus.has(v.id)}
                       className={cn(
-                        'border border-black px-1.5 py-0.5 text-xs font-bold uppercase',
-                        'disabled:pointer-events-none disabled:opacity-50',
                         v.status === 'published'
                           ? 'bg-green-500 text-white'
                           : v.status === 'draft'
@@ -393,7 +388,7 @@ function VideosPageContent(): JSX.Element {
                           {STATUS_LABELS[s]}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </td>
                   <td className="px-3 py-2 text-xs">{v.video_post_date?.slice(0, 10)}</td>
                   <td className="px-3 py-2">
@@ -435,6 +430,7 @@ function VideosPageContent(): JSX.Element {
           }}
         />
       )}
+
       {editVideo && (
         <VideoFormModal
           video={editVideo}
