@@ -8,7 +8,6 @@ import { ClosingCtaSection } from '@/app/why-students-are-protesting/sections/Cl
 import { CoreDemandsSection } from '@/app/why-students-are-protesting/sections/CoreDemandsSection';
 import { MovementHero } from '@/app/why-students-are-protesting/sections/MovementHero';
 import { SourcesSection } from '@/app/why-students-are-protesting/sections/SourcesSection';
-import { TimelineSection } from '@/app/why-students-are-protesting/sections/TimelineSection';
 import { WhatIsSection } from '@/app/why-students-are-protesting/sections/WhatIsSection';
 import { WhereSpreadSection } from '@/app/why-students-are-protesting/sections/WhereSpreadSection';
 import { WhyDidBeginSection } from '@/app/why-students-are-protesting/sections/WhyDidBeginSection';
@@ -44,7 +43,6 @@ export default function MovementPage(): JSX.Element {
       <MovementHero />
       <WhatIsSection />
       <WhyDidBeginSection />
-      <TimelineSection />
       <CoreDemandsSection />
       <WhereSpreadSection />
       <WhyThisArchiveExistsSection />
