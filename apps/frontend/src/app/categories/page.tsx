@@ -7,25 +7,21 @@ import Link from 'next/link';
 
 import { VideoCard } from '@/components/shared/VideoCard';
 import { Button } from '@/components/ui/Button';
-import { CATEGORIES } from '@/constants/categories';
-import { toneMap } from '@/constants/colors';
 import { getAllVideosFromDb, type VideoEntry } from '@/data/videos';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
+import { getCategories, type DbCategory } from '@/lib/db';
 import { cn } from '@/lib/cn';
 
-/**
- * Categories overview page with category cards and recently added videos.
- *
- * @returns {JSX.Element} Rendered categories page.
- */
 export default function CategoriesPage(): JSX.Element {
   const [videos, setVideos] = useState<VideoEntry[]>([]);
+  const [categories, setCategories] = useState<DbCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const { play } = useReelPlayer();
 
   useEffect(() => {
-    getAllVideosFromDb().then((data) => {
-      setVideos(data);
+    Promise.all([getAllVideosFromDb(), getCategories()]).then(([v, c]) => {
+      setVideos(v);
+      setCategories(c);
       setLoading(false);
     });
   }, []);
@@ -40,7 +36,6 @@ export default function CategoriesPage(): JSX.Element {
 
   return (
     <div>
-      {/* Hero */}
       <section className="border-b-2 border-black bg-black py-10 text-white">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="font-mono text-[10px] tracking-widest text-yellow-500 uppercase">/ Categories</div>
@@ -48,7 +43,7 @@ export default function CategoriesPage(): JSX.Element {
             Browse by Category
           </h1>
           <p className="mt-2 max-w-2xl text-white/80">
-            Six core categories, all peaceful, all searchable. Click into any of them to see the full list, or jump to{' '}
+            All categories from the archive. Click into any to see the full list, or jump to{' '}
             <Link
               href="/videos"
               className="decoration-saffron underline decoration-2 underline-offset-4 hover:text-yellow-500"
@@ -60,19 +55,17 @@ export default function CategoriesPage(): JSX.Element {
         </div>
       </section>
 
-      {/* Big category cards */}
       <section className="mx-auto max-w-7xl px-4 py-10 md:px-6">
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {CATEGORIES.map((c) => {
-            const list = videos.filter((v) => v.category === c.id);
+          {categories.map((c) => {
+            const list = videos.filter((v) => v.category === c.value);
             return (
               <Link
-                key={c.id}
-                href={`/categories/${c.id}`}
+                key={c.value}
+                href={`/categories/${c.value}`}
                 className={cn(
                   'group shadow-brutal relative block overflow-hidden border-2 border-black p-5 transition-all',
-                  'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
-                  toneMap[c.color as keyof typeof toneMap] ?? ''
+                  'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5'
                 )}
               >
                 <div className="flex items-start justify-between">
@@ -82,7 +75,7 @@ export default function CategoriesPage(): JSX.Element {
                   <ArrowRight className="h-6 w-6 -rotate-12 transition-transform group-hover:rotate-0" />
                 </div>
                 <h2 className="font-display mt-3 text-3xl font-extrabold tracking-tight uppercase md:text-4xl">
-                  {c.label}
+                  {c.name}
                 </h2>
                 <p className="mt-2 max-w-xs text-sm opacity-90">{c.description}</p>
               </Link>
@@ -91,7 +84,6 @@ export default function CategoriesPage(): JSX.Element {
         </div>
       </section>
 
-      {/* View All CTA */}
       <section className="border-t-2 border-black bg-yellow-400 py-10">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-4 px-4 text-center md:px-6">
           <Grid3x3 className="h-10 w-10" />

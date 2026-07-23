@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type JSX } from 'react';
+import { useEffect, useMemo, useRef, useState, type JSX } from 'react';
 
 import { ArrowLeft, Grid3x3 } from 'lucide-react';
 import Link from 'next/link';
@@ -11,41 +11,49 @@ import { FilterBar } from '@/components/shared/FilterBar';
 import { Pagination } from '@/components/shared/Pagination';
 import { VideoCard } from '@/components/shared/VideoCard';
 import { Button } from '@/components/ui/Button';
-import { CATEGORIES } from '@/constants/categories';
-import { getAllVideosFromDb, type VideoCategory, type VideoEntry } from '@/data/videos';
+import { getAllVideosFromDb, type VideoEntry } from '@/data/videos';
 import { useFilterState } from '@/hooks/useFilterState';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
+import { getCategories, getCategoryByValue, type DbCategory } from '@/lib/db';
 
-/**
- * Individual category page with filtered videos, search, and pagination.
- *
- * @returns {JSX.Element} Rendered category page, or a not-found message if the category doesn't exist.
- */
 export default function CategoryPage(): JSX.Element {
-  const params = useParams<{ id: VideoCategory }>();
-  const id = params?.id;
-  const cat = CATEGORIES.find((c) => c.id === id);
+  const params = useParams<{ id: string }>();
+  const value = params?.id ?? '';
   const [allVideos, setAllVideos] = useState<VideoEntry[]>([]);
+  const [cat, setCat] = useState<DbCategory | null>(null);
+  const [loading, setLoading] = useState(true);
   const { play } = useReelPlayer();
+  const loaded = useRef(false);
 
   useEffect(() => {
-    getAllVideosFromDb().then((data) => {
-      setAllVideos(data);
+    if (loaded.current) return;
+    loaded.current = true;
+    Promise.all([getAllVideosFromDb(), getCategoryByValue(value)]).then(([v, c]) => {
+      setAllVideos(v);
+      setCat(c);
+      setLoading(false);
     });
-  }, []);
+  }, [value]);
 
-  const all = cat ? allVideos.filter((v) => v.category === cat.id) : [];
-  const allTags = Array.from(new Set(allVideos.flatMap((v) => v.tags))).sort();
-  const { state, setState, filtered } = useFilterState({
-    videos: all,
-    defaults: { category: id ?? 'all', perPage: 12 },
-  });
+  const all = useMemo(() => (cat ? allVideos.filter((v) => v.category === cat.value) : []), [allVideos, cat]);
+
+  const allTags = useMemo(() => Array.from(new Set(allVideos.flatMap((v) => v.tags))).sort(), [allVideos]);
+
+  const { state, setState, filtered } = useFilterState({ videos: all, defaults: { category: value, perPage: 12 } });
 
   useEffect(() => {
-    if (id && id !== state.category) {
-      setState((s: FilterState) => ({ ...s, category: id as VideoCategory, page: 1 }));
+    if (value && value !== state.category) {
+      setState((s: FilterState) => ({ ...s, category: value, page: 1 }));
     }
-  }, [id, setState, state.category]);
+  }, [value, setState, state.category]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-100">
+        <div className="font-mono text-xs font-bold text-black/50 uppercase">Loading...</div>
+      </div>
+    );
+  }
 
   if (!cat) {
     return (
@@ -83,7 +91,7 @@ export default function CategoryPage(): JSX.Element {
                 Category
               </span>
               <h1 className="font-display mt-2 text-4xl font-extrabold tracking-tight uppercase md:text-6xl">
-                {cat.label}
+                {cat.name}
               </h1>
               <p className="mt-1 max-w-2xl text-black/70">{cat.description}</p>
             </div>

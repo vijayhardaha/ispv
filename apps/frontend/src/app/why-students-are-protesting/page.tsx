@@ -207,6 +207,10 @@ export default function MovementPage(): JSX.Element {
               </div>
             ))}
           </div>
+          <p className="mt-4 text-xs text-black/50">
+            Disclaimer: This demand data is gathered from public internet sources. Please check official movement
+            communications for the most accurate and current information.
+          </p>
         </Container>
       </section>
 
