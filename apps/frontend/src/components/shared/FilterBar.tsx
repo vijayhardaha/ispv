@@ -5,7 +5,7 @@ import { type JSX } from 'react';
 import { MapPin, Search, X, Filter } from 'lucide-react';
 
 import { TagChips } from '@/components/shared/TagChips';
-import type { FilterState } from '@/lib/schemas';
+import type { FilterState } from '@/lib/frontend-schemas';
 
 /**
  * Search, location, and tag filter bar for the video archive.
@@ -15,7 +15,7 @@ import type { FilterState } from '@/lib/schemas';
  * @param {(s: FilterState) => void} props.setState - Callback to update filter state.
  * @param {number} props.total - Total number of filtered results.
  * @param {string[]} props.allTags - All available tags for the filter chips (capped at 100).
- * @param {string[]} [props.allLocations] - All available location names for the location dropdown.
+ * @param {Array<{ slug: string; name: string }>} [props.allLocations] - All available locations for the location dropdown.
  *
  * @returns {JSX.Element} Rendered filter bar.
  */
@@ -30,7 +30,7 @@ export function FilterBar({
   setState: (s: FilterState) => void;
   total: number;
   allTags: string[];
-  allLocations?: string[];
+  allLocations?: { slug: string; name: string }[];
 }): JSX.Element {
   const tagChips = allTags.slice(0, 100);
 
@@ -73,8 +73,8 @@ export function FilterBar({
             >
               <option value="all">All locations</option>
               {allLocations.map((loc) => (
-                <option key={loc} value={loc}>
-                  {loc}
+                <option key={loc.slug} value={loc.slug}>
+                  {loc.name}
                 </option>
               ))}
             </select>
