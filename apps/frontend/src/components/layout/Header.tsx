@@ -2,7 +2,7 @@
 
 import { useState, type JSX } from 'react';
 
-import { Menu, X } from 'lucide-react';
+import { Menu, Upload, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -61,6 +61,13 @@ export function Header(): JSX.Element {
           </div>
 
           <div className="flex items-center gap-2 lg:hidden">
+            <SubmitVideoDialog
+              trigger={
+                <Button variant="default" size="icon" aria-label="Submit video">
+                  <Upload className="h-5 w-5" />
+                </Button>
+              }
+            />
             <Button variant="default" size="icon" aria-label="Toggle menu" onClick={() => setMobileOpen((o) => !o)}>
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>

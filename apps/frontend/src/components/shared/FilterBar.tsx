@@ -4,28 +4,20 @@ import { type JSX } from 'react';
 
 import { MapPin, Search, X, Filter } from 'lucide-react';
 
-import type { VideoCategory } from '@/constants/categories';
-import { cn } from '@/lib/cn';
+import { TagChips } from '@/components/shared/TagChips';
 
 /**
  * Filter state for the video archive search and filtering.
  *
  * @type {FilterState}
  * @property {string} query - Free-text search query.
- * @property {VideoCategory} category - Active category filter.
+ * @property {string} category - Active category filter.
  * @property {string} location - Active location filter ('all' for no filter).
  * @property {string[]} tags - Selected tag filters.
  * @property {number} page - Current page number.
  * @property {number} perPage - Number of items per page.
  */
-export interface FilterState {
-  query: string;
-  category: VideoCategory;
-  location: string;
-  tags: string[];
-  page: number;
-  perPage: number;
-}
+import type { FilterState } from '@/lib/schemas';
 
 /**
  * Search, location, and tag filter bar for the video archive.
@@ -115,21 +107,8 @@ export function FilterBar({
             </button>
           )}
         </div>
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          {tagChips.map((t) => (
-            <button
-              key={t}
-              onClick={() => selectTag(t)}
-              className={cn(
-                'inline-flex cursor-pointer items-center gap-1 border-2 border-black px-2.5 py-1 font-mono text-xs font-bold uppercase transition-all',
-                state.tags.includes(t)
-                  ? 'shadow-brutal-sm bg-yellow-400 text-black'
-                  : 'bg-white hover:-translate-y-px hover:bg-yellow-400 hover:text-white'
-              )}
-            >
-              #{t}
-            </button>
-          ))}
+        <div className="mt-2">
+          <TagChips tags={tagChips} selected={state.tags} onSelect={selectTag} emptyMessage="No tags available" />
         </div>
       </div>
 

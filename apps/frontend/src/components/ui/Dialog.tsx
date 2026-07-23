@@ -17,19 +17,14 @@ export const Dialog = DialogPrimitive.Root;
 export const DialogTrigger = DialogPrimitive.Trigger;
 
 /**
- * Element that closes the dialog when clicked.
- */
-export const DialogClose = DialogPrimitive.Close;
-
-/**
  * Portal container that renders dialog content outside the DOM hierarchy.
  */
-export const DialogPortal = DialogPrimitive.Portal;
+const DialogPortal = DialogPrimitive.Portal;
 
 /**
  * Semi-transparent backdrop overlay for the dialog.
  */
-export const DialogOverlay = forwardRef<
+const DialogOverlay = forwardRef<
   ComponentRef<typeof DialogPrimitive.Overlay>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
 >(({ className, ...props }, ref) => (

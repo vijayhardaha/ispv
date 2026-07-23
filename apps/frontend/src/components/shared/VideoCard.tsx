@@ -3,7 +3,7 @@ import { useState, type JSX } from 'react';
 import { Play, MapPin } from 'lucide-react';
 import Image from 'next/image';
 
-import type { VideoEntry } from '@/data/videos';
+import type { VideoEntry } from '@/lib/videos';
 import { cn } from '@/lib/cn';
 
 /**

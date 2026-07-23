@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { SLOGANS } from '@/data/slogans';
+import { SLOGANS } from '@/constants/slogans';
 import { cn } from '@/lib/cn';
 
 const PLACARD_STYLES = [

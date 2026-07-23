@@ -7,6 +7,7 @@ import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
 import { GoogleAnalytics } from '@/components/shared/GoogleAnalytics';
 import { ReelPlayerProvider } from '@/components/shared/ReelPlayerProvider';
+import { VercelAnalytics } from '@/components/shared/VercelAnalytics';
 import { SITE_METADATA } from '@/constants/seo';
 import '@/index.css';
 
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: { children: ReactNode }): JSX.E
           </ReelPlayerProvider>
         </div>
         <GoogleAnalytics />
+        <VercelAnalytics />
       </body>
     </html>
   );

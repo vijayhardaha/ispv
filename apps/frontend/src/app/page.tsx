@@ -13,11 +13,11 @@ import { LocationsMap } from '@/components/features/LocationsMap';
 import { ShareSection } from '@/components/features/ShareSection';
 import { SloganTicker } from '@/components/features/SloganTicker';
 import { SITE_CONFIG } from '@/constants/seo';
-import { getAllVideosFromDb } from '@/data/videos';
+import { getAllVideosFromDb } from '@/lib/videos';
 import { getCategories, getFeaturedCategories, getLocations } from '@/lib/db';
-import { buildMetadata } from '@/utils/meta';
-import { globalSchema } from '@/utils/schema';
-import { siteUrl } from '@/utils/seo';
+import { buildMetadata } from '@/lib/meta';
+import { globalSchema } from '@/lib/schema';
+import { siteUrl } from '@/lib/seo';
 
 const title = SITE_CONFIG.title;
 const description = SITE_CONFIG.description;
@@ -44,7 +44,7 @@ export default async function HomePage(): Promise<JSX.Element> {
   const byCategory = Object.fromEntries(categories.map((c) => [c.value, videos.filter((v) => v.category === c.value)]));
 
   const totalCities = new Set(videos.map((v) => v.city).filter(Boolean)).size;
-  const totalStates = new Set(videos.map((v) => v.state).filter(Boolean)).size;
+  const totalStates = new Set(videos.map((v) => v.location).filter(Boolean)).size;
 
   return (
     <>

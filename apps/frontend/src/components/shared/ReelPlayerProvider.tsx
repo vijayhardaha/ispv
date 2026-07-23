@@ -3,7 +3,7 @@
 import { useState, type ReactNode, type JSX } from 'react';
 
 import { ReelPlayer } from '@/components/shared/ReelPlayer';
-import type { VideoEntry } from '@/data/videos';
+import type { VideoEntry } from '@/lib/videos';
 import { ReelPlayerContext } from '@/hooks/useReelPlayer';
 
 /**

@@ -75,14 +75,21 @@ export function Pagination({
  * @returns {(number | '…')[]} Array of page numbers and ellipsis markers.
  */
 function buildPageList(page: number, total: number): (number | '…')[] {
-  const out: (number | '…')[] = [];
   const window = 1;
+  const pages: (number | '…')[] = [];
+  let lastWasGap = false;
+
   for (let i = 1; i <= total; i++) {
-    if (i === 1 || i === total || (i >= page - window && i <= page + window)) {
-      out.push(i);
-    } else if (out[out.length - 1] !== '…') {
-      out.push('…');
+    const isEdge = i === 1 || i === total;
+    const inWindow = i >= page - window && i <= page + window;
+    if (isEdge || inWindow) {
+      pages.push(i);
+      lastWasGap = false;
+    } else if (!lastWasGap) {
+      pages.push('…');
+      lastWasGap = true;
     }
   }
-  return out;
+
+  return pages;
 }

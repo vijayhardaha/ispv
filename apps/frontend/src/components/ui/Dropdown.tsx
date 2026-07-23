@@ -11,11 +11,6 @@ import { cn } from '@/lib/cn';
 export const Select = SelectPrimitive.Root;
 
 /**
- * Groups related select items under an optional label.
- */
-export const SelectGroup = SelectPrimitive.Group;
-
-/**
  * Displays the currently selected value inside the trigger.
  */
 export const SelectValue = SelectPrimitive.Value;

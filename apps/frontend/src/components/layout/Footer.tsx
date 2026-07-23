@@ -8,65 +8,52 @@ import { Container } from '@/components/ui/Container';
  * Internal navigation link with optional anchor support.
  *
  * @type {InfoLink}
- * @property {string} label - Link display text.
- * @property {string} href - Internal route or anchor URL.
+ * @augments LinkProps
  * @property {boolean} [isAnchor] - Whether to render as plain anchor instead of Next Link.
  */
-interface InfoLink {
-  label: string;
-  href: string;
+interface InfoLink extends LinkProps {
   isAnchor?: boolean;
 }
 
 /**
- * External navigation link entry.
+ * External link entry used across navigation link lists.
  *
- * @type {ExternalLink}
+ * @type {LinkProps}
  * @property {string} label - Link display text.
  * @property {string} href - Full external URL.
  */
-interface ExternalLink {
+interface LinkProps {
   label: string;
   href: string;
-}
-
-/**
- * External resource link with an icon component rendered beside the label.
- */
-interface ResourceLink {
-  label: string;
-  href: string;
-  Icon: React.ComponentType<{ className?: string }>;
 }
 
 const infoLinks: InfoLink[] = [
   { label: 'About the project', href: '/about' },
   { label: 'Browse categories', href: '/categories' },
   { label: 'All videos', href: '/videos' },
+  { label: 'Sitemap', href: '/sitemap' },
   { label: 'DMCA', href: '/dmca' },
   { label: 'Privacy Policy', href: '/privacy' },
   { label: 'Terms of Service', href: '/terms' },
 ];
 
-const usefulLinks: ExternalLink[] = [
-  { label: 'Instagram (open)', href: 'https://www.instagram.com/' },
-  { label: 'BBC India coverage', href: 'https://www.bbc.com/news/world/asia/india' },
-  { label: 'Indian Express', href: 'https://indianexpress.com/' },
-  { label: 'The Wire', href: 'https://thewire.in/' },
-  { label: 'Scroll.in', href: 'https://scroll.in/' },
+const usefulLinks: LinkProps[] = [
+  { label: 'CJP (Cockroach Janta Party) Instagram', href: 'https://www.instagram.com/cockroachjantaparty/' },
+  { label: 'BBC Search: CJP', href: 'https://www.bbc.com/search?q=cjp' },
+  { label: 'The News Pinch on YouTube', href: 'https://www.youtube.com/@TheNewsPinch/videos' },
+  { label: 'Bolta Hindustan on YouTube', href: 'https://www.youtube.com/@BoltaHindustan/videos' },
+  { label: 'Scroll.in search: protest', href: 'https://scroll.in/search?q=protest&page=1' },
 ];
 
-const resourceLinks: ResourceLink[] = [
-  { label: 'Know India — Government of India', href: 'https://knowindia.india.gov.in/', Icon: BookOpen },
-  {
-    label: 'Freedom of speech in India',
-    href: 'https://en.wikipedia.org/wiki/Freedom_of_speech_in_India',
-    Icon: BookOpen,
-  },
-  { label: 'CJP Official Website', href: 'https://cockroachjanata.org/', Icon: BookOpen },
+const resourceLinks: LinkProps[] = [
+  { label: 'Know India — Government of India', href: 'https://knowindia.india.gov.in/' },
+  { label: 'Freedom of speech in India', href: 'https://en.wikipedia.org/wiki/Freedom_of_speech_in_India' },
+  { label: 'CJP Official Website', href: 'https://cockroachjanata.org/' },
+  { label: 'Ministry of Education, Government of India', href: 'https://www.education.gov.in' },
 ];
 
-const bottomLinks: ExternalLink[] = [
+const bottomLinks: LinkProps[] = [
+  { label: 'Sitemap', href: '/sitemap' },
   { label: 'DMCA', href: '/dmca' },
   { label: 'Privacy', href: '/privacy' },
   { label: 'Terms', href: '/terms' },
@@ -76,11 +63,11 @@ const bottomLinks: ExternalLink[] = [
  * Renders a list of external links with anchor tags.
  *
  * @param {object} props - Component properties.
- * @param {ExternalLink[]} props.links - External link entries.
+ * @param {LinkProps[]} props.links - External link entries.
  *
  * @returns {JSX.Element} Rendered external link list.
  */
-export function ExternalLinkList({ links }: { links: ExternalLink[] }): JSX.Element {
+function ExternalLinkList({ links }: { links: LinkProps[] }): JSX.Element {
   return (
     <ul className="mt-3 space-y-2 text-sm">
       {links.map((link) => (
@@ -126,16 +113,16 @@ function InternalLinkList({ links }: { links: InfoLink[] }): JSX.Element {
  * Renders a list of resource links with leading icons.
  *
  * @param {object} props - Component properties.
- * @param {ResourceLink[]} props.links - Resource link entries with icons.
+ * @param {LinkProps[]} props.links - Resource link entries with icons.
  *
  * @returns {JSX.Element} Rendered resource link list.
  */
-function ResourceLinkList({ links }: { links: ResourceLink[] }): JSX.Element {
+function ResourceLinkList({ links }: { links: LinkProps[] }): JSX.Element {
   return (
     <ul className="mt-3 space-y-2 text-sm">
       {links.map((link) => (
         <li className="flex items-start gap-2" key={link.href}>
-          <link.Icon className="mt-0.5 size-4 text-yellow-500" />
+          <BookOpen className="mt-0.5 size-4 shrink-0 text-yellow-500" />
           <a className="hover:text-yellow-500" href={link.href} target="_blank" rel="noreferrer">
             {link.label}
           </a>
