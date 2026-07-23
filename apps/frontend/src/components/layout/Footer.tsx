@@ -43,7 +43,9 @@ const infoLinks: InfoLink[] = [
   { label: 'About the project', href: '/about' },
   { label: 'Browse categories', href: '/categories' },
   { label: 'All videos', href: '/videos' },
-  { label: 'How submissions work', href: '/about#how-it-works', isAnchor: true },
+  { label: 'DMCA', href: '/dmca' },
+  { label: 'Privacy Policy', href: '/privacy' },
+  { label: 'Terms of Service', href: '/terms' },
 ];
 
 const usefulLinks: ExternalLink[] = [
@@ -65,9 +67,9 @@ const resourceLinks: ResourceLink[] = [
 ];
 
 const bottomLinks: ExternalLink[] = [
-  { label: 'Privacy', href: '#' },
-  { label: 'Terms', href: '#' },
-  { label: 'Sitemap', href: '#' },
+  { label: 'DMCA', href: '/dmca' },
+  { label: 'Privacy', href: '/privacy' },
+  { label: 'Terms', href: '/terms' },
 ];
 
 /**
@@ -210,11 +212,17 @@ export function Footer(): JSX.Element {
                 <span className="font-bold text-yellow-500 uppercase">Disclaimer:</span> Indian Students Protest Vault
                 is an independent, non-partisan archive of publicly-shared Instagram reels. It is not affiliated with
                 Instagram/Meta, the Government of India, or any political party. All clips remain the property of their
-                original creators. If you believe a video should be removed, email
-                <a className="ml-1 underline hover:text-yellow-500" href="mailto:hi@protest.vault">
-                  hi@protest.vault
+                original creators. If you are the video owner and believe a video should be removed, please DM{' '}
+                <a
+                  className="underline hover:text-yellow-500"
+                  href="https://www.instagram.com/vegan.vijay/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  @vegan.vijay
                 </a>{' '}
-                and we will review it within 48 hours. We do not host any media files — embeds point back to Instagram.
+                on Instagram with a valid removal reason. We review all requests within 48 hours. We do not host any
+                media files — embeds point back to Instagram.
               </p>
             </div>
             <div className="flex items-center gap-2 font-mono text-sm tracking-widest text-zinc-400 uppercase">

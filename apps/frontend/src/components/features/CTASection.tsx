@@ -33,11 +33,11 @@ export function CTASection(): JSX.Element {
               </Button>
             }
           />
-          <Button variant="default-outline" size="lg" asChild>
-            <Link href="/videos">
+          <Link href="/videos">
+            <Button variant="default-outline" size="lg">
               Browse the Archive <ArrowRight className="size-4" />
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </div>
       </Container>
     </section>
