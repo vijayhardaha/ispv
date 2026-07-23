@@ -49,20 +49,16 @@ export default async function RootLayout({ children }: { children: ReactNode }):
         {user && (
           <header>
             <nav className="border-b-2 border-black bg-white py-3" aria-label="Main navigation">
-              <Container className="flex items-center justify-center">
-                <div className="flex items-center gap-6">
-                  <span className="font-display text-sm font-extrabold uppercase">ISPV Admin</span>
+              <Container className="flex items-center justify-between gap-6 text-lg">
+                <p className="font-display text-2xl font-extrabold uppercase">ISPV Admin</p>
+                <nav className="flex items-center gap-4">
                   {HEADER_NAV_LINKS.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="text-xs font-bold uppercase hover:text-yellow-500"
-                    >
+                    <Link key={link.href} href={link.href} className="font-bold uppercase hover:text-yellow-500">
                       {link.label}
                     </Link>
                   ))}
-                </div>
-                <div className="ml-auto">
+                </nav>
+                <div>
                   <LogoutButton />
                 </div>
               </Container>
