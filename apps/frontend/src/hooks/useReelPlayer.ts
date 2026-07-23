@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from 'react';
 
-import type { VideoEntry } from '@/data/videos';
+import type { VideoEntry } from '@/lib/videos';
 
 /**
  * Shape of the reel player context value.

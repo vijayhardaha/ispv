@@ -4,8 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
-import type { FilterState } from '@/components/shared/FilterBar';
-import type { VideoEntry, VideoCategory } from '@/data/videos';
+import type { FilterState } from '@/lib/schemas';
+import type { VideoEntry } from '@/lib/videos';
 import { filterVideos } from '@/helpers/filterVideos';
 
 const DEFAULT_STATE: FilterState = { query: '', category: 'all', location: 'all', tags: [], page: 1, perPage: 36 };
@@ -42,7 +42,7 @@ export function useFilterState({ videos, defaults }: UseFilterStateProps): {
     ...DEFAULT_STATE,
     ...defaults,
     query: searchParams?.get('q') ?? defaults?.query ?? '',
-    category: (searchParams?.get('category') as VideoCategory) ?? defaults?.category ?? 'all',
+    category: searchParams?.get('category') ?? defaults?.category ?? 'all',
     tags: searchParams?.get('tag') ? [searchParams.get('tag')!] : (defaults?.tags ?? []),
   }));
 

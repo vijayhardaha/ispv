@@ -1,4 +1,4 @@
-import type { VideoEntry } from '@/data/videos';
+import type { VideoEntry } from '@/lib/videos';
 
 export interface VideoRow {
   id: string;

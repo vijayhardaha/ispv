@@ -1,5 +1,5 @@
-import type { FilterState } from '@/components/shared/FilterBar';
-import type { VideoEntry } from '@/data/videos';
+import type { FilterState } from '@/lib/schemas';
+import type { VideoEntry } from '@/lib/videos';
 
 /**
  * Filters a list of videos by category, tags, and free-text query.

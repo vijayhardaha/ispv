@@ -1,29 +1,17 @@
+import { extractInstagramId } from '@/lib/instagram';
 import { supabase } from '@/lib/supabase';
 
-export interface DbCategory {
-  id: string;
-  value: string;
-  name: string;
-  color: string;
-  description: string | null;
-}
+import { CATEGORIES, LOCATIONS, FEATURED_SLUGS, type DbCategory, type DbLocation } from '@/constants/data';
 
-export interface DbLocation {
-  id: string;
-  value: string;
-  name: string;
-  description: string | null;
-}
+export type { DbCategory, DbLocation };
 
 /**
- * Fetches all categories from Supabase, ordered by name, with "other" pinned to the end.
+ * Returns all categories with "Other" pinned last.
  *
- * @returns {Promise<DbCategory[]>} Array of category entries.
+ * @returns {Promise<DbCategory[]>} Ordered category list.
  */
 export async function getCategories(): Promise<DbCategory[]> {
-  const { data, error } = await supabase.from('categories').select('*').order('name');
-  if (error) throw error;
-  const list: DbCategory[] = data ?? [];
+  const list = [...CATEGORIES];
   const other = list.findIndex((c) => c.value === 'other');
   if (other !== -1) {
     const [item] = list.splice(other, 1);
@@ -33,14 +21,12 @@ export async function getCategories(): Promise<DbCategory[]> {
 }
 
 /**
- * Fetches all locations from Supabase, ordered by name, with "Foreign (Outside India)" pinned to the end.
+ * Returns all locations with "Foreign (Outside India)" pinned last.
  *
- * @returns {Promise<DbLocation[]>} Array of location entries.
+ * @returns {Promise<DbLocation[]>} Ordered location list.
  */
 export async function getLocations(): Promise<DbLocation[]> {
-  const { data, error } = await supabase.from('locations').select('*').order('name');
-  if (error) throw error;
-  const list: DbLocation[] = data ?? [];
+  const list = [...LOCATIONS];
   const foreignIdx = list.findIndex((l) => l.value === 'foreign');
   if (foreignIdx !== -1) {
     const [item] = list.splice(foreignIdx, 1);
@@ -50,20 +36,27 @@ export async function getLocations(): Promise<DbLocation[]> {
 }
 
 /**
- * Fetches a single category by its URL-safe value slug.
+ * Finds a category by its URL-safe value slug.
  *
- * @param {string} value - Category value slug (e.g., "protest-marches").
+ * @param {string} value - Category value slug.
  *
- * @returns {Promise<DbCategory | null>} Category entry, or null if not found.
+ * @returns {Promise<DbCategory | null>} Matching category or null.
  */
 export async function getCategoryByValue(value: string): Promise<DbCategory | null> {
-  const { data, error } = await supabase.from('categories').select('*').eq('value', value).single();
-  if (error) return null;
-  return data;
+  return CATEGORIES.find((c) => c.value === value) ?? null;
 }
 
 /**
- * Fetches tags with occurrence counts from published videos, sorted by frequency descending.
+ * Returns featured categories in display order.
+ *
+ * @returns {Promise<DbCategory[]>} Featured category entries.
+ */
+export async function getFeaturedCategories(): Promise<DbCategory[]> {
+  return FEATURED_SLUGS.map((slug) => CATEGORIES.find((c) => c.value === slug)).filter(Boolean) as DbCategory[];
+}
+
+/**
+ * Fetches tags with occurrence counts from published videos.
  *
  * @returns {Promise<string[]>} Tag names ordered by popularity.
  */
@@ -73,23 +66,21 @@ export async function getTags(): Promise<string[]> {
   return data.map((r: { tag: string }) => r.tag);
 }
 
-const FEATURED_SLUGS = [
-  'protest-marches',
-  'police-conduct',
-  'gen-z-movement',
-  'acts-of-kindness',
-  'women-leading',
-  'human-rights',
-];
-
 /**
- * Fetches featured categories by predefined slugs, preserving the configured display order.
+ * Checks whether a video with the given URL or extracted Instagram ID already exists.
  *
- * @returns {Promise<DbCategory[]>} Array of featured category entries in display order.
+ * @param {string} url - The Instagram URL to check.
+ *
+ * @returns {Promise<boolean>} True if a duplicate video exists.
  */
-export async function getFeaturedCategories(): Promise<DbCategory[]> {
-  const { data, error } = await supabase.from('categories').select('*').in('value', FEATURED_SLUGS);
-  if (error || !data) return [];
-  const items: DbCategory[] = data;
-  return FEATURED_SLUGS.map((slug) => items.find((c) => c.value === slug)).filter(Boolean) as DbCategory[];
+export async function checkVideoExists(url: string): Promise<boolean> {
+  const videoId = extractInstagramId(url);
+  if (!videoId) return false;
+
+  const byUrl = supabase.from('videos').select('id').eq('video_url', url).maybeSingle();
+  const byId = supabase.from('videos').select('id').eq('video_id', videoId).maybeSingle();
+  const [urlResult, idResult] = await Promise.all([byUrl, byId]);
+
+  if (urlResult.data || idResult.data) return true;
+  return false;
 }
