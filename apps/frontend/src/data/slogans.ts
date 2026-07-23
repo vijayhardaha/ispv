@@ -2,8 +2,6 @@
  * Peaceful protest slogans — short, evocative, non-partisan statements
  * used in the marquee ticker and other UI elements.
  */
-// Peaceful protest slogans — short, evocative, in the spirit of the
-// movement. Not party-political, not communal. Just human.
 export const SLOGANS: string[] = [
   'Freedom survives when ordinary people refuse to look away.',
   'A nation grows stronger when every voice is free to speak.',

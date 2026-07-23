@@ -22,7 +22,12 @@ export default function VideosPage(): JSX.Element {
   );
 }
 
-function VideosPageInner() {
+/**
+ * Inner component that loads videos from the database and renders the filter bar, grid, and pagination.
+ *
+ * @returns {JSX.Element} Rendered videos page content.
+ */
+function VideosPageInner(): JSX.Element {
   const [videos, setVideos] = useState<VideoEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const { play } = useReelPlayer();

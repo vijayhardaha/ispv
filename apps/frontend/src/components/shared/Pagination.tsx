@@ -66,6 +66,14 @@ export function Pagination({
   );
 }
 
+/**
+ * Generates a windowed page number list with ellipsis gaps for large pagination ranges.
+ *
+ * @param {number} page - Current active page.
+ * @param {number} total - Total number of pages.
+ *
+ * @returns {(number | '…')[]} Array of page numbers and ellipsis markers.
+ */
 function buildPageList(page: number, total: number): (number | '…')[] {
   const out: (number | '…')[] = [];
   const window = 1;

@@ -4,17 +4,35 @@ import type { JSX } from 'react/jsx-runtime';
 
 import { Container } from '@/components/ui/Container';
 
+/**
+ * Internal navigation link with optional anchor support.
+ *
+ * @type {InfoLink}
+ * @property {string} label - Link display text.
+ * @property {string} href - Internal route or anchor URL.
+ * @property {boolean} [isAnchor] - Whether to render as plain anchor instead of Next Link.
+ */
 interface InfoLink {
   label: string;
   href: string;
   isAnchor?: boolean;
 }
 
+/**
+ * External navigation link entry.
+ *
+ * @type {ExternalLink}
+ * @property {string} label - Link display text.
+ * @property {string} href - Full external URL.
+ */
 interface ExternalLink {
   label: string;
   href: string;
 }
 
+/**
+ * External resource link with an icon component rendered beside the label.
+ */
 interface ResourceLink {
   label: string;
   href: string;
@@ -210,7 +228,15 @@ export function Footer(): JSX.Element {
         <Container>
           <div className="flex flex-col items-center justify-between gap-6 border-t-2 border-zinc-800 py-8 text-zinc-400 md:flex-row">
             <p className="text-sm font-bold tracking-tight uppercase">
-              © 2026 Indian Students Protest Vault. All rights reserved.
+              <a
+                href="https://ispv.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-yellow-400"
+              >
+                © 2026 Indian Students Protest Vault
+              </a>
+              . All rights reserved.
             </p>
             <div className="flex space-x-8">
               {bottomLinks.map((link) => (
