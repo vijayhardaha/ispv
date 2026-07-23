@@ -2,13 +2,12 @@
 
 import type { JSX } from 'react';
 
-import { ArrowRight, Grid3x3 } from 'lucide-react';
-import Link from 'next/link';
+import { Grid3x3 } from 'lucide-react';
 
+import { SectionHeader } from '@/components/shared/SectionHeader';
 import { VideoCard } from '@/components/shared/VideoCard';
-import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
-import { Tag, type TagVariant } from '@/components/ui/Tag';
+import type { TagVariant } from '@/components/ui/Tag';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 import type { DbCategory } from '@/lib/db';
 import type { VideoEntry } from '@/lib/videos';
@@ -28,23 +27,17 @@ export function CategorySection({ cat, videos }: { cat: DbCategory; videos: Vide
   const items = videos.slice(0, 6);
 
   return (
-    <section className="bg-gray-100 py-12 md:py-16" id={`section-${cat.value}`}>
+    <section className="bg-gray-100 py-12 md:py-16" id={`section-${cat.slug}`}>
       <Container>
-        <div className="mb-6 flex flex-col gap-4 border-b-2 border-zinc-900 pb-6 md:flex-row md:items-end md:justify-between">
-          <div>
-            <Tag variant={cat.color as TagVariant} text={cat.name} icon={<Grid3x3 className="inline h-3 w-3" />} />
-            <h2 className="text-4xl font-bold tracking-tighter uppercase md:text-5xl">{cat.name}</h2>
-            <p className="mt-2 text-zinc-700">{cat.description}</p>
-          </div>
-          <div className="mt-2 flex shrink-0 justify-start md:justify-end">
-            <Link href={`/categories/${cat.value}`}>
-              <Button variant="default-outline" size="sm">
-                <Grid3x3 className="size-4" />
-                View all <ArrowRight className="size-4" />
-              </Button>
-            </Link>
-          </div>
-        </div>
+        <SectionHeader
+          tagVariant={cat.color as TagVariant}
+          tagText={cat.tag}
+          tagIcon={<Grid3x3 className="inline h-3 w-3" />}
+          heading={cat.name}
+          description={cat.description ?? undefined}
+          href={`/categories/${cat.slug}`}
+          buttonIcon={<Grid3x3 className="size-4" />}
+        />
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
           {items.map((v) => (
