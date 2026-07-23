@@ -2,40 +2,34 @@
 
 import type { JSX } from 'react';
 
-import { ArrowRight, FileText, Flag, Search, Shield, ShieldAlert, Sparkles, Users } from 'lucide-react';
+import { ArrowRight, FileText, Flag, Heart, Shield, ShieldAlert, Sparkles, Users } from 'lucide-react';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 import { Tag } from '@/components/ui/Tag';
+import type { DbCategory } from '@/lib/db';
 
-const QUICK_CATEGORIES: { name: string; description: string; icon: typeof Flag }[] = [
-  { name: 'Peaceful Marches', description: 'Videos documenting peaceful protest marches across India.', icon: Flag },
-  {
-    name: 'Police Violence',
-    description: 'Videos documenting alleged use of force by police during protests.',
-    icon: ShieldAlert,
-  },
-  { name: 'Gen Z Movement', description: 'Videos highlighting youth participation and leadership.', icon: Users },
-  { name: 'Police Conduct', description: 'Videos documenting police behavior during protests.', icon: Shield },
-  {
-    name: 'Alleged Police Brutality',
-    description: 'Videos documenting allegations of excessive police force.',
-    icon: Search,
-  },
-  {
-    name: 'Official Statements',
-    description: 'Statements, announcements, and updates from organizers.',
-    icon: FileText,
-  },
-];
+const FEATURED_ICONS: Record<string, typeof Flag> = {
+  'protest-marches': Flag,
+  'police-conduct': Shield,
+  'gen-z-movement': Users,
+  'acts-of-kindness': Heart,
+  'women-leading': Users,
+  'human-rights': ShieldAlert,
+};
+
+const FALLBACK_ICON = FileText;
 
 /**
- * Featured videos section with quick category links displayed as card grid.
+ * Featured videos section with quick category links displayed as a card grid.
+ *
+ * @param {object} props - Component props.
+ * @param {DbCategory[]} props.categories - Featured category entries from the database.
  *
  * @returns {JSX.Element} Rendered featured videos section.
  */
-export function FeaturedVideos(): JSX.Element {
+export function FeaturedVideos({ categories }: { categories: DbCategory[] }): JSX.Element {
   return (
     <section className="border-b-2 border-black bg-yellow-400 py-12 md:py-16">
       <Container>
@@ -61,12 +55,12 @@ export function FeaturedVideos(): JSX.Element {
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {QUICK_CATEGORIES.map((cat) => {
-            const Icon = cat.icon;
+          {categories.map((cat) => {
+            const Icon = FEATURED_ICONS[cat.value] ?? FALLBACK_ICON;
             return (
               <Link
-                key={cat.name}
-                href={`/categories`}
+                key={cat.value}
+                href={`/categories/${cat.value}`}
                 className="group shadow-brutal hover:shadow-brutal-lg flex items-start gap-4 border-2 border-black bg-white p-5 transition-all hover:-translate-x-0.5 hover:-translate-y-0.5"
               >
                 <div className="flex size-12 shrink-0 items-center justify-center border-2 border-black bg-yellow-400">

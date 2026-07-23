@@ -9,9 +9,26 @@ import { Container } from '@/components/ui/Container';
 /**
  * Homepage hero section with headline, call-to-action buttons, and stats.
  *
+ * @param {object} props - Component props.
+ * @param {number} [props.totalVideos] - Total number of archival videos.
+ * @param {number} [props.totalCities] - Number of unique cities represented.
+ * @param {number} [props.totalStates] - Number of unique states/UTs represented.
+ *
  * @returns {JSX.Element} Rendered hero section.
  */
-export function HeroSection(): JSX.Element {
+export function HeroSection({
+  totalVideos = 0,
+  totalCities = 0,
+  totalStates = 0,
+}: {
+  totalVideos?: number;
+  totalCities?: number;
+  totalStates?: number;
+}): JSX.Element {
+  const fmt = (n: number) => {
+    if (n >= 1000) return `${(n / 1000).toFixed(1).replace(/\.0$/, '')}K`;
+    return String(n);
+  };
   return (
     <section className="relative overflow-hidden border-b-2 border-black bg-gray-100">
       <Container className="grid grid-cols-1 gap-10 py-12 md:grid-cols-12 md:py-20">
@@ -48,9 +65,9 @@ export function HeroSection(): JSX.Element {
           </div>
 
           <div className="mt-8 grid max-w-md grid-cols-3 gap-3">
-            <Stat n="2.4K" label="Reels" />
-            <Stat n="180+" label="Cities" />
-            <Stat n="28" label="States & UTs" />
+            <Stat n={fmt(totalVideos) + '+'} label="Reels" />
+            <Stat n={fmt(totalCities) + '+'} label="Cities" />
+            <Stat n={String(totalStates)} label="States & UTs" />
           </div>
         </div>
 

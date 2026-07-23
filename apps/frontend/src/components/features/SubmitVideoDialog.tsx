@@ -1,4 +1,6 @@
-import { useState, type JSX, type ReactNode } from 'react';
+'use client';
+
+import { useEffect, useState, type JSX, type ReactNode } from 'react';
 
 import { Send, Link2, Hash, MapPin, Building2, CheckCircle2, X as XIcon } from 'lucide-react';
 
@@ -15,38 +17,21 @@ import {
 } from '@/components/ui/Dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Dropdown';
 import { FieldLabel, Input, Textarea } from '@/components/ui/Input';
+import { getLocations, type DbLocation } from '@/lib/db';
 import { extractInstagramId } from '@/lib/instagram';
 
-const LOCATIONS = [
-  'Andhra Pradesh',
-  'Assam',
-  'Bihar',
-  'Chandigarh',
-  'Delhi',
-  'Gujarat',
-  'Jammu & Kashmir',
-  'Jharkhand',
-  'Karnataka',
-  'Kerala',
-  'Madhya Pradesh',
-  'Maharashtra',
-  'Odisha',
-  'Punjab',
-  'Rajasthan',
-  'Tamil Nadu',
-  'Telangana',
-  'Uttar Pradesh',
-  'Uttarakhand',
-  'West Bengal',
-] as const;
-
 const SUGGESTED_HASHTAGS = [
-  '#PeacefulProtest',
-  '#Democracy',
-  '#India',
-  '#StudentVoices',
-  '#Justice',
-  '#CandlelightVigil',
+  '#LaathiCharge',
+  '#TearGas',
+  '#FunnyMoment',
+  '#Message',
+  '#Speech',
+  '#JantaMantar',
+  '#AwesomeGenZ',
+  '#GroundReporting',
+  '#Highlights',
+  '#Review',
+  '#Experience',
 ];
 
 /**
@@ -67,11 +52,19 @@ export function SubmitVideoDialog({
 }): JSX.Element {
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState('');
-  const [location, setLocation] = useState('');
+  const [location, setLocation] = useState('Delhi');
   const [city, setCity] = useState('');
   const [hashtags, setHashtags] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [locations, setLocations] = useState<DbLocation[]>([]);
+
+  useEffect(() => {
+    getLocations()
+      .then(setLocations)
+      .catch(() => {});
+  }, []);
 
   const currentTags = Array.from(
     new Set(
@@ -91,11 +84,12 @@ export function SubmitVideoDialog({
     if (!next)
       setTimeout(() => {
         setUrl('');
-        setLocation('');
+        setLocation('Delhi');
         setCity('');
         setHashtags('');
         setError(null);
         setSuccess(false);
+        setSubmitting(false);
       }, 200);
     setOpen(next);
     onOpenChange?.(next);
@@ -104,15 +98,20 @@ export function SubmitVideoDialog({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSubmitting(true);
 
     if (!extractInstagramId(url)) {
       setError('That does not look like a valid Instagram reel URL.');
+      setSubmitting(false);
       return;
     }
 
     // Mock: simulate submission
-    setSuccess(true);
-    setTimeout(() => handleOpen(false), 1500);
+    setTimeout(() => {
+      setSubmitting(false);
+      setSuccess(true);
+      setTimeout(() => handleOpen(false), 1500);
+    }, 1200);
   };
 
   return (
@@ -147,6 +146,7 @@ export function SubmitVideoDialog({
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://www.instagram.com/reel/..."
                   invalid={!!error}
+                  disabled={submitting}
                 />
                 {error && <p className="mt-1 text-xs font-semibold text-red-600">{error}</p>}
               </div>
@@ -156,14 +156,14 @@ export function SubmitVideoDialog({
                   <FieldLabel htmlFor="reel-location">
                     <MapPin className="h-3.5 w-3.5" /> Location
                   </FieldLabel>
-                  <Select value={location} onValueChange={setLocation}>
+                  <Select value={location} onValueChange={setLocation} disabled={submitting}>
                     <SelectTrigger id="reel-location">
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
                     <SelectContent>
-                      {LOCATIONS.map((loc) => (
-                        <SelectItem key={loc} value={loc}>
-                          {loc}
+                      {locations.map((loc) => (
+                        <SelectItem key={loc.value} value={loc.name}>
+                          {loc.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -176,8 +176,15 @@ export function SubmitVideoDialog({
                   <Input
                     id="reel-city"
                     value={city}
-                    onChange={(e) => setCity(e.target.value)}
+                    onChange={(e) => setCity(e.target.value.slice(0, 30))}
+                    onPaste={(e) => {
+                      e.preventDefault();
+                      const text = e.clipboardData.getData('text').trim().slice(0, 30);
+                      setCity(text);
+                    }}
                     placeholder="e.g. Mumbai"
+                    maxLength={30}
+                    disabled={submitting}
                   />
                 </div>
               </div>
@@ -192,6 +199,7 @@ export function SubmitVideoDialog({
                   onChange={(e) => setHashtags(e.target.value)}
                   placeholder="#PeacefulProtest #YourCity #Demo"
                   rows={2}
+                  disabled={submitting}
                 />
               </div>
 
@@ -215,6 +223,7 @@ export function SubmitVideoDialog({
                         }
                         className="cursor-pointer hover:text-red-600"
                         aria-label={`Remove ${t}`}
+                        disabled={submitting}
                       >
                         <XIcon className="h-3 w-3" />
                       </button>
@@ -235,6 +244,7 @@ export function SubmitVideoDialog({
                         type="button"
                         onClick={() => setHashtags(hashtags ? `${hashtags} ${h}` : h)}
                         className="inline-flex items-center gap-1 border-2 border-black bg-white px-2 py-0.5 font-mono text-[10px] font-bold uppercase transition-colors hover:bg-yellow-400"
+                        disabled={submitting}
                       >
                         + {h}
                       </button>
@@ -244,8 +254,8 @@ export function SubmitVideoDialog({
               )}
 
               <DialogFooter>
-                <Button type="submit" variant="default" shadow>
-                  <Send className="size-4" /> Submit Reel
+                <Button type="submit" variant="default" shadow loading={submitting}>
+                  <Send className="size-4" /> {submitting ? 'Submitting…' : 'Submit Reel'}
                 </Button>
               </DialogFooter>
             </DialogBody>
