@@ -135,7 +135,7 @@
     async #collectData() {
       const ogImage = this.#getMetaContent('og:image');
       const datetime = this.#findShareDateTime();
-      const data = { ig_url: window.location.href, og_image: ogImage, ig_post_date: datetime };
+      const data = { video_url: window.location.href, og_image: ogImage, video_post_date: datetime };
 
       try {
         const res = await fetch('http://localhost:3001/api/auth/enrich', {
@@ -146,6 +146,12 @@
           },
           body: JSON.stringify(data),
         });
+
+        if (!res.ok) {
+          const errBody = await res.json().catch(() => ({}));
+          throw new Error(errBody.error || `HTTP ${res.status}`);
+        }
+
         const result = await res.json();
         console.log('[Reel Vault] Enriched:', result);
         alert('\u2705 Submitted to Reel Vault');
