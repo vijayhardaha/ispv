@@ -93,7 +93,7 @@ export function ShareSection(): JSX.Element {
       <Container>
         <div className="mx-auto max-w-3xl text-center">
           {/* Tag */}
-          <div className="mb-6 inline-block -rotate-2 border-[3px] border-black bg-yellow-400 px-4 py-2 shadow-[4px_4px_0px_0px_#000]">
+          <div className="mb-6 inline-block -rotate-2 border-2 border-black bg-yellow-400 px-4 py-2 shadow-[4px_4px_0px_0px_#000]">
             <span className="font-mono text-sm font-bold tracking-tight uppercase">Spread the word</span>
           </div>
 
@@ -122,7 +122,7 @@ export function ShareSection(): JSX.Element {
                     key={platform.name}
                     onClick={() => copyMessage(setIgCopied)}
                     className={cn(
-                      'shadow-brutal hover:shadow-brutal-lg inline-flex items-center gap-2 border-[3px] border-black px-5 py-3 text-sm font-bold text-white uppercase transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5',
+                      'shadow-brutal hover:shadow-brutal-lg inline-flex items-center gap-2 border-2 border-black px-5 py-3 text-sm font-bold text-white uppercase transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5',
                       platform.bg,
                       platform.hoverBg
                     )}
@@ -141,7 +141,7 @@ export function ShareSection(): JSX.Element {
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(
-                    'shadow-brutal hover:shadow-brutal-lg inline-flex items-center gap-2 border-[3px] border-black px-5 py-3 text-sm font-bold text-white uppercase transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5',
+                    'shadow-brutal hover:shadow-brutal-lg inline-flex items-center gap-2 border-2 border-black px-5 py-3 text-sm font-bold text-white uppercase transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5',
                     platform.bg,
                     platform.hoverBg
                   )}
@@ -153,34 +153,33 @@ export function ShareSection(): JSX.Element {
             })}
           </div>
 
-          {/* Copy message CTA */}
-          <div className="shadow-brutal mt-10 rounded-none border-[3px] border-black bg-white p-6 md:p-8">
-            <p className="font-display text-sm font-bold tracking-tight uppercase">
+          {/* Divider with text */}
+          <div className="mt-10 flex items-center gap-4">
+            <div className="h-px flex-1 bg-black" />
+            <span className="shrink-0 font-mono text-[11px] font-bold tracking-[0.15em] text-black uppercase">
               Or copy the message to share anywhere
-            </p>
-            <div className="mt-4 space-y-3">
-              <div className="max-h-32 overflow-y-auto rounded-none border-[3px] border-black bg-gray-50 p-4 text-left font-mono text-xs leading-relaxed text-zinc-700">
-                {SHARE_MESSAGE.split('\n').map((line, i) => (
-                  <p key={i}>{line || '\u00A0'}</p>
-                ))}
-              </div>
-              <Button
-                onClick={() => copyMessage(setCopied)}
-                variant={copied ? 'light' : 'default'}
-                size="sm"
-                className="text-xs"
-              >
-                {copied ? (
-                  <>
-                    <Check className="size-3.5" /> Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="size-3.5" /> Copy
-                  </>
-                )}
-              </Button>
+            </span>
+            <div className="h-px flex-1 bg-black" />
+          </div>
+
+          {/* Message preview + copy button */}
+          <div className="mt-6 space-y-6">
+            <div className="border-2 border-dashed border-zinc-300 bg-gray-50 p-4 text-left font-medium text-zinc-700">
+              {SHARE_MESSAGE.split('\n').map((line, i) => (
+                <p key={i}>{line || '\u00A0'}</p>
+              ))}
             </div>
+            <Button onClick={() => copyMessage(setCopied)} variant="default" size="lg" shadow>
+              {copied ? (
+                <>
+                  <Check className="size-3.5" /> Copied
+                </>
+              ) : (
+                <>
+                  <Copy className="size-3.5" /> Copy & Share
+                </>
+              )}
+            </Button>
           </div>
         </div>
       </Container>
