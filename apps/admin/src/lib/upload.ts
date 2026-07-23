@@ -1,29 +1,26 @@
-import { writeFile, mkdir } from 'node:fs/promises';
-import { basename, join } from 'node:path';
-
 import { put } from '@vercel/blob';
 
 /**
- * Uploads a buffer to Vercel Blob storage, falling back to local filesystem.
+ * Uploads a buffer to Vercel Blob storage.
+ *
+ * Returns null when no BLOB_READ_WRITE_TOKEN is configured or when the upload
+ * fails, so the caller can treat a missing upload as a non-fatal condition.
+ * This avoids storing a local path that would violate DB constraints.
  *
  * @param {Buffer} buffer - The image buffer to upload.
  * @param {string} filename - The desired filename for storage.
  *
- * @returns {Promise<string>} The public URL or local path to the uploaded file.
+ * @returns {Promise<string | null>} The public URL, or null if upload is unavailable.
  */
-export async function uploadBuffer(buffer: Buffer, filename: string): Promise<string> {
+export async function uploadBuffer(buffer: Buffer, filename: string): Promise<string | null> {
   if (process.env.BLOB_READ_WRITE_TOKEN) {
     try {
       const blob = await put(filename, new Blob([buffer.buffer as ArrayBuffer]), { access: 'public' });
       return blob.url;
     } catch {
-      // fall through to local
+      // blob upload failed — return null, no local fallback
     }
   }
 
-  const name = `${Date.now()}-${basename(filename)}`;
-  const dir = join(process.cwd(), 'public', 'uploads');
-  await mkdir(dir, { recursive: true });
-  await writeFile(join(dir, name), buffer);
-  return `/uploads/${name}`;
+  return null;
 }
