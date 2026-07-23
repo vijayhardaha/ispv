@@ -177,14 +177,3 @@ export const CATEGORIES: CategoryRecord[] = [
     description: 'Uncategorised protest content.',
   },
 ];
-/**
- * Category slugs highlighted as featured on the homepage.
- */
-export const FEATURED_CATEGORIES_SLUGS = [
-  'protest-marches',
-  'police-conduct',
-  'gen-z-movement',
-  'night-updates',
-  'human-rights',
-  'women-leading-movement',
-];
