@@ -58,7 +58,7 @@ export function VideoCard({
       className={cn(
         'group relative block w-full cursor-pointer overflow-hidden border-2 border-zinc-900 bg-white text-left',
         'transition-all duration-300',
-        'hover:-translate-y-2 hover:shadow-[8px_8px_0px_0px_#18181b]',
+        'hover:-translate-y-2 hover:shadow-[8px_8px_0px_0px_#fac800]',
         'aspect-9/16',
         className
       )}

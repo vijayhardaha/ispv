@@ -30,28 +30,28 @@ const schemaData = [
 
 const PRINCIPLES = [
   {
-    icon: <Link2 className="h-6 w-6" />,
+    icon: <Link2 className="size-6" />,
     title: 'Public Recordings',
     body: 'We archive only videos that have been publicly shared by their original creators. Every video remains embedded from its original Instagram post whenever possible.',
-    color: 'bg-yellow-400',
+    color: 'bg-yellow-500 text-black',
   },
   {
-    icon: <BookOpen className="h-6 w-6" />,
+    icon: <BookOpen className="size-6" />,
     title: 'Preservation, Not Persuasion',
     body: 'This archive exists to organize public recordings, not to promote a political party, endorse opinions, or rewrite events. Every video represents the perspective of the person who recorded it.',
-    color: 'bg-cyan-400 text-white',
+    color: 'bg-blue-500 text-white',
   },
   {
-    icon: <Eye className="h-6 w-6" />,
+    icon: <Eye className="size-6" />,
     title: 'Attribution Matters',
     body: 'Every embedded video links directly to its original creator. Credit remains with the people who documented the moment.',
-    color: 'bg-red-400 text-white',
+    color: 'bg-red-500 text-white',
   },
   {
-    icon: <Search className="h-6 w-6" />,
+    icon: <Search className="size-6" />,
     title: 'Searchable History',
     body: 'Videos are organized by state, city, event, date, creator, and topic, making it possible to explore a movement from multiple perspectives instead of isolated posts.',
-    color: 'bg-green-400',
+    color: 'bg-green-500 text-black',
   },
 ];
 
@@ -134,7 +134,7 @@ export default function AboutPage(): JSX.Element {
       <section className="border-y-2 border-black bg-gray-100 py-12">
         <Container>
           <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase md:text-4xl">How It Works</h2>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="mt-6 grid gap-6 sm:grid-cols-2">
             {STEPS.map((s) => (
               <Step key={s.n} n={s.n} title={s.title}>
                 {s.body}
@@ -152,7 +152,7 @@ export default function AboutPage(): JSX.Element {
               <h3 className="font-display text-2xl font-extrabold tracking-tight uppercase">What We Archive</h3>
               <ul className="mt-4 space-y-2">
                 {INCLUDED.map((item) => (
-                  <li key={item} className="flex items-start gap-2">
+                  <li key={item} className="flex items-center gap-2">
                     <Check className="mt-0.5 size-4 shrink-0 text-green-600" />
                     <span>{item}</span>
                   </li>
@@ -165,7 +165,7 @@ export default function AboutPage(): JSX.Element {
               </h3>
               <ul className="mt-4 space-y-2">
                 {EXCLUDED.map((item) => (
-                  <li key={item} className="flex items-start gap-2">
+                  <li key={item} className="flex items-center gap-2">
                     <X className="mt-0.5 size-4 shrink-0 text-red-600" />
                     <span>{item}</span>
                   </li>
@@ -236,11 +236,13 @@ function Principle({
 }): JSX.Element {
   return (
     <div className={cn('shadow-brutal border-2 border-black p-5', color)}>
-      <div className="shadow-brutal-sm mb-2 flex size-12 items-center justify-center border-2 border-black bg-white text-black">
-        {icon}
+      <div className="flex items-center gap-4">
+        <div className="shadow-brutal-sm mb-2 flex size-12 items-center justify-center border-2 border-black bg-white text-black">
+          {icon}
+        </div>
+        <h3 className="font-display text-xl font-extrabold uppercase">{title}</h3>
       </div>
-      <h3 className="font-display text-2xl font-extrabold uppercase">{title}</h3>
-      <p className="mt-3 leading-relaxed">{children}</p>
+      <p className="mt-1 leading-relaxed">{children}</p>
     </div>
   );
 }
