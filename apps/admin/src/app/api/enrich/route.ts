@@ -64,7 +64,7 @@ async function validateUrlAcceptsImage(urlString: string): Promise<{ ok: boolean
         headers: { 'User-Agent': 'ISPV/1.0' },
         signal: controller.signal,
       });
-    } catch (err) {
+    } catch {
       clearTimeout(timeout);
       // Some servers don't allow HEAD — fall back to small GET later, but still allow for now
       return { ok: true };
@@ -84,7 +84,7 @@ async function validateUrlAcceptsImage(urlString: string): Promise<{ ok: boolean
     }
 
     return { ok: true };
-  } catch (e) {
+  } catch {
     return { ok: false, message: 'Invalid URL' };
   }
 }
@@ -116,7 +116,7 @@ async function downloadAndUpload(url: string, video_id: string): Promise<string 
     const buffer = Buffer.from(ab);
     const optimized = await sharp(buffer).webp({ quality: 80 }).toBuffer();
     return await uploadBuffer(optimized, `thumbs/${video_id}.webp`);
-  } catch (err) {
+  } catch {
     // swallow errors and return null to keep enrichment best-effort
     return null;
   }
