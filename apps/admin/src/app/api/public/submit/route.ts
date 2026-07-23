@@ -1,3 +1,6 @@
+/** Run on Edge Runtime for faster cold starts and global availability. */
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
@@ -19,7 +22,8 @@ const inMemoryStore = new Map<string, { count: number; resetAt: number }>();
  * @returns {string} IP address string.
  */
 function getIpKey(req: Request) {
-  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+  // Prefer x-real-ip (set by edge/CDN) over x-forwarded-for (can be spoofed)
+  const ip = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || 'unknown';
   return ip.split(',')[0].trim();
 }
 
