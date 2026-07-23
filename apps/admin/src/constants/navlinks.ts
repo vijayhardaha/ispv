@@ -18,6 +18,4 @@ export interface NavLink {
 export const HEADER_NAV_LINKS: NavLink[] = [
   { label: 'Dashboard', href: '/' },
   { label: 'Videos', href: '/videos' },
-  { label: 'Categories', href: '/categories' },
-  { label: 'Locations', href: '/locations' },
 ];
