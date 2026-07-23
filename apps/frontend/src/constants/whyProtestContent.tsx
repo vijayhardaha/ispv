@@ -2,6 +2,15 @@ import type { JSX } from 'react';
 
 import { FileText, Gavel, Heart, Scale, Shield, Users } from 'lucide-react';
 
+/**
+ * A single protest demand with its display styling and description.
+ *
+ * @type {Demand}
+ * @property {string} title - Short label for the demand.
+ * @property {string} color - Tailwind background colour class.
+ * @property {JSX.Element} icon - Lucide icon element representing the demand.
+ * @property {string} body - Detailed explanation of the demand.
+ */
 export interface Demand {
   title: string;
   color: string;
@@ -9,18 +18,37 @@ export interface Demand {
   body: string;
 }
 
+/**
+ * A single entry in the protest timeline.
+ *
+ * @type {TimelineItem}
+ * @property {string} year - Year the event occurred.
+ * @property {string} label - Short headline for the event.
+ * @property {string} description - Detailed account of the event.
+ */
 export interface TimelineItem {
   year: string;
   label: string;
   description: string;
 }
 
+/**
+ * A referenced source with title, URL, and description.
+ *
+ * @type {Source}
+ * @property {string} title - Display title of the source.
+ * @property {string} url - Link to the original source.
+ * @property {string} description - Brief context about the source.
+ */
 export interface Source {
   title: string;
   url: string;
   description: string;
 }
 
+/**
+ * Core demands of the student protest movement.
+ */
 export const DEMANDS: Demand[] = [
   {
     title: 'Justice',
@@ -60,6 +88,9 @@ export const DEMANDS: Demand[] = [
   },
 ];
 
+/**
+ * Chronological timeline of key protest events.
+ */
 export const TIMELINE_ITEMS: TimelineItem[] = [
   {
     year: '2025',
@@ -93,6 +124,9 @@ export const TIMELINE_ITEMS: TimelineItem[] = [
   },
 ];
 
+/**
+ * External sources referenced by the protest information page.
+ */
 export const SOURCES: Source[] = [
   {
     title: 'News Media Coverage',
