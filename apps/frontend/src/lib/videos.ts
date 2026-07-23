@@ -1,6 +1,23 @@
 import { dbRowsToVideoEntries, type VideoRow } from '@/lib/adapt';
 import { supabase } from '@/lib/supabase';
 
+/**
+ * Frontend video record with all fields needed for display and filtering.
+ *
+ * @type {VideoEntry}
+ * @property {string} id - Unique video identifier.
+ * @property {string} description - Video description text.
+ * @property {string} url - Original Instagram URL.
+ * @property {string} thumbnail - Thumbnail image URL.
+ * @property {string} city - City where the video was recorded.
+ * @property {string} location - State or union territory.
+ * @property {string} category - Category value slug.
+ * @property {string} categoryName - Resolved category display name.
+ * @property {string[]} tags - Searchable tags.
+ * @property {string[]} hashtags - Hashtags with hash prefix.
+ * @property {number} duration - Video duration in seconds.
+ * @property {boolean} [featured] - Whether the video is featured on the homepage.
+ */
 export interface VideoEntry {
   id: string;
   description: string;
