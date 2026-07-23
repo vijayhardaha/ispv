@@ -42,7 +42,8 @@ export function ReelItem({ video, active }: { video: VideoEntry; active: boolean
           onLoad={() => {
             setEmbedLoaded(true);
             // Increment view count via admin public endpoint
-            const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://admin-app.vercel.app';
+            const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
+            if (!adminUrl) return;
             fetch(`${adminUrl}/api/public/views`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
