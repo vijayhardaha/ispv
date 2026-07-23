@@ -6,6 +6,8 @@ import Link from 'next/link';
 
 import { LogoutButton } from '@/components/LogoutButton';
 import { Container } from '@/components/ui/Container';
+import { HEADER_NAV_LINKS } from '@/constants/navlinks';
+import { SITE_METADATA } from '@/constants/seo';
 import { createServerSupabase } from '@/lib/supabase-server';
 
 import './globals.css';
@@ -23,15 +25,12 @@ const poppins = Poppins({
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
 
 /**
- * Default metadata for all admin pages.
+ * Site-wide metadata for the admin panel using SEO configuration.
  */
-export const metadata: Metadata = {
-  title: { default: 'Reel Vault Admin', template: '%s - Reel Vault Admin' },
-  description: 'Admin panel for managing the Indian Students Protest Vault archive.',
-};
+export const metadata: Metadata = SITE_METADATA;
 
 /**
- * Root layout with authentication-aware navigation bar.
+ * Root layout with authentication-aware navigation bar using shared NAV_LINKS constant.
  *
  * @param {{ children: ReactNode }} props - Component properties.
  * @param {ReactNode} props.children - Page content to render.
@@ -53,18 +52,15 @@ export default async function RootLayout({ children }: { children: ReactNode }):
               <Container className="flex items-center justify-between">
                 <div className="flex items-center gap-6">
                   <span className="font-display text-sm font-extrabold uppercase">Reel Vault Admin</span>
-                  <Link href="/" className="text-xs font-bold uppercase hover:text-yellow-500">
-                    Dashboard
-                  </Link>
-                  <Link href="/videos" className="text-xs font-bold uppercase hover:text-yellow-500">
-                    Videos
-                  </Link>
-                  <Link href="/categories" className="text-xs font-bold uppercase hover:text-yellow-500">
-                    Categories
-                  </Link>
-                  <Link href="/locations" className="text-xs font-bold uppercase hover:text-yellow-500">
-                    Locations
-                  </Link>
+                  {HEADER_NAV_LINKS.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="text-xs font-bold uppercase hover:text-yellow-500"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
                 </div>
                 <LogoutButton />
               </Container>
@@ -80,7 +76,16 @@ export default async function RootLayout({ children }: { children: ReactNode }):
         <footer className="border-t-2 border-black bg-white">
           <Container className="flex items-center justify-between py-4">
             <span className="font-display text-xs font-extrabold tracking-tight uppercase">Reel Vault Admin</span>
-            <p className="text-xs text-black/50">&copy; {new Date().getFullYear()} Indian Students Protest Vault</p>
+            <p className="text-xs text-black/50">
+              <a
+                href="https://ispv.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-yellow-500"
+              >
+                &copy; {new Date().getFullYear()} Indian Students Protest Vault
+              </a>
+            </p>
           </Container>
         </footer>
       </body>
