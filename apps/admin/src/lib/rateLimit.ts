@@ -35,7 +35,7 @@ export async function tryUseUpstashRateLimit(key: string, limit: number, windowS
       await redis.expire(key, windowSec);
     }
     return value <= limit;
-  } catch (e) {
+  } catch {
     // On any error, fall back to in-memory limiter
     return false;
   }
