@@ -1,4 +1,5 @@
-import { CATEGORIES, LOCATIONS, FEATURED_SLUGS, type DbCategory, type DbLocation } from '@/constants/data';
+import { CATEGORIES, FEATURED_CATEGORIES_SLUGS, type DbCategory } from '@/constants/categories';
+import { LOCATIONS, type DbLocation } from '@/constants/locations';
 import { extractInstagramId } from '@/lib/instagram';
 import { supabase } from '@/lib/supabase';
 
@@ -51,7 +52,9 @@ export async function getCategoryByValue(value: string): Promise<DbCategory | nu
  * @returns {Promise<DbCategory[]>} Featured category entries.
  */
 export async function getFeaturedCategories(): Promise<DbCategory[]> {
-  return FEATURED_SLUGS.map((slug) => CATEGORIES.find((c) => c.value === slug)).filter(Boolean) as DbCategory[];
+  return FEATURED_CATEGORIES_SLUGS.map((slug) => CATEGORIES.find((c) => c.value === slug)).filter(
+    Boolean
+  ) as DbCategory[];
 }
 
 /**
