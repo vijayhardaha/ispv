@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
+import { useCallback, useEffect, useRef, useState, type ChangeEvent, type JSX } from 'react';
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
@@ -53,7 +53,7 @@ export function SearchInput({
   );
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: ChangeEvent<HTMLInputElement>) => {
       const newVal = e.target.value;
       setValue(newVal);
       if (timerRef.current) clearTimeout(timerRef.current);

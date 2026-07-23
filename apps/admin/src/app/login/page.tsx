@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type JSX } from 'react';
+import { useState, type JSX, type SubmitEvent } from 'react';
 
 import { Box } from '@/components/ui/Box';
 import { Button } from '@/components/ui/Button';
@@ -19,7 +19,7 @@ export default function LoginPage(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: SubmitEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);

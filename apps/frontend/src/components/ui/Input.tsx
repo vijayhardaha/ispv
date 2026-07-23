@@ -1,4 +1,4 @@
-import { forwardRef, type InputHTMLAttributes, type TextareaHTMLAttributes, type JSX } from 'react';
+import { forwardRef, type InputHTMLAttributes, type TextareaHTMLAttributes, type JSX, type ReactNode } from 'react';
 
 import { cn } from '@/lib/cn';
 
@@ -68,7 +68,7 @@ export function FieldLabel({
   hint,
 }: {
   htmlFor?: string;
-  children: React.ReactNode;
+  children: ReactNode;
   required?: boolean;
   hint?: string;
 }): JSX.Element {

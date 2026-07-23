@@ -1,6 +1,6 @@
 'use client';
 
-import type { JSX } from 'react';
+import type { ComponentPropsWithoutRef, JSX } from 'react';
 
 import { cn } from '@/lib/cn';
 
@@ -39,7 +39,7 @@ export function Button({
   children,
   disabled,
   ...props
-}: React.ComponentPropsWithoutRef<'button'> & {
+}: ComponentPropsWithoutRef<'button'> & {
   variant?: ButtonVariant;
   size?: ButtonSize;
   loading?: boolean;

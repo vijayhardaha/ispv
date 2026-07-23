@@ -1,4 +1,4 @@
-import { forwardRef, type ComponentPropsWithoutRef, type ComponentRef, type JSX } from 'react';
+import { forwardRef, type ComponentPropsWithoutRef, type ComponentRef, type HTMLAttributes, type JSX } from 'react';
 
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
@@ -79,7 +79,7 @@ DialogContent.displayName = 'DialogContent';
  *
  * @returns {JSX.Element} Rendered dialog header.
  */
-export function DialogHeader({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
+export function DialogHeader({ className, children, ...props }: HTMLAttributes<HTMLDivElement>): JSX.Element {
   return (
     <div
       className={cn('flex items-start justify-between gap-4 border-b-2 border-black px-6 py-4', className)}
@@ -130,7 +130,7 @@ DialogDescription.displayName = 'DialogDescription';
  *
  * @returns {JSX.Element} Rendered dialog body.
  */
-export function DialogBody({ className, ...props }: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
+export function DialogBody({ className, ...props }: HTMLAttributes<HTMLDivElement>): JSX.Element {
   return <div className={cn('px-6 py-5', className)} {...props} />;
 }
 
@@ -142,7 +142,7 @@ export function DialogBody({ className, ...props }: React.HTMLAttributes<HTMLDiv
  *
  * @returns {JSX.Element} Rendered dialog footer.
  */
-export function DialogFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
+export function DialogFooter({ className, ...props }: HTMLAttributes<HTMLDivElement>): JSX.Element {
   return (
     <div
       className={cn('flex flex-wrap items-center justify-end gap-3 border-t-2 border-black bg-white pt-3', className)}

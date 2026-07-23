@@ -1,4 +1,4 @@
-import { type JSX } from 'react';
+import { type JSX, type ReactNode } from 'react';
 
 import { Eye, Play, MapPin } from 'lucide-react';
 
@@ -17,7 +17,7 @@ import type { VideoEntry } from '@/lib/videos';
  *
  * @returns {JSX.Element} Rendered badge span.
  */
-function Badge({ children, className }: { children: React.ReactNode; className?: string }): JSX.Element {
+function Badge({ children, className }: { children: ReactNode; className?: string }): JSX.Element {
   return (
     <span
       className={cn(

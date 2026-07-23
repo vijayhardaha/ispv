@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
@@ -11,7 +11,7 @@ import type { VideoEntry } from '@/lib/videos';
 /**
  * Default filter state used when no URL params or overrides are provided.
  */
-const DEFAULT_STATE: FilterState = { query: '', category: 'all', location: 'all', tags: [], page: 1, perPage: 36 };
+const DEFAULT_STATE: FilterState = { query: '', category: 'all', location: 'all', tags: [], page: 1, perPage: 72 };
 
 /**
  * Configuration options for the useFilterState hook.
@@ -36,7 +36,7 @@ export interface UseFilterStateProps {
  */
 export function useFilterState({ videos, defaults }: UseFilterStateProps): {
   state: FilterState;
-  setState: React.Dispatch<React.SetStateAction<FilterState>>;
+  setState: Dispatch<SetStateAction<FilterState>>;
   filtered: VideoEntry[];
   total: number;
 } {

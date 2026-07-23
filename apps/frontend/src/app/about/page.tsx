@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX, ReactNode } from 'react';
 
 import { aboutPageSchema, breadcrumbSchema } from '@vijayhardaha/schema-builder';
 import { JsonLd } from '@vijayhardaha/schema-builder/react';
@@ -229,9 +229,9 @@ function Principle({
   children,
   color,
 }: {
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
   color: string;
 }): JSX.Element {
   return (
@@ -257,7 +257,7 @@ function Principle({
  *
  * @returns {JSX.Element} Rendered step card.
  */
-function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }): JSX.Element {
+function Step({ n, title, children }: { n: number; title: string; children: ReactNode }): JSX.Element {
   return (
     <div className="shadow-brutal flex items-start gap-4 border-2 border-black bg-white p-4">
       <div className="font-display shadow-brutal-sm flex h-10 w-10 shrink-0 items-center justify-center border-2 border-black bg-yellow-400 text-lg font-extrabold">

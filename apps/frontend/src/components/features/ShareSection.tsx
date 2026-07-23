@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { JSX } from 'react';
+import type { ComponentType, JSX } from 'react';
 
 import { Check, Copy } from 'lucide-react';
 import { FaFacebook, FaInstagram, FaWhatsapp, FaXTwitter } from 'react-icons/fa6';
@@ -32,7 +32,7 @@ const SHARE_TEXT = `🇮🇳 Discover the Indian Students Protest Vault — a se
  */
 interface SharePlatform {
   name: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
   hoverBg: string;
   bg: string;
   getShareUrl: (message: string, url: string) => string;

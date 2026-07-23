@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type JSX } from 'react';
+import { useState, type JSX, type SubmitEvent } from 'react';
 
 import { useToast } from '@/components/Toast';
 import { Field, Input, ModalActions, ModalOverlay, ModalTitle, Textarea } from '@/components/ui/Modal';
@@ -54,7 +54,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
     setLoading(true);
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useState, type SubmitEvent } from 'react';
 
 import type { DbLocation } from '@/lib/db';
 import { checkVideoExists, getLocations } from '@/lib/db';
@@ -40,7 +40,7 @@ export interface UseSubmitVideoFormOptions {
  * @property {boolean} checkingUrl - Whether a duplicate URL check is running.
  * @property {DbLocation[]} locations - Available location options.
  * @property {() => void} handleBlur - URL blur handler for duplicate check.
- * @property {(e: FormEvent<HTMLFormElement>) => void} handleSubmit - Form submit handler.
+ * @property {(e: SubmitEvent<HTMLFormElement>) => void} handleSubmit - Form submit handler.
  * @property {() => void} resetForm - Resets all form state to defaults.
  */
 export interface UseSubmitVideoFormReturn {
@@ -61,7 +61,7 @@ export interface UseSubmitVideoFormReturn {
   checkingUrl: boolean;
   locations: DbLocation[];
   handleBlur: () => void;
-  handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
+  handleSubmit: (e: SubmitEvent<HTMLFormElement>) => void;
   resetForm: () => void;
 }
 
@@ -146,7 +146,10 @@ export function useSubmitVideoForm({
   };
 
   const submitVideo = async () => {
-    const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://admin-app.vercel.app';
+    const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
+    if (!adminUrl) {
+      throw new Error('Admin URL is not configured. Set NEXT_PUBLIC_ADMIN_URL in your environment.');
+    }
     const cleanTags = hashtags
       .split(/\s+/)
       .map((h) => h.trim())
@@ -165,7 +168,7 @@ export function useSubmitVideoForm({
     }
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
 

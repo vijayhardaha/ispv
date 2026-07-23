@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 
 import { useFilterState } from '@/hooks/useFilterState';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
@@ -39,7 +39,7 @@ export interface CategoryPageData {
  */
 export interface CategoryPageFilter {
   state: FilterState;
-  setState: React.Dispatch<React.SetStateAction<FilterState>>;
+  setState: Dispatch<SetStateAction<FilterState>>;
   total: number;
   totalPages: number;
   safePage: number;

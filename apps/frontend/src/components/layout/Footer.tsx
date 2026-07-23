@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { BookOpen, Heart } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -94,7 +96,7 @@ function ResourceLinkList({ links }: { links: NavLink[] }): JSX.Element {
  *
  * @returns {JSX.Element} Rendered widget title.
  */
-function WidgetTitle({ children }: { children: React.ReactNode }): JSX.Element {
+function WidgetTitle({ children }: { children: ReactNode }): JSX.Element {
   return (
     <h4 className="font-display mb-6 text-sm font-extrabold tracking-tight text-white uppercase">
       <span className="border-b-2 border-yellow-400 pb-1">{children}</span>
