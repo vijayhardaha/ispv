@@ -10,13 +10,14 @@ import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { Pagination } from '@/components/ui/Pagination';
 import { SearchInput } from '@/components/ui/SearchInput';
 import { VideoFormModal } from '@/components/VideoFormModal';
+import { CATEGORIES } from '@/constants/categories';
 import { TAG_VARIANTS, type TagVariant } from '@/constants/colors';
+import { LOCATIONS } from '@/constants/locations';
 import { usePagination } from '@/hooks/usePagination';
 import { cn } from '@/lib/cn';
 import { displayVideoUrl } from '@/lib/instagram';
 import { getVideosForApi } from '@/lib/rpc';
 import { createClient } from '@/lib/supabase';
-import { CATEGORIES, LOCATIONS } from '@/lib/types';
 import type { VideoRecord } from '@/lib/types';
 
 /**
