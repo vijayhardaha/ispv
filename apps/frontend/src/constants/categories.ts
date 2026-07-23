@@ -40,12 +40,12 @@ export const CATEGORIES: DbCategory[] = [
     tag: 'After Sunset',
     color: 'black',
     description:
-      'Watch videos recorded during evening and overnight protests, including candlelight vigils, volunteer efforts, speeches, and updates from protest sites.',
+      'Explore videos from evening and overnight protests, including speeches, volunteer activities, and updates from protest locations.',
   },
   {
     id: '4',
-    slug: 'gen-z-movement',
-    name: 'Gen Z Movement',
+    slug: 'gen-z-moments',
+    name: 'Gen Z Moments',
     tag: 'Generation Speaks',
     color: 'green',
     description:

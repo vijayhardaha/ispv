@@ -3,6 +3,7 @@
 import { useState, type JSX } from 'react';
 
 import { Menu, Upload, X } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -25,19 +26,25 @@ export function Header(): JSX.Element {
     <header className="sticky top-0 z-40">
       <div className="border-b-2 border-black bg-gray-100">
         <Container className="flex items-center justify-between gap-3 py-3">
-          <Link href="/" className="group flex items-center" onClick={() => setMobileOpen(false)}>
-            <div className="flex flex-col gap-1 leading-tight">
-              <div className="font-display text-lg font-extrabold tracking-tight uppercase md:text-xl">
+          <Link href="/" className="group flex items-center gap-2" onClick={() => setMobileOpen(false)}>
+            <Image
+              src="/logo.svg"
+              alt="Indian Students Protest Vault"
+              className="h-8 w-auto"
+              width={40}
+              height={21}
+              priority
+            />
+            <div className="flex flex-col gap-0.5 leading-tight">
+              <div className="font-display text-sm font-extrabold tracking-tight uppercase">
                 Indian Students Protest Vault
               </div>
-              <div className="font-mono text-xs tracking-widest text-black/60 uppercase">
-                Students · Cameras · Change
-              </div>
+              <div className="font-mono text-[10px] text-black/60 uppercase">Speak · Record · Witness</div>
             </div>
           </Link>
 
           <div className="hidden items-center gap-4 lg:flex">
-            <nav className="flex items-center gap-2">
+            <nav className="flex items-center">
               {HEADER_NAV_LINKS.map((link) => (
                 <Link
                   key={link.href}
@@ -76,7 +83,12 @@ export function Header(): JSX.Element {
 
         {mobileOpen && (
           <div className="fixed inset-0 z-50 lg:hidden">
-            <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
+            {}
+            <div
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              onClick={() => setMobileOpen(false)}
+              role="presentation"
+            />
             <div className="fixed top-0 right-0 flex h-full w-105 max-w-full flex-col border-l-2 border-black bg-gray-100 shadow-xl transition-transform duration-300">
               <div className="flex items-center justify-between border-b-2 border-black px-4 py-3">
                 <span className="font-display text-sm font-extrabold uppercase">Menu</span>
