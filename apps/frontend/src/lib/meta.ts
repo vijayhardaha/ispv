@@ -86,8 +86,12 @@ const mergeDeep = <T extends AnyObject>(target: T, source: AnyObject): T => {
  * buildSeoTitle('About') // -> 'About | Indian Students Protest Vault'
  */
 const buildSeoTitle = (title: string = '', postfix: boolean): string => {
-  if (!title) return SITE_CONFIG.name;
-  if (!postfix) return title;
+  if (!title) {
+    return SITE_CONFIG.name;
+  }
+  if (!postfix) {
+    return title;
+  }
   return [title, '|', SITE_CONFIG.name].join(' ');
 };
 
