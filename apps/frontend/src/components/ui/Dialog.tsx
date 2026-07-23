@@ -3,7 +3,7 @@ import { forwardRef, type ComponentPropsWithoutRef, type ComponentRef, type JSX 
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 
-import { toneMap } from '@/constants/colors';
+import { toneMap, type Tone } from '@/constants/colors';
 import { cn } from '@/lib/cn';
 
 /**
@@ -46,10 +46,8 @@ DialogOverlay.displayName = 'DialogOverlay';
  */
 export const DialogContent = forwardRef<
   ComponentRef<typeof DialogPrimitive.Content>,
-  ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
-    tone?: 'default' | 'saffron' | 'green' | 'navy' | 'sun' | 'pink' | 'lime';
-  }
->(({ className, children, tone = 'default', ...props }, ref) => {
+  ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & { tone?: Tone }
+>(({ className, children, tone = 'white', ...props }, ref) => {
   return (
     <DialogPortal>
       <DialogOverlay />
