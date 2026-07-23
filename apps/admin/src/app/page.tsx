@@ -8,11 +8,11 @@ import { redirect } from 'next/navigation';
  */
 export const metadata: Metadata = { title: 'Dashboard' };
 
+import { CATEGORIES, type CategoryRecord } from '@/constants/categories';
 import { TAG_VARIANTS, type TagVariant } from '@/constants/colors';
+import { LOCATIONS, type LocationRecord } from '@/constants/locations';
 import { cn } from '@/lib/cn';
 import { createServerSupabase } from '@/lib/supabase-server';
-import { CATEGORIES, LOCATIONS } from '@/lib/types';
-import type { CategoryRecord, LocationRecord } from '@/lib/types';
 
 /**
  * Category record augmented with a live count of associated videos.
