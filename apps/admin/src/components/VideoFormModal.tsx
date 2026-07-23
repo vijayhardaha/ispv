@@ -45,7 +45,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
   const [videoUrl, setVideoUrl] = useState(
     video?.video_id ? reconstructIgUrl(video.video_id) : (video?.video_url ?? '')
   );
-  const [category, setCategory] = useState(video?.category ?? categories[0]?.value ?? '');
+  const [category, setCategory] = useState(video?.category ?? categories[0]?.slug ?? '');
   const [location, setLocation] = useState(video?.location ?? 'delhi');
   const [city, setCity] = useState(video?.city ?? '');
   const [tags, setTags] = useState<string>(video?.tags?.join(', ') ?? '');
@@ -126,7 +126,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
           <Field label="Category">
             <Select value={category} onChange={(e) => setCategory(e.target.value)}>
               {categories.map((c) => (
-                <option key={c.id} value={c.value}>
+                <option key={c.id} value={c.slug}>
                   {c.name}
                 </option>
               ))}
@@ -136,7 +136,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
             <Select value={location} onChange={(e) => setLocation(e.target.value)}>
               <option value="">—</option>
               {locations.map((s) => (
-                <option key={s.id} value={s.value}>
+                <option key={s.id} value={s.slug}>
                   {s.name}
                 </option>
               ))}
