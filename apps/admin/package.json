@@ -20,15 +20,17 @@
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "sharp": "^0.35.3",
-    "slugify": "^1.6.9"
+    "slugify": "^1.6.9",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
+    "@types/latinize": "^0.2.18",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@vijayhardaha/dev-config": "^2.2.0",
     "postcss": "^8.5.0",
-    "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3"
   }
 }

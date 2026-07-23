@@ -17,6 +17,13 @@ async function downloadAndUpload(url: string, ig_id: string): Promise<string | n
   }
 }
 
+/**
+ * Handles POST requests to enrich video metadata from an Instagram URL.
+ *
+ * @param {Request} req - The incoming HTTP request object.
+ *
+ * @returns {Promise<NextResponse>} A JSON response with the enriched result or an error message.
+ */
 export async function POST(req: Request) {
   try {
     const token = req.headers.get('authorization')?.replace('Bearer ', '');

@@ -3,6 +3,14 @@ import { basename, join } from 'node:path';
 
 import { put } from '@vercel/blob';
 
+/**
+ * Uploads a buffer to Vercel Blob storage, falling back to local filesystem.
+ *
+ * @param {Buffer} buffer - The image buffer to upload.
+ * @param {string} filename - The desired filename for storage.
+ *
+ * @returns {Promise<string>} The public URL or local path to the uploaded file.
+ */
 export async function uploadBuffer(buffer: Buffer, filename: string): Promise<string> {
   if (process.env.BLOB_READ_WRITE_TOKEN) {
     try {

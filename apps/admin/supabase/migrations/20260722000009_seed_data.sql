@@ -1,14 +1,4 @@
--- Seed default categories
-INSERT INTO public.categories (id, value, name, color, description) VALUES
-  (gen_random_uuid(), 'marches', 'Marches', 'yellow', 'Organised marches and processions'),
-  (gen_random_uuid(), 'rallies', 'Rallies', 'black', 'Public rallies and gatherings'),
-  (gen_random_uuid(), 'candlelight', 'Candlelight', 'blue', 'Candlelight vigils and peaceful night protests'),
-  (gen_random_uuid(), 'art', 'Art', 'red', 'Protest art, murals, and creative expression'),
-  (gen_random_uuid(), 'youth', 'Youth', 'green', 'Student and youth-led actions'),
-  (gen_random_uuid(), 'press', 'Press', 'white', 'Press conferences and media interactions')
-ON CONFLICT (value) DO NOTHING;
 -- Seed default locations
-
 INSERT INTO public.locations (id, value, name) VALUES
   (gen_random_uuid(), 'andhra-pradesh', 'Andhra Pradesh'),
   (gen_random_uuid(), 'arunachal-pradesh', 'Arunachal Pradesh'),
