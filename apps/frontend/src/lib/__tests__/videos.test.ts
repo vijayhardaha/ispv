@@ -11,8 +11,11 @@ describe('videos data', () => {
   });
 
   it('returns empty array when Supabase returns an error', async () => {
-    const mockOrder = vi.fn().mockResolvedValue({ data: null, error: { message: 'Database error' } });
-    const mockEq = vi.fn().mockReturnValue({ order: mockOrder });
+    const errorResult = { data: null, error: { message: 'Database error' } };
+    const mockThen = vi.fn().mockImplementation((resolve) => resolve(errorResult));
+    const mockOrder2 = vi.fn().mockReturnValue({ then: mockThen });
+    const mockOrder1 = vi.fn().mockReturnValue({ order: mockOrder2 });
+    const mockEq = vi.fn().mockReturnValue({ order: mockOrder1 });
     const mockSelect = vi.fn().mockReturnValue({ eq: mockEq });
 
     vi.mocked(supabase.from).mockReturnValue({ select: mockSelect } as any);
@@ -20,9 +23,10 @@ describe('videos data', () => {
     const videos = await getAllVideosFromDb();
 
     expect(supabase.from).toHaveBeenCalledWith('videos');
-    expect(mockSelect).toHaveBeenCalledWith('*, categories(name, color)');
+    expect(mockSelect).toHaveBeenCalledWith('*');
     expect(mockEq).toHaveBeenCalledWith('status', 'published');
-    expect(mockOrder).toHaveBeenCalledWith('created_at', { ascending: false });
+    expect(mockOrder1).toHaveBeenCalledWith('video_post_date', { ascending: false, nullsFirst: false });
+    expect(mockOrder2).toHaveBeenCalledWith('created_at', { ascending: false });
     expect(videos).toEqual([]);
   });
 
@@ -31,21 +35,23 @@ describe('videos data', () => {
       {
         id: 'vid-1',
         description: 'Test video',
-        url: 'https://instagram.com/reel/123',
+        video_url: 'https://instagram.com/reel/123',
         thumbnail_url: 'https://example.com/thumb.jpg',
         city: 'Mumbai',
         location: 'Azad Maidan',
-        category: 'education',
-        categories: { name: 'Education', color: '#ff0000' },
+        category: 'protest-marches',
         tags: ['student'],
-        hashtags: ['#protest'],
-        duration: 30,
-        featured: true,
+        view_count: 500,
+        status: 'published',
+        created_at: '2026-07-01T10:00:00Z',
+        updated_at: '2026-07-01T10:00:00Z',
       },
     ];
 
-    const mockOrder = vi.fn().mockResolvedValue({ data: rawData, error: null });
-    const mockEq = vi.fn().mockReturnValue({ order: mockOrder });
+    const mockThen = vi.fn().mockImplementation((resolve) => resolve({ data: rawData, error: null }));
+    const mockOrder2 = vi.fn().mockReturnValue({ then: mockThen });
+    const mockOrder1 = vi.fn().mockReturnValue({ order: mockOrder2 });
+    const mockEq = vi.fn().mockReturnValue({ order: mockOrder1 });
     const mockSelect = vi.fn().mockReturnValue({ eq: mockEq });
 
     vi.mocked(supabase.from).mockReturnValue({ select: mockSelect } as any);
@@ -57,8 +63,8 @@ describe('videos data', () => {
       id: 'vid-1',
       description: 'Test video',
       city: 'Mumbai',
-      category: 'education',
-      categoryName: 'Education',
+      category: 'protest-marches',
+      categoryName: 'Protest Marches',
     });
   });
 });
