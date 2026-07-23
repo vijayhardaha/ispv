@@ -29,7 +29,7 @@ export default function CategoryPage(): JSX.Element {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-100">
-        <div className="font-mono text-xs font-bold text-black/50 uppercase">Loading...</div>
+        <div className="text-sm font-bold text-black/50 uppercase">Loading...</div>
       </div>
     );
   }

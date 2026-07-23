@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useFilterState } from '@/hooks/useFilterState';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 import { getCategoryByValue, getLocations, type DbCategory } from '@/lib/db';
-import type { FilterState } from '@/lib/schemas';
+import type { FilterState } from '@/lib/frontend-schemas';
 import { getAllVideosFromDb, type VideoEntry } from '@/lib/videos';
 
 /**
@@ -14,14 +14,14 @@ import { getAllVideosFromDb, type VideoEntry } from '@/lib/videos';
  * @type {CategoryPageData}
  * @property {string} value - Category slug from the URL.
  * @property {DbCategory | null} cat - Category record from the database.
- * @property {string[]} allLocations - All available location names for filtering.
+ * @property {{ slug: string; name: string }[]} allLocations - All available locations for filtering.
  * @property {string[]} allTags - All unique tags across videos for filtering.
  * @property {boolean} loading - Whether data is still being fetched.
  */
 export interface CategoryPageData {
   value: string;
   cat: DbCategory | null;
-  allLocations: string[];
+  allLocations: { slug: string; name: string }[];
   allTags: string[];
   loading: boolean;
 }
@@ -58,7 +58,7 @@ export function useCategoryPage(
 ): CategoryPageData & { filters: CategoryPageFilter; play: ReturnType<typeof useReelPlayer>['play'] } {
   const [allVideos, setAllVideos] = useState<VideoEntry[]>([]);
   const [cat, setCat] = useState<DbCategory | null>(null);
-  const [allLocations, setAllLocations] = useState<string[]>([]);
+  const [allLocations, setAllLocations] = useState<{ slug: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const { play } = useReelPlayer();
   const loaded = useRef(false);
@@ -71,12 +71,12 @@ export function useCategoryPage(
     Promise.all([getAllVideosFromDb(), getCategoryByValue(value), getLocations()]).then(([v, c, locs]) => {
       setAllVideos(v);
       setCat(c);
-      setAllLocations(locs.map((l) => l.name));
+      setAllLocations(locs.map((l) => ({ slug: l.slug, name: l.name })));
       setLoading(false);
     });
   }, [value]);
 
-  const all = useMemo(() => (cat ? allVideos.filter((v) => v.category === cat.value) : []), [allVideos, cat]);
+  const all = useMemo(() => (cat ? allVideos.filter((v) => v.category === cat.slug) : []), [allVideos, cat]);
 
   const allTags = useMemo(() => Array.from(new Set(allVideos.flatMap((v) => v.tags))).sort(), [allVideos]);
 

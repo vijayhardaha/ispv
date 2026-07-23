@@ -50,7 +50,7 @@ export default function CategoriesPage(): JSX.Element {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-100">
-        <div className="font-mono text-xs font-bold text-black/50 uppercase">Loading categories...</div>
+        <div className="text-sm font-bold text-black/50 uppercase">Loading categories...</div>
       </div>
     );
   }
@@ -80,11 +80,11 @@ export default function CategoriesPage(): JSX.Element {
       <section className="mx-auto max-w-7xl px-4 py-10 md:px-6">
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {categories.map((c) => {
-            const list = videos.filter((v) => v.category === c.value);
+            const list = videos.filter((v) => v.category === c.slug);
             return (
               <Link
-                key={c.value}
-                href={`/categories/${c.value}`}
+                key={c.slug}
+                href={`/categories/${c.slug}`}
                 className={cn(
                   'group shadow-brutal relative block overflow-hidden border-2 border-black p-5 transition-all',
                   'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5'

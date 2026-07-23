@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/Button';
  * Hero section for a category page with name, description, and back link.
  *
  * @param {object} props - Component props.
- * @param {{ id: string; value: string; name: string; description: string | null }} props.cat - Category record.
+ * @param {{ id: string; slug: string; name: string; description: string | null }} props.cat - Category record.
  * @param {string} props.value - Category slug from the URL.
  *
  * @returns {JSX.Element} Rendered category hero.
@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/Button';
 export function CategoryHero({
   cat,
 }: {
-  cat: { id: string; value: string; name: string; description: string | null };
+  cat: { id: string; slug: string; name: string; description: string | null };
   value: string;
 }): JSX.Element {
   return (

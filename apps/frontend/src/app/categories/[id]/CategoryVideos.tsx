@@ -5,7 +5,7 @@ import type { JSX } from 'react';
 import { FilterBar } from '@/components/shared/FilterBar';
 import { Pagination } from '@/components/shared/Pagination';
 import { VideoCard } from '@/components/shared/VideoCard';
-import type { FilterState } from '@/lib/schemas';
+import type { FilterState } from '@/lib/frontend-schemas';
 import type { VideoEntry } from '@/lib/videos';
 
 /**
@@ -16,7 +16,7 @@ import type { VideoEntry } from '@/lib/videos';
  * @property {(state: FilterState) => void} setState - Updates the filter state.
  * @property {number} total - Total number of filtered videos.
  * @property {string[]} allTags - Available tags for filtering.
- * @property {string[]} allLocations - Available locations for filtering.
+ * @property {{ slug: string; name: string }[]} allLocations - Available locations for filtering.
  * @property {VideoEntry[]} paged - Videos for the current page.
  * @property {number} totalPages - Total number of pages.
  * @property {number} safePage - Current page clamped to valid range.
@@ -28,7 +28,7 @@ export interface CategoryVideosProps {
   setState: (state: FilterState) => void;
   total: number;
   allTags: string[];
-  allLocations: string[];
+  allLocations: { slug: string; name: string }[];
   paged: VideoEntry[];
   totalPages: number;
   safePage: number;
