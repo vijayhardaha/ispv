@@ -123,7 +123,9 @@ function VideosPageContent(): JSX.Element {
   /** Update the indeterminate state of the select-all checkbox. */
   useEffect(() => {
     const el = selectAllRef.current;
-    if (!el) return;
+    if (!el) {
+      return;
+    }
     const someSelected = selectedIds.size > 0 && selectedIds.size < videos.length;
     el.indeterminate = someSelected;
   }, [selectedIds, videos.length]);
