@@ -103,7 +103,21 @@ const spanVariants = cva(
 );
 
 /**
- * Brutalist-styled button with variant sizes, optional offset shadow, and asChild support.
+ * Spinning circle used as a loading indicator inside buttons.
+ *
+ * @returns {JSX.Element} Animated spinner element.
+ */
+function Spinner(): JSX.Element {
+  return (
+    <span
+      className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
+      aria-hidden="true"
+    />
+  );
+}
+
+/**
+ * Brutalist-styled button with variant sizes, optional offset shadow, loading spinner, and asChild support.
  *
  * @param {object} props - Component properties.
  * @param {string} [props.className] - Additional CSS classes.
@@ -111,6 +125,8 @@ const spanVariants = cva(
  * @param {string} [props.size] - Size variant (default, sm, lg, icon, icon-xs, icon-sm, icon-lg).
  * @param {boolean} [props.asChild] - Render as child element via Radix Slot.
  * @param {boolean} [props.shadow] - Show offset shadow behind the button.
+ * @param {boolean} [props.loading] - Show loading spinner and disable interaction.
+ * @param {boolean} [props.disabled] - Native disabled attribute.
  * @param {React.ReactNode} props.children - Button content.
  *
  * @returns {JSX.Element} Rendered button element.
@@ -121,26 +137,46 @@ function Button({
   size = 'default',
   asChild = false,
   shadow = false,
+  loading = false,
   children,
+  disabled,
   ...props
 }: React.ComponentProps<'button'>
-  & VariantProps<typeof buttonVariants> & { asChild?: boolean; shadow?: boolean }): JSX.Element {
+  & VariantProps<typeof buttonVariants> & { asChild?: boolean; shadow?: boolean; loading?: boolean }): JSX.Element {
   const classes = cn(buttonVariants({ variant, size, className }));
   const Comp = asChild ? Slot.Root : 'button';
+  const isDisabled = disabled || loading;
 
   if (asChild) {
     const asChildClasses = cn(classes, spanVariants({ variant, size }));
     return (
-      <Comp data-slot="button" data-variant={variant} data-size={size} className={asChildClasses} {...props}>
+      <Comp
+        data-slot="button"
+        data-variant={variant}
+        data-size={size}
+        className={asChildClasses}
+        disabled={isDisabled}
+        {...props}
+      >
         {children}
       </Comp>
     );
   }
 
   return (
-    <Comp data-slot="button" data-variant={variant} data-size={size} className={classes} {...props}>
+    <Comp
+      data-slot="button"
+      data-variant={variant}
+      data-size={size}
+      className={cn(classes, loading && 'cursor-wait')}
+      disabled={isDisabled}
+      {...props}
+    >
       {shadow && <div className={offsetVariants({ color: VARIANT_OFFSET_COLOR[variant!] })} aria-hidden="true" />}
-      <span className={spanVariants({ variant, size })}>{children}</span>
+      <span className={spanVariants({ variant, size })}>
+        {loading && <Spinner />}
+        {children}
+      </span>
     </Comp>
   );
 }
