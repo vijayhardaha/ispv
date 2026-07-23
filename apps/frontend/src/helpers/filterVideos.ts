@@ -12,10 +12,18 @@ import type { VideoEntry } from '@/lib/videos';
 export function filterVideos(videos: VideoEntry[], state: FilterState): VideoEntry[] {
   const q = state.query.trim().toLowerCase();
   return videos.filter((v) => {
-    if (state.category !== 'all' && v.category !== state.category) return false;
-    if (state.location !== 'all' && v.location.toLowerCase() !== state.location.toLowerCase()) return false;
-    if (state.tags.length && !state.tags.every((t) => v.tags.includes(t))) return false;
-    if (!q) return true;
+    if (state.category !== 'all' && v.category !== state.category) {
+      return false;
+    }
+    if (state.location !== 'all' && v.location.toLowerCase() !== state.location.toLowerCase()) {
+      return false;
+    }
+    if (state.tags.length && !state.tags.every((t) => v.tags.includes(t))) {
+      return false;
+    }
+    if (!q) {
+      return true;
+    }
     return (
       v.description.toLowerCase().includes(q)
       || v.city.toLowerCase().includes(q)
