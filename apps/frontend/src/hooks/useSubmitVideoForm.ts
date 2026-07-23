@@ -4,8 +4,8 @@ import { useEffect, useState, type FormEvent } from 'react';
 
 import type { DbLocation } from '@/lib/db';
 import { checkVideoExists, getLocations } from '@/lib/db';
+import { submitVideoFormSchema, type SubmitVideoForm } from '@/lib/frontend-schemas';
 import { extractInstagramId } from '@/lib/instagram';
-import { submitVideoFormSchema, type SubmitVideoForm } from '@/lib/schemas';
 
 /**
  * Optional configuration for the useSubmitVideoForm hook.
@@ -147,10 +147,16 @@ export function useSubmitVideoForm({
 
   const submitVideo = async () => {
     const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://admin-app.vercel.app';
+    const cleanTags = hashtags
+      .split(/\s+/)
+      .map((h) => h.trim())
+      .filter(Boolean)
+      .map((h) => h.replace(/^#+/, ''))
+      .join(',');
     const response = await fetch(`${adminUrl}/api/public/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url, location, city, hashtags }),
+      body: JSON.stringify({ url, location, city, hashtags: cleanTags }),
     });
 
     if (!response.ok) {
