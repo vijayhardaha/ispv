@@ -119,7 +119,13 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
       <ModalTitle editing={!!video}>Video</ModalTitle>
       <form onSubmit={handleSubmit} className="space-y-3">
         <Field label="Instagram URL">
-          <Input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} required disabled={!!video} />
+          <Input
+            value={videoUrl}
+            onChange={(e) => setVideoUrl(e.target.value)}
+            placeholder="https://www.instagram.com/reel/..."
+            required
+            disabled={!!video}
+          />
         </Field>
 
         <div className="grid grid-cols-2 gap-3">
@@ -145,15 +151,19 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
         </div>
 
         <Field label="City">
-          <Input value={city} onChange={(e) => setCity(e.target.value)} />
+          <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="e.g. Delhi, Mumbai, Bangalore" />
         </Field>
 
         <Field label="Tags (comma-separated)">
-          <Input value={tags} onChange={(e) => setTags(e.target.value)} />
+          <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="e.g. protest, students, peace" />
         </Field>
 
         <Field label="Description">
-          <Textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+          <Textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Brief description of the video"
+          />
         </Field>
 
         <Field label="Status">
