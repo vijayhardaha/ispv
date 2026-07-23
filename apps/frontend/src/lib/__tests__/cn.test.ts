@@ -13,7 +13,7 @@ describe('cn', () => {
   });
 
   it('handles conditional class objects', () => {
-    expect(cn('px-4', { 'hidden': true, 'block': false })).toBe('px-4 hidden');
+    expect(cn('px-4', { hidden: true, block: false })).toBe('px-4 hidden');
   });
 
   it('handles arrays of classes', () => {

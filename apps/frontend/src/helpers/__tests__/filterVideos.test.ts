@@ -60,20 +60,14 @@ describe('filterVideos', () => {
 
   describe('location filter', () => {
     it('filters by state/location (case-insensitive)', () => {
-      const videos = [
-        makeVideo({ id: '1', state: 'Delhi' }),
-        makeVideo({ id: '2', state: 'Maharashtra' }),
-      ];
+      const videos = [makeVideo({ id: '1', state: 'Delhi' }), makeVideo({ id: '2', state: 'Maharashtra' })];
       const result = filterVideos(videos, { ...baseState, location: 'delhi' });
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe('1');
     });
 
     it('passes all videos when location is "all"', () => {
-      const videos = [
-        makeVideo({ id: '1', state: 'Delhi' }),
-        makeVideo({ id: '2', state: 'Maharashtra' }),
-      ];
+      const videos = [makeVideo({ id: '1', state: 'Delhi' }), makeVideo({ id: '2', state: 'Maharashtra' })];
       expect(filterVideos(videos, { ...baseState, location: 'all' })).toHaveLength(2);
     });
   });
@@ -104,10 +98,7 @@ describe('filterVideos', () => {
     });
 
     it('passes all videos when tags array is empty', () => {
-      const videos = [
-        makeVideo({ id: '1', tags: ['peaceful'] }),
-        makeVideo({ id: '2', tags: ['women'] }),
-      ];
+      const videos = [makeVideo({ id: '1', tags: ['peaceful'] }), makeVideo({ id: '2', tags: ['women'] })];
       expect(filterVideos(videos, { ...baseState, tags: [] })).toHaveLength(2);
     });
   });
@@ -124,20 +115,14 @@ describe('filterVideos', () => {
     });
 
     it('matches city name', () => {
-      const videos = [
-        makeVideo({ id: '1', city: 'Delhi' }),
-        makeVideo({ id: '2', city: 'Mumbai' }),
-      ];
+      const videos = [makeVideo({ id: '1', city: 'Delhi' }), makeVideo({ id: '2', city: 'Mumbai' })];
       const result = filterVideos(videos, { ...baseState, query: 'mumbai' });
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe('2');
     });
 
     it('matches state name', () => {
-      const videos = [
-        makeVideo({ id: '1', state: 'Delhi' }),
-        makeVideo({ id: '2', state: 'Maharashtra' }),
-      ];
+      const videos = [makeVideo({ id: '1', state: 'Delhi' }), makeVideo({ id: '2', state: 'Maharashtra' })];
       const result = filterVideos(videos, { ...baseState, query: 'maharashtra' });
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe('2');
@@ -145,7 +130,12 @@ describe('filterVideos', () => {
 
     it('matches hashtags', () => {
       const videos = [
-        makeVideo({ id: '1', hashtags: ['#peaceful', '#students'], tags: ['peaceful', 'students'], description: 'Delhi protest' }),
+        makeVideo({
+          id: '1',
+          hashtags: ['#peaceful', '#students'],
+          tags: ['peaceful', 'students'],
+          description: 'Delhi protest',
+        }),
         makeVideo({ id: '2', hashtags: ['#women', '#rights'], tags: ['women', 'rights'], description: 'Mumbai rally' }),
       ];
       const result = filterVideos(videos, { ...baseState, query: 'peaceful' });
@@ -155,7 +145,12 @@ describe('filterVideos', () => {
 
     it('matches tags (without hash prefix)', () => {
       const videos = [
-        makeVideo({ id: '1', tags: ['peaceful', 'students'], hashtags: ['#peaceful', '#students'], description: 'Delhi protest' }),
+        makeVideo({
+          id: '1',
+          tags: ['peaceful', 'students'],
+          hashtags: ['#peaceful', '#students'],
+          description: 'Delhi protest',
+        }),
         makeVideo({ id: '2', tags: ['women', 'rights'], hashtags: ['#women', '#rights'], description: 'Mumbai rally' }),
       ];
       const result = filterVideos(videos, { ...baseState, query: 'peaceful' });
