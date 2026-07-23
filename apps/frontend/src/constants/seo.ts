@@ -59,8 +59,8 @@ const SEO_KEYWORDS = [
  * Default image metadata for Open Graph and Twitter cards.
  */
 const seoImage = {
-  url: '/og/preview.png',
-  secureUrl: '/og/preview.png',
+  url: '/api/og/preview.png',
+  secureUrl: '/api/og/preview.png',
   alt: 'Indian Students Protest Vault Thumbnail',
   width: 1200,
   height: 630,
@@ -86,6 +86,9 @@ export const SITE_METADATA: Metadata = {
   category: SITE_CONFIG.category,
   classification: SITE_CONFIG.classification,
   verification: { google: GOOGLE_SITE_VERIFICATION },
+  alternates: {
+    types: { 'application/rss+xml': 'https://www.legislative.gov.in/documents/constitution-of-india?page=1' },
+  },
   icons: {
     icon: [
       { url: '/icon.svg', type: 'image/svg+xml' },
