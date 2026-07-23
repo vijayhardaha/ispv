@@ -2,12 +2,11 @@
 
 import type { JSX } from 'react';
 
-import { ArrowRight, FileText, Flag, Heart, Shield, ShieldAlert, Sparkles, Users } from 'lucide-react';
+import { FileText, Flag, Heart, Shield, ShieldAlert, Sparkles, Users } from 'lucide-react';
 import Link from 'next/link';
 
-import { Button } from '@/components/ui/Button';
+import { SectionHeader } from '@/components/shared/SectionHeader';
 import { Container } from '@/components/ui/Container';
-import { Tag } from '@/components/ui/Tag';
 import type { DbCategory } from '@/lib/db';
 
 const FEATURED_ICONS: Record<string, typeof Flag> = {
@@ -33,34 +32,31 @@ export function FeaturedVideos({ categories }: { categories: DbCategory[] }): JS
   return (
     <section className="border-b-2 border-black bg-yellow-400 py-12 md:py-16">
       <Container>
-        <div className="mb-6 flex flex-col gap-4 border-b-4 border-zinc-900 pb-6 md:flex-row md:items-end md:justify-between">
-          <div>
-            <Tag variant="black" text="Featured" icon={<Sparkles className="inline h-3 w-3" />} />
-            <h2 className="text-4xl font-bold tracking-tighter uppercase md:text-5xl">
+        <SectionHeader
+          tagVariant="black"
+          tagText="Featured"
+          tagIcon={<Sparkles className="inline h-3 w-3" />}
+          heading={
+            <>
               Watch These{' '}
               <span className="bg-linear-to-r from-red-600 to-red-500 bg-clip-text text-transparent">First</span>
-            </h2>
-            <p className="mt-2 max-w-sm text-sm text-zinc-700">
-              Browse by theme — each category collects verified submissions from across India.
-            </p>
-          </div>
-          <div className="mt-2 flex shrink-0 justify-start md:justify-end">
-            <Link href="/categories">
-              <Button variant="default-outline" size="sm">
-                <Sparkles className="size-4" />
-                View categories <ArrowRight className="size-4" />
-              </Button>
-            </Link>
-          </div>
-        </div>
+            </>
+          }
+          description="Browse by theme — each category collects verified submissions from across India."
+          descriptionClassName="max-w-sm text-sm"
+          href="/categories"
+          buttonText="View categories"
+          buttonIcon={<Sparkles className="size-4" />}
+          className="border-b-4"
+        />
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {categories.map((cat) => {
-            const Icon = FEATURED_ICONS[cat.value] ?? FALLBACK_ICON;
+            const Icon = FEATURED_ICONS[cat.slug] ?? FALLBACK_ICON;
             return (
               <Link
-                key={cat.value}
-                href={`/categories/${cat.value}`}
+                key={cat.slug}
+                href={`/categories/${cat.slug}`}
                 className="group shadow-brutal hover:shadow-brutal-lg flex items-start gap-4 border-2 border-black bg-white p-5 transition-all hover:-translate-x-0.5 hover:-translate-y-0.5"
               >
                 <div className="flex size-12 shrink-0 items-center justify-center border-2 border-black bg-yellow-400">
