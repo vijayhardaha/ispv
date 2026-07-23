@@ -57,7 +57,7 @@ export function VideoCard({
       onClick={() => onPlay(video)}
       className={cn(
         'group relative block w-full cursor-pointer overflow-hidden border-2 border-zinc-900 bg-white text-left',
-        'transition-all duration-300',
+        'transition-[transform,box-shadow] duration-300',
         'hover:-translate-y-2 hover:shadow-[8px_8px_0px_0px_#fac800]',
         'aspect-9/16',
         className
@@ -68,7 +68,7 @@ export function VideoCard({
         <img
           src={thumbnailSrc}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover grayscale transition-all duration-300 group-hover:grayscale-0"
+          className="absolute inset-0 h-full w-full object-cover grayscale transition-[filter] duration-300 group-hover:grayscale-0"
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/95 via-black/30 to-transparent" />
         <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/10 to-transparent" />

@@ -37,7 +37,7 @@ export function TagChips({
           key={t}
           onClick={() => onSelect(t)}
           className={cn(
-            'inline-flex cursor-pointer items-center gap-1 border-2 border-black px-2.5 py-1 font-mono text-xs font-bold uppercase transition-all',
+            'inline-flex cursor-pointer items-center gap-1 border-2 border-black px-2.5 py-1 font-mono text-xs font-bold uppercase transition-colors',
             selected.includes(t)
               ? 'shadow-brutal-sm bg-yellow-400 text-black'
               : 'bg-white hover:-translate-y-px hover:bg-yellow-400 hover:text-white'

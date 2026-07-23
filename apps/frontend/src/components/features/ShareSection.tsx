@@ -122,7 +122,7 @@ export function ShareSection(): JSX.Element {
                     key={platform.name}
                     onClick={() => copyMessage(setIgCopied)}
                     className={cn(
-                      'shadow-brutal hover:shadow-brutal-lg inline-flex items-center gap-2 border-2 border-black px-5 py-3 text-sm font-bold text-white uppercase transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5',
+                      'shadow-brutal hover:shadow-brutal-lg inline-flex items-center gap-2 border-2 border-black px-5 py-3 text-sm font-bold text-white uppercase transition-transform duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5',
                       platform.bg,
                       platform.hoverBg
                     )}

@@ -57,7 +57,7 @@ export function FeaturedVideos({ categories }: { categories: DbCategory[] }): JS
               <Link
                 key={cat.slug}
                 href={`/categories/${cat.slug}`}
-                className="group shadow-brutal hover:shadow-brutal-lg flex items-start gap-4 border-2 border-black bg-white p-5 transition-all hover:-translate-x-0.5 hover:-translate-y-0.5"
+                className="group shadow-brutal hover:shadow-brutal-lg flex items-start gap-4 border-2 border-black bg-white p-5 transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
               >
                 <div className="flex size-12 shrink-0 items-center justify-center border-2 border-black bg-yellow-400">
                   <Icon className="size-5" />
