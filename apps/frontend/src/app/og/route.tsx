@@ -32,7 +32,9 @@ async function loadFont(family: string, weight = 700): Promise<ArrayBuffer> {
     })
   ).text();
   const match = css.match(/url\(([^)]+)\)/);
-  if (!match) throw new Error(`Failed to load font: ${family}`);
+  if (!match) {
+    throw new Error(`Failed to load font: ${family}`);
+  }
   return fetch(match[1], { cache: 'force-cache' }).then((r) => r.arrayBuffer());
 }
 
