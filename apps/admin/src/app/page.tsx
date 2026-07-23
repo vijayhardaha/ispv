@@ -71,7 +71,7 @@ export default async function DashboardPage(): Promise<JSX.Element> {
       const { count } = await supabase
         .from('videos')
         .select('*', { count: 'exact', head: true })
-        .eq('state', loc.value);
+        .eq('location', loc.value);
       return { ...loc, video_count: count ?? 0 } as LocationWithCount;
     })
   );

@@ -31,8 +31,6 @@ export function LocationFormModal({
 }): JSX.Element {
   const [name, setName] = useState(item?.name ?? '');
   const [description, setDescription] = useState(item?.description ?? '');
-  const [seoTitle, setSeoTitle] = useState(item?.seo_title ?? '');
-  const [seoDescription, setSeoDescription] = useState(item?.seo_description ?? '');
   const supabase = createClient();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -41,7 +39,7 @@ export function LocationFormModal({
     e.preventDefault();
     setLoading(true);
     const value = item?.value ?? slugify(latinize(name), { lower: true, strict: true });
-    const payload = { value, name, description, seo_title: seoTitle, seo_description: seoDescription };
+    const payload = { value, name, description };
     if (item) {
       const { error } = await supabase.from('locations').update(payload).eq('id', item.id);
       if (error) {
@@ -72,14 +70,6 @@ export function LocationFormModal({
 
         <Field label="Description">
           <Textarea value={description} onChange={(e) => setDescription(e.target.value)} />
-        </Field>
-
-        <Field label="SEO Title">
-          <Input value={seoTitle} onChange={(e) => setSeoTitle(e.target.value)} />
-        </Field>
-
-        <Field label="SEO Description">
-          <Textarea value={seoDescription} onChange={(e) => setSeoDescription(e.target.value)} />
         </Field>
 
         <ModalActions onClose={onClose} loading={loading} />

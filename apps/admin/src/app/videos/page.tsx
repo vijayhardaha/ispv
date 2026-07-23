@@ -170,7 +170,7 @@ function VideosPageContent(): JSX.Element {
                       rel="noopener noreferrer"
                       className="underline hover:text-yellow-500"
                     >
-                      {v.ig_id ?? v.ig_url}
+                      {v.video_id ?? v.video_url}
                     </a>
                   </td>
                   <td className="px-3 py-2">{v.city}</td>
@@ -203,7 +203,7 @@ function VideosPageContent(): JSX.Element {
                       {v.status}
                     </span>
                   </td>
-                  <td className="px-3 py-2 text-xs">{v.ig_post_date?.slice(0, 10)}</td>
+                  <td className="px-3 py-2 text-xs">{v.video_post_date?.slice(0, 10)}</td>
                   <td className="px-3 py-2">
                     <div className="flex gap-1">
                       <Button onClick={() => setEditVideo(v)} variant="secondary" size="xs">

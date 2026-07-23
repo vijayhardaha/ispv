@@ -4,7 +4,6 @@ import { useState, type JSX } from 'react';
 
 import { useToast } from '@/components/Toast';
 import { Field, Input, ModalActions, ModalOverlay, ModalTitle, Select, Textarea } from '@/components/ui/Modal';
-import { COLORS } from '@/constants/colors';
 import { extractIgId, reconstructIgUrl, detectSource } from '@/lib/instagram';
 import type { CategoryRecord, LocationRecord, VideoRecord } from '@/lib/types';
 
@@ -29,13 +28,14 @@ interface VideoFormModalProps {
  * @returns {JSX.Element} Rendered modal form.
  */
 export function VideoFormModal({ video, categories, locations, onClose, onSaved }: VideoFormModalProps): JSX.Element {
-  const [igUrl, setIgUrl] = useState(video?.ig_id ? reconstructIgUrl(video.ig_id) : (video?.ig_url ?? ''));
+  const [videoUrl, setVideoUrl] = useState(
+    video?.video_id ? reconstructIgUrl(video.video_id) : (video?.video_url ?? '')
+  );
   const [category, setCategory] = useState(video?.category ?? categories[0]?.value ?? '');
-  const [state, setState] = useState(video?.state ?? 'delhi');
+  const [location, setLocation] = useState(video?.location ?? 'delhi');
   const [city, setCity] = useState(video?.city ?? '');
   const [tags, setTags] = useState<string>(video?.tags?.join(', ') ?? '');
   const [description, setDescription] = useState(video?.description ?? '');
-  const [color, setColor] = useState<string>(video?.color ?? '');
   const [status, setStatus] = useState<string>(video?.status ?? 'draft');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -43,21 +43,20 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const ig_id = extractIgId(igUrl) ?? undefined;
-    const src = detectSource(igUrl);
+    const video_id = extractIgId(videoUrl) ?? undefined;
+    const video_src = detectSource(videoUrl);
     const body = {
-      ig_url: igUrl,
-      ig_id,
-      src,
+      video_url: videoUrl,
+      video_id,
+      video_src,
       category: category || null,
-      state: state || null,
+      location: location || null,
       city: city || null,
       tags: tags
         .split(',')
         .map((t) => t.trim())
         .filter(Boolean),
       description: description || null,
-      color: color || null,
       status,
     };
 
@@ -81,7 +80,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
       <ModalTitle editing={!!video}>Video</ModalTitle>
       <form onSubmit={handleSubmit} className="space-y-3">
         <Field label="Instagram URL">
-          <Input value={igUrl} onChange={(e) => setIgUrl(e.target.value)} required />
+          <Input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} required />
         </Field>
 
         <div className="grid grid-cols-2 gap-3">
@@ -94,8 +93,8 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
               ))}
             </Select>
           </Field>
-          <Field label="State">
-            <Select value={state} onChange={(e) => setState(e.target.value)}>
+          <Field label="Location">
+            <Select value={location} onChange={(e) => setLocation(e.target.value)}>
               <option value="">—</option>
               {locations.map((s) => (
                 <option key={s.id} value={s.value}>
@@ -124,17 +123,6 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
             <option value="pending_review">Pending Review</option>
             <option value="published">Published</option>
             <option value="rejected">Rejected</option>
-          </Select>
-        </Field>
-
-        <Field label="Color">
-          <Select value={color} onChange={(e) => setColor(e.target.value)}>
-            <option value="">—</option>
-            {COLORS.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
           </Select>
         </Field>
 

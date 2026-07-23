@@ -33,8 +33,6 @@ export function CategoryFormModal({
   const [name, setName] = useState(category?.name ?? '');
   const [color, setColor] = useState(category?.color ?? 'yellow');
   const [description, setDescription] = useState(category?.description ?? '');
-  const [seoTitle, setSeoTitle] = useState(category?.seo_title ?? '');
-  const [seoDescription, setSeoDescription] = useState(category?.seo_description ?? '');
   const supabase = createClient();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -43,7 +41,7 @@ export function CategoryFormModal({
     e.preventDefault();
     setLoading(true);
     const value = category?.value ?? slugify(latinize(name), { lower: true, strict: true });
-    const payload = { value, name, color, description, seo_title: seoTitle, seo_description: seoDescription };
+    const payload = { value, name, color, description };
     if (category) {
       const { error } = await supabase.from('categories').update(payload).eq('id', category.id);
       if (error) {
@@ -84,14 +82,6 @@ export function CategoryFormModal({
 
         <Field label="Description">
           <Textarea value={description} onChange={(e) => setDescription(e.target.value)} />
-        </Field>
-
-        <Field label="SEO Title">
-          <Input value={seoTitle} onChange={(e) => setSeoTitle(e.target.value)} />
-        </Field>
-
-        <Field label="SEO Description">
-          <Textarea value={seoDescription} onChange={(e) => setSeoDescription(e.target.value)} />
         </Field>
 
         <ModalActions onClose={onClose} loading={loading} />
