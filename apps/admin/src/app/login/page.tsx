@@ -2,7 +2,9 @@
 
 import { useState, type JSX } from 'react';
 
+import { Box } from '@/components/ui/Box';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Modal';
 import { createClient } from '@/lib/supabase';
 
 /**
@@ -32,19 +34,19 @@ export default function LoginPage(): JSX.Element {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
-      <article className="w-full max-w-sm border-2 border-black bg-white p-6 shadow-[8px_8px_0px_0px_#18181b]">
+      <Box className="w-full max-w-sm p-6">
         <h1 className="font-display mb-6 text-center text-2xl font-extrabold uppercase">Admin Login</h1>
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label htmlFor="email" className="mb-1 block text-xs font-bold uppercase">
               Email
             </label>
-            <input
+            <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border-2 border-black px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+              className="focus:ring-2 focus:ring-yellow-400 focus:outline-none"
               required
             />
           </div>
@@ -52,12 +54,12 @@ export default function LoginPage(): JSX.Element {
             <label htmlFor="password" className="mb-1 block text-xs font-bold uppercase">
               Password
             </label>
-            <input
+            <Input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border-2 border-black px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+              className="focus:ring-2 focus:ring-yellow-400 focus:outline-none"
               required
             />
           </div>
@@ -66,7 +68,7 @@ export default function LoginPage(): JSX.Element {
             {loading ? 'Signing In…' : 'Sign In'}
           </Button>
         </form>
-      </article>
+      </Box>
     </main>
   );
 }
