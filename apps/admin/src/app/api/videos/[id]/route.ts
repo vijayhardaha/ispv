@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+import { videoFormSchema } from '@/lib/schemas';
 import { createServerSupabase } from '@/lib/supabase-server';
 
 /**
@@ -14,6 +15,11 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   const { id } = await params;
   const supabase = await createServerSupabase();
   const body = await req.json();
+
+  const parsed = videoFormSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid request body' }, { status: 400 });
+  }
 
   if (body.video_url) {
     const { data: existing } = await supabase

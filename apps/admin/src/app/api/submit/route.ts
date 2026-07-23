@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { extractIgId, detectSource } from '@/lib/instagram';
+import { submitVideoBodySchema } from '@/lib/schemas';
 import { createServerSupabase } from '@/lib/supabase-server';
 
 /**
@@ -11,9 +12,13 @@ import { createServerSupabase } from '@/lib/supabase-server';
  * @returns {Promise<NextResponse>} JSON response with submitted data.
  */
 export async function POST(req: Request) {
-  const { video_url, tags, category, location, city } = await req.json();
-  if (!video_url) return NextResponse.json({ error: 'video_url required' }, { status: 400 });
+  const body = await req.json();
+  const parsed = submitVideoBodySchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid request body' }, { status: 400 });
+  }
 
+  const { video_url, tags, category, location, city } = parsed.data;
   const video_id = extractIgId(video_url);
   const video_src = detectSource(video_url);
   if (!video_id) return NextResponse.json({ error: 'invalid instagram url' }, { status: 400 });

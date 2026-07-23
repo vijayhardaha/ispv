@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import sharp from 'sharp';
 
 import { detectSource, extractIgId } from '@/lib/instagram';
+import { enrichVideoBodySchema } from '@/lib/schemas';
 import { uploadBuffer } from '@/lib/upload';
 
 async function downloadAndUpload(url: string, video_id: string): Promise<string | null> {
@@ -31,8 +32,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { video_url, video_post_date, og_image } = await req.json();
-    if (!video_url) return NextResponse.json({ error: 'video_url required' }, { status: 400 });
+    const body = await req.json();
+    const parsed = enrichVideoBodySchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid request body' }, { status: 400 });
+    }
+
+    const { video_url, video_post_date, og_image } = parsed.data;
 
     const video_id = extractIgId(video_url);
     const video_src = detectSource(video_url);

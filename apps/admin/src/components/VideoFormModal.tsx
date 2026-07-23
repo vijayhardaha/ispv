@@ -5,6 +5,7 @@ import { useState, type JSX } from 'react';
 import { useToast } from '@/components/Toast';
 import { Field, Input, ModalActions, ModalOverlay, ModalTitle, Select, Textarea } from '@/components/ui/Modal';
 import { extractIgId, reconstructIgUrl, detectSource } from '@/lib/instagram';
+import { videoFormSchema } from '@/lib/schemas';
 import type { CategoryRecord, LocationRecord, VideoRecord } from '@/lib/types';
 
 interface VideoFormModalProps {
@@ -28,9 +29,7 @@ interface VideoFormModalProps {
  * @returns {JSX.Element} Rendered modal form.
  */
 export function VideoFormModal({ video, categories, locations, onClose, onSaved }: VideoFormModalProps): JSX.Element {
-  const [videoUrl, setVideoUrl] = useState(
-    video?.video_id ? reconstructIgUrl(video.video_id) : (video?.video_url ?? '')
-  );
+  const [videoUrl] = useState(video?.video_id ? reconstructIgUrl(video.video_id) : (video?.video_url ?? ''));
   const [category, setCategory] = useState(video?.category ?? categories[0]?.value ?? '');
   const [location, setLocation] = useState(video?.location ?? 'delhi');
   const [city, setCity] = useState(video?.city ?? '');
@@ -43,22 +42,47 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const video_id = extractIgId(videoUrl) ?? undefined;
-    const video_src = detectSource(videoUrl);
-    const body = {
-      video_url: videoUrl,
-      video_id,
-      video_src,
-      category: category || null,
-      location: location || null,
-      city: city || null,
-      tags: tags
-        .split(',')
-        .map((t) => t.trim())
-        .filter(Boolean),
-      description: description || null,
-      status,
-    };
+
+    const tagsArr = tags
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean);
+
+    let body: Record<string, unknown>;
+
+    if (video) {
+      // Editing — only send mutable fields, keep URL intact
+      body = {
+        category: category || null,
+        location: location || null,
+        city: city || null,
+        tags: tagsArr,
+        description: description || null,
+        status,
+      };
+    } else {
+      // Creating — send everything including URL
+      const video_id = extractIgId(videoUrl) ?? undefined;
+      const video_src = detectSource(videoUrl);
+      body = {
+        video_url: videoUrl,
+        video_id,
+        video_src,
+        category: category || null,
+        location: location || null,
+        city: city || null,
+        tags: tagsArr,
+        description: description || null,
+        status,
+      };
+    }
+
+    const parsed = videoFormSchema.safeParse(body);
+    if (!parsed.success) {
+      setLoading(false);
+      toast(parsed.error.issues[0]?.message ?? 'Invalid form data', 'error');
+      return;
+    }
 
     const res = await fetch(video ? `/api/videos/${video.id}` : '/api/videos', {
       method: video ? 'PUT' : 'POST',
@@ -80,7 +104,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
       <ModalTitle editing={!!video}>Video</ModalTitle>
       <form onSubmit={handleSubmit} className="space-y-3">
         <Field label="Instagram URL">
-          <Input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} required />
+          <Input value={videoUrl} onChange={() => {}} required disabled={!!video} />
         </Field>
 
         <div className="grid grid-cols-2 gap-3">
