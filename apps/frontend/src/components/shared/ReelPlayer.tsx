@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type JSX } from 'react';
+import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
 
 import { X, ChevronUp, ChevronDown } from 'lucide-react';
 
@@ -68,6 +68,13 @@ export function ReelPlayer({ videos, startIndex = 0, open, onClose }: ReelPlayer
     };
   }, [open, videos.length]);
 
+  const getNextIndex = useCallback(
+    (delta: number) => {
+      return Math.min(Math.max(active + delta, 0), videos.length - 1);
+    },
+    [active, videos.length]
+  );
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -81,7 +88,7 @@ export function ReelPlayer({ videos, startIndex = 0, open, onClose }: ReelPlayer
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open, active, videos.length]);
+  }, [open, getNextIndex]);
 
   useEffect(() => {
     if (!open) return;
@@ -91,10 +98,6 @@ export function ReelPlayer({ videos, startIndex = 0, open, onClose }: ReelPlayer
       document.body.style.overflow = orig;
     };
   }, [open]);
-
-  function getNextIndex(delta: number) {
-    return Math.min(Math.max(active + delta, 0), videos.length - 1);
-  }
 
   function scrollToIndex(i: number) {
     const el = containerRef.current;
