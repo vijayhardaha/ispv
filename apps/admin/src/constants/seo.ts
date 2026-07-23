@@ -13,8 +13,8 @@ const CREATOR = {
  * Site-wide configuration values for SEO and metadata.
  */
 export const SITE_CONFIG = {
-  name: 'Reel Vault Admin',
-  title: 'Reel Vault Admin — Video Archive Management',
+  name: 'ISPV Admin',
+  title: 'ISPV Admin — Video Archive Management',
   url: 'https://ispv.vercel.app',
   description: 'Admin panel for managing the Indian Students Protest Vault archive.',
   creator: CREATOR,

@@ -7,8 +7,8 @@
   ],
   "scripts": {
     "dev": "bun run --filter './apps/*' dev",
-    "dev:frontend": "bun run --filter @reel-vault/frontend dev",
-    "dev:admin": "bun run --filter @reel-vault/admin dev",
+    "dev:frontend": "bun run --filter @ispv/frontend dev",
+    "dev:admin": "bun run --filter @ispv/admin dev",
     "build": "bun run --filter './apps/*' build",
     "lint": "bun run --filter './apps/*' lint",
     "lint:fix": "bun run --filter './apps/*' lint:fix",
@@ -21,6 +21,7 @@
     "@prettier/plugin-xml": "^3.4.2",
     "@types/latinize": "^0.2.18",
     "@vijayhardaha/dev-config": "^2.2.0",
+    "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^10.7.0",
     "eslint-config-next": "^16.2.10",
     "eslint-config-prettier": "^10.1.8",
@@ -33,7 +34,8 @@
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.65.0"
+    "typescript-eslint": "^8.65.0",
+    "vitest": "^4.1.10"
   },
   "author": {
     "name": "Vijay Hardaha",

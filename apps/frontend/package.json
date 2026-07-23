@@ -1,11 +1,14 @@
 {
-  "name": "@reel-vault/frontend",
+  "name": "@ispv/frontend",
   "version": "0.0.0",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "tsc": "tsc --noEmit"
   },
   "author": {
@@ -39,7 +42,9 @@
     "@types/node": "^26.1.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@vijayhardaha/dev-config": "^2.2.0"
+    "@vijayhardaha/dev-config": "^2.2.0",
+    "@vitest/coverage-v8": "^4.1.10",
+    "vitest": "^4.1.10"
   },
   "trustedDependencies": [
     "sharp",

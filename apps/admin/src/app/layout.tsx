@@ -51,7 +51,7 @@ export default async function RootLayout({ children }: { children: ReactNode }):
             <nav className="border-b-2 border-black bg-white py-3" aria-label="Main navigation">
               <Container className="flex items-center justify-between">
                 <div className="flex items-center gap-6">
-                  <span className="font-display text-sm font-extrabold uppercase">Reel Vault Admin</span>
+                  <span className="font-display text-sm font-extrabold uppercase">ISPV Admin</span>
                   {HEADER_NAV_LINKS.map((link) => (
                     <Link
                       key={link.href}
@@ -75,15 +75,16 @@ export default async function RootLayout({ children }: { children: ReactNode }):
 
         <footer className="border-t-2 border-black bg-white">
           <Container className="flex items-center justify-between py-4">
-            <span className="font-display text-xs font-extrabold tracking-tight uppercase">Reel Vault Admin</span>
+            <span className="font-display text-xs font-extrabold tracking-tight uppercase">ISPV Admin</span>
             <p className="text-xs text-black/50">
+              &copy; {new Date().getFullYear()}
               <a
                 href="https://ispv.vercel.app"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition-colors hover:text-yellow-500"
               >
-                &copy; {new Date().getFullYear()} Indian Students Protest Vault
+                Indian Students Protest Vault
               </a>
             </p>
           </Container>

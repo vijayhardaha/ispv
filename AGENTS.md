@@ -2,9 +2,9 @@
 
 ## Project Overview
 
-- **Name**: `@reel-vault/frontend` — a Next.js static archive site (part of `reel-vault-monorepo`)
-- **Admin**: `@reel-vault/admin` — Next.js admin panel at `apps/admin/`
-- **Extension**: `@reel-vault/extension` — Chrome extension at `chrome-extension/`
+- **Name**: `@ispv/frontend` — a Next.js static archive site (part of `ispv-monorepo`)
+- **Admin**: `@ispv/admin` — Next.js admin panel at `apps/admin/`
+- **Extension**: `@ispv/extension` — Chrome extension at `chrome-extension/`
 - **Purpose**: Indexes peaceful Indian protest Instagram reels, organised by city, category, and hashtag
 - **Version**: 0.0.0
 - **License**: MIT
@@ -44,11 +44,15 @@
 
 Always run lint + tsc after making changes: `bun run lint && bun run tsc`.
 
+## Frontend Knowledge Base
+
+Detailed frontend documentation at `apps/frontend/knowledge.md` — covers components, data flow, filter architecture, hooks, SEO, and known gaps.
+
 ## Project Structure
 
 ```
 apps/
-├── frontend/             # @reel-vault/frontend — public site
+├── frontend/             # @ispv/frontend — public site
 │   ├── src/
 │   │   ├── app/          # Next.js App Router pages
 │   │   ├── components/   # React components
@@ -58,14 +62,14 @@ apps/
 │   ├── public/
 │   ├── next.config.ts
 │   └── package.json
-└── admin/                # @reel-vault/admin — admin panel
+└── admin/                # @ispv/admin — admin panel
     ├── src/
     │   ├── app/          # Pages + API routes
     │   ├── components/   # Form modals
     │   └── lib/          # Supabase client + types
     ├── supabase/migrations/
     └── package.json
-chrome-extension/         # @reel-vault/extension
+chrome-extension/         # @ispv/extension
 ├── manifest.json
 ├── content.js
 ├── icons/
@@ -116,13 +120,15 @@ chrome-extension/         # @reel-vault/extension
 
 ## Data Architecture
 
-All video data is hardcoded in `src/data/videos.ts`. There is no backend or database.
+All video data is stored in Supabase (`videos`, `categories`, `locations` tables). The frontend fetches from Supabase via `lib/db.ts` (server components) or `useEffect` (client components). See `apps/frontend/knowledge.md` for full Data Architecture details.
 
 Key types:
 
-- `VideoEntry` — full video record (id, description, url, thumbnail, city, state, category, tags, hashtags, duration, featured?)
-- `VideoCategory` — `'all' | 'marches' | 'rallies' | 'candlelight' | 'art' | 'youth' | 'press'`
-- Helper functions: `getAllVideos()`, `getVideosByCity()`, `getVideosByCategory()`, `getCategoryById()`, `getAllCities()`
+- `VideoEntry` — full video record (id, description, url, thumbnail, city, state, category, categoryName, tags, hashtags, duration, featured?)
+- `VideoCategory` — `string`
+- `DbCategory` — `{ id, value, name, color, description?, seo_title?, seo_description? }`
+- `DbLocation` — `{ id, value, name, description? }`
+- Helper functions: `getAllVideosFromDb()`, `getCategories()`, `getLocations()`, `getTags()`, `getCategoryByValue()`
 
 ## Config files
 
@@ -140,5 +146,5 @@ Key types:
 - **No env files** exist (no `.env.example` either)
 - **No CI/CD** (no `.github/` directory)
 - **No analytics, no i18n, no PWA, no service worker**
-- Data is entirely static/hardcoded
+- Data is entirely dynamic from Supabase (not hardcoded)
 - The `dist/` dir is stale Vite build output (from pre-Next.js migration)

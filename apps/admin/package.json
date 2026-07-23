@@ -1,5 +1,5 @@
 {
-  "name": "@reel-vault/admin",
+  "name": "@ispv/admin",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,6 +8,9 @@
     "start": "next start -p 3001",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "tsc": "tsc --noEmit"
   },
   "dependencies": {
@@ -30,7 +33,9 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vijayhardaha/dev-config": "^2.2.0",
+    "@vitest/coverage-v8": "^4.1.10",
     "postcss": "^8.5.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
   }
 }
