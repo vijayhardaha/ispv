@@ -7,6 +7,7 @@ import { JsonLd } from '@vijayhardaha/schema-builder/react';
 import { ArrowRight, Grid3x3 } from 'lucide-react';
 import Link from 'next/link';
 
+import { PageHero } from '@/components/shared/PageHero';
 import { VideoCard } from '@/components/shared/VideoCard';
 import { Button } from '@/components/ui/Button';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
@@ -58,24 +59,18 @@ export default function CategoriesPage(): JSX.Element {
   return (
     <div>
       <JsonLd data={schemaData} />
-      <section className="border-b-2 border-black bg-black py-10 text-white">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="font-mono text-[10px] tracking-widest text-yellow-500 uppercase">/ Categories</div>
-          <h1 className="font-display mt-2 text-4xl font-extrabold tracking-tight uppercase md:text-6xl">
-            Browse by Category
-          </h1>
-          <p className="mt-2 max-w-2xl text-white/80">
-            All categories from the archive. Click into any to see the full list, or jump to{' '}
-            <Link
-              href="/videos"
-              className="decoration-saffron underline decoration-2 underline-offset-4 hover:text-yellow-500"
-            >
-              all videos
-            </Link>
-            .
-          </p>
-        </div>
-      </section>
+      <PageHero breadcrumb="Categories" title="Browse by Category">
+        <p className="mt-2 max-w-2xl text-white/80">
+          All categories from the archive. Click into any to see the full list, or jump to{' '}
+          <Link
+            href="/videos"
+            className="decoration-saffron underline decoration-2 underline-offset-4 hover:text-yellow-500"
+          >
+            all videos
+          </Link>
+          .
+        </p>
+      </PageHero>
 
       <section className="mx-auto max-w-7xl px-4 py-10 md:px-6">
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">

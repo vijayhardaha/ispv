@@ -6,6 +6,7 @@ import { breadcrumbSchema, collectionPageSchema } from '@vijayhardaha/schema-bui
 import { JsonLd } from '@vijayhardaha/schema-builder/react';
 
 import { FilterBar } from '@/components/shared/FilterBar';
+import { PageHero } from '@/components/shared/PageHero';
 import { Pagination } from '@/components/shared/Pagination';
 import { VideoCard } from '@/components/shared/VideoCard';
 import { useFilterState } from '@/hooks/useFilterState';
@@ -70,17 +71,11 @@ function VideosPageInner(): JSX.Element {
   return (
     <div className="bg-gray-100">
       <JsonLd data={schemaData} />
-      <section className="border-b-2 border-black bg-black py-10 text-white">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="font-mono text-[10px] tracking-widest text-yellow-500 uppercase">/ All Videos</div>
-          <h1 className="font-display mt-2 text-4xl font-extrabold tracking-tight uppercase md:text-6xl">
-            The Full Archive
-          </h1>
-          <p className="mt-2 text-white/80">
-            Every reel we have on file. Use the search, tags, and category filters to narrow it down.
-          </p>
-        </div>
-      </section>
+      <PageHero breadcrumb="All Videos" title="The Full Archive">
+        <p className="mt-2 text-white/80">
+          Every reel we have on file. Use the search, tags, and category filters to narrow it down.
+        </p>
+      </PageHero>
 
       <section className="mx-auto max-w-7xl px-4 py-8 md:px-6">
         <FilterBar

@@ -6,6 +6,7 @@ import { ArrowRight, Check, X, Search, Link2, Eye, BookOpen } from 'lucide-react
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { PageHero } from '@/components/shared/PageHero';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 import { cn } from '@/lib/cn';
@@ -101,27 +102,20 @@ export default function AboutPage(): JSX.Element {
     <div>
       <JsonLd data={schemaData} />
       {/* Hero */}
-      <section className="border-b-2 border-black bg-black py-14 text-white">
-        <Container>
-          <div className="font-mono text-[10px] tracking-widest text-yellow-400 uppercase">/ About</div>
-          <h1 className="font-display mt-2 text-4xl font-extrabold tracking-tight uppercase md:text-6xl">
-            What is Indian Students Protest Vault?
-          </h1>
-          <p className="mt-4 leading-relaxed text-white/80">
-            Indian Students Protest Vault is an independent archive of publicly shared videos documenting student
-            protests across India.
-          </p>
-          <p className="mt-3 leading-relaxed text-white/70">
-            Every protest leaves behind thousands of recordings. They are scattered across social media, difficult to
-            search, and often disappear over time. This archive brings those public videos together into one searchable
-            collection, organized by event, location, date, and topic.
-          </p>
-          <p className="mt-3 leading-relaxed text-yellow-400/80">
-            Our purpose is simple: preserve public recordings so they remain easy to discover today and valuable
-            tomorrow.
-          </p>
-        </Container>
-      </section>
+      <PageHero breadcrumb="About" title="What is Indian Students Protest Vault?">
+        <p className="mt-2 text-white/80">
+          Indian Students Protest Vault is an independent archive of publicly shared videos documenting student protests
+          across India.
+        </p>
+        <p className="mt-1 text-white/70">
+          Every protest leaves behind thousands of recordings. They are scattered across social media, difficult to
+          search, and often disappear over time. This archive brings those public videos together into one searchable
+          collection, organized by event, location, date, and topic.
+        </p>
+        <p className="mt-2 text-yellow-400/80">
+          Our purpose is simple: preserve public recordings so they remain easy to discover today and valuable tomorrow.
+        </p>
+      </PageHero>
 
       {/* Principles */}
       <section className="py-12">
