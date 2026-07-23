@@ -25,10 +25,12 @@ const SUGGESTED_HASHTAGS = [
 
 /**
  * Parse a space-separated hashtag string into a unique list of cleaned tags.
+ * Only words prefixed with `#` are treated as valid tags; plain text is ignored.
+ * The `#` prefix is stripped for display.
  *
  * @param {string} input - Raw hashtag text input.
  *
- * @returns {string[]} Deduplicated array of hashtag strings (with `#` prefix).
+ * @returns {string[]} Deduplicated array of tag strings (without `#` prefix).
  */
 function parseHashtags(input: string): string[] {
   return Array.from(
@@ -36,11 +38,8 @@ function parseHashtags(input: string): string[] {
       input
         .split(/\s+/)
         .map((h) => h.trim())
-        .filter(Boolean)
-        .map((h) => {
-          const match = h.match(/^#+(.+)/);
-          return match ? `#${match[1]}` : h;
-        })
+        .filter((h) => h.startsWith('#'))
+        .map((h) => h.replace(/^#+/, ''))
     )
   );
 }
@@ -69,7 +68,7 @@ export function HashtagArea({
     setHashtags(
       hashtags
         .split(/\s+/)
-        .filter((h) => h.trim() !== tag)
+        .filter((h) => h.trim().replace(/^#+/, '') !== tag)
         .join(' ')
     );
   };
@@ -92,17 +91,14 @@ export function HashtagArea({
       />
 
       {currentTags.length > 0 && (
-        <div className="flex flex-wrap gap-1">
+        <div className="mb-4 flex flex-wrap gap-1">
           {currentTags.map((t) => (
-            <span
-              key={t}
-              className="inline-flex items-center gap-1 border-2 border-black bg-gray-200 px-2 py-0.5 font-mono text-[10px] font-bold uppercase"
-            >
-              {t}
+            <span key={t} className="inline-flex items-center text-[10px] font-bold uppercase">
+              <span className="h-6 border-2 border-r-0 border-black bg-gray-200 px-2 py-0.5">{t}</span>
               <button
                 type="button"
                 onClick={() => removeTag(t)}
-                className="cursor-pointer hover:text-red-600"
+                className="flex h-6 w-6 cursor-pointer items-center justify-center border-2 border-black bg-red-400 text-white hover:bg-red-600 hover:text-white"
                 aria-label={`Remove ${t}`}
                 disabled={disabled}
               >
@@ -115,14 +111,14 @@ export function HashtagArea({
 
       {SUGGESTED_HASHTAGS.filter((h) => !currentTags.includes(h)).length > 0 && (
         <div>
-          <p className="mb-1 font-mono text-[10px] font-bold tracking-widest text-black/50 uppercase">Suggestions</p>
+          <p className="mb-1 text-[10px] font-bold tracking-widest text-black/50 uppercase">Suggestions</p>
           <div className="flex flex-wrap gap-1">
             {SUGGESTED_HASHTAGS.filter((h) => !currentTags.includes(h)).map((h) => (
               <button
                 key={h}
                 type="button"
                 onClick={() => addTag(h)}
-                className="inline-flex items-center gap-1 border-2 border-black bg-white px-2 py-0.5 font-mono text-[10px] font-bold uppercase transition-colors hover:bg-yellow-400"
+                className="inline-flex items-center gap-1 border-2 border-black bg-white px-2 py-0.5 text-[10px] font-bold uppercase transition-colors hover:bg-yellow-400"
                 disabled={disabled}
               >
                 + {h}
