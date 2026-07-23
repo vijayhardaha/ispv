@@ -72,66 +72,59 @@ export const DEMANDS: Demand[] = [
   },
 ];
 
-/**
- * Chronological timeline of key protest events.
- */
-export const TIMELINE_ITEMS: TimelineItem[] = [
-  {
-    year: '2025',
-    label: 'Peaceful Protests Begin',
-    description:
-      'Students across multiple universities begin peaceful demonstrations, raising concerns about campus safety, administrative transparency, and student rights.',
-  },
-  {
-    year: '2025',
-    label: 'Widespread Awareness',
-    description:
-      "Social media campaigns and on-ground efforts bring national and international attention to the students' demands. Peaceful marches are organised in major cities.",
-  },
-  {
-    year: '2025',
-    label: 'Community Solidarity',
-    description:
-      'Faculty members, civil society groups, and public figures express solidarity. Open letters and public statements amplify calls for dialogue and resolution.',
-  },
-  {
-    year: '2025',
-    label: 'Policy Discussions',
-    description:
-      'Administrative bodies initiate discussions on key demands. Student representatives participate in formal dialogues while continuing peaceful advocacy.',
-  },
-  {
-    year: '2025',
-    label: 'Ongoing Movement',
-    description:
-      'The movement continues to evolve with sustained civic engagement, public discourse, and efforts toward institutional reform.',
-  },
-];
-
-/**
- * External sources referenced by the protest information page.
- */
 export const SOURCES: Source[] = [
   {
-    title: 'News Media Coverage',
-    url: 'https://en.wikipedia.org/wiki/2024%E2%80%9325_Indian_protests_against_the_Controversies_and_roadblocks',
+    title: 'Cockroach Janta Party (Official)',
+    url: 'https://www.cockrochjantaparty.co.in/',
     description:
-      'Major national and international news outlets providing verified reports on protest events and student statements.',
+      'Official website containing the movement’s announcements, manifesto, campaign updates, and public communications.',
   },
   {
-    title: 'Student Organisations',
-    url: 'https://en.wikipedia.org/wiki/2024%E2%80%9325_Indian_protests_against_the_Controversies_and_roadblocks',
-    description: 'Official communications and manifestos published by student bodies and protest organisers.',
-  },
-  {
-    title: 'Public Records',
-    url: 'https://en.wikipedia.org/wiki/2024%E2%80%9325_Indian_protests_against_the_Controversies_and_roadblocks',
-    description: 'Government and institutional statements, reports, and official responses related to the protests.',
-  },
-  {
-    title: 'Civil Society Reports',
-    url: 'https://en.wikipedia.org/wiki/2024%E2%80%9325_Indian_protests_against_the_Controversies_and_roadblocks',
+    title: 'The Hindu',
+    url: 'https://www.thehindu.com/',
     description:
-      'Reports and analyses from human rights organisations and civil society groups documenting the movement.',
+      'Independent reporting, ground coverage, interviews, and analysis related to student protests and public movements.',
+  },
+  {
+    title: 'The Indian Express',
+    url: 'https://indianexpress.com/',
+    description:
+      'Verified news reports, timelines, interviews, and investigative coverage documenting protest events across India.',
+  },
+  {
+    title: 'NDTV',
+    url: 'https://www.ndtv.com/',
+    description:
+      'National news coverage, live updates, interviews, and reports covering student protests and related developments.',
+  },
+  {
+    title: 'Aaj Tak',
+    url: 'https://www.aajtak.in/',
+    description:
+      'Hindi news coverage featuring reports, discussions, interviews, and on-ground updates from protest events.',
+  },
+  {
+    title: 'Dainik Bhaskar',
+    url: 'https://www.bhaskar.com/',
+    description:
+      'Regional and national reporting with city-wise coverage, eyewitness accounts, and protest related news updates.',
+  },
+  {
+    title: 'NewsLaundry',
+    url: 'https://www.newslaundry.com/',
+    description:
+      'Independent journalism featuring field reports, media analysis, interviews, and investigative stories related to public movements.',
+  },
+  {
+    title: 'The Wire',
+    url: 'https://thewire.in/',
+    description:
+      'Independent digital publication covering public policy, civil liberties, and student movements through reports and analysis.',
+  },
+  {
+    title: 'The Quint',
+    url: 'https://www.thequint.com/',
+    description:
+      'Digital journalism platform covering public issues, ground reports, fact checks, and multimedia stories.',
   },
 ];
