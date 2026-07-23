@@ -12,7 +12,7 @@ export type { DbCategory, DbLocation };
  */
 export async function getCategories(): Promise<DbCategory[]> {
   const list = [...CATEGORIES];
-  const other = list.findIndex((c) => c.value === 'other');
+  const other = list.findIndex((c) => c.slug === 'other');
   if (other !== -1) {
     const [item] = list.splice(other, 1);
     list.push(item);
@@ -27,7 +27,7 @@ export async function getCategories(): Promise<DbCategory[]> {
  */
 export async function getLocations(): Promise<DbLocation[]> {
   const list = [...LOCATIONS];
-  const foreignIdx = list.findIndex((l) => l.value === 'foreign');
+  const foreignIdx = list.findIndex((l) => l.slug === 'foreign');
   if (foreignIdx !== -1) {
     const [item] = list.splice(foreignIdx, 1);
     list.push(item);
@@ -36,14 +36,14 @@ export async function getLocations(): Promise<DbLocation[]> {
 }
 
 /**
- * Finds a category by its URL-safe value slug.
+ * Finds a category by its URL-safe slug.
  *
- * @param {string} value - Category value slug.
+ * @param {string} value - Category slug.
  *
  * @returns {Promise<DbCategory | null>} Matching category or null.
  */
 export async function getCategoryByValue(value: string): Promise<DbCategory | null> {
-  return CATEGORIES.find((c) => c.value === value) ?? null;
+  return CATEGORIES.find((c) => c.slug === value) ?? null;
 }
 
 /**
@@ -52,7 +52,7 @@ export async function getCategoryByValue(value: string): Promise<DbCategory | nu
  * @returns {Promise<DbCategory[]>} Featured category entries.
  */
 export async function getFeaturedCategories(): Promise<DbCategory[]> {
-  return FEATURED_CATEGORIES_SLUGS.map((slug) => CATEGORIES.find((c) => c.value === slug)).filter(
+  return FEATURED_CATEGORIES_SLUGS.map((slug) => CATEGORIES.find((c) => c.slug === slug)).filter(
     Boolean
   ) as DbCategory[];
 }
