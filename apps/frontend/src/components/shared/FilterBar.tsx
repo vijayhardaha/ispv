@@ -2,7 +2,7 @@
 
 import { type JSX } from 'react';
 
-import { Search, X, Filter } from 'lucide-react';
+import { MapPin, Search, X, Filter } from 'lucide-react';
 
 import type { VideoCategory } from '@/constants/categories';
 import { cn } from '@/lib/cn';
@@ -13,6 +13,7 @@ import { cn } from '@/lib/cn';
  * @type {FilterState}
  * @property {string} query - Free-text search query.
  * @property {VideoCategory} category - Active category filter.
+ * @property {string} location - Active location filter ('all' for no filter).
  * @property {string[]} tags - Selected tag filters.
  * @property {number} page - Current page number.
  * @property {number} perPage - Number of items per page.
@@ -20,19 +21,21 @@ import { cn } from '@/lib/cn';
 export interface FilterState {
   query: string;
   category: VideoCategory;
+  location: string;
   tags: string[];
   page: number;
   perPage: number;
 }
 
 /**
- * Search and tag filter bar for the video archive.
+ * Search, location, and tag filter bar for the video archive.
  *
  * @param {object} props - Component properties.
  * @param {FilterState} props.state - Current filter state.
  * @param {(s: FilterState) => void} props.setState - Callback to update filter state.
  * @param {number} props.total - Total number of filtered results.
- * @param {string[]} props.allTags - All available tags for the filter chips.
+ * @param {string[]} props.allTags - All available tags for the filter chips (capped at 100).
+ * @param {string[]} [props.allLocations] - All available location names for the location dropdown.
  *
  * @returns {JSX.Element} Rendered filter bar.
  */
@@ -41,13 +44,15 @@ export function FilterBar({
   setState,
   total,
   allTags,
+  allLocations = [],
 }: {
   state: FilterState;
   setState: (s: FilterState) => void;
   total: number;
   allTags: string[];
+  allLocations?: string[];
 }): JSX.Element {
-  const tagChips = allTags;
+  const tagChips = allTags.slice(0, 100);
 
   const selectTag = (tag: string) => {
     setState({ ...state, tags: state.tags.includes(tag) ? [] : [tag], page: 1 });
@@ -56,7 +61,7 @@ export function FilterBar({
   return (
     <div className="shadow-brutal border-2 border-black bg-white p-4 md:p-5">
       <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
-        <div className="md:col-span-6">
+        <div className="md:col-span-8">
           <label className="font-mono text-[10px] font-bold tracking-widest text-black/60 uppercase">Search</label>
           <div className="relative mt-1">
             <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-black/50" />
@@ -75,6 +80,24 @@ export function FilterBar({
                 <X className="h-3 w-3" />
               </button>
             )}
+          </div>
+        </div>
+        <div className="md:col-span-4">
+          <label className="font-mono text-[10px] font-bold tracking-widest text-black/60 uppercase">Location</label>
+          <div className="relative mt-1">
+            <MapPin className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-black/50" />
+            <select
+              value={state.location}
+              onChange={(e) => setState({ ...state, location: e.target.value, page: 1 })}
+              className="font-body w-full appearance-none border-2 border-black bg-white px-3 py-2.5 pr-9 pl-9 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+            >
+              <option value="all">All locations</option>
+              {allLocations.map((loc) => (
+                <option key={loc} value={loc}>
+                  {loc}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       </div>

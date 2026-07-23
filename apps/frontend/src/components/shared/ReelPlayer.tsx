@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, type JSX } from 'react';
 import { X, ChevronUp, ChevronDown } from 'lucide-react';
 import Image from 'next/image';
 
-import { getCategoryById, type VideoEntry } from '@/data/videos';
+import type { VideoEntry } from '@/data/videos';
 import { cn } from '@/lib/cn';
 import { extractInstagramId } from '@/lib/instagram';
 
@@ -184,7 +184,6 @@ function ReelItem({
 }): JSX.Element {
   const [embedLoaded, setEmbedLoaded] = useState(false);
   const id = extractInstagramId(video.url);
-  const cat = getCategoryById(video.category);
   return (
     <div className="snap-reel-item relative h-full w-full bg-black">
       <Image src={video.thumbnail} alt="" fill sizes="100vw" className="object-cover opacity-90" />
@@ -215,7 +214,7 @@ function ReelItem({
       <div className="absolute inset-x-0 top-0 z-10 bg-linear-to-b from-black via-black/40 to-transparent pt-3 pr-3 pb-8 pl-3">
         <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1 border-2 border-black bg-yellow-400 px-2.5 py-0.5 font-mono text-xs font-bold text-black uppercase">
-            {cat?.label ?? video.category}
+            {video.categoryName}
           </span>
           <span className="inline-flex items-center gap-1 border-2 border-black bg-white px-2.5 py-0.5 font-mono text-xs font-bold text-black uppercase">
             {video.city}, {video.state}

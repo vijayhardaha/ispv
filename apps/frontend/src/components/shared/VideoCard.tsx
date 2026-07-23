@@ -3,7 +3,7 @@ import { useState, type JSX } from 'react';
 import { Play, MapPin } from 'lucide-react';
 import Image from 'next/image';
 
-import { getCategoryById, type VideoEntry } from '@/data/videos';
+import type { VideoEntry } from '@/data/videos';
 import { cn } from '@/lib/cn';
 
 /**
@@ -49,7 +49,6 @@ export function VideoCard({
   className?: string;
 }): JSX.Element {
   const [imgError, setImgError] = useState(false);
-  const cat = getCategoryById(video.category);
 
   return (
     <button
@@ -81,7 +80,7 @@ export function VideoCard({
       </div>
 
       <div className="absolute top-2 right-2 left-2 z-10 flex items-start justify-between gap-1">
-        <Badge className="bg-yellow-400 text-black">{cat?.label ?? video.category}</Badge>
+        <Badge className="bg-yellow-400 text-black">{video.categoryName}</Badge>
         {video.featured && <Badge className="bg-red-500 text-white">Featured</Badge>}
       </div>
 
