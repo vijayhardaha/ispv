@@ -106,7 +106,7 @@ export function FAQSection(): JSX.Element {
         <div className="mx-auto max-w-250">
           {/* Header */}
           <div className="mb-12 text-center">
-            <div className="mb-6 inline-block -rotate-2 border-[3px] border-black bg-yellow-400 px-4 py-2 shadow-[4px_4px_0px_0px_#000]">
+            <div className="mb-6 inline-block -rotate-2 border-2 border-black bg-yellow-400 px-4 py-2 shadow-[4px_4px_0px_0px_#000]">
               <h2 className="font-mono text-sm font-bold tracking-tight uppercase md:text-base">{'//'} The FAQs</h2>
             </div>
             <h2 className="font-display text-5xl leading-[0.9] font-black tracking-tighter uppercase md:text-7xl">
@@ -121,7 +121,7 @@ export function FAQSection(): JSX.Element {
             {FAQS.map((faq) => (
               <details
                 key={faq.q}
-                className="group shadow-brutal-xl hover:shadow-brutal-2xl open:shadow-brutal border-[3px] border-black bg-white transition-all duration-200 open:translate-x-0.5 open:translate-y-0.5 hover:-translate-x-0.5 hover:-translate-y-0.5"
+                className="group shadow-brutal-xl hover:shadow-brutal-2xl open:shadow-brutal border-2 border-black bg-white transition-all duration-200 open:translate-x-0.5 open:translate-y-0.5 hover:-translate-x-0.5 hover:-translate-y-0.5"
               >
                 <summary className="flex cursor-pointer items-center justify-between p-6 select-none md:p-8">
                   <h3 className="font-display text-xl font-bold tracking-tight uppercase md:text-3xl">{faq.q}</h3>
@@ -130,7 +130,7 @@ export function FAQSection(): JSX.Element {
                     <MinusIcon />
                   </div>
                 </summary>
-                <div className="border-t-[3px] border-black bg-yellow-400/10 p-6 md:p-8">
+                <div className="border-t-2 border-black bg-yellow-400/10 p-6 md:p-8">
                   <p className="font-mono text-base leading-relaxed md:text-lg">{faq.a}</p>
                 </div>
               </details>
@@ -144,7 +144,7 @@ export function FAQSection(): JSX.Element {
               href="https://www.instagram.com/vegan.vijay/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block border-[3px] border-black bg-black px-8 py-4 text-xl font-bold text-white uppercase shadow-[4px_4px_0px_0px_#fdc700] transition-all duration-200 hover:bg-yellow-400 hover:text-black hover:shadow-[4px_4px_0px_0px_#000]"
+              className="inline-block border-2 border-black bg-black px-8 py-4 text-xl font-bold text-white uppercase shadow-[4px_4px_0px_0px_#fdc700] transition-all duration-200 hover:bg-yellow-400 hover:text-black hover:shadow-[4px_4px_0px_0px_#000]"
             >
               Message @vegan.vijay
             </a>
