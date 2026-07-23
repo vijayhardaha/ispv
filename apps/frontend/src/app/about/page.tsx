@@ -18,19 +18,19 @@ const PRINCIPLES = [
     icon: <BookOpen className="h-6 w-6" />,
     title: 'Preservation, Not Persuasion',
     body: 'This archive exists to organize public recordings, not to promote a political party, endorse opinions, or rewrite events. Every video represents the perspective of the person who recorded it.',
-    color: 'bg-black text-white',
+    color: 'bg-cyan-400 text-white',
   },
   {
     icon: <Eye className="h-6 w-6" />,
     title: 'Attribution Matters',
     body: 'Every embedded video links directly to its original creator. Credit remains with the people who documented the moment.',
-    color: 'bg-blue-600 text-white',
+    color: 'bg-red-400 text-white',
   },
   {
     icon: <Search className="h-6 w-6" />,
     title: 'Searchable History',
     body: 'Videos are organized by state, city, event, date, creator, and topic, making it possible to explore a movement from multiple perspectives instead of isolated posts.',
-    color: 'bg-yellow-400',
+    color: 'bg-green-400',
   },
 ];
 

@@ -9,9 +9,14 @@ import { VideoCard } from '@/components/shared/VideoCard';
 import { Button } from '@/components/ui/Button';
 import { getAllVideosFromDb, type VideoEntry } from '@/data/videos';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
-import { getCategories, type DbCategory } from '@/lib/db';
 import { cn } from '@/lib/cn';
+import { getCategories, type DbCategory } from '@/lib/db';
 
+/**
+ * Categories listing page — shows all categories with video counts and recently added videos.
+ *
+ * @returns {JSX.Element} Rendered categories page.
+ */
 export default function CategoriesPage(): JSX.Element {
   const [videos, setVideos] = useState<VideoEntry[]>([]);
   const [categories, setCategories] = useState<DbCategory[]>([]);
@@ -96,14 +101,16 @@ export default function CategoriesPage(): JSX.Element {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-10 md:px-6">
-        <h3 className="font-display text-xl font-extrabold uppercase">Recently added</h3>
-        <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
-          {videos.slice(0, 12).map((v) => (
-            <VideoCard key={v.id} video={v} onPlay={(video) => play(video, videos)} />
-          ))}
-        </div>
-      </section>
+      {videos.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-10 md:px-6">
+          <h3 className="font-display text-xl font-extrabold uppercase">Recently added</h3>
+          <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+            {videos.slice(0, 12).map((v) => (
+              <VideoCard key={v.id} video={v} onPlay={(video) => play(video, videos)} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

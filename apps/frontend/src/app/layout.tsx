@@ -6,6 +6,7 @@ import { Space_Grotesk, Poppins, JetBrains_Mono } from 'next/font/google';
 
 import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
+import { GoogleAnalytics } from '@/components/shared/GoogleAnalytics';
 import { ReelPlayerProvider } from '@/components/shared/ReelPlayerProvider';
 import { SITE_METADATA } from '@/constants/seo';
 import '@/index.css';
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: { children: ReactNode }): JSX.E
           </ReelPlayerProvider>
         </div>
         <JsonLd data={globalSchema()} />
+        <GoogleAnalytics />
       </body>
     </html>
   );

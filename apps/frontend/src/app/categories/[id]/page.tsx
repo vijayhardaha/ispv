@@ -14,13 +14,19 @@ import { Button } from '@/components/ui/Button';
 import { getAllVideosFromDb, type VideoEntry } from '@/data/videos';
 import { useFilterState } from '@/hooks/useFilterState';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
-import { getCategories, getCategoryByValue, type DbCategory } from '@/lib/db';
+import { getCategoryByValue, getLocations, type DbCategory } from '@/lib/db';
 
+/**
+ * Individual category page with filtered videos, search, and pagination.
+ *
+ * @returns {JSX.Element} Rendered category page.
+ */
 export default function CategoryPage(): JSX.Element {
   const params = useParams<{ id: string }>();
   const value = params?.id ?? '';
   const [allVideos, setAllVideos] = useState<VideoEntry[]>([]);
   const [cat, setCat] = useState<DbCategory | null>(null);
+  const [allLocations, setAllLocations] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const { play } = useReelPlayer();
   const loaded = useRef(false);
@@ -28,9 +34,10 @@ export default function CategoryPage(): JSX.Element {
   useEffect(() => {
     if (loaded.current) return;
     loaded.current = true;
-    Promise.all([getAllVideosFromDb(), getCategoryByValue(value)]).then(([v, c]) => {
+    Promise.all([getAllVideosFromDb(), getCategoryByValue(value), getLocations()]).then(([v, c, locs]) => {
       setAllVideos(v);
       setCat(c);
+      setAllLocations(locs.map((l) => l.name));
       setLoading(false);
     });
   }, [value]);
@@ -105,7 +112,13 @@ export default function CategoryPage(): JSX.Element {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-8 md:px-6">
-        <FilterBar state={state} setState={setState} total={filtered.length} allTags={allTags} />
+        <FilterBar
+          state={state}
+          setState={setState}
+          total={filtered.length}
+          allTags={allTags}
+          allLocations={allLocations}
+        />
         <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
           {paged.map((v) => (
             <VideoCard key={v.id} video={v} onPlay={(video) => play(video, paged)} />

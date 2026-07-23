@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useMemo, useState, type JSX } from 'react';
+import { Suspense, useEffect, useState, type JSX } from 'react';
 
 import { FilterBar } from '@/components/shared/FilterBar';
 import { Pagination } from '@/components/shared/Pagination';
@@ -8,6 +8,7 @@ import { VideoCard } from '@/components/shared/VideoCard';
 import { getAllVideosFromDb, type VideoEntry } from '@/data/videos';
 import { useFilterState } from '@/hooks/useFilterState';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
+import { getLocations, getTags } from '@/lib/db';
 
 /**
  * Full video archive page with search, filtering, pagination, and reel player.
@@ -29,17 +30,19 @@ export default function VideosPage(): JSX.Element {
  */
 function VideosPageInner(): JSX.Element {
   const [videos, setVideos] = useState<VideoEntry[]>([]);
+  const [allTags, setAllTags] = useState<string[]>([]);
+  const [allLocations, setAllLocations] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const { play } = useReelPlayer();
 
   useEffect(() => {
-    getAllVideosFromDb().then((data) => {
+    Promise.all([getAllVideosFromDb(), getTags(), getLocations()]).then(([data, tags, locs]) => {
       setVideos(data);
+      setAllTags(tags);
+      setAllLocations(locs.map((l) => l.name));
       setLoading(false);
     });
   }, []);
-
-  const allTags = useMemo(() => Array.from(new Set(videos.flatMap((v) => v.tags))).sort(), [videos]);
 
   const { state, setState, filtered } = useFilterState({ videos });
 
@@ -62,7 +65,13 @@ function VideosPageInner(): JSX.Element {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-8 md:px-6">
-        <FilterBar state={state} setState={setState} total={filtered.length} allTags={allTags} />
+        <FilterBar
+          state={state}
+          setState={setState}
+          total={filtered.length}
+          allTags={allTags}
+          allLocations={allLocations}
+        />
 
         {loading ? (
           <div className="mt-10 flex items-center justify-center py-20">
