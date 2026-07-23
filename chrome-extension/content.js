@@ -3,7 +3,7 @@
 
   const BUTTON_HTML = `
     <button id="reel-vault-collect" title="Collect to Reel Vault"
-      style="position:fixed;bottom:24px;right:24px;z-index:99999;width:48px;height:48px;border:2px solid #000;border-radius:50%;background:#facc15;color:#000;font-size:28px;font-weight:700;cursor:pointer;box-shadow:4px 4px 0 #000;display:flex;align-items:center;justify-content:center;transition:all .15s;">
+      style="position:fixed;bottom:100px;right:40px;z-index:99999;width:56px;height:56px;border:2px solid #000;border-radius:10px;background:#facc15;color:#000;font-size:28px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;">
       +
     </button>
   `;
@@ -52,9 +52,18 @@
 
     /**
      * Inserts the floating collect button into the DOM if not already present.
+     * Retries once if document.body is not yet available.
      */
     #injectButton() {
-      if (document.getElementById('reel-vault-collect')) return;
+      if (document.getElementById('reel-vault-collect')) {
+        return;
+      }
+
+      if (!document.body) {
+        setTimeout(() => this.#injectButton(), 200);
+        return;
+      }
+
       document.body.insertAdjacentHTML('beforeend', BUTTON_HTML);
       document.getElementById('reel-vault-collect').addEventListener('click', () => this.#collectData());
     }
@@ -90,14 +99,18 @@
       let shareEl = null;
       for (const sel of shareSelectors) {
         shareEl = document.querySelector(sel);
-        if (shareEl) break;
+        if (shareEl) {
+          break;
+        }
       }
 
       if (shareEl) {
         const parentDiv = shareEl.closest('div');
         if (parentDiv) {
           const timeEl = parentDiv.querySelector('time');
-          if (timeEl) return timeEl.getAttribute('datetime');
+          if (timeEl) {
+            return timeEl.getAttribute('datetime');
+          }
         }
       }
 
@@ -105,7 +118,9 @@
       const allTimes = document.querySelectorAll('time[datetime]');
       for (const t of allTimes) {
         const val = t.getAttribute('datetime');
-        if (val) return val;
+        if (val) {
+          return val;
+        }
       }
 
       return null;
@@ -141,6 +156,5 @@
     }
   }
 
-  // eslint-disable-next-line no-new
   new ReelVaultCollector();
 })();
