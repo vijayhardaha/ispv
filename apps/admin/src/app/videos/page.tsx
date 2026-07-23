@@ -217,7 +217,7 @@ function CategoryBadge({ category }: { category: string | null }): JSX.Element {
   return (
     <span
       className={cn(
-        'inline-block border border-black px-2 py-0.5 text-sm font-bold uppercase',
+        'inline-block border border-black px-2 py-0.5 text-xs font-bold uppercase',
         TAG_VARIANTS[cat.color as TagVariant] ?? 'bg-gray-200 text-black'
       )}
     >
