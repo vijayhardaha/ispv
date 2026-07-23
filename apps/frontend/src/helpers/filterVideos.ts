@@ -13,6 +13,7 @@ export function filterVideos(videos: VideoEntry[], state: FilterState): VideoEnt
   const q = state.query.trim().toLowerCase();
   return videos.filter((v) => {
     if (state.category !== 'all' && v.category !== state.category) return false;
+    if (state.location !== 'all' && v.state.toLowerCase() !== state.location.toLowerCase()) return false;
     if (state.tags.length && !state.tags.every((t) => v.tags.includes(t))) return false;
     if (!q) return true;
     return (

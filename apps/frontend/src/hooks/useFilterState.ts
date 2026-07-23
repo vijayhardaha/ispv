@@ -8,7 +8,7 @@ import type { FilterState } from '@/components/shared/FilterBar';
 import type { VideoEntry, VideoCategory } from '@/data/videos';
 import { filterVideos } from '@/helpers/filterVideos';
 
-const DEFAULT_STATE: FilterState = { query: '', category: 'all', tags: [], page: 1, perPage: 36 };
+const DEFAULT_STATE: FilterState = { query: '', category: 'all', location: 'all', tags: [], page: 1, perPage: 36 };
 
 /**
  * Configuration options for the useFilterState hook.
@@ -50,6 +50,7 @@ export function useFilterState({ videos, defaults }: UseFilterStateProps): {
     const next = new URLSearchParams();
     if (state.query) next.set('q', state.query);
     if (state.category !== 'all') next.set('category', state.category);
+    if (state.location !== 'all') next.set('location', state.location);
     if (state.tags.length) next.set('tag', state.tags[0]);
     if (state.page !== 1) next.set('page', String(state.page));
     window.history.replaceState(null, '', `?${next.toString()}`);
