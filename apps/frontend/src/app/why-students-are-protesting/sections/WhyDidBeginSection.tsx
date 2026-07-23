@@ -14,7 +14,9 @@ const REASONS = [
 ];
 
 /**
+ * Lists the key reasons that sparked the student protest movement.
  *
+ * @returns {JSX.Element} Rendered reasons grid section.
  */
 export function WhyDidBeginSection(): JSX.Element {
   return (
