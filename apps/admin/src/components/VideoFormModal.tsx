@@ -4,9 +4,11 @@ import { useState, type JSX } from 'react';
 
 import { useToast } from '@/components/Toast';
 import { Field, Input, ModalActions, ModalOverlay, ModalTitle, Select, Textarea } from '@/components/ui/Modal';
+import type { CategoryRecord } from '@/constants/categories';
+import type { LocationRecord } from '@/constants/locations';
 import { extractIgId, reconstructIgUrl, detectSource } from '@/lib/instagram';
 import { videoFormSchema } from '@/lib/schemas';
-import type { CategoryRecord, LocationRecord, VideoRecord } from '@/lib/types';
+import type { VideoRecord } from '@/lib/types';
 
 /**
  * Properties for the VideoFormModal component.
