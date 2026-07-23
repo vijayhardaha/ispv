@@ -9,7 +9,9 @@ import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 
 /**
+ * Explains the purpose and importance of the protest video archive.
  *
+ * @returns {JSX.Element} Rendered archive purpose section.
  */
 export function WhyThisArchiveExistsSection(): JSX.Element {
   return (
