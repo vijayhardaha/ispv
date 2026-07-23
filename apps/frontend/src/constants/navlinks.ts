@@ -16,9 +16,8 @@ export interface NavLink {
  * @type {NavLink[]}
  */
 export const HEADER_NAV_LINKS: NavLink[] = [
-  { label: 'Home', href: '/' },
-  { label: 'All Videos', href: '/videos' },
   { label: 'Why Protest', href: '/why-students-are-protesting' },
+  { label: 'All Videos', href: '/videos' },
   { label: 'Categories', href: '/categories' },
   { label: 'About', href: '/about' },
 ];

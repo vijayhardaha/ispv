@@ -2,11 +2,17 @@ import { CREATOR, type CreatorConfig } from '@vijayhardaha/schema-builder';
 import type { Metadata } from 'next';
 
 /**
+ * Google Analytics measurement ID. Set to an empty string to disable GA.
+ * Only activates in production when a non-empty ID is provided.
+ */
+export const GOOGLE_ANALYTICS_ID = '';
+
+/**
  * Site-wide configuration values for SEO and metadata.
  */
 export const SITE_CONFIG = {
   name: 'Indian Students Protest Vault',
-  title: 'Indian Students Protest Vault — A Peaceful Protest Archive',
+  title: 'A Peaceful Protest Archive — Indian Students Protest Vault',
   url: 'https://ispv.vercel.app',
   description:
     'A peaceful, non-partisan archive of Indian protest reels from Instagram. Browse by city, category, or hashtag. Preserving publicly shared videos documenting student protests across India.',

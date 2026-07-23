@@ -19,6 +19,11 @@ export interface VideoEntry {
   featured?: boolean;
 }
 
+/**
+ * Fetches all published videos from Supabase with joined category data.
+ *
+ * @returns {Promise<VideoEntry[]>} Array of published video entries.
+ */
 export async function getAllVideosFromDb(): Promise<VideoEntry[]> {
   const { data, error } = await supabase
     .from('videos')
