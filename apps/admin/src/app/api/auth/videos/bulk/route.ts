@@ -6,14 +6,14 @@ const VALID_STATUSES = ['draft', 'pending_review', 'published', 'rejected'] as c
 
 /**
  * Performs bulk operations on multiple video records.
- * Supports `delete` and `update_status` actions.
+ * Supports `delete`, `update_status`, `trash`, and `restore` actions.
  *
- * @param {Request} req - Incoming request with { action, ids, status? }.
+ * @param {Request} req - Incoming request with { action, ids, status?, reason? }.
  *
  * @returns {Promise<NextResponse>} JSON response with operation result.
  */
 export async function POST(req: Request) {
-  const { action, ids, status } = await req.json();
+  const { action, ids, status, reason } = await req.json();
 
   if (!Array.isArray(ids) || ids.length === 0) {
     return NextResponse.json({ error: 'ids must be a non-empty array' }, { status: 400 });
@@ -21,7 +21,6 @@ export async function POST(req: Request) {
 
   const supabase = await createServerSupabase();
 
-  // Require authenticated user for bulk operations
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -43,6 +42,26 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Invalid or missing status' }, { status: 400 });
       }
       const { error } = await supabase.from('videos').update({ status }).in('id', ids);
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+      return NextResponse.json({ ok: true, count: ids.length });
+    }
+
+    case 'trash': {
+      const reasonText = reason || 'Manually trashed by admin';
+      const { error } = await supabase
+        .from('videos')
+        .update({ trashed_at: new Date().toISOString(), trash_reason: reasonText })
+        .in('id', ids);
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+      return NextResponse.json({ ok: true, count: ids.length });
+    }
+
+    case 'restore': {
+      const { error } = await supabase.from('videos').update({ trashed_at: null, trash_reason: null }).in('id', ids);
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
