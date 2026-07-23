@@ -82,7 +82,7 @@ export default async function DashboardPage(): Promise<JSX.Element> {
       const { count } = await supabase
         .from('videos')
         .select('*', { count: 'exact', head: true })
-        .eq('category', cat.value);
+        .eq('category', cat.slug);
       return { ...cat, video_count: count ?? 0 } as CategoryWithCount;
     })
   );
@@ -93,7 +93,7 @@ export default async function DashboardPage(): Promise<JSX.Element> {
       const { count } = await supabase
         .from('videos')
         .select('*', { count: 'exact', head: true })
-        .eq('location', loc.value);
+        .eq('location', loc.slug);
       return { ...loc, video_count: count ?? 0 } as LocationWithCount;
     })
   );
@@ -162,7 +162,6 @@ export default async function DashboardPage(): Promise<JSX.Element> {
           >
             <div>
               <div className="text-sm font-bold uppercase">{loc.name}</div>
-              {loc.description && <div className="mt-0.5 text-xs text-black/50">{loc.description}</div>}
             </div>
             <span className="text-2xl font-extrabold">{loc.video_count}</span>
           </article>

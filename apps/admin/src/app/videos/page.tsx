@@ -210,7 +210,7 @@ function BulkActionsToolbar({
  * @returns {JSX.Element} Rendered category badge or en-dash fallback.
  */
 function CategoryBadge({ category }: { category: string | null }): JSX.Element {
-  const cat = CATEGORIES.find((c) => c.value === category);
+  const cat = CATEGORIES.find((c) => c.slug === category);
   if (!cat) {
     return <span className="text-sm text-black/40">–</span>;
   }
