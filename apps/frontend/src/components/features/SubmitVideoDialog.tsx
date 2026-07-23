@@ -66,7 +66,9 @@ export function SubmitVideoDialog({
                   value={form.url}
                   onChange={(e) => {
                     form.setUrl(e.target.value);
-                    if (form.error) form.setError(null);
+                    if (form.error) {
+                      form.setError(null);
+                    }
                   }}
                   onBlur={form.handleBlur}
                   placeholder="https://www.instagram.com/reel/..."
