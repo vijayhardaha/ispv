@@ -75,7 +75,7 @@ export default async function RootLayout({ children }: { children: ReactNode }):
           <Container className="flex items-center justify-between py-4">
             <span className="font-display text-xs font-extrabold tracking-tight uppercase">ISPV Admin</span>
             <p className="text-xs text-black/50">
-              &copy; {new Date().getFullYear()}
+              &copy; {new Date().getFullYear()}{' '}
               <a
                 href="https://ispv.vercel.app"
                 target="_blank"
