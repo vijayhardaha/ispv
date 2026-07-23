@@ -72,6 +72,10 @@ export const DEMANDS: Demand[] = [
   },
 ];
 
+/**
+ * Referenced news and media sources covering the student protest movement.
+ * Used in the Sources section of the Why Students Are Protesting page.
+ */
 export const SOURCES: Source[] = [
   {
     title: 'Cockroach Janta Party (Official)',
@@ -114,12 +118,6 @@ export const SOURCES: Source[] = [
     url: 'https://www.newslaundry.com/',
     description:
       'Independent journalism featuring field reports, media analysis, interviews, and investigative stories related to public movements.',
-  },
-  {
-    title: 'The Wire',
-    url: 'https://thewire.in/',
-    description:
-      'Independent digital publication covering public policy, civil liberties, and student movements through reports and analysis.',
   },
   {
     title: 'The Quint',
