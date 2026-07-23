@@ -10,7 +10,7 @@ export interface VideoEntry {
   url: string;
   thumbnail: string;
   city: string;
-  state: string;
+  location: string;
   category: string;
   categoryName: string;
   tags: string[];

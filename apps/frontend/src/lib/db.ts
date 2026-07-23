@@ -6,8 +6,6 @@ export interface DbCategory {
   name: string;
   color: string;
   description: string | null;
-  seo_title: string | null;
-  seo_description: string | null;
 }
 
 export interface DbLocation {

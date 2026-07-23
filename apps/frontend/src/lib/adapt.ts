@@ -2,16 +2,16 @@ import type { VideoEntry } from '@/data/videos';
 
 export interface VideoRow {
   id: string;
-  ig_url: string;
-  ig_id: string | null;
-  src: string | null;
+  video_url: string;
+  video_id: string | null;
+  video_src: string | null;
   category: string | null;
-  state: string | null;
+  location: string | null;
   city: string | null;
   tags: string[] | null;
   description: string | null;
   thumbnail_url: string | null;
-  ig_post_date: string | null;
+  video_post_date: string | null;
   view_count: number | null;
   status: string;
   created_at: string;
@@ -35,10 +35,10 @@ export function dbRowToVideoEntry(row: VideoRow): VideoEntry {
   return {
     id: row.id,
     description: row.description ?? '',
-    url: row.ig_url,
+    url: row.video_url,
     thumbnail: row.thumbnail_url ?? '',
     city: row.city ?? '',
-    state: row.state ?? '',
+    location: row.location ?? '',
     category: row.category ?? '',
     categoryName: row.categories?.name ?? row.category ?? '',
     tags,

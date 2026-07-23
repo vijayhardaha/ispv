@@ -13,13 +13,13 @@ export function filterVideos(videos: VideoEntry[], state: FilterState): VideoEnt
   const q = state.query.trim().toLowerCase();
   return videos.filter((v) => {
     if (state.category !== 'all' && v.category !== state.category) return false;
-    if (state.location !== 'all' && v.state.toLowerCase() !== state.location.toLowerCase()) return false;
+    if (state.location !== 'all' && v.location.toLowerCase() !== state.location.toLowerCase()) return false;
     if (state.tags.length && !state.tags.every((t) => v.tags.includes(t))) return false;
     if (!q) return true;
     return (
       v.description.toLowerCase().includes(q)
       || v.city.toLowerCase().includes(q)
-      || v.state.toLowerCase().includes(q)
+      || v.location.toLowerCase().includes(q)
       || v.hashtags.some((h) => h.toLowerCase().includes(q))
       || v.tags.some((t) => t.toLowerCase().includes(q))
     );
