@@ -53,7 +53,9 @@ export default async function DashboardPage(): Promise<JSX.Element> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect('/login');
+  if (!user) {
+    redirect('/login');
+  }
 
   // Status counts
   const { count: total } = await supabase.from('videos').select('*', { count: 'exact', head: true });
