@@ -5,7 +5,9 @@ import { type JSX } from 'react';
 import { Container } from '@/components/ui/Container';
 
 /**
+ * Explains the origins and nature of the student protest movement.
  *
+ * @returns {JSX.Element} Rendered section describing the movement.
  */
 export function WhatIsSection(): JSX.Element {
   return (
