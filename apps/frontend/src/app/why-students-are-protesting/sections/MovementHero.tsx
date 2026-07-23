@@ -5,7 +5,9 @@ import { type JSX } from 'react';
 import { Container } from '@/components/ui/Container';
 
 /**
+ * Hero banner for the movement page with headline and introductory text.
  *
+ * @returns {JSX.Element} Rendered hero section.
  */
 export function MovementHero(): JSX.Element {
   return (
