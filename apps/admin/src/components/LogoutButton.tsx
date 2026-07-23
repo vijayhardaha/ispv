@@ -24,7 +24,7 @@ export function LogoutButton(): JSX.Element {
   };
 
   return (
-    <Button type="button" variant="ghost" size="sm" onClick={handleLogout} disabled={loggingOut}>
+    <Button type="button" variant="danger" onClick={handleLogout} disabled={loggingOut}>
       {loggingOut ? 'Signing out...' : 'Logout'}
     </Button>
   );
