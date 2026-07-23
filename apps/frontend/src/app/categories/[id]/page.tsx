@@ -2,17 +2,16 @@
 
 import type { JSX } from 'react';
 
-import { useParams } from 'next/navigation';
-
 import { breadcrumbSchema, webPageSchema } from '@vijayhardaha/schema-builder';
 import { JsonLd } from '@vijayhardaha/schema-builder/react';
+import { useParams } from 'next/navigation';
 
+import { CategoryHero } from '@/app/categories/[id]/CategoryHero';
+import { CategoryVideos } from '@/app/categories/[id]/CategoryVideos';
+import { useCategoryPage } from '@/app/categories/[id]/useCategoryPage';
 import type { DbCategory } from '@/lib/db';
 import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
 import { siteUrl } from '@/lib/seo';
-import { useCategoryPage } from '@/app/categories/[id]/useCategoryPage';
-import { CategoryHero } from '@/app/categories/[id]/CategoryHero';
-import { CategoryVideos } from '@/app/categories/[id]/CategoryVideos';
 
 const rootUrl = siteUrl();
 const pathPrefix = '/categories';

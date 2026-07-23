@@ -11,7 +11,7 @@ export const SLOGANS: string[] = [
   'The Constitution belongs to all of us.',
   'Rights are preserved only when people are willing to defend them.',
   'The bravest voices are often the peaceful ones.',
-  'A peaceful crowd is one of democracy’s greatest strengths.',
+  "A peaceful crowd is one of democracy's greatest strengths.",
   'We raise our voices so no one has to raise their fists.',
   'India was built by courage, not by silence.',
   'The freedom won yesterday must be protected today.',
@@ -50,7 +50,7 @@ export const SLOGANS_PULL_QUOTES = [
   },
   {
     quote:
-      'The Constitution is not a mere lawyers’ document, it is a vehicle of life. (संविधान केवल वकीलों का दस्तावेज़ नहीं, बल्कि जीवन का एक माध्यम है।)',
+      "The Constitution is not a mere lawyers' document, it is a vehicle of life. (संविधान केवल वकीलों का दस्तावेज़ नहीं, बल्कि जीवन का एक माध्यम है।)",
     person: 'Dr. B. R. Ambedkar (डॉ. भीमराव रामजी आंबेडकर)',
   },
   {

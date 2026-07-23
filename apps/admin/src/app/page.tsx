@@ -14,10 +14,31 @@ import { createServerSupabase } from '@/lib/supabase-server';
 import { CATEGORIES, LOCATIONS } from '@/lib/types';
 import type { CategoryRecord, LocationRecord } from '@/lib/types';
 
+/**
+ * Category record augmented with a live count of associated videos.
+ *
+ * @type {CategoryWithCount}
+ * @property {string} id - Unique identifier for the category.
+ * @property {string} value - URL-friendly slug value.
+ * @property {string} name - Display name for the category.
+ * @property {string} color - Colour identifier for styling.
+ * @property {string | null} description - Short description of the category.
+ * @property {number} video_count - Number of videos in this category.
+ */
 interface CategoryWithCount extends CategoryRecord {
   video_count: number;
 }
 
+/**
+ * Location record augmented with a live count of associated videos.
+ *
+ * @type {LocationWithCount}
+ * @property {string} id - Unique identifier for the location.
+ * @property {string} value - URL-friendly slug value.
+ * @property {string} name - Display name for the location.
+ * @property {string | null} description - Short description of the location.
+ * @property {number} video_count - Number of videos in this location.
+ */
 interface LocationWithCount extends LocationRecord {
   video_count: number;
 }

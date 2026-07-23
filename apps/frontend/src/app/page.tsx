@@ -13,11 +13,11 @@ import { LocationsMap } from '@/components/features/LocationsMap';
 import { ShareSection } from '@/components/features/ShareSection';
 import { SloganTicker } from '@/components/features/SloganTicker';
 import { SITE_CONFIG } from '@/constants/seo';
-import { getAllVideosFromDb } from '@/lib/videos';
 import { getCategories, getFeaturedCategories, getLocations } from '@/lib/db';
 import { buildMetadata } from '@/lib/meta';
 import { globalSchema } from '@/lib/schema';
 import { siteUrl } from '@/lib/seo';
+import { getAllVideosFromDb } from '@/lib/videos';
 
 const title = SITE_CONFIG.title;
 const description = SITE_CONFIG.description;

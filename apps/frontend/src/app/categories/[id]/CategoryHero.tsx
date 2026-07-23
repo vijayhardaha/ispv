@@ -7,7 +7,22 @@ import Link from 'next/link';
 
 import { Button } from '@/components/ui/Button';
 
-export function CategoryHero({ cat }: { cat: { id: string; value: string; name: string; description: string | null }; value: string }): JSX.Element {
+/**
+ *
+ * @param props
+ * @param props.cat
+ * @param props.cat.id
+ * @param props.cat.value
+ * @param props.cat.name
+ * @param props.cat.description
+ * @param props.value
+ */
+export function CategoryHero({
+  cat,
+}: {
+  cat: { id: string; value: string; name: string; description: string | null };
+  value: string;
+}): JSX.Element {
   return (
     <section className="border-b-2 border-black bg-gray-100 py-8">
       <div className="mx-auto max-w-7xl px-4 md:px-6">

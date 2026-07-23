@@ -4,6 +4,9 @@ import { type JSX } from 'react';
 
 import { Container } from '@/components/ui/Container';
 
+/**
+ *
+ */
 export function MovementHero(): JSX.Element {
   return (
     <section className="border-b-2 border-black bg-black py-14 text-white">

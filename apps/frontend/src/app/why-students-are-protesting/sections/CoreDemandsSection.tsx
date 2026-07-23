@@ -3,9 +3,12 @@
 import { type JSX } from 'react';
 
 import { Container } from '@/components/ui/Container';
-import { cn } from '@/lib/cn';
 import { DEMANDS } from '@/constants/whyProtestContent';
+import { cn } from '@/lib/cn';
 
+/**
+ *
+ */
 export function CoreDemandsSection(): JSX.Element {
   return (
     <section className="border-y-2 border-black bg-gray-100 py-12">

@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import type { FilterState } from '@/lib/schemas';
 import { useFilterState } from '@/hooks/useFilterState';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
-import { getAllVideosFromDb, type VideoEntry } from '@/lib/videos';
 import { getCategoryByValue, getLocations, type DbCategory } from '@/lib/db';
+import type { FilterState } from '@/lib/schemas';
+import { getAllVideosFromDb, type VideoEntry } from '@/lib/videos';
 
 export interface CategoryPageData {
   value: string;
@@ -25,6 +25,10 @@ export interface CategoryPageFilter {
   paged: VideoEntry[];
 }
 
+/**
+ *
+ * @param value
+ */
 export function useCategoryPage(
   value: string
 ): CategoryPageData & { filters: CategoryPageFilter; play: ReturnType<typeof useReelPlayer>['play'] } {

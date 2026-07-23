@@ -5,9 +5,9 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { filterVideos } from '@/helpers/filterVideos';
 import type { FilterState } from '@/lib/schemas';
 import type { VideoEntry } from '@/lib/videos';
-import { filterVideos } from '@/helpers/filterVideos';
 
 const makeVideo = (overrides: Partial<VideoEntry> = {}): VideoEntry => ({
   id: '1',

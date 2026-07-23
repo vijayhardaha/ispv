@@ -1,22 +1,21 @@
 import type { JSX } from 'react';
-import type { Metadata } from 'next';
 
 import { breadcrumbSchema, webPageSchema } from '@vijayhardaha/schema-builder';
 import { JsonLd } from '@vijayhardaha/schema-builder/react';
+import type { Metadata } from 'next';
 
+import { ClosingCtaSection } from '@/app/why-students-are-protesting/sections/ClosingCtaSection';
+import { CoreDemandsSection } from '@/app/why-students-are-protesting/sections/CoreDemandsSection';
+import { MovementHero } from '@/app/why-students-are-protesting/sections/MovementHero';
+import { SourcesSection } from '@/app/why-students-are-protesting/sections/SourcesSection';
+import { TimelineSection } from '@/app/why-students-are-protesting/sections/TimelineSection';
+import { WhatIsSection } from '@/app/why-students-are-protesting/sections/WhatIsSection';
+import { WhereSpreadSection } from '@/app/why-students-are-protesting/sections/WhereSpreadSection';
+import { WhyDidBeginSection } from '@/app/why-students-are-protesting/sections/WhyDidBeginSection';
+import { WhyThisArchiveExistsSection } from '@/app/why-students-are-protesting/sections/WhyThisArchiveExistsSection';
+import { buildMetadata } from '@/lib/meta';
 import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
 import { siteUrl } from '@/lib/seo';
-import { buildMetadata } from '@/lib/meta';
-
-import { MovementHero } from '@/app/why-students-are-protesting/sections/MovementHero';
-import { WhatIsSection } from '@/app/why-students-are-protesting/sections/WhatIsSection';
-import { WhyDidBeginSection } from '@/app/why-students-are-protesting/sections/WhyDidBeginSection';
-import { TimelineSection } from '@/app/why-students-are-protesting/sections/TimelineSection';
-import { CoreDemandsSection } from '@/app/why-students-are-protesting/sections/CoreDemandsSection';
-import { WhereSpreadSection } from '@/app/why-students-are-protesting/sections/WhereSpreadSection';
-import { WhyThisArchiveExistsSection } from '@/app/why-students-are-protesting/sections/WhyThisArchiveExistsSection';
-import { SourcesSection } from '@/app/why-students-are-protesting/sections/SourcesSection';
-import { ClosingCtaSection } from '@/app/why-students-are-protesting/sections/ClosingCtaSection';
 
 const title = 'Why Students Are Protesting — Understanding the Movement';
 const description =

@@ -8,6 +8,9 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { TIMELINE_ITEMS } from '@/constants/whyProtestContent';
 
+/**
+ *
+ */
 export function TimelineSection(): JSX.Element {
   return (
     <section className="py-12">

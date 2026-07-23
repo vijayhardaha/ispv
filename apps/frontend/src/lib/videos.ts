@@ -1,8 +1,5 @@
-import type { VideoCategory } from '@/constants/categories';
 import { dbRowsToVideoEntries, type VideoRow } from '@/lib/adapt';
 import { supabase } from '@/lib/supabase';
-
-export type { VideoCategory };
 
 export interface VideoEntry {
   id: string;

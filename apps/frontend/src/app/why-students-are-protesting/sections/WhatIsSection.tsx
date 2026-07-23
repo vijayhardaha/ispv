@@ -4,6 +4,9 @@ import { type JSX } from 'react';
 
 import { Container } from '@/components/ui/Container';
 
+/**
+ *
+ */
 export function WhatIsSection(): JSX.Element {
   return (
     <section className="py-12">

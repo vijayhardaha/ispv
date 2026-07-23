@@ -1,3 +1,6 @@
+import dns from 'node:dns/promises';
+import net from 'node:net';
+
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import sharp from 'sharp';
@@ -6,14 +9,115 @@ import { detectSource, extractIgId } from '@/lib/instagram';
 import { enrichVideoBodySchema } from '@/lib/schemas';
 import { uploadBuffer } from '@/lib/upload';
 
+const MAX_BYTES = 5 * 1024 * 1024; // 5 MB
+const HEAD_TIMEOUT_MS = 8000;
+const GET_TIMEOUT_MS = 15000;
+
+function isPrivateIp(ip: string): boolean {
+  if (!ip) return true;
+  // IPv4
+  if (net.isIP(ip) === 4) {
+    if (ip.startsWith('10.')) return true;
+    if (ip.startsWith('127.')) return true;
+    if (ip.startsWith('169.254.')) return true;
+    if (ip.startsWith('192.168.')) return true;
+    const m = ip.match(/^172\.(\d+)\./);
+    if (m) {
+      const second = Number(m[1]);
+      if (second >= 16 && second <= 31) return true;
+    }
+    return false;
+  }
+
+  // IPv6
+  if (net.isIP(ip) === 6) {
+    if (ip === '::1') return true;
+    if (ip.startsWith('fc') || ip.startsWith('fd')) return true; // unique local
+    if (ip.startsWith('fe80')) return true; // link-local
+    return false;
+  }
+
+  return true;
+}
+
+async function validateUrlAcceptsImage(urlString: string): Promise<{ ok: boolean; message?: string }> {
+  try {
+    const url = new URL(urlString);
+    if (!['http:', 'https:'].includes(url.protocol)) return { ok: false, message: 'Invalid protocol' };
+
+    // Resolve hostname and block private IPs
+    const lookup = await dns.lookup(url.hostname).catch(() => null);
+    if (!lookup) return { ok: false, message: 'Unable to resolve host' };
+    if (Array.isArray(lookup)) {
+      if (lookup.some((l) => isPrivateIp(l.address))) return { ok: false, message: 'Host resolves to private IP' };
+    } else {
+      if (isPrivateIp(lookup.address)) return { ok: false, message: 'Host resolves to private IP' };
+    }
+
+    // HEAD to check content-length and content-type
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), HEAD_TIMEOUT_MS);
+    let headResp: Response;
+    try {
+      headResp = await fetch(urlString, {
+        method: 'HEAD',
+        headers: { 'User-Agent': 'ISPV/1.0' },
+        signal: controller.signal,
+      });
+    } catch (err) {
+      clearTimeout(timeout);
+      // Some servers don't allow HEAD — fall back to small GET later, but still allow for now
+      return { ok: true };
+    }
+    clearTimeout(timeout);
+
+    if (!headResp.ok) return { ok: false, message: 'Failed to fetch resource' };
+
+    const ct = headResp.headers.get('content-type') ?? '';
+    if (!ct.startsWith('image/') && !ct.includes('image'))
+      return { ok: false, message: `Unsupported content-type: ${ct}` };
+
+    const cl = headResp.headers.get('content-length');
+    if (cl) {
+      const bytes = Number(cl);
+      if (!Number.isNaN(bytes) && bytes > MAX_BYTES) return { ok: false, message: 'Image too large' };
+    }
+
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, message: 'Invalid URL' };
+  }
+}
+
 async function downloadAndUpload(url: string, video_id: string): Promise<string | null> {
   try {
-    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    // Basic URL validation + private IP checks + content-type/size via HEAD
+    const validated = await validateUrlAcceptsImage(url);
+    if (!validated.ok) return null;
+
+    // Fetch with timeout and size enforcement
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), GET_TIMEOUT_MS);
+    const res = await fetch(url, { headers: { 'User-Agent': 'ISPV/1.0' }, signal: controller.signal }).finally(() =>
+      clearTimeout(timeout)
+    );
     if (!res.ok) return null;
-    const buffer = Buffer.from(await res.arrayBuffer());
+
+    // If content-length present, enforce again
+    const cl = res.headers.get('content-length');
+    if (cl) {
+      const bytes = Number(cl);
+      if (!Number.isNaN(bytes) && bytes > MAX_BYTES) return null;
+    }
+
+    const ab = await res.arrayBuffer();
+    if (ab.byteLength > MAX_BYTES) return null;
+
+    const buffer = Buffer.from(ab);
     const optimized = await sharp(buffer).webp({ quality: 80 }).toBuffer();
     return await uploadBuffer(optimized, `thumbs/${video_id}.webp`);
-  } catch {
+  } catch (err) {
+    // swallow errors and return null to keep enrichment best-effort
     return null;
   }
 }

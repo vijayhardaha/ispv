@@ -8,6 +8,16 @@ import { extractIgId, reconstructIgUrl, detectSource } from '@/lib/instagram';
 import { videoFormSchema } from '@/lib/schemas';
 import type { CategoryRecord, LocationRecord, VideoRecord } from '@/lib/types';
 
+/**
+ * Properties for the VideoFormModal component.
+ *
+ * @type {VideoFormModalProps}
+ * @property {VideoRecord | null} [video] - Existing video to edit, or null for new.
+ * @property {CategoryRecord[]} categories - Available category options.
+ * @property {LocationRecord[]} locations - Available location options.
+ * @property {() => void} onClose - Callback to close the modal.
+ * @property {() => void} onSaved - Callback after successful save.
+ */
 interface VideoFormModalProps {
   video?: VideoRecord | null;
   categories: CategoryRecord[];

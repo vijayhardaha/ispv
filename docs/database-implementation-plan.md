@@ -35,7 +35,7 @@ Only the `videos` table is consumed by the frontend. Filtered to `status = 'publ
 | video_url       | text        | Yes              | Mapped to VideoEntry.url    |
 | video_id        | text        | No               | Internal                    |
 | video_src       | text        | No               | Source platform             |
-| category        | text        | Yes              | Category value               |
+| category        | text        | Yes              | Category value              |
 | location        | text        | Yes              | Mapped to VideoEntry.state  |
 | city            | text        | Yes              | Mapped to VideoEntry.city   |
 | tags            | text[]      | Yes              | Mapped to VideoEntry.tags   |
@@ -240,9 +240,9 @@ export async function trackVideoView(videoId: string): Promise<void> {
 
 ## Migration Files to Add
 
-| Location                                           | Purpose                     |
-| -------------------------------------------------- | --------------------------- |
-| `apps/admin/supabase/migrations/`                  | Frontend read-optimized RPC |
+| Location                          | Purpose                     |
+| --------------------------------- | --------------------------- |
+| `apps/admin/supabase/migrations/` | Frontend read-optimized RPC |
 
 All schema is consolidated into a single file: `apps/admin/supabase/migrations/20260723000001_initial_schema.sql`.
 

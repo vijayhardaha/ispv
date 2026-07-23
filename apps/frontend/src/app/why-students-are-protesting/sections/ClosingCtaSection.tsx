@@ -8,6 +8,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 
+/**
+ *
+ */
 export function ClosingCtaSection(): JSX.Element {
   return (
     <section className="bg-black py-12">

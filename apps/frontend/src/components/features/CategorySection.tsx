@@ -9,9 +9,9 @@ import { VideoCard } from '@/components/shared/VideoCard';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 import { Tag, type TagVariant } from '@/components/ui/Tag';
-import type { VideoEntry } from '@/data/videos';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 import type { DbCategory } from '@/lib/db';
+import type { VideoEntry } from '@/lib/videos';
 
 /**
  * Displays a category heading with up to 6 video cards and a link to the full category page.

@@ -4,9 +4,9 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
+import { filterVideos } from '@/helpers/filterVideos';
 import type { FilterState } from '@/lib/schemas';
 import type { VideoEntry } from '@/lib/videos';
-import { filterVideos } from '@/helpers/filterVideos';
 
 const DEFAULT_STATE: FilterState = { query: '', category: 'all', location: 'all', tags: [], page: 1, perPage: 36 };
 

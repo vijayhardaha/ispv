@@ -1,7 +1,6 @@
+import { CATEGORIES, LOCATIONS, FEATURED_SLUGS, type DbCategory, type DbLocation } from '@/constants/data';
 import { extractInstagramId } from '@/lib/instagram';
 import { supabase } from '@/lib/supabase';
-
-import { CATEGORIES, LOCATIONS, FEATURED_SLUGS, type DbCategory, type DbLocation } from '@/constants/data';
 
 export type { DbCategory, DbLocation };
 

@@ -1,5 +1,5 @@
 import { SITE_METADATA, SITE_CONFIG } from '@/constants/seo';
-import { siteUrl, getPermaLink } from '@/utils/seo';
+import { siteUrl, getPermaLink } from '@/lib/seo';
 
 /**
  * Props for generating metadata, including title, description, and path for SEO.
@@ -30,13 +30,8 @@ type AnyObject = Record<string, any>;
  * @param {AnyObject} value - Value to test.
  *
  * @returns {value is AnyObject} True when the value is a plain object.
- *
- * @example
- * isPlainObject({}) // true
- * isPlainObject([]) // false
- * isPlainObject(null) // false
  */
-const isPlainObject = (value: AnyObject): value is AnyObject => {
+const isPlainObject = (value: unknown): value is AnyObject => {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 };
 

@@ -22,7 +22,9 @@ export async function POST(req: Request) {
   const supabase = await createServerSupabase();
 
   // Require authenticated user for bulk operations
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   switch (action) {

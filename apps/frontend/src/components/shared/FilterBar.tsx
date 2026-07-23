@@ -6,17 +6,6 @@ import { MapPin, Search, X, Filter } from 'lucide-react';
 
 import { TagChips } from '@/components/shared/TagChips';
 
-/**
- * Filter state for the video archive search and filtering.
- *
- * @type {FilterState}
- * @property {string} query - Free-text search query.
- * @property {string} category - Active category filter.
- * @property {string} location - Active location filter ('all' for no filter).
- * @property {string[]} tags - Selected tag filters.
- * @property {number} page - Current page number.
- * @property {number} perPage - Number of items per page.
- */
 import type { FilterState } from '@/lib/schemas';
 
 /**

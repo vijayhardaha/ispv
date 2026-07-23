@@ -19,7 +19,14 @@ import { createClient } from '@/lib/supabase';
 import { CATEGORIES, LOCATIONS } from '@/lib/types';
 import type { VideoRecord } from '@/lib/types';
 
+/**
+ * All possible video statuses for filtering, including empty string for "All".
+ */
 const STATUSES = ['', 'draft', 'pending_review', 'published', 'rejected'] as const;
+
+/**
+ * Human-readable labels for each video status value.
+ */
 const STATUS_LABELS: Record<string, string> = {
   '': 'All',
   draft: 'Draft',
@@ -27,6 +34,10 @@ const STATUS_LABELS: Record<string, string> = {
   published: 'Published',
   rejected: 'Rejected',
 };
+
+/**
+ * Number of videos displayed per page in the table.
+ */
 const PER_PAGE = 15;
 
 /** Valid status values for bulk updates, in display order. */
@@ -343,18 +354,21 @@ function VideosPageContent(): JSX.Element {
                   </td>
                   <td className="px-3 py-2">{v.city}</td>
                   <td className="px-3 py-2">
-                    {v.category ? (
-                      <span
-                        className={cn(
-                          'inline-block border border-black px-2 py-0.5 text-xs font-bold uppercase',
-                          TAG_VARIANTS[v.category_color as TagVariant] ?? 'bg-gray-200 text-black'
-                        )}
-                      >
-                        {v.category_name}
-                      </span>
-                    ) : (
-                      <span className="text-xs text-black/40">—</span>
-                    )}
+                    {(() => {
+                      const cat = categories.find((c) => c.value === v.category);
+                      return cat ? (
+                        <span
+                          className={cn(
+                            'inline-block border border-black px-2 py-0.5 text-xs font-bold uppercase',
+                            TAG_VARIANTS[cat.color as TagVariant] ?? 'bg-gray-200 text-black'
+                          )}
+                        >
+                          {cat.name}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-black/40">—</span>
+                      );
+                    })()}
                   </td>
                   <td className="px-3 py-2">
                     <select

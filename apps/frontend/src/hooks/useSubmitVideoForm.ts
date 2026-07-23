@@ -34,6 +34,12 @@ export interface UseSubmitVideoFormReturn {
   resetForm: () => void;
 }
 
+/**
+ *
+ * @param props
+ * @param props.onOpenChange
+ * @param props.onSuccess
+ */
 export function useSubmitVideoForm({
   onOpenChange,
   onSuccess,

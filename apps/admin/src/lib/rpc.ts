@@ -4,12 +4,13 @@
  */
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { GetVideosApiResponse, VideoRecord, PaginationMeta } from './types';
+
+import type { GetVideosApiResponse } from './types';
 
 /**
  * Filters object for get_videos_for_api RPC.
  *
- * @typedef {Object} GetVideosFilters
+ * @typedef {object} GetVideosFilters
  * @property {string} [status] - Filter by video status (draft, pending_review, published, rejected)
  * @property {string} [search] - Search query across video_url, video_id, description, city
  * @property {string} [category] - Filter by category slug
@@ -31,7 +32,8 @@ export interface GetVideosFilters {
  *
  * @param {SupabaseClient} supabase - Supabase client instance
  * @param {GetVideosFilters} filters - Filter options for the query
- * @returns {Promise<{ data: VideoRecord[]; pagination: PaginationMeta; } | null>} Videos and pagination metadata, or null on error
+ *
+ * @returns {Promise<GetVideosApiResponse | null>} Videos and pagination metadata, or null on error
  *
  * @example
  * const { data: videos, pagination } = await getVideosForApi(supabase, {
@@ -74,6 +76,7 @@ export async function getVideosForApi(
  * @param {SupabaseClient} supabase - Supabase client instance
  * @param {string} videoId - Video UUID
  * @param {string} reason - Reason for trashing the video
+ *
  * @returns {Promise<boolean>} True if successful, false on error
  *
  * @example
@@ -84,10 +87,7 @@ export async function trashVideo(
   videoId: string,
   reason: string = 'No reason provided'
 ): Promise<boolean> {
-  const { error } = await supabase.rpc('trash_video', {
-    p_video_id: videoId,
-    p_reason: reason,
-  });
+  const { error } = await supabase.rpc('trash_video', { p_video_id: videoId, p_reason: reason });
 
   if (error) {
     console.error('Error trashing video:', error);
@@ -102,15 +102,14 @@ export async function trashVideo(
  *
  * @param {SupabaseClient} supabase - Supabase client instance
  * @param {string} videoId - Video UUID
+ *
  * @returns {Promise<boolean>} True if successful, false on error
  *
  * @example
  * const success = await restoreVideo(supabase, videoId);
  */
 export async function restoreVideo(supabase: SupabaseClient, videoId: string): Promise<boolean> {
-  const { error } = await supabase.rpc('restore_video', {
-    p_video_id: videoId,
-  });
+  const { error } = await supabase.rpc('restore_video', { p_video_id: videoId });
 
   if (error) {
     console.error('Error restoring video:', error);
@@ -126,6 +125,7 @@ export async function restoreVideo(supabase: SupabaseClient, videoId: string): P
  *
  * @param {SupabaseClient} supabase - Supabase client instance
  * @param {number} gracePeriodDays - Number of days before permanent deletion (default: 30)
+ *
  * @returns {Promise<number>} Number of videos permanently deleted, or -1 on error
  *
  * @example
@@ -133,13 +133,8 @@ export async function restoreVideo(supabase: SupabaseClient, videoId: string): P
  * const deletedCount = await purgeTrash(supabase, 30);
  * console.log(`Purged ${deletedCount} videos`);
  */
-export async function purgeTrash(
-  supabase: SupabaseClient,
-  gracePeriodDays: number = 30
-): Promise<number> {
-  const { data, error } = await supabase.rpc('purge_old_trashed_videos', {
-    p_grace_period_days: gracePeriodDays,
-  });
+export async function purgeTrash(supabase: SupabaseClient, gracePeriodDays: number = 30): Promise<number> {
+  const { data, error } = await supabase.rpc('purge_old_trashed_videos', { p_grace_period_days: gracePeriodDays });
 
   if (error) {
     console.error('Error purging trash:', error);
@@ -152,7 +147,8 @@ export async function purgeTrash(
 /**
  * Build query string for pagination links.
  *
- * @param {Object} params - Parameters to include in the query string
+ * @param {object} params - Parameters to include in the query string
+ *
  * @returns {string} Query string (e.g., "?page=2&per_page=20&status=published")
  *
  * @example
@@ -178,7 +174,8 @@ export function buildQueryString(params: Record<string, string | number | null |
  * @param {number} page - Current page number (1-based)
  * @param {number} perPage - Items per page
  * @param {number} totalCount - Total number of items
- * @returns {Object} Start and end item numbers for display
+ *
+ * @returns {object} Start and end item numbers for display
  *
  * @example
  * const { start, end } = getPaginationBoundaries(2, 20, 150);
@@ -197,21 +194,18 @@ export function getPaginationBoundaries(
 /**
  * Build pagination links for browser history/navigation.
  *
- * @param {Object} options - Pagination options
+ * @param {object} options - Pagination options
  * @param {number} options.currentPage - Current page number
  * @param {number} options.totalPages - Total number of pages
- * @param {number} [options.maxLinks=5] - Maximum number of page links to show
- * @returns {Object} Object with prev, next, and pages array
+ * @param {number} [options.maxLinks] - Maximum number of page links to show
+ *
+ * @returns {object} Object with prev, next, and pages array
  *
  * @example
  * const links = buildPaginationLinks({ currentPage: 5, totalPages: 20, maxLinks: 5 });
  * // Returns: { prev: 4, next: 6, pages: [3, 4, 5, 6, 7] }
  */
-export function buildPaginationLinks(options: {
-  currentPage: number;
-  totalPages: number;
-  maxLinks?: number;
-}): {
+export function buildPaginationLinks(options: { currentPage: number; totalPages: number; maxLinks?: number }): {
   prev: number | null;
   next: number | null;
   pages: number[];

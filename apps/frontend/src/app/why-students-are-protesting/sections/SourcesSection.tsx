@@ -7,6 +7,9 @@ import { ExternalLink } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
 import { SOURCES } from '@/constants/whyProtestContent';
 
+/**
+ *
+ */
 export function SourcesSection(): JSX.Element {
   return (
     <section className="py-12">

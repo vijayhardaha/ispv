@@ -150,7 +150,14 @@ function Button({
   if (asChild) {
     const asChildClasses = cn(classes, spanVariants({ variant, size }));
     return (
-      <Comp data-slot="button" data-variant={variant} data-size={size} className={asChildClasses} disabled={isDisabled} {...props}>
+      <Comp
+        data-slot="button"
+        data-variant={variant}
+        data-size={size}
+        className={asChildClasses}
+        disabled={isDisabled}
+        {...props}
+      >
         <span className={spanVariants({ variant, size })}>
           {loading && <Spinner />}
           {children}

@@ -2,8 +2,8 @@ import { useEffect, useRef, useState, type JSX } from 'react';
 
 import { X, ChevronUp, ChevronDown } from 'lucide-react';
 
-import type { VideoEntry } from '@/lib/videos';
 import { ReelItem } from '@/components/shared/ReelItem';
+import type { VideoEntry } from '@/lib/videos';
 
 /**
  * Props for the ReelPlayer component.

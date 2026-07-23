@@ -3,8 +3,8 @@
 import { useState, type ReactNode, type JSX } from 'react';
 
 import { ReelPlayer } from '@/components/shared/ReelPlayer';
-import type { VideoEntry } from '@/lib/videos';
 import { ReelPlayerContext } from '@/hooks/useReelPlayer';
+import type { VideoEntry } from '@/lib/videos';
 
 /**
  * Context provider that manages reel player state and renders the global player overlay.

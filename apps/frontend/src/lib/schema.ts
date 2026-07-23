@@ -1,7 +1,7 @@
 import { personSchema, organizationSchema, webSiteSchema } from '@vijayhardaha/schema-builder';
 
 import { SITE_CONFIG } from '@/constants/seo';
-import { siteUrl } from '@/utils/seo';
+import { siteUrl } from '@/lib/seo';
 
 /**
  * Breadcrumb item structure.

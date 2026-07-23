@@ -8,6 +8,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 
+/**
+ *
+ */
 export function WhyThisArchiveExistsSection(): JSX.Element {
   return (
     <section className="border-y-2 border-black bg-yellow-400 py-12">
@@ -17,8 +20,8 @@ export function WhyThisArchiveExistsSection(): JSX.Element {
         </h2>
         <p className="mt-4">
           Public demonstrations generate thousands of videos across Instagram. While each recording captures only one
-          perspective, together they form a visual record of the movement. Indian Students Protest Vault organises
-          these publicly shared videos by event, city, date, and topic so they remain easy to discover and explore.
+          perspective, together they form a visual record of the movement. Indian Students Protest Vault organises these
+          publicly shared videos by event, city, date, and topic so they remain easy to discover and explore.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link href="/videos">

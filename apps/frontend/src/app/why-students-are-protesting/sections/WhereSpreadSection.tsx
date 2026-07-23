@@ -8,6 +8,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 
+/**
+ *
+ */
 export function WhereSpreadSection(): JSX.Element {
   return (
     <section className="py-12">

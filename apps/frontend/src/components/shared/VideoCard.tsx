@@ -3,8 +3,8 @@ import { useState, type JSX } from 'react';
 import { Play, MapPin } from 'lucide-react';
 import Image from 'next/image';
 
-import type { VideoEntry } from '@/lib/videos';
 import { cn } from '@/lib/cn';
+import type { VideoEntry } from '@/lib/videos';
 
 /**
  * Small uppercase label with border, used for category and featured tags.

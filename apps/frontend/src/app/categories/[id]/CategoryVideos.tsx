@@ -2,10 +2,10 @@
 
 import type { JSX } from 'react';
 
-import type { FilterState } from '@/lib/schemas';
 import { FilterBar } from '@/components/shared/FilterBar';
 import { Pagination } from '@/components/shared/Pagination';
 import { VideoCard } from '@/components/shared/VideoCard';
+import type { FilterState } from '@/lib/schemas';
 import type { VideoEntry } from '@/lib/videos';
 
 export interface CategoryVideosProps {
@@ -21,6 +21,20 @@ export interface CategoryVideosProps {
   onChangePage: (page: number) => void;
 }
 
+/**
+ *
+ * @param props
+ * @param props.state
+ * @param props.setState
+ * @param props.total
+ * @param props.allTags
+ * @param props.allLocations
+ * @param props.paged
+ * @param props.totalPages
+ * @param props.safePage
+ * @param props.onPlay
+ * @param props.onChangePage
+ */
 export function CategoryVideos({
   state,
   setState,

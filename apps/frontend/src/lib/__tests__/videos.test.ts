@@ -1,7 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
 import { supabase } from '@/lib/supabase';
-
 import { getAllVideosFromDb } from '@/lib/videos';
 
 vi.mock('@/lib/supabase', () => ({ supabase: { from: vi.fn() } }));
