@@ -6,7 +6,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { filterVideos } from '@/helpers/filterVideos';
-import type { FilterState } from '@/lib/schemas';
+import type { FilterState } from '@/lib/frontend-schemas';
 import type { VideoEntry } from '@/lib/videos';
 
 const makeVideo = (overrides: Partial<VideoEntry> = {}): VideoEntry => ({
@@ -21,6 +21,7 @@ const makeVideo = (overrides: Partial<VideoEntry> = {}): VideoEntry => ({
   tags: ['peaceful', 'students', 'delhi'],
   hashtags: ['#peaceful', '#students', '#Delhi'],
   duration: 0,
+  viewCount: 0,
   featured: false,
   ...overrides,
 });
