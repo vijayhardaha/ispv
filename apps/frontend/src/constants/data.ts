@@ -1,3 +1,13 @@
+/**
+ * Category record shape matching the (now hardcoded) category metadata.
+ *
+ * @type {DbCategory}
+ * @property {string} id - Unique identifier for the category.
+ * @property {string} value - URL-friendly slug value.
+ * @property {string} name - Display name for the category.
+ * @property {string} color - Colour identifier for styling.
+ * @property {string | null} description - Short description of the category.
+ */
 export interface DbCategory {
   id: string;
   value: string;
@@ -6,6 +16,15 @@ export interface DbCategory {
   description: string | null;
 }
 
+/**
+ * Location record shape matching the (now hardcoded) location metadata.
+ *
+ * @type {DbLocation}
+ * @property {string} id - Unique identifier for the location.
+ * @property {string} value - URL-friendly slug value.
+ * @property {string} name - Display name for the location.
+ * @property {string | null} description - Short description of the location.
+ */
 export interface DbLocation {
   id: string;
   value: string;
@@ -13,6 +32,10 @@ export interface DbLocation {
   description: string | null;
 }
 
+/**
+ * Hardcoded categories used across the frontend for filtering and display.
+ * Order here determines display order.
+ */
 export const CATEGORIES: DbCategory[] = [
   {
     id: '1',
@@ -32,110 +55,130 @@ export const CATEGORIES: DbCategory[] = [
     id: '3',
     value: 'night-updates',
     name: 'Night Updates',
-    color: 'indigo',
+    color: 'black',
     description: 'Night-time protest updates and reports',
   },
   {
     id: '4',
+    value: 'important-protest-updates-announcements',
+    name: 'Important Protest Updates & Announcements',
+    color: 'white',
+    description:
+      'Stay informed with important updates for protesters, including event schedules, route changes, official announcements, safety advisories, meeting points, and campaign information.',
+  },
+  {
+    id: '5',
     value: 'gen-z-movement',
     name: 'Gen Z Movement',
     color: 'green',
     description: 'Student-led youth movements',
   },
   {
-    id: '5',
+    id: '6',
     value: 'official-statements',
     name: 'Official Statements',
-    color: 'slate',
+    color: 'blue',
     description: 'Official statements from authorities and organisations',
   },
   {
-    id: '6',
+    id: '7',
     value: 'counter-protests-public-reactions',
     name: 'Counter Protests & Public Reactions',
-    color: 'orange',
+    color: 'yellow',
     description: 'Counter-protests and public reactions',
   },
   {
-    id: '7',
+    id: '8',
     value: 'human-rights',
     name: 'Human Rights',
-    color: 'amber',
+    color: 'red',
     description: 'Human rights advocacy and awareness',
   },
   {
-    id: '8',
+    id: '9',
     value: 'news-coverage',
     name: 'News Coverage',
-    color: 'sky',
+    color: 'black',
     description: 'News media coverage of the protests',
   },
   {
-    id: '9',
+    id: '10',
     value: 'protest-vlogs',
     name: 'Protest Vlogs',
-    color: 'teal',
+    color: 'white',
     description: 'First-person vlogs from the ground',
   },
   {
-    id: '10',
+    id: '11',
     value: 'public-figures-creators',
     name: 'Public Figures & Creators',
-    color: 'violet',
+    color: 'green',
     description: 'Public figures and content creators covering the protests',
   },
   {
-    id: '11',
+    id: '12',
     value: 'acts-of-kindness',
     name: 'Acts of Kindness',
     color: 'blue',
     description: 'Moments of compassion and solidarity',
   },
   {
-    id: '12',
+    id: '13',
     value: 'women-leading-movement',
     name: 'Women Leading the Movement',
-    color: 'pink',
+    color: 'yellow',
     description: 'Women at the forefront of protests',
   },
   {
-    id: '13',
+    id: '14',
     value: 'solidarity-protection',
     name: 'Solidarity & Protection',
-    color: 'cyan',
+    color: 'red',
     description: 'Acts of solidarity and protection during protests',
   },
   {
-    id: '14',
+    id: '15',
     value: 'senior-citizens-voices',
     name: "Senior Citizens' Voices",
-    color: 'lime',
+    color: 'black',
     description: 'Senior citizens participating and sharing their views',
   },
   {
-    id: '15',
+    id: '16',
     value: 'children-voices',
     name: "Children's Voices",
-    color: 'rose',
+    color: 'white',
     description: 'Children expressing their thoughts and participating',
   },
   {
-    id: '16',
+    id: '17',
     value: 'celebrations-cultural-events',
     name: 'Celebrations & Cultural Events',
-    color: 'emerald',
+    color: 'green',
     description: 'Cultural events and celebrations during protests',
   },
   {
-    id: '17',
+    id: '18',
     value: 'media-analysis',
     name: 'Media Analysis',
-    color: 'stone',
+    color: 'blue',
     description: 'Analysis of media coverage and narratives',
   },
-  { id: '18', value: 'other', name: 'Other', color: 'gray', description: 'Uncategorised protest content' },
+  {
+    id: '19',
+    value: 'fact-checks-and-misinformation',
+    name: 'Fact Checks & Misinformation',
+    color: 'yellow',
+    description:
+      'Explore fact checks, misinformation investigations, and verified explanations addressing viral claims, misleading posts, edited videos, and false narratives related to student protests.',
+  },
+  { id: '20', value: 'other', name: 'Other', color: 'red', description: 'Uncategorised protest content' },
 ];
 
+/**
+ * Hardcoded locations used across the frontend for filtering and display.
+ * Order here determines display order.
+ */
 export const LOCATIONS: DbLocation[] = [
   { id: '1', value: 'delhi', name: 'Delhi', description: null },
   { id: '2', value: 'bihar', name: 'Bihar', description: null },
@@ -181,7 +224,10 @@ export const LOCATIONS: DbLocation[] = [
   { id: '37', value: 'foreign', name: 'Foreign (Outside India)', description: null },
 ];
 
-export const FEATURED_SLUGS = [
+/**
+ * Category slugs highlighted as featured on the homepage.
+ */
+export const FEATURED_CATEGORIES_SLUGS = [
   'protest-marches',
   'police-conduct',
   'gen-z-movement',
