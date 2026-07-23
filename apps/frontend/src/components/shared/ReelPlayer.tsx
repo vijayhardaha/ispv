@@ -22,6 +22,51 @@ interface ReelPlayerProps {
 }
 
 /**
+ * Navigation controls for the reel player — prev/next buttons with a counter.
+ * Styled in brutalist yellow with heavy borders and shadow.
+ *
+ * @param {object} props - Component properties.
+ * @param {number} props.active - Index of the currently active video.
+ * @param {number} props.total - Total number of videos.
+ * @param {(index: number) => void} props.onNavigate - Callback with the target index.
+ *
+ * @returns {JSX.Element} Rendered navigation buttons.
+ */
+function NavigationButtons({
+  active,
+  total,
+  onNavigate,
+}: {
+  active: number;
+  total: number;
+  onNavigate: (index: number) => void;
+}): JSX.Element {
+  return (
+    <>
+      <button
+        disabled={active === 0}
+        onClick={() => onNavigate(active - 1)}
+        className="shadow-brutal-sm cursor-pointer border-2 border-black bg-yellow-400 p-4 transition hover:-translate-y-0.5 disabled:opacity-40"
+        aria-label="Previous reel"
+      >
+        <ChevronUp className="size-6" />
+      </button>
+      <div className="border-2 border-black bg-white px-2 py-1 text-center font-mono text-[10px] font-bold">
+        {active + 1}/{total}
+      </div>
+      <button
+        disabled={active === total - 1}
+        onClick={() => onNavigate(active + 1)}
+        className="shadow-brutal-sm cursor-pointer border-2 border-black bg-yellow-400 p-4 transition hover:translate-y-0.5 disabled:opacity-40"
+        aria-label="Next reel"
+      >
+        <ChevronDown className="size-6" />
+      </button>
+    </>
+  );
+}
+
+/**
  * Full-screen reel player with snap scrolling, keyboard navigation, and Instagram embeds.
  *
  * @param {ReelPlayerProps} props - Player properties.
@@ -128,35 +173,17 @@ export function ReelPlayer({ videos, startIndex = 0, open, onClose }: ReelPlayer
       <button
         onClick={onClose}
         aria-label="Close player"
-        className="shadow-brutal-sm absolute top-4 right-4 z-20 border-2 border-black bg-white p-2 hover:bg-yellow-400 hover:text-white"
+        className="shadow-brutal-sm absolute top-4 right-4 z-20 cursor-pointer border-2 border-black bg-white p-2 hover:bg-yellow-400 hover:text-white"
       >
         <X className="h-5 w-5" />
       </button>
 
       <div className="relative flex h-full w-full items-stretch justify-center">
         <div className="absolute top-1/2 left-4 z-20 hidden -translate-y-1/2 flex-col gap-2 md:flex">
-          <button
-            disabled={active === 0}
-            onClick={() => scrollToIndex(active - 1)}
-            className="shadow-brutal-sm border-2 border-black bg-yellow-400 p-2 transition hover:-translate-y-0.5 disabled:opacity-40"
-            aria-label="Previous reel"
-          >
-            <ChevronUp className="h-5 w-5" />
-          </button>
-          <div className="border-2 border-black bg-white px-2 py-1 text-center font-mono text-[10px] font-bold">
-            {active + 1}/{videos.length}
-          </div>
-          <button
-            disabled={active === videos.length - 1}
-            onClick={() => scrollToIndex(active + 1)}
-            className="shadow-brutal-sm border-2 border-black bg-yellow-400 p-2 transition hover:translate-y-0.5 disabled:opacity-40"
-            aria-label="Next reel"
-          >
-            <ChevronDown className="h-5 w-5" />
-          </button>
+          <NavigationButtons active={active} total={videos.length} onNavigate={scrollToIndex} />
         </div>
 
-        <div className="relative aspect-9/16 h-full bg-black">
+        <div className="relative aspect-9/16 h-full max-w-full bg-black">
           <div ref={containerRef} className="snap-reel relative h-full w-full">
             {videos.map((v, i) => (
               <ReelItem key={v.id} video={v} active={i === active} />
