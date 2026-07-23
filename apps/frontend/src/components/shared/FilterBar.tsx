@@ -5,7 +5,6 @@ import { type JSX } from 'react';
 import { MapPin, Search, X, Filter } from 'lucide-react';
 
 import { TagChips } from '@/components/shared/TagChips';
-
 import type { FilterState } from '@/lib/schemas';
 
 /**
