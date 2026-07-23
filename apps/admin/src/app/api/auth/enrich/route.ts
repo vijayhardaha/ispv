@@ -1,3 +1,6 @@
+/** Requires Node.js runtime for sharp (native addon), dns, and net modules. */
+export const runtime = 'nodejs';
+
 import dns from 'node:dns/promises';
 import net from 'node:net';
 
@@ -153,7 +156,8 @@ async function downloadAndUpload(url: string, video_id: string): Promise<string 
     }
 
     const buffer = Buffer.from(ab);
-    const optimized = await sharp(buffer).webp({ quality: 80 }).toBuffer();
+    // limitInputPixels prevents decompression bombs from consuming excessive memory
+    const optimized = await sharp(buffer, { limitInputPixels: 50_000_000 }).webp({ quality: 80 }).toBuffer();
     return await uploadBuffer(optimized, `thumbs/${video_id}.webp`);
   } catch {
     // swallow errors and return null to keep enrichment best-effort

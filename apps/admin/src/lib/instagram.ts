@@ -25,9 +25,11 @@ export function detectSource(url: string): string {
   if (/youtube\.com|youtu\.be/i.test(url)) {
     return 'youtube';
   }
+
   if (/instagram\.com/i.test(url)) {
     return 'instagram';
   }
+
   return 'instagram';
 }
 
@@ -45,9 +47,11 @@ export function displayVideoUrl(v: { video_src: string; video_id?: string | null
   if (v.video_src === 'youtube') {
     return v.video_url ?? '';
   }
+
   if (v.video_id) {
     return `https://www.instagram.com/p/${v.video_id}/`;
   }
+
   return v.video_url ?? '';
 }
 

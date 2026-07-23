@@ -1,4 +1,4 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr';
 import { type NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -28,27 +28,17 @@ export async function proxy(req: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return req.cookies.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          // Update the request (for downstream middleware logic) and the response
-          // (so the browser receives the Set-Cookie header).
-          req.cookies.set({ name, value, ...options });
-          response = NextResponse.next({ request: req });
-          response.cookies.set({ name, value, ...options });
-        },
-        remove(name: string, options: CookieOptions) {
-          req.cookies.set({ name, value: '', ...options });
-          response = NextResponse.next({ request: req });
-          response.cookies.set({ name, value: '', ...options });
-        },
         getAll() {
           return req.cookies.getAll();
         },
-        setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
+        setAll(cookiesToSet: { name: string; value: string; options: Record<string, unknown> }[]) {
           cookiesToSet.forEach(({ name, value, options }) => {
             req.cookies.set({ name, value, ...options });
+            response.cookies.set({ name, value, ...options });
+          });
+          // Rebuild response so downstream middleware sees updated cookies
+          response = NextResponse.next({ request: req });
+          cookiesToSet.forEach(({ name, value, options }) => {
             response.cookies.set({ name, value, ...options });
           });
         },
@@ -56,27 +46,51 @@ export async function proxy(req: NextRequest) {
     }
   );
 
+  // Apply security headers to all responses
+  response = addSecurityHeaders(response);
+
+  // Enforce maximum request body size for non-GET requests to API routes
+  if (pathname.startsWith('/api/') && req.method !== 'GET') {
+    const contentLength = req.headers.get('content-length');
+    if (contentLength && Number(contentLength) > MAX_BODY_BYTES) {
+      return addSecurityHeaders(NextResponse.json({ error: 'Request body too large' }, { status: 413 }));
+    }
+  }
+
   // Allow public endpoints through without auth
   if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
     if (req.method === 'OPTIONS') {
-      return new NextResponse(null, {
-        status: 204,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        },
-      });
+      return addSecurityHeaders(
+        new NextResponse(null, {
+          status: 204,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+        })
+      );
     }
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    return response;
+    return addSecurityHeaders(response);
   }
 
   // Allow static assets
   if (pathname.startsWith('/_next') || pathname.startsWith('/favicon') || pathname.startsWith('/uploads')) {
-    return response;
+    return addSecurityHeaders(response);
+  }
+
+  // CSRF protection: validate Origin header for state-changing requests
+  // Prevents a malicious site from using an authenticated admin's session cookie
+  // to make cross-origin POST/PUT/DELETE requests against internal API routes.
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    const origin = req.headers.get('origin');
+    const host = req.headers.get('host');
+    if (origin && host && !origin.includes(host)) {
+      return addSecurityHeaders(NextResponse.json({ error: 'Forbidden' }, { status: 403 }));
+    }
   }
 
   // Check for Supabase session — triggers refresh if access token is expired
@@ -86,13 +100,30 @@ export async function proxy(req: NextRequest) {
 
   if (!user) {
     if (pathname.startsWith('/api/')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return addSecurityHeaders(NextResponse.json({ error: 'Unauthorized' }, { status: 401 }));
     }
-    return NextResponse.redirect(new URL('/login', req.url));
+    return addSecurityHeaders(NextResponse.redirect(new URL('/login', req.url)));
   }
 
-  return response;
+  return addSecurityHeaders(response);
 }
+
+/**
+ * Adds common security headers to a response object.
+ *
+ * @param {NextResponse} res - Response to add headers to.
+ *
+ * @returns {NextResponse} The response with security headers attached.
+ */
+function addSecurityHeaders(res: NextResponse): NextResponse {
+  res.headers.set('X-Content-Type-Options', 'nosniff');
+  res.headers.set('X-Frame-Options', 'DENY');
+  res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  return res;
+}
+
+/** Maximum request body size in bytes (100 KB) for API requests. */
+const MAX_BODY_BYTES = 100_000;
 
 /**
  * Routes that bypass authentication entirely.
