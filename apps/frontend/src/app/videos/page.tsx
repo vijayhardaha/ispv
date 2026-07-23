@@ -8,12 +8,12 @@ import { JsonLd } from '@vijayhardaha/schema-builder/react';
 import { FilterBar } from '@/components/shared/FilterBar';
 import { Pagination } from '@/components/shared/Pagination';
 import { VideoCard } from '@/components/shared/VideoCard';
-import { getAllVideosFromDb, type VideoEntry } from '@/data/videos';
+import { getAllVideosFromDb, type VideoEntry } from '@/lib/videos';
 import { useFilterState } from '@/hooks/useFilterState';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 import { getLocations, getTags } from '@/lib/db';
-import { buildBreadcrumbs, globalSchema } from '@/utils/schema';
-import { siteUrl } from '@/utils/seo';
+import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
+import { siteUrl } from '@/lib/seo';
 
 const title = 'All Videos — Full Archive';
 const description =

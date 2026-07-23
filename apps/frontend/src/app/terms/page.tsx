@@ -5,9 +5,9 @@ import { JsonLd } from '@vijayhardaha/schema-builder/react';
 import type { Metadata } from 'next';
 
 import { Container } from '@/components/ui/Container';
-import { buildMetadata } from '@/utils/meta';
-import { buildBreadcrumbs, globalSchema } from '@/utils/schema';
-import { siteUrl } from '@/utils/seo';
+import { buildMetadata } from '@/lib/meta';
+import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
+import { siteUrl } from '@/lib/seo';
 
 const title = 'Terms of Service — Indian Students Protest Vault';
 const description =

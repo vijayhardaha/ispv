@@ -9,12 +9,12 @@ import Link from 'next/link';
 
 import { VideoCard } from '@/components/shared/VideoCard';
 import { Button } from '@/components/ui/Button';
-import { getAllVideosFromDb, type VideoEntry } from '@/data/videos';
+import { getAllVideosFromDb, type VideoEntry } from '@/lib/videos';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 import { cn } from '@/lib/cn';
 import { getCategories, type DbCategory } from '@/lib/db';
-import { buildBreadcrumbs, globalSchema } from '@/utils/schema';
-import { siteUrl } from '@/utils/seo';
+import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
+import { siteUrl } from '@/lib/seo';
 
 const title = 'Categories — Browse by Category';
 const description =

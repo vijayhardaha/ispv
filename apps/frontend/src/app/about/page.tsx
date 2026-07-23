@@ -9,9 +9,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 import { cn } from '@/lib/cn';
-import { buildMetadata } from '@/utils/meta';
-import { buildBreadcrumbs, globalSchema } from '@/utils/schema';
-import { siteUrl } from '@/utils/seo';
+import { buildMetadata } from '@/lib/meta';
+import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
+import { siteUrl } from '@/lib/seo';
 
 const title = 'About — Indian Students Protest Vault';
 const description =
