@@ -15,7 +15,6 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   const { id } = await params;
   const supabase = await createServerSupabase();
 
-  // Require authenticated user for updates
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -62,7 +61,63 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 }
 
 /**
- * Deletes a video record by ID.
+ * Handles trash, restore, and permanent-delete actions on a video.
+ * Accepts JSON body: { action: 'trash' | 'restore' | 'delete', reason?: string }
+ *
+ * @param {Request} req - Incoming request with action metadata.
+ * @param {{ params: Promise<{ id: string }> }} context - Route context containing the video ID.
+ *
+ * @returns {Promise<NextResponse>} JSON response with operation result.
+ */
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const supabase = await createServerSupabase();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { action, reason } = await req.json();
+
+  switch (action) {
+    case 'trash': {
+      const { error } = await supabase.rpc('trash_video', {
+        p_video_id: id,
+        p_reason: reason || 'Manually trashed by admin',
+      });
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+      return NextResponse.json({ ok: true });
+    }
+
+    case 'restore': {
+      const { error } = await supabase.rpc('restore_video', { p_video_id: id });
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+      return NextResponse.json({ ok: true });
+    }
+
+    case 'delete': {
+      const { error } = await supabase.from('videos').delete().eq('id', id);
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+      return NextResponse.json({ ok: true });
+    }
+
+    default:
+      return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 });
+  }
+}
+
+/**
+ * Hard-deletes a video record by ID (permanent, cannot be undone).
+ * Use POST with action:'trash' for soft delete.
  *
  * @param {Request} _req - Incoming delete request (unused).
  * @param {{ params: Promise<{ id: string }> }} context - Route context containing the video ID.
@@ -73,7 +128,6 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   const { id } = await params;
   const supabase = await createServerSupabase();
 
-  // Require authenticated user for delete
   const {
     data: { user },
   } = await supabase.auth.getUser();
