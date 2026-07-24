@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 
+import type { FilterState } from '@/helpers/filterVideos';
 import { useFilterState } from '@/hooks/useFilterState';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 import { getCategoryByValue, getLocations, type DbCategory } from '@/lib/db';
-import type { FilterState } from '@/helpers/filterVideos';
 import { getAllVideosFromDb, type VideoEntry } from '@/lib/videos';
 
 /**
