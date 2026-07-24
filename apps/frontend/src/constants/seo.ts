@@ -5,7 +5,7 @@ import type { Metadata } from 'next';
  * Google Analytics measurement ID. Set to an empty string to disable GA.
  * Only activates in production when a non-empty ID is provided.
  */
-export const GOOGLE_ANALYTICS_ID = 'G-2V0Q5EV3PP';
+export const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GA_ID ? process.env.NEXT_PUBLIC_GA_ID.trim() : '';
 
 /**
  * Google Search Console verification code for the site.
