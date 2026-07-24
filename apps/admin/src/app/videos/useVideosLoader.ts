@@ -78,41 +78,21 @@ export function useVideosLoader(): UseVideosLoaderReturn {
     router.replace(pathname);
   }, [router, pathname]);
 
-  const loadTrashedVideos = useCallback(async () => {
-    const { data } = await supabase
-      .from('videos')
-      .select('*')
-      .not('trashed_at', 'is', null)
-      .order('trashed_at', { ascending: false });
-    setVideos((data ?? []) as VideoRecord[]);
-    setTotalCount(data?.length ?? 0);
-  }, [supabase]);
-
-  const loadNormalVideos = useCallback(
-    async (st: string, srch: string, pg: number) => {
-      const response = await getVideosForApi(supabase, {
-        status: st || null,
-        search: srch || null,
-        page: pg,
-        per_page: PER_PAGE,
-      });
-      if (response) {
-        setVideos(response.data);
-        setTotalCount(response.pagination.total_count);
-      }
-    },
-    [supabase]
-  );
-
-  const loadData = useCallback(() => {
-    if (isTrashed) {
-      loadTrashedVideos();
-    } else {
-      loadNormalVideos(status, search, page);
+  const loadData = useCallback(async () => {
+    const response = await getVideosForApi(supabase, {
+      status: status || null,
+      search: search || null,
+      page,
+      per_page: PER_PAGE,
+      trashed: isTrashed ? 'only' : null,
+    });
+    if (response) {
+      setVideos(response.data);
+      setTotalCount(response.pagination.total_count);
     }
-  }, [isTrashed, status, search, page, loadTrashedVideos, loadNormalVideos]);
+  }, [isTrashed, status, search, page, supabase]);
 
-  const totalPages = isTrashed ? 1 : Math.ceil(totalCount / PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(totalCount / PER_PAGE));
 
   return {
     videos,

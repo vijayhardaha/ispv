@@ -615,7 +615,7 @@ function VideosPageContent(): JSX.Element {
         onInlineStatusChange={handleInlineStatusChange}
       />
 
-      {!isTrashed && <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} />}
+      <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} />
 
       {actionConfirm && (
         <DeleteConfirmDialog

@@ -3,9 +3,6 @@ import type { JSX } from 'react';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
-/**
- * Page title for the admin dashboard.
- */
 export const metadata: Metadata = { title: 'Dashboard' };
 
 import { CATEGORIES, type CategoryRecord } from '@/constants/categories';
@@ -14,128 +11,54 @@ import { LOCATIONS, type LocationRecord } from '@/constants/locations';
 import { cn } from '@/lib/cn';
 import { createServerSupabase } from '@/lib/supabase-server';
 
-/**
- * Category record augmented with a live count of associated videos.
- *
- * @type {CategoryWithCount}
- * @property {string} id - Unique identifier for the category.
- * @property {string} value - URL-friendly slug value.
- * @property {string} name - Display name for the category.
- * @property {string} color - Colour identifier for styling.
- * @property {string | null} description - Short description of the category.
- * @property {number} video_count - Number of videos in this category.
- */
 interface CategoryWithCount extends CategoryRecord {
   video_count: number;
 }
 
-/**
- * Location record augmented with a live count of associated videos.
- *
- * @type {LocationWithCount}
- * @property {string} id - Unique identifier for the location.
- * @property {string} value - URL-friendly slug value.
- * @property {string} name - Display name for the location.
- * @property {string | null} description - Short description of the location.
- * @property {number} video_count - Number of videos in this location.
- */
 interface LocationWithCount extends LocationRecord {
   video_count: number;
 }
 
-/**
- * A single status statistic with display label, colour, and video count.
- *
- * @type {StatusStat}
- * @property {string} label - Display label for the status (e.g. "Published").
- * @property {string} color - Tailwind background colour class for the badge.
- * @property {number} count - Number of videos in this status category.
- */
 interface StatusStat {
   label: string;
   color: string;
   count: number;
 }
 
-const STATUS_QUERIES = [
+interface DashboardStats {
+  total_videos: number;
+  status_counts: { status: string; count: number }[];
+  category_counts: { slug: string; count: number }[];
+  location_counts: { slug: string; count: number }[];
+}
+
+const STATUS_QUERIES: { label: string; color: string; status: string | null }[] = [
   { label: 'Total', color: 'bg-black', status: null },
   { label: 'Draft', color: 'bg-gray-400', status: 'draft' },
   { label: 'Pending', color: 'bg-yellow-400', status: 'pending_review' },
   { label: 'Published', color: 'bg-green-500', status: 'published' },
   { label: 'Rejected', color: 'bg-red-500', status: 'rejected' },
-] as const;
+];
 
-/**
- * Fetches counts of videos by status.
- *
- * @param {import('@supabase/supabase-js').SupabaseClient} supabase - Supabase client.
- *
- * @returns {Promise<StatusStat[]>} Array of status stat objects.
- */
-async function getStatusStats(
-  supabase: ReturnType<typeof createServerSupabase> extends Promise<infer T> ? T : never
-): Promise<StatusStat[]> {
-  const results = await Promise.all(
-    STATUS_QUERIES.map(async (s) => {
-      let query = supabase.from('videos').select('*', { count: 'exact', head: true });
-      if (s.status) {
-        query = query.eq('status', s.status);
-      }
-      const { count } = await query;
-      return { label: s.label, color: s.color, count: count ?? 0 };
-    })
-  );
-
-  return results;
+function buildStatusStats(stats: DashboardStats): StatusStat[] {
+  const countsMap = Object.fromEntries(stats.status_counts.map((s) => [s.status, s.count]));
+  return STATUS_QUERIES.map((s) => ({
+    label: s.label,
+    color: s.color,
+    count: s.status ? (countsMap[s.status] ?? 0) : stats.total_videos,
+  }));
 }
 
-/**
- * Fetches categories with their video counts.
- *
- * @param {object} supabase - Supabase client instance.
- *
- * @returns {Promise<CategoryWithCount[]>} Categories with video counts.
- */
-async function getCategoryStats(
-  supabase: ReturnType<typeof createServerSupabase> extends Promise<infer T> ? T : never
-): Promise<CategoryWithCount[]> {
-  return Promise.all(
-    CATEGORIES.map(async (cat) => {
-      const { count } = await supabase
-        .from('videos')
-        .select('*', { count: 'exact', head: true })
-        .eq('category', cat.slug);
-      return { ...cat, video_count: count ?? 0 } as CategoryWithCount;
-    })
-  );
+function buildCategoryStats(categoryCounts: { slug: string; count: number }[]): CategoryWithCount[] {
+  const countsMap = Object.fromEntries(categoryCounts.map((c) => [c.slug, c.count]));
+  return CATEGORIES.map((cat) => ({ ...cat, video_count: countsMap[cat.slug] ?? 0 }));
 }
 
-/**
- * Fetches locations with their video counts.
- *
- * @param {object} supabase - Supabase client instance.
- *
- * @returns {Promise<LocationWithCount[]>} Locations with video counts.
- */
-async function getLocationStats(
-  supabase: ReturnType<typeof createServerSupabase> extends Promise<infer T> ? T : never
-): Promise<LocationWithCount[]> {
-  return Promise.all(
-    LOCATIONS.map(async (loc) => {
-      const { count } = await supabase
-        .from('videos')
-        .select('*', { count: 'exact', head: true })
-        .eq('location', loc.slug);
-      return { ...loc, video_count: count ?? 0 } as LocationWithCount;
-    })
-  );
+function buildLocationStats(locationCounts: { slug: string; count: number }[]): LocationWithCount[] {
+  const countsMap = Object.fromEntries(locationCounts.map((l) => [l.slug, l.count]));
+  return LOCATIONS.map((loc) => ({ ...loc, video_count: countsMap[loc.slug] ?? 0 }));
 }
 
-/**
- * Dashboard page displaying video status statistics, categories with counts, and locations with counts.
- *
- * @returns {Promise<JSX.Element>} Rendered dashboard.
- */
 export default async function DashboardPage(): Promise<JSX.Element> {
   const supabase = await createServerSupabase();
   const {
@@ -145,11 +68,20 @@ export default async function DashboardPage(): Promise<JSX.Element> {
     redirect('/login');
   }
 
-  const [stats, categoryCounts, locationCounts] = await Promise.all([
-    getStatusStats(supabase),
-    getCategoryStats(supabase),
-    getLocationStats(supabase),
-  ]);
+  const { data, error } = await supabase.rpc('get_dashboard_stats');
+  const stats: DashboardStats = data ?? {
+    total_videos: 0,
+    status_counts: [],
+    category_counts: [],
+    location_counts: [],
+  };
+  if (error) {
+    console.error('Dashboard stats RPC error:', error);
+  }
+
+  const statusStats = buildStatusStats(stats);
+  const categoryCounts = buildCategoryStats(stats.category_counts);
+  const locationCounts = buildLocationStats(stats.location_counts);
 
   const totalCategoryVideos = categoryCounts.reduce((sum, c) => sum + c.video_count, 0);
   const totalLocationVideos = locationCounts.reduce((sum, l) => sum + l.video_count, 0);
@@ -160,9 +92,8 @@ export default async function DashboardPage(): Promise<JSX.Element> {
         Dashboard
       </h1>
 
-      {/* Status cards */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-        {stats.map((s) => (
+        {statusStats.map((s) => (
           <article key={s.label} className="border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_#18181b]">
             <div className={`mb-2 h-3 w-3 ${s.color}`} />
             <div className="text-3xl font-extrabold">{s.count}</div>
@@ -171,7 +102,6 @@ export default async function DashboardPage(): Promise<JSX.Element> {
         ))}
       </div>
 
-      {/* Categories section */}
       <h2 className="mt-10 mb-4 text-2xl font-extrabold uppercase">
         Categories ({categoryCounts.length}) &middot; {totalCategoryVideos} videos
       </h2>
@@ -195,7 +125,6 @@ export default async function DashboardPage(): Promise<JSX.Element> {
         {categoryCounts.length === 0 && <p className="col-span-full text-sm text-black/50">No categories found.</p>}
       </div>
 
-      {/* Locations section */}
       <h2 className="mt-10 mb-4 text-2xl font-extrabold uppercase">
         Locations ({locationCounts.length}) &middot; {totalLocationVideos} videos
       </h2>

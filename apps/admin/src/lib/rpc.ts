@@ -23,6 +23,7 @@ export interface GetVideosFilters {
   search?: string | null;
   category?: string | null;
   location?: string | null;
+  trashed?: string | null;
   page?: number;
   per_page?: number;
 }
