@@ -80,7 +80,7 @@ export function HeroSection({
               <p className="font-display mt-3 text-2xl leading-tight font-extrabold tracking-tighter uppercase md:text-3xl">
                 Every student who pressed record became a witness to history.
               </p>
-              <p className="mt-3 text-sm text-black/70">
+              <p className="mt-3 text-black/70">
                 Every archived video is one student&apos;s perspective. Together, they preserve the collective memory of
                 a movement.
               </p>
@@ -92,7 +92,7 @@ export function HeroSection({
               <p className="font-display mt-3 text-2xl leading-tight font-extrabold tracking-tighter uppercase md:text-3xl">
                 No single camera can tell the whole story.
               </p>
-              <p className="mt-3 text-sm text-black/70">
+              <p className="mt-3 text-black/70">
                 Every archived video captures one perspective. Together, they reveal the moments, voices, and
                 experiences that shaped a movement.
               </p>
