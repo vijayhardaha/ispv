@@ -15,10 +15,10 @@ import { put } from '@vercel/blob';
 export const uploadBuffer = async (buffer: Buffer, filename: string): Promise<string | null> => {
   if (process.env.BLOB_READ_WRITE_TOKEN) {
     try {
-      const blob = await put(filename, new Blob([buffer.buffer as ArrayBuffer]), { access: 'public' });
+      const blob = await put(filename, buffer, { access: 'public', addRandomSuffix: true, allowOverwrite: true });
       return blob.url;
-    } catch {
-      // blob upload failed — return null, no local fallback
+    } catch (err) {
+      console.error('[upload] Vercel Blob upload failed:', err instanceof Error ? err.message : err);
     }
   }
 
