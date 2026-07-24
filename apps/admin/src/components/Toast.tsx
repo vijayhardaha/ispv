@@ -2,14 +2,29 @@
 
 import { createContext, useCallback, useContext, useState, type JSX, type ReactNode } from 'react';
 
+/** Type of toast notification indicating success or error. */
 type ToastType = 'success' | 'error';
 
+/**
+ * A single toast notification entry.
+ *
+ * @type {Toast}
+ * @property {number} id - Auto-incremented unique identifier.
+ * @property {string} message - Notification message text.
+ * @property {ToastType} type - Visual type (success or error).
+ */
 interface Toast {
   id: number;
   message: string;
   type: ToastType;
 }
 
+/**
+ * Context value providing the toast notification function.
+ *
+ * @type {ToastContextValue}
+ * @property {(message: string, type?: ToastType) => void} toast - Function to show a toast.
+ */
 interface ToastContextValue {
   toast: (message: string, type?: ToastType) => void;
 }

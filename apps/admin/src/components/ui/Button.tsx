@@ -15,7 +15,10 @@ const variantStyles = {
 
 const sizeStyles = { default: 'px-4 py-2 text-sm', sm: 'px-3 py-1 text-xs', xs: 'px-2 py-1 text-xs' } as const;
 
+/** Visual style variants for the Button component. */
 type ButtonVariant = keyof typeof variantStyles;
+
+/** Size variants for the Button component. */
 type ButtonSize = keyof typeof sizeStyles;
 
 /**

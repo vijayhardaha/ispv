@@ -3,6 +3,7 @@ export type { VideoRecord } from '@/lib/schemas';
 /**
  * Pagination metadata returned by get_videos_for_api RPC.
  *
+ * @type {PaginationMeta}
  * @property {number} page - Current page number (1-based).
  * @property {number} per_page - Number of items per page.
  * @property {number} total_count - Total number of items across all pages.
@@ -22,8 +23,9 @@ interface PaginationMeta {
 /**
  * Response structure from get_videos_for_api RPC.
  *
- * @property {import('@/lib/schemas').VideoRecord[]} data - Array of video records.
- * @property {PaginationMeta} pagination - Pagination metadata.
+ * @type {GetVideosApiResponse}
+ * @property {import('@/lib/schemas').VideoRecord[]} data - Array of video records from the query.
+ * @property {PaginationMeta} pagination - Pagination metadata for the result set.
  */
 export interface GetVideosApiResponse {
   data: import('@/lib/schemas').VideoRecord[];

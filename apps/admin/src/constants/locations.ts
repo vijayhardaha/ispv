@@ -1,5 +1,10 @@
 /**
- * Location record shape.
+ * A single location entry used across the admin for filtering and display.
+ *
+ * @type {LocationRecord}
+ * @property {string} id - Unique identifier for the location.
+ * @property {string} slug - URL-friendly slug derived from the location name.
+ * @property {string} name - Human-readable location name.
  */
 export interface LocationRecord {
   id: string;

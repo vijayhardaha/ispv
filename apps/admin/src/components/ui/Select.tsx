@@ -5,11 +5,14 @@ import type { ComponentPropsWithoutRef, JSX } from 'react';
 import { cn } from '@/lib/cn';
 
 /**
- * Visual variants for the Select component.
+ * Visual style variants for the Select component.
+ *
  * - `form`: Full-width select for modal forms.
  * - `filter`: Compact select for page-level filters.
  * - `bulk`: Extra-compact select for bulk action toolbars.
  * - `inline`: Minimal select for inline table editing.
+ *
+ * @type {SelectVariant}
  */
 type SelectVariant = 'form' | 'filter' | 'bulk' | 'inline';
 

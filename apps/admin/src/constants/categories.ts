@@ -1,5 +1,13 @@
 /**
- * Category record shape.
+ * A single video category used across the admin for filtering and display.
+ *
+ * @type {CategoryRecord}
+ * @property {string} id - Unique identifier for the category.
+ * @property {string} slug - URL-friendly slug derived from the category name.
+ * @property {string} name - Human-readable category name.
+ * @property {string} tag - Short display tag for the category.
+ * @property {string} color - Color variant name matching TAG_VARIANTS.
+ * @property {string | null} description - Detailed description of the category.
  */
 export interface CategoryRecord {
   id: string;
