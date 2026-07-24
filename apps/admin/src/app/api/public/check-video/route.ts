@@ -70,7 +70,7 @@ export async function POST(req: Request): Promise<NextResponse> {
       const dbError = byId.error ?? byUrl.error;
       console.error('[check-video] database error:', dbError);
       return NextResponse.json(
-        { error: dbError?.message ?? 'Database lookup failed' },
+        { error: 'Database lookup failed' },
         { status: 500 }
       );
     }

@@ -31,7 +31,7 @@ export async function POST(req: Request): Promise<NextResponse> {
 
     const { error } = await sb.rpc('increment_video_view', { p_video_id: video_id });
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to record view' }, { status: 500 });
     }
 
     return NextResponse.json({ ok: true });

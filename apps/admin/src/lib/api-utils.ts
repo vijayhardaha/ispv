@@ -34,7 +34,7 @@ export const jsonError = (error: { message: string } | null, status: number = 50
   if (!error) {
     return null;
   }
-  return NextResponse.json({ error: error.message }, { status });
+  return NextResponse.json({ error: 'Operation failed' }, { status });
 };
 
 /**
@@ -57,7 +57,7 @@ export const deleteVideoById = async (supabase: SupabaseClient, id: string): Pro
 
   const { error } = await supabase.from('videos').delete().eq('id', id);
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
   }
   return NextResponse.json({ ok: true });
 };

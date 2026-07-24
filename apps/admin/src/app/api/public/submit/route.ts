@@ -57,7 +57,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'Submission failed' }, { status: 500 });
     }
     return NextResponse.json(data ?? { ok: true });
   } catch (e) {
