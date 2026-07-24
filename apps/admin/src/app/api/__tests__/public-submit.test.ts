@@ -14,6 +14,7 @@ const mockRpc = vi.fn();
 vi.mock('@supabase/supabase-js', () => ({ createClient: vi.fn(() => ({ rpc: mockRpc })) }));
 
 vi.mock('@/lib/rateLimit', () => ({
+  checkRateLimit: vi.fn(async () => true), // allow all requests
   tryUseUpstashRateLimit: vi.fn(async () => false), // falls back to in-memory
 }));
 

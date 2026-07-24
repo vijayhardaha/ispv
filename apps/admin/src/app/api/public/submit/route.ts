@@ -2,76 +2,11 @@
 export const runtime = 'edge';
 
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 
+import { createServiceSupabase } from '@/lib/api-utils';
+import { checkRateLimit } from '@/lib/rateLimit';
 import { submitVideoBodySchema } from '@/lib/schemas';
 import { extractIgId, detectSource } from '@/lib/instagram';
-
-/**
- * Simple in-memory rate limiter fallback (per-instance).
- * For global/distributed limits, set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN
- * and implement the Upstash logic in tryUseUpstashRateLimit().
- */
-const inMemoryStore = new Map<string, { count: number; resetAt: number }>();
-
-/**
- * Extracts the client IP from forwarded headers.
- *
- * @param {Request} req - Incoming request.
- *
- * @returns {string} IP address string.
- */
-function getIpKey(req: Request) {
-  // Prefer x-real-ip (set by edge/CDN) over x-forwarded-for (can be spoofed)
-  const ip = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || 'unknown';
-  return ip.split(',')[0].trim();
-}
-
-import { tryUseUpstashRateLimit } from '@/lib/rateLimit';
-
-/**
- * Checks whether a request is within the in-memory rate limit.
- *
- * @param {string} key - Rate-limit key (usually IP-based).
- * @param {number} limit - Maximum allowed requests within the window.
- * @param {number} windowSec - Time window in seconds.
- *
- * @returns {boolean} True if the request is allowed.
- */
-function checkInMemoryLimit(key: string, limit: number, windowSec: number): boolean {
-  const now = Date.now();
-  const entry = inMemoryStore.get(key);
-  if (!entry || entry.resetAt <= now) {
-    inMemoryStore.set(key, { count: 1, resetAt: now + windowSec * 1000 });
-    return true;
-  }
-  if (entry.count >= limit) {
-    return false;
-  }
-  entry.count += 1;
-  return true;
-}
-
-/**
- * Checks rate limit using Upstash Redis with in-memory fallback.
- *
- * @param {Request} req - Incoming request for IP extraction.
- * @param {number} limit - Maximum allowed requests within the window.
- * @param {number} windowSec - Time window in seconds.
- *
- * @returns {Promise<boolean>} True if the request is allowed.
- */
-async function checkRateLimit(req: Request, limit: number, windowSec: number): Promise<boolean> {
-  const ip = getIpKey(req);
-  const key = `rl:${ip}`;
-
-  const upstashAllowed = await tryUseUpstashRateLimit(key, limit, windowSec);
-  if (upstashAllowed) {
-    return true;
-  }
-
-  return checkInMemoryLimit(key, limit, windowSec);
-}
 
 /**
  * Handles public video submission from the frontend submit dialog.
@@ -81,10 +16,10 @@ async function checkRateLimit(req: Request, limit: number, windowSec: number): P
  *
  * @returns {Promise<NextResponse>} JSON response with the submitted video record.
  */
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<NextResponse> {
   try {
     // Rate limit: 5 submissions per minute per IP
-    const allowed = await checkRateLimit(req, 5, 60); // 5 submissions per minute per IP
+    const allowed = await checkRateLimit(req, 'rl', 5, 60);
     if (!allowed) {
       return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
     }
@@ -109,14 +44,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid instagram url' }, { status: 400 });
     }
 
-    // Use server-only service role key
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!supabaseUrl || !serviceKey) {
+    const sb = createServiceSupabase();
+    if (!sb) {
       return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
     }
-
-    const sb = createClient(supabaseUrl, serviceKey, { "global": { fetch } } as any);
 
     const { data, error } = await sb.rpc('submit_video', {
       p_video_url: video_url,
