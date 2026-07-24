@@ -1,6 +1,5 @@
 import { ImageResponse } from '@vercel/og';
 
-export const contentType = 'image/png';
 export const runtime = 'edge';
 export const preferredRegion = 'iad1';
 
