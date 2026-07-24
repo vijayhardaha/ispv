@@ -1,6 +1,6 @@
 'use client';
 
-import type { JSX } from 'react';
+import { useCallback, useMemo, type JSX } from 'react';
 
 import { Grid3x3 } from 'lucide-react';
 
@@ -24,7 +24,8 @@ import type { VideoEntry } from '@/lib/videos';
 export function CategorySection({ cat, videos }: { cat: DbCategory; videos: VideoEntry[] }): JSX.Element {
   const { play } = useReelPlayer();
 
-  const items = videos.slice(0, 6);
+  const items = useMemo(() => videos.slice(0, 6), [videos]);
+  const handlePlay = useCallback((video: VideoEntry) => play(video, items), [play, items]);
 
   return (
     <section className="bg-gray-100 py-12 md:py-16" id={`section-${cat.slug}`}>
@@ -41,7 +42,7 @@ export function CategorySection({ cat, videos }: { cat: DbCategory; videos: Vide
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
           {items.map((v) => (
-            <VideoCard key={v.id} video={v} onPlay={() => play(v, items)} />
+            <VideoCard key={v.id} video={v} onPlay={handlePlay} />
           ))}
           {items.length === 0 && (
             <div className="col-span-full border-2 border-dashed border-black/40 p-8 text-center font-mono text-sm text-black/50 uppercase">

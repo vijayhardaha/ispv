@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type SubmitEvent } from 'react';
+import { useCallback, useEffect, useState, type SubmitEvent } from 'react';
 
 import type { DbLocation } from '@/lib/db';
 import { checkVideoExists, getLocations } from '@/lib/db';
@@ -95,7 +95,7 @@ export function useSubmitVideoForm({
       .catch(() => {});
   }, []);
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setUrl('');
     setLocation('Delhi');
     setCity('');
@@ -104,17 +104,20 @@ export function useSubmitVideoForm({
     setSuccess(false);
     setSubmitting(false);
     setCheckingUrl(false);
-  };
+  }, []);
 
-  const handleOpen = (next: boolean) => {
-    if (!next) {
-      setTimeout(resetForm, 200);
-    }
-    setOpen(next);
-    onOpenChange?.(next);
-  };
+  const handleOpen = useCallback(
+    (next: boolean) => {
+      if (!next) {
+        setTimeout(resetForm, 200);
+      }
+      setOpen(next);
+      onOpenChange?.(next);
+    },
+    [onOpenChange, resetForm]
+  );
 
-  const checkForDuplicate = async (val: string) => {
+  const checkForDuplicate = useCallback(async (val: string) => {
     const igId = extractInstagramId(val);
     if (!igId) {
       return;
@@ -126,15 +129,15 @@ export function useSubmitVideoForm({
       setError('This reel is already in the archive. Submit another one!');
     }
     setCheckingUrl(false);
-  };
+  }, []);
 
-  const handleBlur = () => {
+  const handleBlur = useCallback(() => {
     if (url && !error) {
       checkForDuplicate(url);
     }
-  };
+  }, [url, error, checkForDuplicate]);
 
-  const validateForm = (): string | null => {
+  const validateForm = useCallback((): string | null => {
     const parsed = submitVideoFormSchema.safeParse({ url, location, city, hashtags } satisfies SubmitVideoForm);
     if (!parsed.success) {
       return parsed.error.issues[0]?.message ?? 'Invalid form data';
@@ -143,9 +146,9 @@ export function useSubmitVideoForm({
       return 'That does not look like a valid Instagram reel URL.';
     }
     return null;
-  };
+  }, [url, location, city, hashtags]);
 
-  const submitVideo = async () => {
+  const submitVideo = useCallback(async () => {
     const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
     if (!adminUrl) {
       throw new Error('Admin URL is not configured. Set NEXT_PUBLIC_ADMIN_URL in your environment.');
@@ -166,37 +169,40 @@ export function useSubmitVideoForm({
       const data = (await response.json().catch(() => ({}))) as { error?: string };
       throw new Error(data.error ?? 'Something went wrong');
     }
-  };
+  }, [url, location, city, hashtags]);
 
-  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError(null);
+  const handleSubmit = useCallback(
+    async (e: SubmitEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setError(null);
 
-    const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
+      const validationError = validateForm();
+      if (validationError) {
+        setError(validationError);
+        return;
+      }
 
-    setSubmitting(true);
+      setSubmitting(true);
 
-    const exists = await checkVideoExists(url);
-    if (exists) {
-      setError('This reel is already in the archive. Submit another one!');
-      setSubmitting(false);
-      return;
-    }
+      const exists = await checkVideoExists(url);
+      if (exists) {
+        setError('This reel is already in the archive. Submit another one!');
+        setSubmitting(false);
+        return;
+      }
 
-    try {
-      await submitVideo();
-      setSuccess(true);
-      onSuccess?.();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
-    } finally {
-      setSubmitting(false);
-    }
-  };
+      try {
+        await submitVideo();
+        setSuccess(true);
+        onSuccess?.();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Something went wrong');
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [url, validateForm, submitVideo, onSuccess]
+  );
 
   return {
     open,

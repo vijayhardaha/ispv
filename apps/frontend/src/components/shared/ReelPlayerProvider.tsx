@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ReactNode, type JSX } from 'react';
+import { useCallback, useState, type ReactNode, type JSX } from 'react';
 
 import { ReelPlayer } from '@/components/shared/ReelPlayer';
 import { ReelPlayerContext } from '@/hooks/useReelPlayer';
@@ -18,14 +18,14 @@ export function ReelPlayerProvider({ children }: { children: ReactNode }): JSX.E
   const [active, setActive] = useState<VideoEntry | null>(null);
   const [videosList, setVideosList] = useState<VideoEntry[]>([]);
 
-  const play = (video: VideoEntry, list: VideoEntry[]) => {
+  const play = useCallback((video: VideoEntry, list: VideoEntry[]) => {
     setActive(video);
     setVideosList(list);
-  };
-  const close = () => {
+  }, []);
+  const close = useCallback(() => {
     setActive(null);
     setVideosList([]);
-  };
+  }, []);
 
   return (
     <ReelPlayerContext.Provider value={{ active, play, close, setActive }}>
