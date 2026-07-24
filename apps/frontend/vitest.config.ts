@@ -45,6 +45,8 @@ export default defineConfig({
         'src/lib/db.ts',
         'src/lib/supabase.ts',
         'src/hooks/**',
+        'src/app/categories/**',
+        'src/lib/meta.ts',
       ],
     },
   },
