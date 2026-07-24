@@ -133,7 +133,8 @@ async function validateUrlAcceptsImage(urlString: string): Promise<{ ok: boolean
     }
 
     return { ok: true };
-  } catch {
+  } catch (err) {
+    console.warn('[enrich] URL validation failed:', err instanceof Error ? err.message : err);
     return { ok: false, message: 'Invalid URL' };
   }
 }
@@ -145,14 +146,16 @@ async function validateUrlAcceptsImage(urlString: string): Promise<{ ok: boolean
  *
  * @param {string} url - Source image URL to download.
  * @param {string} video_id - Video ID used to derive the thumbnail filename.
+ * @param {string} video_src - Source platform ('instagram' | 'youtube') used for filename.
  *
  * @returns {Promise<string | null>} Uploaded thumbnail URL, or null on failure.
  */
-async function downloadAndUpload(url: string, video_id: string): Promise<string | null> {
+async function downloadAndUpload(url: string, video_id: string, video_src: string): Promise<string | null> {
   try {
     // Basic URL validation + private IP checks + content-type/size via HEAD
     const validated = await validateUrlAcceptsImage(url);
     if (!validated.ok) {
+      console.warn('[enrich] Image validation failed for', video_id, ':', validated.message);
       return null;
     }
 
@@ -163,6 +166,7 @@ async function downloadAndUpload(url: string, video_id: string): Promise<string 
       clearTimeout(timeout)
     );
     if (!res.ok) {
+      console.warn('[enrich] Image download failed for', video_id, '- status:', res.status);
       return null;
     }
 
@@ -171,21 +175,27 @@ async function downloadAndUpload(url: string, video_id: string): Promise<string 
     if (cl) {
       const bytes = Number(cl);
       if (!Number.isNaN(bytes) && bytes > MAX_BYTES) {
+        console.warn('[enrich] Image too large for', video_id, '- size:', cl);
         return null;
       }
     }
 
     const ab = await res.arrayBuffer();
     if (ab.byteLength > MAX_BYTES) {
+      console.warn('[enrich] Downloaded image too large for', video_id, '- bytes:', ab.byteLength);
       return null;
     }
 
     const buffer = Buffer.from(ab);
     // limitInputPixels prevents decompression bombs from consuming excessive memory
     const optimized = await sharp(buffer, { limitInputPixels: 50_000_000 }).webp({ quality: 80 }).toBuffer();
-    return await uploadBuffer(optimized, `thumbs/${video_id}.webp`);
-  } catch {
-    // swallow errors and return null to keep enrichment best-effort
+    const uploadedUrl = await uploadBuffer(optimized, `${video_src}-${video_id}.webp`);
+    if (!uploadedUrl) {
+      console.warn('[enrich] Vercel Blob upload returned null for', video_id);
+    }
+    return uploadedUrl;
+  } catch (err) {
+    console.error('[enrich] downloadAndUpload failed for', video_id, ':', err instanceof Error ? err.message : err);
     return null;
   }
 }
@@ -218,7 +228,10 @@ export async function POST(req: Request): Promise<NextResponse> {
       return NextResponse.json({ error: 'invalid instagram url' }, { status: 400 });
     }
 
-    const thumbnail_url = og_image ? await downloadAndUpload(og_image, video_id) : null;
+    if (og_image) {
+      console.log('[enrich] Downloading thumbnail for', video_id, 'from', og_image);
+    }
+    const thumbnail_url = og_image ? await downloadAndUpload(og_image, video_id, video_src) : null;
 
     const supabase = createServiceSupabase();
     if (!supabase) {
@@ -234,10 +247,19 @@ export async function POST(req: Request): Promise<NextResponse> {
     });
 
     if (error) {
+      console.error('[enrich] RPC submit_video failed for', video_id, ':', error.message);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    if (thumbnail_url) {
+      console.log('[enrich] Successfully enriched', video_id, '- thumbnail:', thumbnail_url);
+    } else if (og_image) {
+      console.warn('[enrich] Enriched', video_id, 'but thumbnail upload failed (missing BLOB_READ_WRITE_TOKEN?)');
+    }
+
     return NextResponse.json(data ?? { ok: true, thumbnail_url });
   } catch (e) {
+    console.error('[enrich] POST handler error:', e instanceof Error ? e.message : e);
     return NextResponse.json({ error: e instanceof Error ? e.message : 'Internal error' }, { status: 500 });
   }
 }
