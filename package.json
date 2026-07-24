@@ -17,9 +17,13 @@
     "test": "bun run --filter './apps/*' test",
     "test:watch": "bun run --filter './apps/*' test:watch",
     "test:coverage": "bun run --filter './apps/*' test:coverage",
-    "tsc": "bun run --filter './apps/*' tsc"
+    "tsc": "bun run --filter './apps/*' tsc",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
+    "@commitlint/types": "^21.2.0",
     "@eslint/compat": "^2.1.0",
     "@prettier/plugin-xml": "^3.4.2",
     "@types/latinize": "^0.2.18",
@@ -35,6 +39,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.7.0",
+    "husky": "^9.1.7",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "typescript": "^6.0.3",
