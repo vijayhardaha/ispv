@@ -153,7 +153,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
           <Field label="Category">
             <Select value={category} onChange={(e) => setCategory(e.target.value)}>
               {categories.map((c) => (
-                <option key={c.id} value={c.slug}>
+                <option key={c.slug} value={c.slug}>
                   {c.name}
                 </option>
               ))}
@@ -163,7 +163,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
             <Select value={location} onChange={(e) => setLocation(e.target.value)}>
               <option value="">—</option>
               {locations.map((s) => (
-                <option key={s.id} value={s.slug}>
+                <option key={s.slug} value={s.slug}>
                   {s.name}
                 </option>
               ))}
