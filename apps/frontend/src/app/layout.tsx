@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: ReactNode }): JSX.E
       <body className="font-body bg-gray-100 text-black antialiased">
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-[100] focus:border-2 focus:border-black focus:bg-yellow-400 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-black focus:uppercase"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-100 focus:border-2 focus:border-black focus:bg-yellow-400 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-black focus:uppercase"
         >
           Skip to content
         </a>
