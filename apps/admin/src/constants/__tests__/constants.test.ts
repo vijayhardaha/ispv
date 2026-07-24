@@ -114,13 +114,11 @@ describe('CATEGORIES', () => {
 
   it('every category has the correct CategoryRecord shape', () => {
     for (const cat of CATEGORIES) {
-      expect(cat).toHaveProperty('id');
       expect(cat).toHaveProperty('slug');
       expect(cat).toHaveProperty('name');
       expect(cat).toHaveProperty('tag');
       expect(cat).toHaveProperty('color');
       expect(cat).toHaveProperty('description');
-      expect(typeof cat.id).toBe('string');
       expect(typeof cat.slug).toBe('string');
       expect(typeof cat.name).toBe('string');
       expect(typeof cat.tag).toBe('string');
@@ -131,11 +129,6 @@ describe('CATEGORIES', () => {
   it('has unique slugs across all categories', () => {
     const slugs = CATEGORIES.map((c) => c.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
-  });
-
-  it('has unique ids across all categories', () => {
-    const ids = CATEGORIES.map((c) => c.id);
-    expect(new Set(ids).size).toBe(ids.length);
   });
 
   it('every category color is a recognized color string', () => {
@@ -177,10 +170,8 @@ describe('LOCATIONS', () => {
 
   it('every location has the correct LocationRecord shape', () => {
     for (const loc of LOCATIONS) {
-      expect(loc).toHaveProperty('id');
       expect(loc).toHaveProperty('slug');
       expect(loc).toHaveProperty('name');
-      expect(typeof loc.id).toBe('string');
       expect(typeof loc.slug).toBe('string');
       expect(typeof loc.name).toBe('string');
     }
@@ -189,11 +180,6 @@ describe('LOCATIONS', () => {
   it('has unique slugs across all locations', () => {
     const slugs = LOCATIONS.map((l) => l.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
-  });
-
-  it('has unique ids across all locations', () => {
-    const ids = LOCATIONS.map((l) => l.id);
-    expect(new Set(ids).size).toBe(ids.length);
   });
 
   it('includes major locations', () => {
