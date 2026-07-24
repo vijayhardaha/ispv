@@ -30,7 +30,7 @@ const inMemoryStore = new Map<string, { count: number; resetAt: number }>();
  *
  * @returns {string} IP address string.
  */
-export const getIpKey = (req: Request): string => {
+const getIpKey = (req: Request): string => {
   const ip = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || 'unknown';
   return ip.split(',')[0].trim();
 };
@@ -48,7 +48,7 @@ export const getIpKey = (req: Request): string => {
  *
  * @returns {Promise<boolean>} True if the request is allowed.
  */
-export const tryUseUpstashRateLimit = async (key: string, limit: number, windowSec: number): Promise<boolean> => {
+const tryUseUpstashRateLimit = async (key: string, limit: number, windowSec: number): Promise<boolean> => {
   if (!redis) {
     return false;
   }
