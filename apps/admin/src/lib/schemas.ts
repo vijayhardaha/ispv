@@ -23,7 +23,7 @@ export const enrichVideoBodySchema = z.object({
 /**
  * Zod schema matching the VideoRecord interface for validation.
  */
-export const videoRecordSchema = z.object({
+const _videoRecordSchema = z.object({
   id: z.string(),
   video_url: z.string(),
   video_id: z.string().nullable(),
@@ -48,7 +48,7 @@ export const videoRecordSchema = z.object({
 /**
  * Inferred type from the video record schema.
  */
-export type VideoRecord = z.infer<typeof videoRecordSchema>;
+export type VideoRecord = z.infer<typeof _videoRecordSchema>;
 
 /**
  * Zod schema validating the admin video create/edit form submission.
