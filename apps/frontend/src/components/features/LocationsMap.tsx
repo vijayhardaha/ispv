@@ -49,7 +49,7 @@ export function LocationsMap({ locations, videos }: { locations: DbLocation[]; v
           <div className="mb-2 font-mono text-[10px] font-bold tracking-widest text-black/60 uppercase">
             By location
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
             {withCounts.map((loc) => (
               <Link
                 key={loc.name}
