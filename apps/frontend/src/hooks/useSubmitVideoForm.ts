@@ -142,9 +142,13 @@ export function useSubmitVideoForm({
     }
 
     setCheckingUrl(true);
-    const exists = await checkVideoExists(val);
-    if (exists) {
-      setError('This reel is already in the archive. Submit another one!');
+    const result = await checkVideoExists(val);
+    if (result.exists) {
+      if (result.trashed) {
+        setError('This reel was removed from the archive.');
+      } else {
+        setError('This reel is already in the archive. Submit another one!');
+      }
     }
     setCheckingUrl(false);
   }, []);
@@ -202,9 +206,13 @@ export function useSubmitVideoForm({
 
       setSubmitting(true);
 
-      const exists = await checkVideoExists(url);
-      if (exists) {
-        setError('This reel is already in the archive. Submit another one!');
+      const result = await checkVideoExists(url);
+      if (result.exists) {
+        if (result.trashed) {
+          setError('This reel was removed from the archive.');
+        } else {
+          setError('This reel is already in the archive. Submit another one!');
+        }
         setSubmitting(false);
         return;
       }

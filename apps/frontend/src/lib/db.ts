@@ -1,6 +1,5 @@
 import { CATEGORIES, FEATURED_CATEGORIES_SLUGS, type DbCategory } from '@/constants/categories';
 import { LOCATIONS, type DbLocation } from '@/constants/locations';
-import { extractInstagramId } from '@/lib/instagram';
 import { supabase } from '@/lib/supabase';
 
 export type { DbCategory, DbLocation };
@@ -73,22 +72,35 @@ export async function getTags(): Promise<string[]> {
 /**
  * Checks whether a video with the given URL or extracted Instagram ID already exists.
  *
+ * Uses the admin public API so the check includes draft/rejected/trashed records,
+ * not just published ones.
+ *
  * @param {string} url - The Instagram URL to check.
  *
- * @returns {Promise<boolean>} True if a duplicate video exists.
+ * @returns {Promise<{exists: boolean, trashed?: boolean, status?: string}>} Duplicate check result.
  */
-export async function checkVideoExists(url: string): Promise<boolean> {
-  const videoId = extractInstagramId(url);
-  if (!videoId) {
-    return false;
+export async function checkVideoExists(url: string): Promise<{ exists: boolean; trashed?: boolean; status?: string }> {
+  const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
+  if (!adminUrl) {
+    return { exists: false };
   }
 
-  const byUrl = supabase.from('videos').select('id').eq('video_url', url).maybeSingle();
-  const byId = supabase.from('videos').select('id').eq('video_id', videoId).maybeSingle();
-  const [urlResult, idResult] = await Promise.all([byUrl, byId]);
+  try {
+    const response = await fetch(`${adminUrl}/api/public/check-video`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url }),
+      // Skip Next.js caching for this data-sensitive check
+      cache: 'no-store',
+    });
 
-  if (urlResult.data || idResult.data) {
-    return true;
+    if (!response.ok) {
+      return { exists: false };
+    }
+
+    const data = (await response.json()) as { exists: boolean; trashed?: boolean; status?: string };
+    return data;
+  } catch {
+    return { exists: false };
   }
-  return false;
 }
