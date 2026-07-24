@@ -1,12 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from 'react';
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 
 import type { FilterState } from '@/helpers/filterVideos';
-import { useFilterState } from '@/hooks/useFilterState';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
-import { getCategoryByValue, getLocations, type DbCategory } from '@/lib/db';
-import { getAllVideosFromDb, type VideoEntry } from '@/lib/videos';
+import { getCategoryByValue, getLocations, getTags, type DbCategory } from '@/lib/db';
+import { getPublishedVideos, type VideoEntry } from '@/lib/videos';
 
 /**
  * Data shape for the category page, including category metadata and filter options.
@@ -31,7 +30,7 @@ export interface CategoryPageData {
  *
  * @type {CategoryPageFilter}
  * @property {FilterState} state - Current filter values.
- * @property {(value: FilterState | ((prev: FilterState) => FilterState)) => void} setState - Updates the filter state.
+ * @property {(value: FilterState) => void} setState - Updates the filter state.
  * @property {number} total - Total number of filtered videos.
  * @property {number} totalPages - Total number of paginated pages.
  * @property {number} safePage - Current page clamped to valid range.
@@ -46,59 +45,76 @@ export interface CategoryPageFilter {
   paged: VideoEntry[];
 }
 
+const DEFAULT_STATE: FilterState = {
+  query: '',
+  category: 'all',
+  location: 'all',
+  tags: [],
+  page: 1,
+  perPage: 72,
+  sort: 'posted_date_desc',
+};
+
 /**
  * Manages category page data fetching, filtering, and pagination state.
  *
  * @param {string} value - Category slug from the URL.
  *
- * @returns {CategoryPageData & { filters: CategoryPageFilter; play: ReturnType<typeof useReelPlayer>['play'] }} Category data, filter state, and reel player.
+ * @returns {Promise<CategoryPageData & { filters: CategoryPageFilter; play: ReturnType<typeof useReelPlayer>['play'] }>} Category data, filter state, and reel player.
  */
 export function useCategoryPage(
   value: string
 ): CategoryPageData & { filters: CategoryPageFilter; play: ReturnType<typeof useReelPlayer>['play'] } {
-  const [allVideos, setAllVideos] = useState<VideoEntry[]>([]);
+  const [paged, setPaged] = useState<VideoEntry[]>([]);
+  const [total, setTotal] = useState(0);
   const [cat, setCat] = useState<DbCategory | null>(null);
   const [allLocations, setAllLocations] = useState<{ slug: string; name: string }[]>([]);
+  const [allTags, setAllTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [state, setState] = useState<FilterState>(() => ({ ...DEFAULT_STATE, category: value }));
   const { play } = useReelPlayer();
-  const loaded = useRef(false);
+  const loadedStatic = useRef(false);
 
   useEffect(() => {
-    if (loaded.current) {
-      return;
+    if (!loadedStatic.current) {
+      loadedStatic.current = true;
+      Promise.all([getCategoryByValue(value), getLocations(), getTags()]).then(([c, locs, tags]) => {
+        setCat(c);
+        setAllLocations(locs.map((l) => ({ slug: l.slug, name: l.name })));
+        setAllTags(tags);
+      });
     }
-    loaded.current = true;
-    Promise.all([getAllVideosFromDb(), getCategoryByValue(value), getLocations()]).then(([v, c, locs]) => {
-      setAllVideos(v);
-      setCat(c);
-      setAllLocations(locs.map((l) => ({ slug: l.slug, name: l.name })));
+
+    let cancelled = false;
+    getPublishedVideos({
+      category: value,
+      location: state.location,
+      tag: state.tags[0],
+      query: state.query,
+      sort: state.sort,
+      page: state.page,
+      perPage: state.perPage,
+    }).then((result) => {
+      if (cancelled) return;
+      setPaged(result.videos);
+      setTotal(result.total);
       setLoading(false);
     });
-  }, [value]);
+    return () => {
+      cancelled = true;
+    };
+  }, [value, state]);
 
-  const all = useMemo(() => (cat ? allVideos.filter((v) => v.category === cat.slug) : []), [allVideos, cat]);
-
-  const allTags = useMemo(() => Array.from(new Set(allVideos.flatMap((v) => v.tags))).sort(), [allVideos]);
-
-  const { state, setState, filtered } = useFilterState({ videos: all, defaults: { category: value, perPage: 72 } });
-
-  useEffect(() => {
-    if (value && value !== state.category) {
-      setState((s: FilterState) => ({ ...s, category: value, page: 1 }));
-    }
-  }, [value, setState, state.category]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / state.perPage));
+  const totalPages = Math.max(1, Math.ceil(total / state.perPage));
   const safePage = Math.min(state.page, totalPages);
-  const paged = filtered.slice((safePage - 1) * state.perPage, safePage * state.perPage);
 
   return {
     value,
     cat,
     allLocations,
     allTags,
-    loading,
-    filters: { state, setState, total: filtered.length, totalPages, safePage, paged },
+    loading: loading && cat === null,
+    filters: { state, setState, total, totalPages, safePage, paged },
     play,
   };
 }
