@@ -44,6 +44,93 @@ interface LocationWithCount extends LocationRecord {
 }
 
 /**
+ * Fetches counts of videos by status.
+ *
+ * @param {{ from: (table: string) => { select: (columns: string, opts: { count: 'exact'; head: true }) => Promise<{ count: number | null }> } }} supabase - Supabase client.
+ *
+ * @returns {Promise<Array<{ label: string; color: string; count: number }>>} Array of status stat objects.
+ */
+interface StatusStat {
+  label: string;
+  color: string;
+  count: number;
+}
+
+const STATUS_QUERIES = [
+  { label: 'Total', color: 'bg-black', status: null },
+  { label: 'Draft', color: 'bg-gray-400', status: 'draft' },
+  { label: 'Pending', color: 'bg-yellow-400', status: 'pending_review' },
+  { label: 'Published', color: 'bg-green-500', status: 'published' },
+  { label: 'Rejected', color: 'bg-red-500', status: 'rejected' },
+] as const;
+
+/**
+ * Fetches counts of videos by status.
+ *
+ * @param {import('@supabase/supabase-js').SupabaseClient} supabase - Supabase client.
+ *
+ * @returns {Promise<StatusStat[]>} Array of status stat objects.
+ */
+async function getStatusStats(
+  supabase: ReturnType<typeof createServerSupabase> extends Promise<infer T> ? T : never
+): Promise<StatusStat[]> {
+  const results = await Promise.all(
+    STATUS_QUERIES.map(async (s) => {
+      let query = supabase.from('videos').select('*', { count: 'exact', head: true });
+      if (s.status) {
+        query = query.eq('status', s.status);
+      }
+      const { count } = await query;
+      return { label: s.label, color: s.color, count: count ?? 0 };
+    })
+  );
+
+  return results;
+}
+
+/**
+ * Fetches categories with their video counts.
+ *
+ * @param {object} supabase - Supabase client instance.
+ *
+ * @returns {Promise<CategoryWithCount[]>} Categories with video counts.
+ */
+async function getCategoryStats(
+  supabase: ReturnType<typeof createServerSupabase> extends Promise<infer T> ? T : never
+): Promise<CategoryWithCount[]> {
+  return Promise.all(
+    CATEGORIES.map(async (cat) => {
+      const { count } = await supabase
+        .from('videos')
+        .select('*', { count: 'exact', head: true })
+        .eq('category', cat.slug);
+      return { ...cat, video_count: count ?? 0 } as CategoryWithCount;
+    })
+  );
+}
+
+/**
+ * Fetches locations with their video counts.
+ *
+ * @param {object} supabase - Supabase client instance.
+ *
+ * @returns {Promise<LocationWithCount[]>} Locations with video counts.
+ */
+async function getLocationStats(
+  supabase: ReturnType<typeof createServerSupabase> extends Promise<infer T> ? T : never
+): Promise<LocationWithCount[]> {
+  return Promise.all(
+    LOCATIONS.map(async (loc) => {
+      const { count } = await supabase
+        .from('videos')
+        .select('*', { count: 'exact', head: true })
+        .eq('location', loc.slug);
+      return { ...loc, video_count: count ?? 0 } as LocationWithCount;
+    })
+  );
+}
+
+/**
  * Dashboard page displaying video status statistics, categories with counts, and locations with counts.
  *
  * @returns {Promise<JSX.Element>} Rendered dashboard.
@@ -57,54 +144,11 @@ export default async function DashboardPage(): Promise<JSX.Element> {
     redirect('/login');
   }
 
-  // Status counts
-  const { count: total } = await supabase.from('videos').select('*', { count: 'exact', head: true });
-  const { count: draft } = await supabase
-    .from('videos')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'draft');
-  const { count: pending } = await supabase
-    .from('videos')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'pending_review');
-  const { count: published } = await supabase
-    .from('videos')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'published');
-  const { count: rejected } = await supabase
-    .from('videos')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'rejected');
-
-  // Categories with video counts
-  const categoryCounts = await Promise.all(
-    CATEGORIES.map(async (cat) => {
-      const { count } = await supabase
-        .from('videos')
-        .select('*', { count: 'exact', head: true })
-        .eq('category', cat.slug);
-      return { ...cat, video_count: count ?? 0 } as CategoryWithCount;
-    })
-  );
-
-  // Locations with video counts
-  const locationCounts = await Promise.all(
-    LOCATIONS.map(async (loc) => {
-      const { count } = await supabase
-        .from('videos')
-        .select('*', { count: 'exact', head: true })
-        .eq('location', loc.slug);
-      return { ...loc, video_count: count ?? 0 } as LocationWithCount;
-    })
-  );
-
-  const stats = [
-    { label: 'Total', color: 'bg-black', count: total ?? 0 },
-    { label: 'Draft', color: 'bg-gray-400', count: draft ?? 0 },
-    { label: 'Pending', color: 'bg-yellow-400', count: pending ?? 0 },
-    { label: 'Published', color: 'bg-green-500', count: published ?? 0 },
-    { label: 'Rejected', color: 'bg-red-500', count: rejected ?? 0 },
-  ];
+  const [stats, categoryCounts, locationCounts] = await Promise.all([
+    getStatusStats(supabase),
+    getCategoryStats(supabase),
+    getLocationStats(supabase),
+  ]);
 
   const totalCategoryVideos = categoryCounts.reduce((sum, c) => sum + c.video_count, 0);
   const totalLocationVideos = locationCounts.reduce((sum, l) => sum + l.video_count, 0);
