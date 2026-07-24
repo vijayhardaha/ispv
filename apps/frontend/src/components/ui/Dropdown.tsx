@@ -1,4 +1,4 @@
-import { forwardRef, type ComponentPropsWithoutRef, type ComponentRef, type ElementRef } from 'react';
+import { forwardRef, type ComponentPropsWithoutRef, type ComponentRef } from 'react';
 
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { Check, ChevronDown } from 'lucide-react';
@@ -19,7 +19,7 @@ export const SelectValue = SelectPrimitive.Value;
  * Styled select trigger with border, chevron icon, and focus ring.
  */
 export const SelectTrigger = forwardRef<
-  ElementRef<typeof SelectPrimitive.Trigger>,
+  ComponentRef<typeof SelectPrimitive.Trigger>,
   ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
 >(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Trigger
@@ -43,7 +43,7 @@ SelectTrigger.displayName = 'SelectTrigger';
  * Dropdown content panel rendered in a portal with snap-in animation.
  */
 export const SelectContent = forwardRef<
-  ElementRef<typeof SelectPrimitive.Content>,
+  ComponentRef<typeof SelectPrimitive.Content>,
   ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
 >(({ className, children, position = 'popper', ...props }, ref) => (
   <SelectPrimitive.Portal>
