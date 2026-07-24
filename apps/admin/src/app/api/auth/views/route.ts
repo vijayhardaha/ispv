@@ -1,6 +1,3 @@
-/** Run on Edge Runtime for faster cold starts and global availability. */
-export const runtime = 'edge';
-
 import { NextResponse } from 'next/server';
 
 import { createServerSupabase } from '@/lib/supabase-server';

@@ -74,7 +74,7 @@ export const createServiceSupabase = (): SupabaseClient | null => {
   if (!supabaseUrl || !serviceKey) {
     return null;
   }
-  return createClient(supabaseUrl, serviceKey, { global: { fetch } } as any);
+  return createClient(supabaseUrl, serviceKey);
 };
 
 /**
