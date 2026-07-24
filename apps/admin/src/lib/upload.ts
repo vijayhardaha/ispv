@@ -1,5 +1,18 @@
 import { del, put } from '@vercel/blob';
 
+/** Characters permitted in blob filenames (alphanumeric, hyphen, underscore, dot). */
+const SAFE_FILENAME_RE = /[^a-zA-Z0-9\-_.]/g;
+
+/**
+ * Sanitizes a blob filename to remove harmful or unexpected characters.
+ * Only allows alphanumeric characters, hyphens, underscores, and dots.
+ *
+ * @param {string} name - Raw filename (e.g. `"instagram-ABC123"`).
+ *
+ * @returns {string} Sanitized filename safe for blob storage.
+ */
+export const sanitizeFilename = (name: string): string => name.replace(SAFE_FILENAME_RE, '');
+
 /** Whether we've already logged the missing-token warning once. */
 let missingTokenWarningLogged = false;
 

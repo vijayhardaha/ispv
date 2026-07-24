@@ -10,7 +10,7 @@ import sharp from 'sharp';
 import { createServiceSupabase } from '@/lib/api-utils';
 import { detectSource, extractIgId } from '@/lib/instagram';
 import { enrichVideoBodySchema } from '@/lib/schemas';
-import { uploadBuffer } from '@/lib/upload';
+import { sanitizeFilename, uploadBuffer } from '@/lib/upload';
 
 /** Maximum allowed image size in bytes (5 MB) for enrichment. */
 const MAX_BYTES = 5 * 1024 * 1024;
@@ -189,7 +189,7 @@ async function downloadAndUpload(url: string, video_id: string, video_src: strin
     const buffer = Buffer.from(ab);
     // limitInputPixels prevents decompression bombs from consuming excessive memory
     const optimized = await sharp(buffer, { limitInputPixels: 50_000_000 }).webp({ quality: 80 }).toBuffer();
-    const uploadedUrl = await uploadBuffer(optimized, `${video_src}-${video_id}.webp`);
+    const uploadedUrl = await uploadBuffer(optimized, `${sanitizeFilename(`${video_src}-${video_id}`)}.webp`);
     if (!uploadedUrl) {
       console.warn('[enrich] Vercel Blob upload returned null for', video_id);
     }
