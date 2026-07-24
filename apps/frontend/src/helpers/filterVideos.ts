@@ -2,25 +2,29 @@ import type { FilterState, SortOption } from '@/lib/frontend-schemas';
 import type { VideoEntry } from '@/lib/videos';
 
 /**
- * Sort comparators keyed by sort option.
+ * Sort comparators keyed by sort option (field + direction).
  */
 const SORT_COMPARATORS: Record<SortOption, (a: VideoEntry, b: VideoEntry) => number> = {
-  views: (a, b) => b.viewCount - a.viewCount,
-  posted_date: (a, b) => {
-    if (!a.videoPostDate && !b.videoPostDate) {
-      return 0;
-    }
-    if (!a.videoPostDate) {
-      return 1;
-    }
-    if (!b.videoPostDate) {
-      return -1;
-    }
+  views_desc: (a, b) => b.viewCount - a.viewCount,
+  views_asc: (a, b) => a.viewCount - b.viewCount,
+  posted_date_desc: (a, b) => {
+    if (!a.videoPostDate && !b.videoPostDate) return 0;
+    if (!a.videoPostDate) return 1;
+    if (!b.videoPostDate) return -1;
     return new Date(b.videoPostDate).getTime() - new Date(a.videoPostDate).getTime();
   },
-  created_date: (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-  city: (a, b) => a.city.localeCompare(b.city),
-  location: (a, b) => a.location.localeCompare(b.location),
+  posted_date_asc: (a, b) => {
+    if (!a.videoPostDate && !b.videoPostDate) return 0;
+    if (!a.videoPostDate) return -1;
+    if (!b.videoPostDate) return 1;
+    return new Date(a.videoPostDate).getTime() - new Date(b.videoPostDate).getTime();
+  },
+  created_date_desc: (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  created_date_asc: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+  city_asc: (a, b) => a.city.localeCompare(b.city),
+  city_desc: (a, b) => b.city.localeCompare(a.city),
+  location_asc: (a, b) => a.location.localeCompare(b.location),
+  location_desc: (a, b) => b.location.localeCompare(a.location),
 };
 
 /**
@@ -39,15 +43,19 @@ export function filterVideos(videos: VideoEntry[], state: FilterState): VideoEnt
     if (state.category !== 'all' && v.category !== state.category) {
       return false;
     }
+
     if (state.location !== 'all' && v.location.toLowerCase() !== state.location.toLowerCase()) {
       return false;
     }
+
     if (state.tags.length && !state.tags.every((t) => v.tags.includes(t))) {
       return false;
     }
+
     if (!q) {
       return true;
     }
+
     return (
       v.description.toLowerCase().includes(q)
       || v.city.toLowerCase().includes(q)
@@ -61,12 +69,18 @@ export function filterVideos(videos: VideoEntry[], state: FilterState): VideoEnt
 }
 
 /**
- * Human-readable labels for sort options.
+ * Sort options array for rendering select/dropdown elements via iteration.
+ * Each entry includes the value and human-readable label.
  */
-export const SORT_LABELS: Record<SortOption, string> = {
-  views: 'Views',
-  posted_date: 'Posted Date',
-  created_date: 'Created Date',
-  city: 'City',
-  location: 'Location',
-};
+export const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: 'posted_date_desc', label: 'Posted Date (Newest)' },
+  { value: 'posted_date_asc', label: 'Posted Date (Newest)' },
+  { value: 'created_date_desc', label: 'Created Date (Newest)' },
+  { value: 'created_date_asc', label: 'Created Date (Oldest)' },
+  { value: 'views_desc', label: 'Trending (High to Low)' },
+  { value: 'views_asc', label: 'Trending (Low to High)' },
+  { value: 'location_asc', label: 'Location (A-Z)' },
+  { value: 'location_desc', label: 'Location (Z-A)' },
+  { value: 'city_asc', label: 'City (A-Z)' },
+  { value: 'city_desc', label: 'City (Z-A)' },
+];

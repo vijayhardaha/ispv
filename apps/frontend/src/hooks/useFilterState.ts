@@ -18,7 +18,7 @@ const DEFAULT_STATE: FilterState = {
   tags: [],
   page: 1,
   perPage: 72,
-  sort: 'views',
+  sort: 'posted_date_desc',
 };
 
 /**

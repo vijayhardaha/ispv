@@ -18,11 +18,21 @@ export const submitVideoFormSchema = z.object({
 export type SubmitVideoForm = z.infer<typeof submitVideoFormSchema>;
 
 /**
- * Sort options for video archive results.
+ * Sort options for video archive results, including direction.
  *
  * @type {SortOption}
  */
-export type SortOption = 'views' | 'posted_date' | 'created_date' | 'city' | 'location';
+export type SortOption =
+  | 'views_desc'
+  | 'views_asc'
+  | 'posted_date_desc'
+  | 'posted_date_asc'
+  | 'created_date_desc'
+  | 'created_date_asc'
+  | 'city_asc'
+  | 'city_desc'
+  | 'location_asc'
+  | 'location_desc';
 
 /**
  * Filter state for the video archive search and filtering.

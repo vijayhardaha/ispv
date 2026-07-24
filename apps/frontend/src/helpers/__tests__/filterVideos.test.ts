@@ -36,7 +36,7 @@ describe('filterVideos', () => {
     tags: [],
     page: 1,
     perPage: 36,
-    sort: 'views',
+    sort: 'posted_date_desc',
   };
 
   it('returns all videos with default filter state', () => {
