@@ -4,10 +4,10 @@ export const runtime = 'nodejs';
 import dns from 'node:dns/promises';
 import net from 'node:net';
 
-import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import sharp from 'sharp';
 
+import { createServiceSupabase } from '@/lib/api-utils';
 import { detectSource, extractIgId } from '@/lib/instagram';
 import { enrichVideoBodySchema } from '@/lib/schemas';
 import { uploadBuffer } from '@/lib/upload';
@@ -220,7 +220,10 @@ export async function POST(req: Request): Promise<NextResponse> {
 
     const thumbnail_url = og_image ? await downloadAndUpload(og_image, video_id) : null;
 
-    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+    const supabase = createServiceSupabase();
+    if (!supabase) {
+      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+    }
 
     const { data, error } = await supabase.rpc('submit_video', {
       p_video_url: video_url,

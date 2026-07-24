@@ -18,7 +18,7 @@ const mockSharp = vi.hoisted(() =>
   vi.fn(() => ({ webp: vi.fn(() => ({ toBuffer: vi.fn(async () => Buffer.from('optimized')) })) }))
 );
 
-vi.mock('@supabase/supabase-js', () => ({ createClient: vi.fn(() => ({ rpc: mockRpc })) }));
+vi.mock('@/lib/api-utils', () => ({ createServiceSupabase: vi.fn(() => ({ rpc: mockRpc })) }));
 
 vi.mock('@/lib/upload', () => ({ uploadBuffer: mockUploadBuffer }));
 
