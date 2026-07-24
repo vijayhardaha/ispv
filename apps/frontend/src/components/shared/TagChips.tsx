@@ -1,6 +1,6 @@
 'use client';
 
-import type { JSX } from 'react';
+import { memo, type JSX } from 'react';
 
 import { cn } from '@/lib/cn';
 
@@ -15,7 +15,7 @@ import { cn } from '@/lib/cn';
  *
  * @returns {JSX.Element} Rendered tag chip list or empty message.
  */
-export function TagChips({
+const TagChips = memo(function TagChips({
   tags,
   selected,
   onSelect,
@@ -48,4 +48,6 @@ export function TagChips({
       ))}
     </div>
   );
-}
+});
+
+export { TagChips };

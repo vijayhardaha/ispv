@@ -1,4 +1,4 @@
-import { type JSX, type ReactNode } from 'react';
+import { memo, type JSX, type ReactNode } from 'react';
 
 import { Eye, Play, MapPin } from 'lucide-react';
 
@@ -21,7 +21,7 @@ function Badge({ children, className }: { children: ReactNode; className?: strin
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 border-2 border-black px-2.5 py-0.5 text-[8px] font-semibold',
+        'inline-flex items-center gap-1 border-2 border-black px-1.5 py-0.5 text-[10px] font-semibold',
         className
       )}
     >
@@ -40,7 +40,7 @@ function Badge({ children, className }: { children: ReactNode; className?: strin
  *
  * @returns {JSX.Element} Rendered video card.
  */
-export function VideoCard({
+const VideoCard = memo(function VideoCard({
   video,
   onPlay,
   className,
@@ -75,7 +75,7 @@ export function VideoCard({
       </div>
 
       <div className="absolute top-2 right-2 left-2 z-10 flex items-start justify-between gap-1">
-        <Badge className="bg-yellow-400 text-xs text-black">{video.categoryName}</Badge>
+        <Badge className="bg-yellow-400 text-black">{video.categoryName}</Badge>
         {video.featured && <Badge className="bg-red-500 text-white">Featured</Badge>}
       </div>
 
@@ -99,4 +99,6 @@ export function VideoCard({
       </div>
     </button>
   );
-}
+});
+
+export { VideoCard };
