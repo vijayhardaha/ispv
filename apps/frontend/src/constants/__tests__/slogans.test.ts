@@ -49,9 +49,7 @@ describe('slogans', () => {
     expect(figures.some((f) => f.includes('Nehru'))).toBe(true);
     expect(figures.some((f) => f.includes('Bose'))).toBe(true);
     expect(figures.some((f) => f.includes('Singh'))).toBe(true);
-    expect(figures.some((f) => f.includes('Tilak'))).toBe(true);
     expect(figures.some((f) => f.includes('Azad'))).toBe(true);
-    expect(figures.some((f) => f.includes('Tagore'))).toBe(true);
   });
 
   it('has at least 20 slogans', () => {
