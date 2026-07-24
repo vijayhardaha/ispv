@@ -3,7 +3,7 @@
  * Unit tests for number formatting and time-ago utilities.
  */
 
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 
 import { formatNumber, timeAgo } from '@/lib/format';
 
@@ -44,14 +44,15 @@ describe('formatNumber', () => {
 });
 
 describe('timeAgo', () => {
+  let restoreDateNow: (() => void) | null = null;
+
   beforeEach(() => {
-    vi.useFakeTimers();
-    // Fix "now" to a known timestamp: 2026-07-23T10:00:00.000Z
-    vi.setSystemTime(new Date('2026-07-23T10:00:00.000Z'));
+    const fixedTime = new Date('2026-07-23T10:00:00.000Z').getTime();
+    restoreDateNow = vi.spyOn(Date, 'now').mockImplementation(() => fixedTime);
   });
 
   afterEach(() => {
-    vi.useRealTimers();
+    restoreDateNow?.();
   });
 
   it('returns seconds ago for recent times', () => {

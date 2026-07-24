@@ -18,7 +18,7 @@ describe('videos data', () => {
     const mockEq = vi.fn().mockReturnValue({ order: mockOrder1 });
     const mockSelect = vi.fn().mockReturnValue({ eq: mockEq });
 
-    vi.mocked(supabase.from).mockReturnValue({ select: mockSelect } as any);
+    (supabase.from as any).mockReturnValue({ select: mockSelect });
 
     const videos = await getAllVideosFromDb();
 
@@ -54,7 +54,7 @@ describe('videos data', () => {
     const mockEq = vi.fn().mockReturnValue({ order: mockOrder1 });
     const mockSelect = vi.fn().mockReturnValue({ eq: mockEq });
 
-    vi.mocked(supabase.from).mockReturnValue({ select: mockSelect } as any);
+    (supabase.from as any).mockReturnValue({ select: mockSelect });
 
     const videos = await getAllVideosFromDb();
 
