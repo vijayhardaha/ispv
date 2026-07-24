@@ -153,7 +153,7 @@ export function useSubmitVideoForm({
     const cleanTags = hashtags
       .split(/\s+/)
       .map((h) => h.trim())
-      .filter(Boolean)
+      .filter((h) => h.startsWith('#'))
       .map((h) => h.replace(/^#+/, ''))
       .join(',');
     const response = await fetch(`${adminUrl}/api/public/submit`, {
