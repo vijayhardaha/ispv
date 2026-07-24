@@ -17,6 +17,23 @@ const ROOT_URL = siteUrl();
 const PATH_PREFIX = '/categories';
 
 /**
+ * Builds the JSON-LD schema data for a category page.
+ *
+ * @param {string} rootUrl - Base URL of the site.
+ * @param {string} catPath - URL path for this category (e.g. /categories/delhi).
+ * @param {DbCategory} cat - Category record to build schema for.
+ *
+ * @returns {Array<object>} Array of JSON-LD schema objects.
+ */
+function buildCategorySchema(rootUrl: string, catPath: string, cat: DbCategory) {
+  return [
+    ...globalSchema(),
+    webPageSchema({ rootUrl, path: catPath, breadcrumb: true }, { name: cat.name, description: cat.description ?? '' }),
+    breadcrumbSchema({ rootUrl, items: buildBreadcrumbs(catPath, cat.name) }),
+  ];
+}
+
+/**
  * Individual category page with filtered videos, search, and pagination.
  *
  * @returns {JSX.Element} Rendered category page.
@@ -50,21 +67,7 @@ export default function CategoryPage(): JSX.Element {
     <div>
       <JsonLd data={schemaData} />
       <CategoryHero cat={cat} value={value} />
-      <CategoryVideos
-        {...filters}
-        allTags={allTags}
-        allLocations={allLocations}
-        onPlay={play}
-        onChangePage={(page) => filters.setState((s) => ({ ...s, page }))}
-      />
+      <CategoryVideos {...filters} allTags={allTags} allLocations={allLocations} onPlay={play} />
     </div>
   );
-}
-
-function buildCategorySchema(rootUrl: string, catPath: string, cat: DbCategory) {
-  return [
-    ...globalSchema(),
-    webPageSchema({ rootUrl, path: catPath, breadcrumb: true }, { name: cat.name, description: cat.description ?? '' }),
-    breadcrumbSchema({ rootUrl, items: buildBreadcrumbs(catPath, cat.name) }),
-  ];
 }

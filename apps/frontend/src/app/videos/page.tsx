@@ -1,22 +1,12 @@
-'use client';
-
-import { Suspense, useEffect, useState, type JSX } from 'react';
+import { Suspense, type JSX } from 'react';
 
 import { breadcrumbSchema, collectionPageSchema } from '@vijayhardaha/schema-builder';
 import { JsonLd } from '@vijayhardaha/schema-builder/react';
 
-import { FilterBar } from '@/components/shared/FilterBar';
-import { PageHero } from '@/components/shared/PageHero';
-import { Pagination } from '@/components/shared/Pagination';
-import { VideoCard } from '@/components/shared/VideoCard';
-import { SORT_LABELS } from '@/helpers/filterVideos';
-import { useFilterState } from '@/hooks/useFilterState';
-import { useReelPlayer } from '@/hooks/useReelPlayer';
-import { getLocations, getTags } from '@/lib/db';
-import type { SortOption } from '@/lib/frontend-schemas';
 import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
 import { siteUrl } from '@/lib/seo';
-import { getAllVideosFromDb, type VideoEntry } from '@/lib/videos';
+
+import { VideosPageContent } from './VideosPageContent';
 
 const PAGE_TITLE = 'All Videos — Full Archive';
 const PAGE_DESCRIPTION =
@@ -31,119 +21,19 @@ const SCHEMA_DATA = [
 ];
 
 /**
- * Full video archive page with search, filtering, pagination, and reel player.
+ * Full video archive page — server component that renders JSON-LD schema and a Suspense-bound client content.
  *
  * @returns {JSX.Element} Rendered videos page.
  */
 export default function VideosPage(): JSX.Element {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-100" />}>
-      <VideosPageInner />
-    </Suspense>
-  );
-}
-
-/**
- * Inner component that loads videos from the database and renders the filter bar, grid, and pagination.
- *
- * @returns {JSX.Element} Rendered videos page content.
- */
-function VideosPageInner(): JSX.Element {
-  const [videos, setVideos] = useState<VideoEntry[]>([]);
-  const [allTags, setAllTags] = useState<string[]>([]);
-  const [allLocations, setAllLocations] = useState<{ slug: string; name: string }[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { play } = useReelPlayer();
-
-  useEffect(() => {
-    Promise.all([getAllVideosFromDb(), getTags(), getLocations()]).then(([data, tags, locs]) => {
-      setVideos(data);
-      setAllTags(tags);
-      setAllLocations(locs.map((l) => ({ slug: l.slug, name: l.name })));
-      setLoading(false);
-    });
-  }, []);
-
-  const { state, setState, filtered } = useFilterState({ videos });
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / state.perPage));
-  const safePage = Math.min(state.page, totalPages);
-  const paged = filtered.slice((safePage - 1) * state.perPage, safePage * state.perPage);
+  const fallback = <div className="min-h-screen bg-gray-100" />;
 
   return (
-    <div className="bg-gray-100">
+    <>
       <JsonLd data={SCHEMA_DATA} />
-      <PageHero breadcrumb="All Videos" title="The Full Archive">
-        <p className="mt-2 text-white/80">
-          Every reel we have on file. Use the search, tags, and category filters to narrow it down.
-        </p>
-      </PageHero>
-
-      <section className="mx-auto max-w-7xl px-4 py-8 md:px-6">
-        <FilterBar
-          state={state}
-          setState={setState}
-          total={filtered.length}
-          allTags={allTags}
-          allLocations={allLocations}
-        />
-
-        {loading ? (
-          <div className="mt-10 flex items-center justify-center py-20">
-            <div className="text-sm font-bold text-black/50 uppercase">Loading videos...</div>
-          </div>
-        ) : (
-          <>
-            <div className="mt-6 flex items-center justify-between">
-              <div className="text-[10px] tracking-widest text-black/60 uppercase">
-                Page {safePage} of {totalPages} · {filtered.length} videos
-              </div>
-              <div className="flex items-center gap-2">
-                <label
-                  htmlFor="sort-select"
-                  className="font-mono text-[10px] font-bold tracking-widest text-black/60 uppercase"
-                >
-                  Sort by
-                </label>
-                <select
-                  id="sort-select"
-                  value={state.sort}
-                  onChange={(e) => setState({ ...state, sort: e.target.value as SortOption, page: 1 })}
-                  className="font-body border-2 border-black bg-white px-2 py-1 text-xs focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-                >
-                  <option value="views">{SORT_LABELS.views}</option>
-                  <option value="posted_date">{SORT_LABELS.posted_date}</option>
-                  <option value="created_date">{SORT_LABELS.created_date}</option>
-                  <option value="city">{SORT_LABELS.city}</option>
-                  <option value="location">{SORT_LABELS.location}</option>
-                </select>
-              </div>
-            </div>
-
-            {paged.length === 0 ? (
-              <div className="mt-10 border-2 border-dashed border-black/40 p-12 text-center">
-                <div className="font-display text-2xl font-extrabold uppercase">Nothing matched</div>
-                <p className="mt-1 text-black/60">Try a different search term or fewer tags.</p>
-              </div>
-            ) : (
-              <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
-                {paged.map((v) => (
-                  <VideoCard key={v.id} video={v} onPlay={(video) => play(video, paged)} />
-                ))}
-              </div>
-            )}
-
-            <Pagination
-              page={safePage}
-              totalPages={totalPages}
-              onChange={(p) => {
-                setState({ ...state, page: p });
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            />
-          </>
-        )}
-      </section>
-    </div>
+      <Suspense fallback={fallback}>
+        <VideosPageContent />
+      </Suspense>
+    </>
   );
 }
