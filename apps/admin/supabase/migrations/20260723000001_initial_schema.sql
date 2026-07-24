@@ -292,39 +292,8 @@ $function$;
 REVOKE EXECUTE ON FUNCTION public.restore_video(uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.restore_video(uuid) TO authenticated;
 
--- 4g. purge_old_trashed_videos – permanent cleanup
-CREATE OR REPLACE FUNCTION public.purge_old_trashed_videos(
-  p_grace_period_days integer DEFAULT 30
-) RETURNS TABLE(deleted_count integer)
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $function$
-BEGIN
-  DELETE FROM public.videos
-  WHERE trashed_at IS NOT NULL
-    AND trashed_at <= NOW() - (p_grace_period_days || ' days')::interval;
-  RETURN QUERY SELECT ROW_COUNT()::integer;
-END;
-$function$;
-
-REVOKE EXECUTE ON FUNCTION public.purge_old_trashed_videos(integer) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.purge_old_trashed_videos(integer) TO authenticated;
-
 -- ............................................................................
--- 5. Views
--- ............................................................................
-
-CREATE OR REPLACE VIEW public.active_videos AS
-  SELECT * FROM public.videos WHERE trashed_at IS NULL;
-
-CREATE OR REPLACE VIEW public.trashed_videos AS
-  SELECT * FROM public.videos
-  WHERE trashed_at IS NOT NULL
-  ORDER BY trashed_at DESC;
-
--- ............................................................................
--- 6. Indexes
+-- 5. Indexes
 -- ............................................................................
 
 SET search_path TO public, extensions;
