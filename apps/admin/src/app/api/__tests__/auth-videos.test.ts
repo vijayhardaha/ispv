@@ -31,7 +31,7 @@ const mockFromDataQueue: unknown[] = [];
  *
  * @returns {Record<string, (...args: unknown[]) => unknown>} Thenable chain.
  */
-function makeChain() {
+function makeChain(): Record<string, (...args: unknown[]) => unknown> {
   const chain: Record<string, any> = {
     then: (resolve: (v: unknown) => void) => resolve(mockFromDataQueue.shift() ?? { data: null, error: null }),
     select: (..._a: unknown[]) => {
