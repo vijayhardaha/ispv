@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+import { requireUser } from '@/lib/api-utils';
 import { extractIgId, detectSource } from '@/lib/instagram';
 import { submitVideoBodySchema } from '@/lib/schemas';
 import { createServerSupabase } from '@/lib/supabase-server';
@@ -12,6 +13,13 @@ import { createServerSupabase } from '@/lib/supabase-server';
  * @returns {Promise<NextResponse>} JSON response with submitted data.
  */
 export async function POST(req: Request): Promise<NextResponse> {
+  const supabase = await createServerSupabase();
+
+  const guard = await requireUser(supabase);
+  if (guard) {
+    return guard;
+  }
+
   const body = await req.json();
   const parsed = submitVideoBodySchema.safeParse(body);
   if (!parsed.success) {
@@ -25,7 +33,6 @@ export async function POST(req: Request): Promise<NextResponse> {
     return NextResponse.json({ error: 'invalid instagram url' }, { status: 400 });
   }
 
-  const supabase = await createServerSupabase();
   const { data, error } = await supabase.rpc('submit_video', {
     p_video_url: video_url,
     p_video_id: video_id,
@@ -37,7 +44,7 @@ export async function POST(req: Request): Promise<NextResponse> {
   });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Submission failed' }, { status: 500 });
   }
 
   return NextResponse.json(data);
