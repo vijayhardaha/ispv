@@ -6,7 +6,7 @@ import { FilterBar } from '@/components/shared/FilterBar';
 import { Pagination } from '@/components/shared/Pagination';
 import { VideoCard } from '@/components/shared/VideoCard';
 import { SORT_OPTIONS } from '@/helpers/filterVideos';
-import type { FilterState, SortOption } from '@/lib/frontend-schemas';
+import type { FilterState, SortOption } from '@/helpers/filterVideos';
 import type { VideoEntry } from '@/lib/videos';
 
 /**

@@ -1,5 +1,43 @@
-import type { FilterState, SortOption } from '@/lib/frontend-schemas';
 import type { VideoEntry } from '@/lib/videos';
+
+/**
+ * Sort options for video archive results, including direction.
+ *
+ * @type {SortOption}
+ */
+export type SortOption =
+  | 'views_desc'
+  | 'views_asc'
+  | 'posted_date_desc'
+  | 'posted_date_asc'
+  | 'created_date_desc'
+  | 'created_date_asc'
+  | 'city_asc'
+  | 'city_desc'
+  | 'location_asc'
+  | 'location_desc';
+
+/**
+ * Filter state for the video archive search and filtering.
+ *
+ * @type {FilterState}
+ * @property {string} query - Free-text search query string.
+ * @property {string} category - Selected category slug filter.
+ * @property {string} location - Selected location slug filter.
+ * @property {string[]} tags - Active tag filters.
+ * @property {number} page - Current page number (1-based).
+ * @property {number} perPage - Number of items per page.
+ * @property {SortOption} sort - Current sort order for results.
+ */
+export interface FilterState {
+  query: string;
+  category: string;
+  location: string;
+  tags: string[];
+  page: number;
+  perPage: number;
+  sort: SortOption;
+}
 
 /**
  * Sort comparators keyed by sort option (field + direction).

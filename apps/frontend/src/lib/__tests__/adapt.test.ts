@@ -121,6 +121,25 @@ describe('dbRowToVideoEntry', () => {
 
     expect(entry.hashtags).toEqual([]);
   });
+
+  it('handles null city', () => {
+    const row = makeRow({ city: null });
+    const entry = dbRowToVideoEntry(row);
+    expect(entry.city).toBe('');
+  });
+
+  it('handles null location', () => {
+    const row = makeRow({ location: null });
+    const entry = dbRowToVideoEntry(row);
+    expect(entry.location).toBe('');
+  });
+
+  it('handles null category', () => {
+    const row = makeRow({ category: null });
+    const entry = dbRowToVideoEntry(row);
+    expect(entry.category).toBe('');
+    expect(entry.categoryName).toBe('');
+  });
 });
 
 describe('dbRowsToVideoEntries', () => {

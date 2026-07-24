@@ -2,10 +2,28 @@
 
 import { useCallback, useEffect, useState, type SubmitEvent } from 'react';
 
+import { z } from 'zod/v4';
+
 import type { DbLocation } from '@/lib/db';
 import { checkVideoExists, getLocations } from '@/lib/db';
-import { submitVideoFormSchema, type SubmitVideoForm } from '@/lib/frontend-schemas';
 import { extractInstagramId } from '@/lib/instagram';
+
+/**
+ * Zod schema validating the public video submission form.
+ */
+export const submitVideoFormSchema = z.object({
+  url: z.string().min(1, 'URL is required'),
+  location: z.string().min(1, 'Location is required'),
+  city: z.string().max(30, 'City must be 30 characters or less'),
+  hashtags: z.string(),
+});
+
+/**
+ * Inferred type from the submit-video form schema.
+ *
+ * @type {SubmitVideoForm}
+ */
+export type SubmitVideoForm = z.infer<typeof submitVideoFormSchema>;
 
 /**
  * Optional configuration for the useSubmitVideoForm hook.

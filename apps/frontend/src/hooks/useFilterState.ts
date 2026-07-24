@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from
 import { useSearchParams } from 'next/navigation';
 
 import { filterVideos } from '@/helpers/filterVideos';
-import type { FilterState } from '@/lib/frontend-schemas';
+import type { FilterState } from '@/helpers/filterVideos';
 import type { VideoEntry } from '@/lib/videos';
 
 /**

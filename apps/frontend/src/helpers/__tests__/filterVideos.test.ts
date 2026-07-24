@@ -6,7 +6,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { filterVideos } from '@/helpers/filterVideos';
-import type { FilterState } from '@/lib/frontend-schemas';
+import type { FilterState } from '@/helpers/filterVideos';
 import type { VideoEntry } from '@/lib/videos';
 
 const makeVideo = (overrides: Partial<VideoEntry> = {}): VideoEntry => ({
@@ -195,5 +195,103 @@ describe('filterVideos', () => {
     });
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('1');
+  });
+
+  describe('sort options', () => {
+    it('sorts by views descending', () => {
+      const videos = [makeVideo({ id: '1', viewCount: 100 }), makeVideo({ id: '2', viewCount: 500 })];
+      const result = filterVideos(videos, { ...baseState, sort: 'views_desc' });
+      expect(result.map((v) => v.id)).toEqual(['2', '1']);
+    });
+
+    it('sorts by views ascending', () => {
+      const videos = [makeVideo({ id: '1', viewCount: 100 }), makeVideo({ id: '2', viewCount: 500 })];
+      const result = filterVideos(videos, { ...baseState, sort: 'views_asc' });
+      expect(result.map((v) => v.id)).toEqual(['1', '2']);
+    });
+
+    it('sorts by posted date descending', () => {
+      const videos = [
+        makeVideo({ id: '1', videoPostDate: '2026-01-01T00:00:00Z' }),
+        makeVideo({ id: '2', videoPostDate: '2026-06-01T00:00:00Z' }),
+      ];
+      const result = filterVideos(videos, { ...baseState, sort: 'posted_date_desc' });
+      expect(result.map((v) => v.id)).toEqual(['2', '1']);
+    });
+
+    it('sorts by posted date ascending', () => {
+      const videos = [
+        makeVideo({ id: '1', videoPostDate: '2026-01-01T00:00:00Z' }),
+        makeVideo({ id: '2', videoPostDate: '2026-06-01T00:00:00Z' }),
+      ];
+      const result = filterVideos(videos, { ...baseState, sort: 'posted_date_asc' });
+      expect(result.map((v) => v.id)).toEqual(['1', '2']);
+    });
+
+    it('sorts by posted date with null values (desc)', () => {
+      const videos = [
+        makeVideo({ id: '1', videoPostDate: null }),
+        makeVideo({ id: '2', videoPostDate: '2026-06-01T00:00:00Z' }),
+      ];
+      const result = filterVideos(videos, { ...baseState, sort: 'posted_date_desc' });
+      expect(result.map((v) => v.id)).toEqual(['2', '1']);
+    });
+
+    it('sorts by posted date with null values (asc)', () => {
+      const videos = [
+        makeVideo({ id: '1', videoPostDate: null }),
+        makeVideo({ id: '2', videoPostDate: '2026-06-01T00:00:00Z' }),
+      ];
+      const result = filterVideos(videos, { ...baseState, sort: 'posted_date_asc' });
+      expect(result.map((v) => v.id)).toEqual(['1', '2']);
+    });
+
+    it('sorts by posted date with both null', () => {
+      const videos = [makeVideo({ id: '1', videoPostDate: null }), makeVideo({ id: '2', videoPostDate: null })];
+      const result = filterVideos(videos, { ...baseState, sort: 'posted_date_desc' });
+      expect(result).toHaveLength(2);
+    });
+
+    it('sorts by created date descending', () => {
+      const videos = [
+        makeVideo({ id: '1', createdAt: '2026-01-01T00:00:00Z' }),
+        makeVideo({ id: '2', createdAt: '2026-06-01T00:00:00Z' }),
+      ];
+      const result = filterVideos(videos, { ...baseState, sort: 'created_date_desc' });
+      expect(result.map((v) => v.id)).toEqual(['2', '1']);
+    });
+
+    it('sorts by created date ascending', () => {
+      const videos = [
+        makeVideo({ id: '1', createdAt: '2026-01-01T00:00:00Z' }),
+        makeVideo({ id: '2', createdAt: '2026-06-01T00:00:00Z' }),
+      ];
+      const result = filterVideos(videos, { ...baseState, sort: 'created_date_asc' });
+      expect(result.map((v) => v.id)).toEqual(['1', '2']);
+    });
+
+    it('sorts by city ascending', () => {
+      const videos = [makeVideo({ id: '1', city: 'Mumbai' }), makeVideo({ id: '2', city: 'Delhi' })];
+      const result = filterVideos(videos, { ...baseState, sort: 'city_asc' });
+      expect(result.map((v) => v.id)).toEqual(['2', '1']);
+    });
+
+    it('sorts by city descending', () => {
+      const videos = [makeVideo({ id: '1', city: 'Mumbai' }), makeVideo({ id: '2', city: 'Delhi' })];
+      const result = filterVideos(videos, { ...baseState, sort: 'city_desc' });
+      expect(result.map((v) => v.id)).toEqual(['1', '2']);
+    });
+
+    it('sorts by location ascending', () => {
+      const videos = [makeVideo({ id: '1', location: 'Maharashtra' }), makeVideo({ id: '2', location: 'Delhi' })];
+      const result = filterVideos(videos, { ...baseState, sort: 'location_asc' });
+      expect(result.map((v) => v.id)).toEqual(['2', '1']);
+    });
+
+    it('sorts by location descending', () => {
+      const videos = [makeVideo({ id: '1', location: 'Maharashtra' }), makeVideo({ id: '2', location: 'Delhi' })];
+      const result = filterVideos(videos, { ...baseState, sort: 'location_desc' });
+      expect(result.map((v) => v.id)).toEqual(['1', '2']);
+    });
   });
 });
