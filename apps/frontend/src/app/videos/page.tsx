@@ -9,9 +9,11 @@ import { FilterBar } from '@/components/shared/FilterBar';
 import { PageHero } from '@/components/shared/PageHero';
 import { Pagination } from '@/components/shared/Pagination';
 import { VideoCard } from '@/components/shared/VideoCard';
+import { SORT_LABELS } from '@/helpers/filterVideos';
 import { useFilterState } from '@/hooks/useFilterState';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 import { getLocations, getTags } from '@/lib/db';
+import type { SortOption } from '@/lib/frontend-schemas';
 import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
 import { siteUrl } from '@/lib/seo';
 import { getAllVideosFromDb, type VideoEntry } from '@/lib/videos';
@@ -95,6 +97,26 @@ function VideosPageInner(): JSX.Element {
             <div className="mt-6 flex items-center justify-between">
               <div className="text-[10px] tracking-widest text-black/60 uppercase">
                 Page {safePage} of {totalPages} · {filtered.length} videos
+              </div>
+              <div className="flex items-center gap-2">
+                <label
+                  htmlFor="sort-select"
+                  className="font-mono text-[10px] font-bold tracking-widest text-black/60 uppercase"
+                >
+                  Sort by
+                </label>
+                <select
+                  id="sort-select"
+                  value={state.sort}
+                  onChange={(e) => setState({ ...state, sort: e.target.value as SortOption, page: 1 })}
+                  className="font-body border-2 border-black bg-white px-2 py-1 text-xs focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+                >
+                  <option value="views">{SORT_LABELS.views}</option>
+                  <option value="posted_date">{SORT_LABELS.posted_date}</option>
+                  <option value="created_date">{SORT_LABELS.created_date}</option>
+                  <option value="city">{SORT_LABELS.city}</option>
+                  <option value="location">{SORT_LABELS.location}</option>
+                </select>
               </div>
             </div>
 

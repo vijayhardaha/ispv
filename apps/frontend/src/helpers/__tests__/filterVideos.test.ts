@@ -22,12 +22,14 @@ const makeVideo = (overrides: Partial<VideoEntry> = {}): VideoEntry => ({
   hashtags: ['#peaceful', '#students', '#Delhi'],
   duration: 0,
   viewCount: 0,
+  videoPostDate: null,
+  createdAt: '2026-01-01T00:00:00Z',
   featured: false,
   ...overrides,
 });
 
 describe('filterVideos', () => {
-  const baseState: FilterState = { query: '', category: 'all', location: 'all', tags: [], page: 1, perPage: 36 };
+  const baseState: FilterState = { query: '', category: 'all', location: 'all', tags: [], page: 1, perPage: 36, sort: 'views' };
 
   it('returns all videos with default filter state', () => {
     const videos = [makeVideo({ id: '1' }), makeVideo({ id: '2', city: 'Mumbai' })];

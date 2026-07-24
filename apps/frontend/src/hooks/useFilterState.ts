@@ -11,7 +11,15 @@ import type { VideoEntry } from '@/lib/videos';
 /**
  * Default filter state used when no URL params or overrides are provided.
  */
-const DEFAULT_STATE: FilterState = { query: '', category: 'all', location: 'all', tags: [], page: 1, perPage: 72 };
+const DEFAULT_STATE: FilterState = {
+  query: '',
+  category: 'all',
+  location: 'all',
+  tags: [],
+  page: 1,
+  perPage: 72,
+  sort: 'views',
+};
 
 /**
  * Configuration options for the useFilterState hook.

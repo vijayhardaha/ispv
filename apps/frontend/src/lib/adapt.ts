@@ -67,6 +67,8 @@ export function dbRowToVideoEntry(row: VideoRow): VideoEntry {
     hashtags,
     duration: 0,
     viewCount: row.view_count ?? 0,
+    videoPostDate: row.video_post_date,
+    createdAt: row.created_at,
     featured: (row.view_count ?? 0) > 1000,
   };
 }

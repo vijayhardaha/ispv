@@ -18,6 +18,13 @@ export const submitVideoFormSchema = z.object({
 export type SubmitVideoForm = z.infer<typeof submitVideoFormSchema>;
 
 /**
+ * Sort options for video archive results.
+ *
+ * @type {SortOption}
+ */
+export type SortOption = 'views' | 'posted_date' | 'created_date' | 'city' | 'location';
+
+/**
  * Filter state for the video archive search and filtering.
  *
  * @type {FilterState}
@@ -27,6 +34,7 @@ export type SubmitVideoForm = z.infer<typeof submitVideoFormSchema>;
  * @property {string[]} tags - Active tag filters.
  * @property {number} page - Current page number (1-based).
  * @property {number} perPage - Number of items per page.
+ * @property {SortOption} sort - Current sort order for results.
  */
 export interface FilterState {
   query: string;
@@ -35,4 +43,5 @@ export interface FilterState {
   tags: string[];
   page: number;
   perPage: number;
+  sort: SortOption;
 }

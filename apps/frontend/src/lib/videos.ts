@@ -17,6 +17,8 @@ import { supabase } from '@/lib/supabase';
  * @property {string[]} hashtags - Hashtags with hash prefix.
  * @property {number} duration - Video duration in seconds.
  * @property {number} viewCount - Number of video views.
+ * @property {string | null} videoPostDate - Post date from Instagram (ISO string).
+ * @property {string} createdAt - Timestamp of record creation (ISO string).
  * @property {boolean} [featured] - Whether the video is featured on the homepage.
  */
 export interface VideoEntry {
@@ -32,6 +34,8 @@ export interface VideoEntry {
   hashtags: string[];
   duration: number;
   viewCount: number;
+  videoPostDate: string | null;
+  createdAt: string;
   featured?: boolean;
 }
 
