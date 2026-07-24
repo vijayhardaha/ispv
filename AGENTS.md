@@ -47,9 +47,10 @@
 
 Always run lint + tsc after making changes: `bun run lint && bun run tsc`. Also run `bun run test` to verify no regressions.
 
-## Frontend Knowledge Base
+## Knowledge Bases
 
-Detailed frontend documentation at `apps/frontend/knowledge.md` — covers components, data flow, filter architecture, hooks, SEO, and known gaps.
+- **Frontend:** `apps/frontend/knowledge.md` — components, data flow, filter architecture, hooks, SEO, known gaps
+- **Admin:** `apps/admin/knowledge.md` — API routes, authentication, data schema, videos page architecture, rate limiting, security
 
 ## Project Structure
 
@@ -58,26 +59,42 @@ apps/
 ├── frontend/             # @ispv/frontend — public site
 │   ├── src/
 │   │   ├── app/          # Next.js App Router pages
-│   │   ├── components/   # React components
-│   │   ├── data/         # Hardcoded video entries
-│   │   ├── hooks/
-│   │   └── lib/
+│   │   ├── components/   # React components (features/, layout/, shared/, ui/)
+│   │   ├── constants/    # seo.ts, colors.ts, navlinks.ts, categories.ts, locations.ts, slogans.ts, why-protest-data.tsx
+│   │   ├── hooks/        # useFilterState, useReelPlayer, useSubmitVideoForm
+│   │   ├── helpers/      # filterVideos, formatLocation, buildThumbnailSrc
+│   │   └── lib/          # db.ts, adapt.ts, cn.ts, videos.ts, format.ts, instagram.ts, frontend-schemas.ts
 │   ├── public/
 │   ├── next.config.ts
 │   └── package.json
-└── admin/                # @ispv/admin — admin panel
-    ├── src/
-    │   ├── app/          # Pages + API routes
-    │   ├── components/   # Form modals
-    │   └── lib/          # Supabase client + types
-    ├── supabase/migrations/
-    └── package.json
+├── admin/                # @ispv/admin — admin panel
+│   ├── src/
+│   │   ├── app/          # Pages (login, dashboard, videos) + API routes (auth/, public/)
+│   │   ├── components/   # layout/, ui/, plus features (VideoFormModal, LogoutButton, Toast)
+│   │   ├── constants/    # categories.ts, colors.ts, locations.ts, navlinks.ts, seo.ts, status.ts
+│   │   ├── hooks/        # usePagination
+│   │   ├── lib/          # api-utils.ts, cn.ts, instagram.ts, rateLimit.ts, rpc.ts, schemas.ts, types.ts, supabase.ts, supabase-server.ts, upload.ts
+│   │   └── proxy.ts      # Middleware (auth guard, CSRF, security headers)
+│   ├── supabase/migrations/
+│   └── package.json
 chrome-extension/         # @ispv/extension
 ├── manifest.json
 ├── content.js
-├── icons/
-└── package.json
+├── package.json
 ```
+
+### Videos Page (Admin) — Custom Hooks Architecture
+
+The videos page state is split across 3 sub-hooks composed by `useVideosPageState`:
+
+| Hook                 | File                               | Responsibility                                               |
+| -------------------- | ---------------------------------- | ------------------------------------------------------------ |
+| `useVideosLoader`    | `app/videos/useVideosLoader.ts`    | Data fetching, URL filter params, pagination                 |
+| `useVideosSelection` | `app/videos/useVideosSelection.ts` | Checkbox selection, select-all, indeterminate state          |
+| `useVideosActions`   | `app/videos/useVideosActions.ts`   | Single/bulk/inline status actions, confirmation dialogs      |
+| `useVideosPageState` | `app/videos/useVideosPageState.ts` | Composition + modal UI state (edit/showAdd) + loading effect |
+
+See `apps/admin/knowledge.md` for full details.
 
 ## Key paths
 
@@ -127,26 +144,29 @@ All video data is stored in Supabase (`videos`, `categories`, `locations` tables
 
 Key types:
 
-- `VideoEntry` — full video record (id, description, url, thumbnail, city, location, category, categoryName, tags, hashtags, duration, featured?)
+- `VideoEntry` — full video record (id, description, url, thumbnail, city, location, category, categoryName, tags, hashtags, duration, trending?, videoPostDate?, createdAt, viewCount?)
 - `DbCategory` — `{ id, value, name, color, description? }`
 - `DbLocation` — `{ id, value, name, description? }`
-- Helper functions: `getAllVideosFromDb()`, `getCategories()`, `getLocations()`, `getTags()`, `getCategoryByValue()`
+- `VideoRecord` (admin) — full DB row type (includes status, trashed_at, video_src, video_id, view_count, etc.)
+- Helper functions: `getAllVideosFromDb()`, `getCategories()`, `getLocations()`, `getTags()`, `getCategoryByValue()`, `filterVideos()`, `formatLocation()`, `buildThumbnailSrc()`
+- DB adapter: `dbRowToVideoEntry()` in `lib/adapt.ts` normalises DB rows → VideoEntry (sets `trending` flag when `view_count > 1000`)
 
 ## Config files
 
-- `next.config.ts` — image remote patterns (Unsplash, Instagram CDN)
+- `next.config.ts` — image remote patterns (Instagram CDN, Vercel Blob)
 - `tsconfig.json` — extends `@vijayhardaha/dev-config/tsconfig`, `@/*` path alias
 - `eslint.config.mjs` — delegates to `@vijayhardaha/dev-config/eslint/next`
 - `prettier.config.mjs` — extends `@vijayhardaha/dev-config/prettier` + `prettier-plugin-tailwindcss`
 - `components.json` — shadcn/ui config (`base-nova` style, RSC enabled)
 - `postcss.config.mjs` — `@tailwindcss/postcss`
 - `.editorconfig` — 2-space indent, LF, UTF-8
+- `vitest.config.ts` — per-app Vitest config (node env, global setup)
 
 ## Project state
 
-- **Vitest ^4.1.10** configured per-app with 8 test files, 104 tests total
-- **No env files** exist (no `.env.example` either)
+- **Vitest ^4.1.10** configured per-app with **133 tests total** (admin: 10+ files, frontend: 5+ files)
+- **No env files** tracked in git (`.env.local` + `.env.example` exist locally)
 - **No CI/CD** (no `.github/` directory)
 - **No analytics, no i18n, no PWA, no service worker**
 - Data is entirely dynamic from Supabase (not hardcoded)
-- The `dist/` dir is stale Vite build output (from pre-Next.js migration)
+- **Design philosophy** documented in `PHILOSOPHY.md` at repo root

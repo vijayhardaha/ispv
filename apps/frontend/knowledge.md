@@ -10,8 +10,8 @@
 - **Class Utils:** clsx + tailwind-merge (`cn()`)
 - **Variants:** class-variance-authority
 - **Database:** Supabase (browser client via `@supabase/supabase-js`)
-- **Schema:** `@vijayhardaha/schema-builder` for JSON-LD
-- **Testing:** Vitest (node env, no jsdom, 5 test files — utilities only)
+- **Schema:** Zod for form validation (`lib/frontend-schemas.ts`), `@vijayhardaha/schema-builder` for JSON-LD
+- **Testing:** Vitest (node env, 5+ test files — utilities, adapters, constants, filtering)
 
 ## Project Structure
 
@@ -19,44 +19,48 @@
 src/
 ├── app/              # App Router pages
 │   ├── layout.tsx    # Root layout (fonts, Header, Footer, GA, JSON-LD, ReelPlayerProvider)
-│   ├── page.tsx      # Homepage (server component)
+│   ├── page.tsx      # Homepage (server component — fetches videos, categories, locations from Supabase)
 │   ├── not-found.tsx
 │   ├── about/page.tsx
-│   ├── categories/page.tsx, categories/[id]/page.tsx
+│   ├── categories/page.tsx, categories/[id]/page.tsx (with useCategoryPage hook)
 │   ├── dmca/page.tsx
 │   ├── privacy/page.tsx
 │   ├── sitemap/page.tsx
 │   ├── terms/page.tsx
 │   ├── videos/page.tsx
-│   └── why-students-are-protesting/page.tsx
+│   └── why-students-are-protesting/page.tsx (multi-section content page)
 ├── components/
-│   ├── features/     # Feature-specific (HeroSection, FeaturedVideos, CategorySection, LocationsMap, etc.)
+│   ├── features/     # HeroSection, FeaturedVideos, CategorySection, LocationsMap, CTASection,
+│   │                 # FAQSection, ShareSection, SloganTicker, HashtagArea, SubmitVideoDialog
 │   ├── layout/       # Header, Footer
-│   ├── shared/       # FilterBar, VideoCard, ReelPlayer, Pagination, GoogleAnalytics, VercelAnalytics
-│   └── ui/           # Primitives (Button, Dialog, Dropdown, Input, Badge, Card, Container, Tag)
-├── constants/        # seo.ts, colors.ts, navlinks.ts
-├── data/             # videos.ts (VideoEntry + getAllVideosFromDb), slogans.ts
-├── helpers/          # filterVideos.ts + tests
-├── hooks/            # useFilterState.ts, useReelPlayer.ts
-├── lib/              # db.ts, adapt.ts, cn.ts, format.ts, instagram.ts, supabase.ts + tests
-└── utils/            # schema.ts, seo.ts, meta.ts
+│   ├── shared/       # FilterBar, VideoCard (React.memo), ReelPlayer, ReelPlayerProvider, ReelItem,
+│   │                 # Pagination, TagChips (React.memo), SuccessState, GoogleAnalytics, VercelAnalytics
+│   └── ui/           # Primitives (Button, Container, Dialog, Dropdown, Input, Tag)
+├── constants/        # seo.ts, colors.ts, navlinks.ts, categories.ts, locations.ts, slogans.ts,
+│                     # why-protest-data.tsx, data.ts (deprecated)
+├── helpers/          # filterVideos.ts (with sort support), formatLocation.ts, buildThumbnailSrc.ts
+├── hooks/            # useFilterState.ts, useReelPlayer.ts, useSubmitVideoForm.ts
+├── lib/              # videos.ts (VideoEntry + getAllVideosFromDb), db.ts, adapt.ts, cn.ts,
+│                     # format.ts, instagram.ts, supabase.ts, frontend-schemas.ts, schema.ts, seo.ts, meta.ts
 ```
 
 ## Data Architecture
 
 - **Supabase** is the single source of truth (`videos`, `categories`, `locations` tables)
-- `data/videos.ts:getAllVideosFromDb()` fetches published videos with joined category name/color
-- Raw rows go through `lib/adapt.ts:dbRowToVideoEntry()` — normalizes fields, generates hashtags from tags+city, sets `featured` flag when `view_count > 1000`
+- `lib/videos.ts:getAllVideosFromDb()` fetches published videos ordered by `video_post_date DESC, created_at DESC`
+- Raw rows go through `lib/adapt.ts:dbRowToVideoEntry()` — normalises fields, generates hashtags from tags+city, sets `trending` flag when `view_count > 1000`
 - Server components fetch directly via `lib/db.ts` functions
-- Client components fetch via `useEffect` -> `useState`
+- Client components fetch via `useEffect` → `useState`
 - No caching layer, no SWR/React Query, no server-side filtering
+- Categories, locations, and slogans are also available as hardcoded constants in `constants/` for use in static pages (why-protest, etc.)
 
 ### Key Types
 
 ```
-VideoEntry { id, description, url, thumbnail, city, state, category, categoryName, tags, hashtags, duration, featured? }
-DbCategory  { id, value, name, color, description?, seo_title?, seo_description? }
-DbLocation  { id, value, name, description? }
+VideoEntry {
+  id, description, url, thumbnail, city, location, category, categoryName,
+  tags, hashtags, duration, trending?, videoPostDate?, createdAt, viewCount?
+}
 ```
 
 ### DB Functions (`lib/db.ts`)
@@ -71,11 +75,13 @@ DbLocation  { id, value, name, description? }
 
 ## Filter Architecture
 
-- `FilterState` (`components/shared/FilterBar.tsx`): `{ query, category, location, tags[], page, perPage }`
+- `FilterState` (`lib/frontend-schemas.ts`): `{ query, category, location, tags[], page, perPage, sort }`
 - `useFilterState` (`hooks/useFilterState.ts`): Reads URL params on init, syncs back via `replaceState`
-- `filterVideos()` (`helpers/filterVideos.ts`): AND logic across category, location, tags, query
-- Tags: single-select toggle, capped at 100 chips
+- `filterVideos()` (`helpers/filterVideos.ts`): AND logic across category, location, tags, query, then sorts by selected option
+- Tags: single-select toggle, capped at 100 chips, **hidden by default** (toggle button to show)
 - Location: select dropdown, "All locations" default
+- Sort options: views (default), posted date, created date, city, location
+- Tags section in FilterBar has show/hide toggle button (collapsed by default) with `aria-expanded` for accessibility
 
 ## Reel Player
 
@@ -87,7 +93,9 @@ DbLocation  { id, value, name, description? }
 
 ## Component Conventions
 
-- Named function exports (`export function Foo()`)
+- Named `const` function exports: `export const Foo = (...) => { ... }`
+- **`React.memo`** wraps `VideoCard` and `TagChips` to skip re-renders when props don't change
+- **`useCallback`** / **`useMemo`** used throughout for stable references (CategorySection, FilterBar, useSubmitVideoForm, ReelPlayerProvider)
 - Explicit `JSX.Element` return type
 - Props interfaces at top of file, exported for reuse
 - Server components: no directive
@@ -98,19 +106,32 @@ DbLocation  { id, value, name, description? }
 ## SEO & Analytics
 
 - `constants/seo.ts`: `SITE_CONFIG`, `SITE_METADATA` (full Next.js Metadata with OG/Twitter/robots)
-- `utils/schema.ts`: `globalSchema()` returns Person + Organization + WebSite JSON-LD
-- `utils/meta.ts`: `buildMetadata()` per-page metadata builder
+- `lib/seo.ts`: `siteUrl()`, `buildMetadata()` per-page metadata builder
+- `lib/schema.ts`: JSON-LD schemas (global + per-page)
 - `GoogleAnalytics`: gated to production + non-empty `GOOGLE_ANALYTICS_ID` (currently empty — disabled)
 - `VercelAnalytics`: exists but not wired in layout
+
+## Performance Optimisations Applied
+
+| File                     | Optimisation                                                        |
+| ------------------------ | ------------------------------------------------------------------- |
+| `VideoCard.tsx`          | `React.memo` — skips re-render unless video/onPlay/className change |
+| `TagChips.tsx`           | `React.memo` — skips re-render unless tags/selected/onSelect stable |
+| `CategorySection.tsx`    | `useMemo` for items slice + `useCallback` for handlePlay            |
+| `FilterBar.tsx`          | `useCallback` for selectTag → stable onSelect for TagChips.memo     |
+| `ReelPlayerProvider.tsx` | `useCallback` for play/close context values                         |
+| `useSubmitVideoForm.ts`  | `useCallback` on all 7 internal handlers                            |
 
 ## Testing
 
 - Vitest, node environment, `globals: true`
-- 5 test files: `adapt.test.ts`, `cn.test.ts`, `format.test.ts`, `instagram.test.ts`, `filterVideos.test.ts`
+- Test files: `adapt.test.ts`, `cn.test.ts`, `format.test.ts`, `instagram.test.ts`, `filterVideos.test.ts`, `constants/__tests__/constants.test.ts`, `lib/__tests__/` files
+- Covers: DB adapters, class merging, formatting utilities, Instagram URL parsing, filter logic, constants validation
 - No component tests or E2E tests
 
 ## Not Wired / Known Gaps
 
 - `VercelAnalytics` component exists but is not imported in layout
-- `SubmitVideoDialog` uses mock timeout (1.2s) — no real API integration
+- `SubmitVideoDialog` POSTs to the admin public API endpoint — needs production URL configured in `NEXT_PUBLIC_ADMIN_URL`
 - No env files tracked (only `.env.example` with Supabase placeholder values)
+- `why-protest-content.tsx` (old) vs `why-protest-data.tsx` (current) — old file kept for reference
