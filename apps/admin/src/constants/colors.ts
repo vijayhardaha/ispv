@@ -9,8 +9,10 @@ export const TAG_VARIANTS = {
   green: 'bg-green-600 text-white',
   black: 'bg-black text-white',
   white: 'bg-white text-black',
+  gray: 'bg-gray-500 text-white',
 } as const;
 
+/** Valid colour variants derived from the TAG_VARIANTS keys. */
 export type TagVariant = keyof typeof TAG_VARIANTS;
 
 /** Canonical list of valid colour names. */
