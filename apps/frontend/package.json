@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "next build && next-sitemap",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest run",
@@ -29,6 +29,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^1.25.0",
     "next": "^16.2.10",
+    "next-sitemap": "^4.2.3",
     "postcss": "^8.5.20",
     "radix-ui": "^1.6.4",
     "react": "^19.2.7",
@@ -46,6 +47,7 @@
     "@vijayhardaha/dev-config": "^2.2.0",
     "@vitest/coverage-v8": "^4.1.10",
     "postcss-load-config": "^6.0.1",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.10"
   },
   "trustedDependencies": [
