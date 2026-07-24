@@ -107,7 +107,7 @@ describe('POST /api/public/submit', () => {
     const res = await POST(makeRequest({ video_url: 'https://www.instagram.com/reel/ABC123xyz/' }));
     expect(res.status).toBe(500);
     const body = await res.json();
-    expect(body.error).toBe('Database error');
+    expect(body.error).toBe('Submission failed');
   });
 
   it('accepts video_url field as an alias for url', async () => {

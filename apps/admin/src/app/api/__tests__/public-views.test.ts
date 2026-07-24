@@ -68,7 +68,7 @@ describe('POST /api/public/views', () => {
     const res = await POST(makeRequest({ video_id: 'nonexistent' }));
     expect(res.status).toBe(500);
     const body = await res.json();
-    expect(body.error).toBe('Video not found');
+    expect(body.error).toBe('Failed to record view');
   });
 
   it('returns 500 when env vars are missing', async () => {

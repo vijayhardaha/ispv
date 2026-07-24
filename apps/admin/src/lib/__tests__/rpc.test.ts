@@ -15,7 +15,7 @@ describe('getVideosForApi', () => {
     const result = await getVideosForApi(mockSupabase);
 
     expect(mockRpc).toHaveBeenCalledWith('get_videos_for_api', {
-      filters: { status: null, search: null, category: null, location: null, page: 1, per_page: 50 },
+      filters: { status: null, search: null, category: null, location: null, trashed: null, page: 1, per_page: 50 },
     });
     expect(result).toEqual({ data: [], pagination: { page: 1, per_page: 50, total_count: 0, total_pages: 0 } });
   });
@@ -41,6 +41,7 @@ describe('getVideosForApi', () => {
         search: 'protest',
         category: 'police-conduct',
         location: 'delhi',
+        trashed: null,
         page: 2,
         per_page: 20,
       },
@@ -56,7 +57,7 @@ describe('getVideosForApi', () => {
     await getVideosForApi(mockSupabase, { status: undefined, search: null, category: '', location: undefined } as any);
 
     expect(mockRpc).toHaveBeenCalledWith('get_videos_for_api', {
-      filters: { status: null, search: null, category: null, location: null, page: 1, per_page: 50 },
+      filters: { status: null, search: null, category: null, location: null, trashed: null, page: 1, per_page: 50 },
     });
   });
 

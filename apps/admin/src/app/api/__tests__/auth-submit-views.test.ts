@@ -87,7 +87,7 @@ describe('POST /api/auth/submit', () => {
     const res = await submitPost(makeRequest({ video_url: 'https://www.instagram.com/reel/ABC123xyz/' }));
     expect(res.status).toBe(500);
     const body = await res.json();
-    expect(body.error).toBe('RPC failed');
+    expect(body.error).toBe('Submission failed');
   });
 });
 
@@ -130,6 +130,6 @@ describe('POST /api/auth/views', () => {
     const res = await viewsPost(makeRequest({ video_id: 'vid-1' }));
     expect(res.status).toBe(500);
     const body = await res.json();
-    expect(body.error).toBe('View increment failed');
+    expect(body.error).toBe('Failed to record view');
   });
 });

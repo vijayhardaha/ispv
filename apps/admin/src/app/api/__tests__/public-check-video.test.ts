@@ -140,6 +140,6 @@ describe('POST /api/public/check-video', () => {
     const res = await POST(makeRequest({ url: 'https://www.instagram.com/reel/ABC123xyz/' }));
     expect(res.status).toBe(500);
     const body = await res.json();
-    expect(body.error).toBe('DB down');
+    expect(body.error).toBe('Database lookup failed');
   });
 });

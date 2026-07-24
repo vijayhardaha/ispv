@@ -46,6 +46,9 @@ function makeChain(): Record<string, (...args: unknown[]) => unknown> {
       mockOrder(..._a);
       return chain;
     },
+    limit: (_: number) => {
+      return chain;
+    },
     insert: (..._a: unknown[]) => {
       mockInsert(..._a);
       return chain;
@@ -131,7 +134,7 @@ describe('GET /api/auth/videos', () => {
     const res = await GET();
     expect(res.status).toBe(500);
     const body = await res.json();
-    expect(body.error).toBe('Connection failed');
+    expect(body.error).toBe('Failed to fetch videos');
   });
 });
 
@@ -186,12 +189,12 @@ describe('POST /api/auth/videos', () => {
   it('handles database insert errors', async () => {
     mockFromDataQueue.push(
       { data: null, error: null }, // URL duplicate check
-      { data: null, error: { message: 'Insert failed' } } // Insert error (no video_id in body)
+      { data: null, error: { message: 'Insert failed' } }
     );
 
     const res = await POST(makeRequest({ video_url: 'https://www.instagram.com/reel/ABC123xyz/' }));
     expect(res.status).toBe(500);
     const body = await res.json();
-    expect(body.error).toBe('Insert failed');
+    expect(body.error).toBe('Failed to create video');
   });
 });
