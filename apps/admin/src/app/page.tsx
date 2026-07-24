@@ -27,6 +27,7 @@ interface StatusStat {
 
 interface DashboardStats {
   total_videos: number;
+  trashed_count: number;
   status_counts: { status: string; count: number }[];
   category_counts: { slug: string; count: number }[];
   location_counts: { slug: string; count: number }[];
@@ -38,6 +39,7 @@ const STATUS_QUERIES: { label: string; color: string; status: string | null }[] 
   { label: 'Pending', color: 'bg-yellow-400', status: 'pending_review' },
   { label: 'Published', color: 'bg-green-500', status: 'published' },
   { label: 'Rejected', color: 'bg-red-500', status: 'rejected' },
+  { label: 'Trashed', color: 'bg-gray-800', status: null },
 ];
 
 function buildStatusStats(stats: DashboardStats): StatusStat[] {
@@ -45,20 +47,39 @@ function buildStatusStats(stats: DashboardStats): StatusStat[] {
   return STATUS_QUERIES.map((s) => ({
     label: s.label,
     color: s.color,
-    count: s.status ? (countsMap[s.status] ?? 0) : stats.total_videos,
+    count: s.status ? (countsMap[s.status] ?? 0) : s.label === 'Trashed' ? stats.trashed_count : stats.total_videos,
   }));
 }
 
+/**
+ * Merge raw category counts from the dashboard RPC into full category objects with video_count.
+ *
+ * @param {{ slug: string; count: number }[]} categoryCounts - Counts by slug from RPC.
+ *
+ * @returns {CategoryWithCount[]} Full category objects with count (0 for missing slugs).
+ */
 function buildCategoryStats(categoryCounts: { slug: string; count: number }[]): CategoryWithCount[] {
   const countsMap = Object.fromEntries(categoryCounts.map((c) => [c.slug, c.count]));
   return CATEGORIES.map((cat) => ({ ...cat, video_count: countsMap[cat.slug] ?? 0 }));
 }
 
+/**
+ * Merge raw location counts from the dashboard RPC into full location objects with video_count.
+ *
+ * @param {{ slug: string; count: number }[]} locationCounts - Counts by slug from RPC.
+ *
+ * @returns {LocationWithCount[]} Full location objects with count (0 for missing slugs).
+ */
 function buildLocationStats(locationCounts: { slug: string; count: number }[]): LocationWithCount[] {
   const countsMap = Object.fromEntries(locationCounts.map((l) => [l.slug, l.count]));
   return LOCATIONS.map((loc) => ({ ...loc, video_count: countsMap[loc.slug] ?? 0 }));
 }
 
+/**
+ * Dashboard page — shows aggregate stats, status breakdown, category, and location counts.
+ *
+ * @returns {Promise<JSX.Element>} Admin dashboard with stat cards and tables.
+ */
 export default async function DashboardPage(): Promise<JSX.Element> {
   const supabase = await createServerSupabase();
   const {
@@ -107,7 +128,7 @@ export default async function DashboardPage(): Promise<JSX.Element> {
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {categoryCounts.map((cat) => (
-          <article key={cat.id} className="border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_#18181b]">
+          <article key={cat.slug} className="border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_#18181b]">
             <div className="mb-2 flex items-center justify-between">
               <span
                 className={cn(
