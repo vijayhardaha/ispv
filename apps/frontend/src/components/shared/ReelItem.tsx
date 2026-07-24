@@ -71,7 +71,7 @@ export function ReelItem({ video, active }: { video: VideoEntry; active: boolean
       <div className="absolute inset-x-0 bottom-0 z-10 pr-3 pb-3 pl-3">
         <div className="flex justify-end font-mono text-[10px] tracking-tight text-white/80 uppercase">
           <span className="flex items-center gap-1">
-            <Eye className="h-3 w-3" />
+            <Eye className="size-3" />
             {video.viewCount}
           </span>
         </div>

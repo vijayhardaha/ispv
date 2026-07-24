@@ -102,7 +102,7 @@ export function HashtagArea({
                 aria-label={`Remove ${t}`}
                 disabled={disabled}
               >
-                <XIcon className="h-3 w-3" />
+                <XIcon className="size-3" />
               </button>
             </span>
           ))}

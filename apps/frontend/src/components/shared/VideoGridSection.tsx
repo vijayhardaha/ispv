@@ -84,7 +84,7 @@ function SkeletonCard(): JSX.Element {
     <div className="relative aspect-9/16 overflow-hidden border-2 border-black bg-gray-200">
       <div className="absolute inset-0 animate-pulse bg-linear-to-b from-gray-300 to-gray-200" />
       <div className="absolute right-0 bottom-0 left-0 space-y-2 p-3">
-        <div className="h-3 w-3/4 animate-pulse rounded bg-gray-300" />
+        <div className="size-3/4 animate-pulse rounded bg-gray-300" />
         <div className="h-2 w-1/2 animate-pulse rounded bg-gray-300" />
       </div>
     </div>
@@ -121,7 +121,7 @@ export function VideoGridSection({
       <FilterBar state={state} setState={setState} total={total} allTags={allTags} allLocations={allLocations} />
 
       {loading ? (
-        <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 8 }, (_, i) => (
             <SkeletonCard key={i} />
           ))}
@@ -141,7 +141,7 @@ export function VideoGridSection({
               <p className="mt-1 text-black/60">Try a different search term or fewer tags.</p>
             </div>
           ) : (
-            <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            <div className="mt-6 grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
               {paged.map((v) => (
                 <VideoCard key={v.id} video={v} onPlay={(video) => onPlay(video, paged)} />
               ))}

@@ -67,7 +67,7 @@ export function FilterBar({
                 className="absolute top-1/2 right-2 -translate-y-1/2 border-2 border-black bg-white p-1 hover:bg-yellow-400 hover:text-white"
                 aria-label="Clear search"
               >
-                <X className="h-3 w-3" />
+                <X className="size-3" />
               </button>
             )}
           </div>

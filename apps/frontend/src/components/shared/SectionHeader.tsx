@@ -48,7 +48,7 @@ export function SectionHeader({
 }): JSX.Element {
   return (
     <div
-      className={`mb-6 flex flex-col gap-4 border-b-2 border-zinc-900 pb-6 md:flex-row md:items-end md:justify-between${className ? ` ${className}` : ''}`}
+      className={`mb-6 flex w-full flex-col gap-4 border-b-2 border-zinc-900 pb-6 md:flex-row md:items-end md:justify-between ${className ? ` ${className}` : ''}`}
     >
       <div>
         <Tag variant={tagVariant} text={tagText} icon={tagIcon} />

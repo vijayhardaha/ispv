@@ -35,7 +35,7 @@ export function LocationsMap({
         <SectionHeader
           tagVariant="blue"
           tagText="Map"
-          tagIcon={<MapPin className="inline h-3 w-3" />}
+          tagIcon={<MapPin className="inline size-3" />}
           heading="Locations on the ground"
           description="Every location listed draws from archival videos — sourced from people on the ground and organised by state and union territory. Click any location to jump to its videos."
           href="/videos"

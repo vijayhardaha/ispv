@@ -35,7 +35,7 @@ export function FeaturedVideos({ categories }: { categories: DbCategory[] }): JS
         <SectionHeader
           tagVariant="black"
           tagText="Featured"
-          tagIcon={<Sparkles className="inline h-3 w-3" />}
+          tagIcon={<Sparkles className="inline size-3" />}
           heading={
             <>
               Watch These{' '}
@@ -43,14 +43,13 @@ export function FeaturedVideos({ categories }: { categories: DbCategory[] }): JS
             </>
           }
           description="Browse by theme — each category collects verified submissions from across India."
-          descriptionClassName="max-w-sm text-sm"
           href="/categories"
           buttonText="View categories"
           buttonIcon={<Sparkles className="size-4" />}
           className="border-b-4"
         />
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {categories.map((cat) => {
             const Icon = FEATURED_ICONS[cat.slug] ?? FALLBACK_ICON;
             return (

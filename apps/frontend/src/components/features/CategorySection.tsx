@@ -33,7 +33,7 @@ export function CategorySection({ cat, videos }: { cat: DbCategory; videos: Vide
         <SectionHeader
           tagVariant={cat.color as TagVariant}
           tagText={cat.tag}
-          tagIcon={<Grid3x3 className="inline h-3 w-3" />}
+          tagIcon={<Grid3x3 className="inline size-3" />}
           heading={cat.name}
           description={cat.description ?? undefined}
           href={`/categories/${cat.slug}`}

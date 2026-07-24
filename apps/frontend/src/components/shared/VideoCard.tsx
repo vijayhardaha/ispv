@@ -88,11 +88,11 @@ const VideoCard = memo(function VideoCard({
       <div className="absolute inset-x-0 bottom-0 z-10 p-3">
         <div className="mt-1 flex items-center justify-between font-mono text-[10px] tracking-tight text-white/80 uppercase">
           <span className="flex items-center gap-1">
-            <MapPin className="h-3 w-3" />
+            <MapPin className="size-3" />
             {locationLabel}
           </span>
           <span className="flex items-center gap-1">
-            <Eye className="h-3 w-3" />
+            <Eye className="size-3" />
             {video.viewCount}
           </span>
         </div>
