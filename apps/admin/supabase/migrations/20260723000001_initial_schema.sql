@@ -12,12 +12,12 @@
 
 CREATE SCHEMA IF NOT EXISTS extensions;
 
+CREATE EXTENSION IF NOT EXISTS "hypopg" WITH SCHEMA "extensions";
+CREATE EXTENSION IF NOT EXISTS "index_advisor" WITH SCHEMA "extensions";
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA "extensions";
-
 CREATE EXTENSION IF NOT EXISTS "pg_trgm" WITH SCHEMA "extensions";
 
 ALTER ROLE authenticator SET search_path TO public, extensions;
-
 ALTER ROLE postgres SET search_path TO public, extensions;
 
 -- ............................................................................
@@ -221,7 +221,8 @@ BEGIN
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION public.submit_video TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.submit_video(text, text, text, text, text, text, text, timestamptz, text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.submit_video(text, text, text, text, text, text, text, timestamptz, text) TO authenticated;
 
 -- 4c. increment_video_view
 CREATE OR REPLACE FUNCTION public.increment_video_view(p_video_id uuid)
@@ -229,28 +230,31 @@ RETURNS void
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
-AS $$
+AS $function$
 BEGIN
   UPDATE public.videos SET view_count = view_count + 1 WHERE id = p_video_id;
 END;
-$$;
+$function$;
 
-GRANT EXECUTE ON FUNCTION public.increment_video_view TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.increment_video_view(uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.increment_video_view(uuid) TO authenticated;
 
 -- 4d. get_tags – published video tags with counts
 CREATE OR REPLACE FUNCTION public.get_tags()
 RETURNS TABLE (tag text, count bigint)
 LANGUAGE sql
 STABLE
-AS $$
+SET search_path = public
+AS $function$
   SELECT unnest(tags) AS tag, COUNT(*)::bigint AS count
   FROM public.videos
   WHERE status = 'published' AND tags IS NOT NULL
   GROUP BY tag
   ORDER BY count DESC, tag ASC;
-$$;
+$function$;
 
-GRANT EXECUTE ON FUNCTION public.get_tags TO anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.get_tags() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.get_tags() TO anon, authenticated;
 
 -- 4e. trash_video – soft delete
 CREATE OR REPLACE FUNCTION public.trash_video(
@@ -259,14 +263,16 @@ CREATE OR REPLACE FUNCTION public.trash_video(
 ) RETURNS void
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $$
+SET search_path = public
+AS $function$
 BEGIN
   UPDATE public.videos
   SET trashed_at = NOW(), trash_reason = p_reason, updated_at = NOW()
   WHERE id = p_video_id;
 END;
-$$;
+$function$;
 
+REVOKE EXECUTE ON FUNCTION public.trash_video(uuid, text) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.trash_video(uuid, text) TO authenticated;
 
 -- 4f. restore_video – restore from trash
@@ -274,14 +280,16 @@ CREATE OR REPLACE FUNCTION public.restore_video(p_video_id uuid)
 RETURNS void
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $$
+SET search_path = public
+AS $function$
 BEGIN
   UPDATE public.videos
   SET trashed_at = NULL, trash_reason = NULL, updated_at = NOW()
   WHERE id = p_video_id;
 END;
-$$;
+$function$;
 
+REVOKE EXECUTE ON FUNCTION public.restore_video(uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.restore_video(uuid) TO authenticated;
 
 -- 4g. purge_old_trashed_videos – permanent cleanup
@@ -290,15 +298,17 @@ CREATE OR REPLACE FUNCTION public.purge_old_trashed_videos(
 ) RETURNS TABLE(deleted_count integer)
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $$
+SET search_path = public
+AS $function$
 BEGIN
   DELETE FROM public.videos
   WHERE trashed_at IS NOT NULL
     AND trashed_at <= NOW() - (p_grace_period_days || ' days')::interval;
   RETURN QUERY SELECT ROW_COUNT()::integer;
 END;
-$$;
+$function$;
 
+REVOKE EXECUTE ON FUNCTION public.purge_old_trashed_videos(integer) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.purge_old_trashed_videos(integer) TO authenticated;
 
 -- ............................................................................
@@ -316,6 +326,8 @@ CREATE OR REPLACE VIEW public.trashed_videos AS
 -- ............................................................................
 -- 6. Indexes
 -- ............................................................................
+
+SET search_path TO public, extensions;
 
 CREATE INDEX idx_videos_status ON public.videos(status);
 CREATE INDEX idx_videos_category ON public.videos(category);
