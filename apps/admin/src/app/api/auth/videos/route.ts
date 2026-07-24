@@ -3,6 +3,7 @@ export const runtime = 'edge';
 
 import { NextResponse } from 'next/server';
 
+import { checkDuplicate, requireUser } from '@/lib/api-utils';
 import { videoFormSchema } from '@/lib/schemas';
 import { createServerSupabase } from '@/lib/supabase-server';
 
@@ -11,21 +12,19 @@ import { createServerSupabase } from '@/lib/supabase-server';
  *
  * @returns {Promise<NextResponse>} JSON response with the video list.
  */
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
   const supabase = await createServerSupabase();
 
-  // Require authenticated user for admin list access
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const guard = await requireUser(supabase);
+  if (guard) {
+    return guard;
   }
 
   const { data, error } = await supabase.from('videos').select('*').order('created_at', { ascending: false });
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
   return NextResponse.json(data);
 }
 
@@ -36,15 +35,12 @@ export async function GET() {
  *
  * @returns {Promise<NextResponse>} JSON response with the created video.
  */
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<NextResponse> {
   const supabase = await createServerSupabase();
 
-  // Require authenticated user for creating videos
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const guard = await requireUser(supabase);
+  if (guard) {
+    return guard;
   }
 
   const body = await req.json();
@@ -55,16 +51,16 @@ export async function POST(req: Request) {
   }
 
   if (body.video_url) {
-    const { data: existing } = await supabase.from('videos').select('id').eq('video_url', body.video_url).maybeSingle();
-    if (existing) {
-      return NextResponse.json({ error: 'A video with this URL already exists' }, { status: 409 });
+    const dup = await checkDuplicate(supabase, 'video_url', body.video_url);
+    if (dup) {
+      return dup;
     }
   }
 
   if (body.video_id) {
-    const { data: existing } = await supabase.from('videos').select('id').eq('video_id', body.video_id).maybeSingle();
-    if (existing) {
-      return NextResponse.json({ error: 'A video with this ID already exists' }, { status: 409 });
+    const dup = await checkDuplicate(supabase, 'video_id', body.video_id);
+    if (dup) {
+      return dup;
     }
   }
 
@@ -72,5 +68,6 @@ export async function POST(req: Request) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
   return NextResponse.json(data);
 }

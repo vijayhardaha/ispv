@@ -12,26 +12,30 @@ import { detectSource, extractIgId } from '@/lib/instagram';
 import { enrichVideoBodySchema } from '@/lib/schemas';
 import { uploadBuffer } from '@/lib/upload';
 
-const MAX_BYTES = 5 * 1024 * 1024; // 5 MB
+/** Maximum allowed image size in bytes (5 MB) for enrichment. */
+const MAX_BYTES = 5 * 1024 * 1024;
+
+/** Timeout in milliseconds for HEAD requests during URL validation. */
 const HEAD_TIMEOUT_MS = 8000;
+
+/** Timeout in milliseconds for GET requests during image download. */
 const GET_TIMEOUT_MS = 15000;
 
+/**
+ * Determines whether an IP address belongs to a private or reserved range.
+ *
+ * @param {string} ip - IPv4 or IPv6 address string.
+ *
+ * @returns {boolean} True if the IP is private, loopback, or link-local.
+ */
 function isPrivateIp(ip: string): boolean {
   if (!ip) {
     return true;
   }
   // IPv4
   if (net.isIP(ip) === 4) {
-    if (ip.startsWith('10.')) {
-      return true;
-    }
-    if (ip.startsWith('127.')) {
-      return true;
-    }
-    if (ip.startsWith('169.254.')) {
-      return true;
-    }
-    if (ip.startsWith('192.168.')) {
+    const PRIVATE_PREFIXES = ['10.', '127.', '169.254.', '192.168.'];
+    if (PRIVATE_PREFIXES.some((prefix) => ip.startsWith(prefix))) {
       return true;
     }
     const m = ip.match(/^172\.(\d+)\./);
@@ -61,6 +65,16 @@ function isPrivateIp(ip: string): boolean {
   return true;
 }
 
+/**
+ * Validates that a URL points to an acceptable image resource.
+ *
+ * Checks protocol, DNS resolution (blocking private IPs), content-type header,
+ * and content-length against the maximum allowed size.
+ *
+ * @param {string} urlString - URL to validate.
+ *
+ * @returns {Promise<{ ok: boolean; message?: string }>} Validation result with optional error message.
+ */
 async function validateUrlAcceptsImage(urlString: string): Promise<{ ok: boolean; message?: string }> {
   try {
     const url = new URL(urlString);
@@ -73,6 +87,7 @@ async function validateUrlAcceptsImage(urlString: string): Promise<{ ok: boolean
     if (!lookup) {
       return { ok: false, message: 'Unable to resolve host' };
     }
+
     if (Array.isArray(lookup)) {
       if (lookup.some((l) => isPrivateIp(l.address))) {
         return { ok: false, message: 'Host resolves to private IP' };
@@ -123,6 +138,16 @@ async function validateUrlAcceptsImage(urlString: string): Promise<{ ok: boolean
   }
 }
 
+/**
+ * Downloads an image from a URL, optimizes it via Sharp, and uploads to blob storage.
+ *
+ * Returns the public URL of the uploaded thumbnail, or null on any failure.
+ *
+ * @param {string} url - Source image URL to download.
+ * @param {string} video_id - Video ID used to derive the thumbnail filename.
+ *
+ * @returns {Promise<string | null>} Uploaded thumbnail URL, or null on failure.
+ */
 async function downloadAndUpload(url: string, video_id: string): Promise<string | null> {
   try {
     // Basic URL validation + private IP checks + content-type/size via HEAD
@@ -172,7 +197,7 @@ async function downloadAndUpload(url: string, video_id: string): Promise<string 
  *
  * @returns {Promise<NextResponse>} A JSON response with the enriched result or an error message.
  */
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<NextResponse> {
   try {
     const token = req.headers.get('authorization')?.replace('Bearer ', '');
     if (token !== process.env.ENRICH_API_TOKEN) {

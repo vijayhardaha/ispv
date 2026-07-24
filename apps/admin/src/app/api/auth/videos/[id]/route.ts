@@ -3,6 +3,7 @@ export const runtime = 'edge';
 
 import { NextResponse } from 'next/server';
 
+import { checkDuplicate, deleteVideoById, requireUser } from '@/lib/api-utils';
 import { videoFormSchema } from '@/lib/schemas';
 import { createServerSupabase } from '@/lib/supabase-server';
 
@@ -14,15 +15,13 @@ import { createServerSupabase } from '@/lib/supabase-server';
  *
  * @returns {Promise<NextResponse>} JSON response with the updated video.
  */
-export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   const { id } = await params;
   const supabase = await createServerSupabase();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const guard = await requireUser(supabase);
+  if (guard) {
+    return guard;
   }
 
   const body = await req.json();
@@ -33,26 +32,16 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   }
 
   if (body.video_url) {
-    const { data: existing } = await supabase
-      .from('videos')
-      .select('id')
-      .eq('video_url', body.video_url)
-      .neq('id', id)
-      .maybeSingle();
-    if (existing) {
-      return NextResponse.json({ error: 'Another video with this URL already exists' }, { status: 409 });
+    const dup = await checkDuplicate(supabase, 'video_url', body.video_url, id);
+    if (dup) {
+      return dup;
     }
   }
 
   if (body.video_id) {
-    const { data: existing } = await supabase
-      .from('videos')
-      .select('id')
-      .eq('video_id', body.video_id)
-      .neq('id', id)
-      .maybeSingle();
-    if (existing) {
-      return NextResponse.json({ error: 'Another video with this ID already exists' }, { status: 409 });
+    const dup = await checkDuplicate(supabase, 'video_id', body.video_id, id);
+    if (dup) {
+      return dup;
     }
   }
 
@@ -72,15 +61,13 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
  *
  * @returns {Promise<NextResponse>} JSON response with operation result.
  */
-export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   const { id } = await params;
   const supabase = await createServerSupabase();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const guard = await requireUser(supabase);
+  if (guard) {
+    return guard;
   }
 
   const { action, reason } = await req.json();
@@ -91,9 +78,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         p_video_id: id,
         p_reason: reason || 'Manually trashed by admin',
       });
+
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
+
       return NextResponse.json({ ok: true });
     }
 
@@ -102,15 +91,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
+
       return NextResponse.json({ ok: true });
     }
 
     case 'delete': {
-      const { error } = await supabase.from('videos').delete().eq('id', id);
-      if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
-      }
-      return NextResponse.json({ ok: true });
+      return deleteVideoById(supabase, id);
     }
 
     default:
@@ -127,20 +113,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
  *
  * @returns {Promise<NextResponse>} JSON response confirming deletion.
  */
-export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   const { id } = await params;
   const supabase = await createServerSupabase();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const guard = await requireUser(supabase);
+  if (guard) {
+    return guard;
   }
 
-  const { error } = await supabase.from('videos').delete().eq('id', id);
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-  return NextResponse.json({ ok: true });
+  return deleteVideoById(supabase, id);
 }

@@ -14,7 +14,7 @@ import { createServerSupabase } from '@/lib/supabase-server';
  *
  * @returns {Promise<NextResponse>} JSON response with submitted data.
  */
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<NextResponse> {
   const body = await req.json();
   const parsed = submitVideoBodySchema.safeParse(body);
   if (!parsed.success) {
