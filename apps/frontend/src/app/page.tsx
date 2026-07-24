@@ -1,25 +1,27 @@
-import type { JSX } from 'react';
+import { type JSX } from 'react';
 
 import { webPageSchema } from '@vijayhardaha/schema-builder';
 import { JsonLd } from '@vijayhardaha/schema-builder/react';
 import type { Metadata } from 'next';
 
-import { CategorySection } from '@/components/features/CategorySection';
+import { CategorySectionLoader } from '@/components/features/CategorySectionLoader';
 import { CTASection } from '@/components/features/CTASection';
 import { FAQSection } from '@/components/features/FAQSection';
 import { FeaturedVideos } from '@/components/features/FeaturedVideos';
 import { HeroSection } from '@/components/features/HeroSection';
 import { LocationsMap } from '@/components/features/LocationsMap';
-import { PullQuoteSection } from '@/components/features/PullQuoteSection';
 import { ShareSection } from '@/components/features/ShareSection';
 import { SloganTicker } from '@/components/features/SloganTicker';
+import { CATEGORIES, FEATURED_CATEGORIES_SLUGS } from '@/constants/categories';
+import type { DbCategory } from '@/constants/categories';
+import { LOCATIONS } from '@/constants/locations';
+import type { DbLocation } from '@/constants/locations';
 import { SITE_CONFIG } from '@/constants/seo';
-import { SLOGANS_PULL_QUOTES } from '@/constants/slogans';
-import { getCategories, getFeaturedCategories, getLocations } from '@/lib/db';
+import { getHomepageStats } from '@/lib/db';
 import { buildMetadata } from '@/lib/meta';
 import { globalSchema } from '@/lib/schema';
 import { siteUrl } from '@/lib/seo';
-import { getAllVideosFromDb } from '@/lib/videos';
+import { getCategorySectionVideos } from '@/lib/videos';
 
 const PAGE_TITLE = SITE_CONFIG.title;
 const PAGE_DESCRIPTION = SITE_CONFIG.description;
@@ -28,10 +30,38 @@ const ROOT_URL = siteUrl();
 
 export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH });
 
+export const revalidate = 300;
+
 const SCHEMA_DATA = [
   ...globalSchema(),
   webPageSchema({ rootUrl: ROOT_URL, path: PAGE_PATH }, { name: PAGE_TITLE, description: PAGE_DESCRIPTION }),
 ];
+
+function sortCategoriesWithOtherLast(): DbCategory[] {
+  const list = [...CATEGORIES];
+  const other = list.findIndex((c) => c.slug === 'other');
+  if (other !== -1) {
+    const [item] = list.splice(other, 1);
+    list.push(item);
+  }
+  return list;
+}
+
+function getFeaturedCategories(): DbCategory[] {
+  return FEATURED_CATEGORIES_SLUGS.map((slug) => CATEGORIES.find((c) => c.slug === slug)).filter(
+    Boolean
+  ) as DbCategory[];
+}
+
+function sortLocationsWithForeignLast(): DbLocation[] {
+  const list = [...LOCATIONS];
+  const foreignIdx = list.findIndex((l) => l.slug === 'foreign');
+  if (foreignIdx !== -1) {
+    const [item] = list.splice(foreignIdx, 1);
+    list.push(item);
+  }
+  return list;
+}
 
 /**
  * Home page — fetches videos and categories, renders hero, sections, and map.
@@ -39,37 +69,35 @@ const SCHEMA_DATA = [
  * @returns {Promise<JSX.Element>} Rendered home page.
  */
 export default async function HomePage(): Promise<JSX.Element> {
-  const [videos, categories, featuredCategories, locations] = await Promise.all([
-    getAllVideosFromDb(),
-    getCategories(),
-    getFeaturedCategories(),
-    getLocations(),
-  ]);
+  const categories = sortCategoriesWithOtherLast();
+  const featuredCategories = getFeaturedCategories();
+  const locations = sortLocationsWithForeignLast();
 
-  const byCategory = Object.fromEntries(categories.map((c) => [c.slug, videos.filter((v) => v.category === c.slug)]));
+  const categorySlugs = categories.filter((c) => c.slug !== 'other').map((c) => c.slug);
+  const totalSections = categorySlugs.length;
 
-  const totalCities = new Set(videos.map((v) => v.city).filter(Boolean)).size;
-  const totalStates = new Set(videos.map((v) => v.location).filter(Boolean)).size;
+  const statsPromise = getHomepageStats();
+  const videosPromise = getCategorySectionVideos(categorySlugs);
+
+  const stats = await statsPromise;
 
   return (
     <>
       <JsonLd data={SCHEMA_DATA} />
-      <HeroSection totalVideos={videos.length} totalCities={totalCities} totalStates={totalStates} />
+      <HeroSection totalVideos={stats.totalVideos} totalCities={stats.totalCities} totalStates={stats.totalLocations} />
       <SloganTicker />
       <ShareSection />
       <FeaturedVideos categories={featuredCategories} />
-      {(() => {
-        const filtered = categories.filter((c) => c.slug !== 'other');
-        return filtered.flatMap((c, i) => {
-          const sections: JSX.Element[] = [<CategorySection key={c.slug} cat={c} videos={byCategory[c.slug] ?? []} />];
-          if (i < filtered.length - 1) {
-            const quote = SLOGANS_PULL_QUOTES[i % SLOGANS_PULL_QUOTES.length];
-            sections.push(<PullQuoteSection key={`quote-${i}`} quote={quote.quote} person={quote.person} index={i} />);
-          }
-          return sections;
-        });
-      })()}
-      <LocationsMap locations={locations} videos={videos} />
+      {categorySlugs.map((slug, i) => (
+        <CategorySectionLoader
+          key={slug}
+          slug={slug}
+          index={i}
+          totalSections={totalSections}
+          videosPromise={videosPromise}
+        />
+      ))}
+      <LocationsMap locations={locations} locationCounts={stats.locationCounts} />
       <FAQSection />
       <CTASection />
     </>

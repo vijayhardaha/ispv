@@ -6,29 +6,27 @@ import Link from 'next/link';
 import { SectionHeader } from '@/components/shared/SectionHeader';
 import { Container } from '@/components/ui/Container';
 import type { DbLocation } from '@/lib/db';
-import type { VideoEntry } from '@/lib/videos';
 
 /**
  * Location list section showing states and union territories with archival video counts.
  *
  * @param {object} props - Component properties.
  * @param {DbLocation[]} props.locations - Location entries from the database.
- * @param {VideoEntry[]} props.videos - Video entries to compute video counts per location.
+ * @param {{ slug: string; count: number }[]} props.locationCounts - Pre-computed video counts per location slug.
  *
  * @returns {JSX.Element} Rendered locations section.
  */
-export function LocationsMap({ locations, videos }: { locations: DbLocation[]; videos: VideoEntry[] }): JSX.Element {
-  const stateCounts = videos.reduce<Record<string, number>>((acc, v) => {
-    const loc = (v.location ?? '').trim().toLowerCase();
-    if (!loc) {
-      return acc;
-    }
-    acc[loc] = (acc[loc] || 0) + 1;
-    return acc;
-  }, {});
+export function LocationsMap({
+  locations,
+  locationCounts,
+}: {
+  locations: DbLocation[];
+  locationCounts: { slug: string; count: number }[];
+}): JSX.Element {
+  const countsMap = Object.fromEntries(locationCounts.map((lc) => [lc.slug, lc.count]));
 
   const withCounts = locations
-    .map((loc) => ({ slug: loc.slug, name: loc.name, count: stateCounts[loc.slug] ?? 0 }))
+    .map((loc) => ({ slug: loc.slug, name: loc.name, count: countsMap[loc.slug] ?? 0 }))
     .sort((a, b) => b.count - a.count);
 
   return (

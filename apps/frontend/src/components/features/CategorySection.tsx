@@ -24,7 +24,7 @@ import type { VideoEntry } from '@/lib/videos';
 export function CategorySection({ cat, videos }: { cat: DbCategory; videos: VideoEntry[] }): JSX.Element {
   const { play } = useReelPlayer();
 
-  const items = useMemo(() => videos.slice(0, 6), [videos]);
+  const items = useMemo(() => videos.slice(0, 4), [videos]);
   const handlePlay = useCallback((video: VideoEntry) => play(video, items), [play, items]);
 
   return (
