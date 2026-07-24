@@ -2,9 +2,11 @@ import { ImageResponse } from '@vercel/og';
 
 export const runtime = 'edge';
 export const preferredRegion = 'iad1';
+export const revalidate = 86400;
 
 /**
  * Generates dynamic Open Graph preview image response.
+ * Uses the yellow and black brutalist colour palette from the frontend.
  *
  * @returns {Promise<ImageResponse>} Dynamic OG image response.
  */
@@ -19,16 +21,16 @@ export async function GET(): Promise<ImageResponse> {
         alignItems: 'center',
         justifyContent: 'center',
         background: '#f3f4f6',
-        border: '6px solid #171717',
+        border: '6px solid #000',
         fontFamily: '"Space Grotesk", "Poppins", sans-serif',
         padding: 48,
         position: 'relative',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
-        <div style={{ width: 32, height: 32, background: '#fbbf24', border: '3px solid #171717' }} />
-        <div style={{ width: 32, height: 32, background: '#2563eb', border: '3px solid #171717' }} />
-        <div style={{ width: 32, height: 32, background: '#16a34a', border: '3px solid #171717' }} />
+        <div style={{ width: 32, height: 32, background: '#facc15', border: '3px solid #000' }} />
+        <div style={{ width: 32, height: 32, background: '#facc15', border: '3px solid #000' }} />
+        <div style={{ width: 32, height: 32, background: '#facc15', border: '3px solid #000' }} />
       </div>
       <div
         style={{
@@ -36,7 +38,7 @@ export async function GET(): Promise<ImageResponse> {
           fontWeight: 800,
           letterSpacing: '-0.03em',
           textAlign: 'center',
-          color: '#171717',
+          color: '#000',
           maxWidth: 900,
         }}
       >
@@ -62,8 +64,8 @@ export async function GET(): Promise<ImageResponse> {
             key={tag}
             style={{
               padding: '8px 16px',
-              border: '3px solid #171717',
-              background: '#171717',
+              border: '3px solid #000',
+              background: '#000',
               color: '#f3f4f6',
               fontSize: 20,
               fontWeight: 700,
