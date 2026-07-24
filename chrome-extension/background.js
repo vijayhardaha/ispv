@@ -47,7 +47,7 @@ async function getCredentials() {
  * @param {string | null} payload.og_image - Open Graph image URL.
  * @param {string | null} payload.video_post_date - Reel post date/time.
  *
- * @returns {Promise<{ success: boolean; data?: any; error?: string }>} Resolves with the API response result.
+ * @returns {Promise<{ success: boolean; data?: object; error?: string }>} Resolves with the API response result.
  */
 async function proxyEnrichRequest(payload) {
   const { token, adminUrl } = await getCredentials();
@@ -99,7 +99,7 @@ async function proxyEnrichRequest(payload) {
  *   - "get-status"      — Check if token is configured
  *
  * @param {object} message - The incoming runtime message with an action type and optional payload.
- * @param {chrome.runtime.MessageSender} sender - The sender of the message.
+ * @param {object} sender - The sender of the message (tab, frame, extension ID).
  * @param {(response: object) => void} sendResponse - Callback to send response back to the sender.
  *
  * @returns {boolean} true if the response is async (keep channel open).
