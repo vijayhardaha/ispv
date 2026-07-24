@@ -12,7 +12,7 @@ import { put } from '@vercel/blob';
  *
  * @returns {Promise<string | null>} The public URL, or null if upload is unavailable.
  */
-export async function uploadBuffer(buffer: Buffer, filename: string): Promise<string | null> {
+export const uploadBuffer = async (buffer: Buffer, filename: string): Promise<string | null> => {
   if (process.env.BLOB_READ_WRITE_TOKEN) {
     try {
       const blob = await put(filename, new Blob([buffer.buffer as ArrayBuffer]), { access: 'public' });
@@ -23,4 +23,4 @@ export async function uploadBuffer(buffer: Buffer, filename: string): Promise<st
   }
 
   return null;
-}
+};

@@ -8,15 +8,15 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { GetVideosApiResponse } from './types';
 
 /**
- * Filters object for get_videos_for_api RPC.
+ * Filter options for the get_videos_for_api RPC.
  *
- * @typedef {object} GetVideosFilters
- * @property {string} [status] - Filter by video status (draft, pending_review, published, rejected)
- * @property {string} [search] - Search query across video_url, video_id, description, city
- * @property {string} [category] - Filter by category slug
- * @property {string} [location] - Filter by location slug
- * @property {number} [page] - Page number (1-based, default: 1)
- * @property {number} [per_page] - Items per page (default: 50, max: 500)
+ * @type {GetVideosFilters}
+ * @property {string | null} [status] - Filter by video status (draft, pending_review, published, rejected).
+ * @property {string | null} [search] - Search query across video_url, video_id, description, city.
+ * @property {string | null} [category] - Filter by category slug.
+ * @property {string | null} [location] - Filter by location slug.
+ * @property {number} [page] - Page number (1-based, default: 1).
+ * @property {number} [per_page] - Items per page (default: 50, max: 500).
  */
 export interface GetVideosFilters {
   status?: string | null;
@@ -47,10 +47,10 @@ export interface GetVideosFilters {
  * console.log(`Page ${pagination.page} of ${pagination.total_pages}`);
  * console.log(`Total videos: ${pagination.total_count}`);
  */
-export async function getVideosForApi(
+export const getVideosForApi = async (
   supabase: SupabaseClient,
   filters: GetVideosFilters = {}
-): Promise<GetVideosApiResponse | null> {
+): Promise<GetVideosApiResponse | null> => {
   const { data: response, error } = await supabase.rpc('get_videos_for_api', {
     filters: {
       status: filters.status || null,
@@ -68,4 +68,4 @@ export async function getVideosForApi(
   }
 
   return response as GetVideosApiResponse;
-}
+};

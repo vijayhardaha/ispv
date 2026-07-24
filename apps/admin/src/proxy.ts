@@ -1,4 +1,4 @@
-import { createServerClient } from '@supabase/ssr';
+import { createServerClient, type CookieMethodsServer } from '@supabase/ssr';
 import { type NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -17,33 +17,33 @@ import { type NextRequest, NextResponse } from 'next/server';
  *
  * @returns {Promise<NextResponse>} Response, redirect, or passthrough.
  */
-export async function proxy(req: NextRequest) {
+export async function proxy(req: NextRequest): Promise<NextResponse> {
   const { pathname } = req.nextUrl;
 
   // Build the response early so Supabase can write session cookies onto it.
   let response = NextResponse.next({ request: { headers: req.headers } });
 
+  const cookieMethods: CookieMethodsServer = {
+    getAll() {
+      return req.cookies.getAll();
+    },
+    setAll(cookiesToSet) {
+      cookiesToSet.forEach(({ name, value, options }) => {
+        req.cookies.set({ name, value, ...options });
+        response.cookies.set({ name, value, ...options });
+      });
+      // Rebuild response so downstream middleware sees updated cookies
+      response = NextResponse.next({ request: req });
+      cookiesToSet.forEach(({ name, value, options }) => {
+        response.cookies.set({ name, value, ...options });
+      });
+    },
+  };
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return req.cookies.getAll();
-        },
-        setAll(cookiesToSet: { name: string; value: string; options: Record<string, unknown> }[]) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            req.cookies.set({ name, value, ...options });
-            response.cookies.set({ name, value, ...options });
-          });
-          // Rebuild response so downstream middleware sees updated cookies
-          response = NextResponse.next({ request: req });
-          cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set({ name, value, ...options });
-          });
-        },
-      },
-    }
+    { cookies: cookieMethods }
   );
 
   // Apply security headers to all responses

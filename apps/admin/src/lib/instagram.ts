@@ -10,9 +10,9 @@ const IG_URL_RE = /(?:www\.)?instagram\.com\/(?:p|reel|reels)\/([a-zA-Z0-9_-]+)/
  *
  * @returns {string | null} Extracted media ID, or null if no match.
  */
-export function extractIgId(url: string): string | null {
+export const extractIgId = (url: string): string | null => {
   return url.match(IG_URL_RE)?.[1] ?? null;
-}
+};
 
 /**
  * Detects the source platform from a video URL.
@@ -21,7 +21,7 @@ export function extractIgId(url: string): string | null {
  *
  * @returns {string} Platform name ("youtube" or "instagram").
  */
-export function detectSource(url: string): string {
+export const detectSource = (url: string): string => {
   if (/youtube\.com|youtu\.be/i.test(url)) {
     return 'youtube';
   }
@@ -31,7 +31,7 @@ export function detectSource(url: string): string {
   }
 
   return 'instagram';
-}
+};
 
 /**
  * Builds the best available display URL for a video record.
@@ -43,7 +43,7 @@ export function detectSource(url: string): string {
  *
  * @returns {string} Clickable URL for the video.
  */
-export function displayVideoUrl(v: { video_src: string; video_id?: string | null; video_url?: string }): string {
+export const displayVideoUrl = (v: { video_src: string; video_id?: string | null; video_url?: string }): string => {
   if (v.video_src === 'youtube') {
     return v.video_url ?? '';
   }
@@ -53,7 +53,7 @@ export function displayVideoUrl(v: { video_src: string; video_id?: string | null
   }
 
   return v.video_url ?? '';
-}
+};
 
 /**
  * Reconstructs a full Instagram reels URL from a media ID.
@@ -62,6 +62,6 @@ export function displayVideoUrl(v: { video_src: string; video_id?: string | null
  *
  * @returns {string} Full Instagram URL.
  */
-export function reconstructIgUrl(id: string): string {
+export const reconstructIgUrl = (id: string): string => {
   return `https://www.instagram.com/p/${id}/`;
-}
+};
