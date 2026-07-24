@@ -1,8 +1,8 @@
 'use client';
 
-import { type JSX } from 'react';
+import { useCallback, useState, type JSX } from 'react';
 
-import { MapPin, Search, X, Filter } from 'lucide-react';
+import { ChevronDown, ChevronRight, MapPin, Search, X } from 'lucide-react';
 
 import { TagChips } from '@/components/shared/TagChips';
 import type { FilterState } from '@/lib/frontend-schemas';
@@ -32,11 +32,15 @@ export function FilterBar({
   allTags: string[];
   allLocations?: { slug: string; name: string }[];
 }): JSX.Element {
+  const [showTags, setShowTags] = useState(false);
   const tagChips = allTags.slice(0, 100);
 
-  const selectTag = (tag: string) => {
-    setState({ ...state, tags: state.tags.includes(tag) ? [] : [tag], page: 1 });
-  };
+  const selectTag = useCallback(
+    (tag: string) => {
+      setState({ ...state, tags: state.tags.includes(tag) ? [] : [tag], page: 1 });
+    },
+    [state, setState]
+  );
 
   return (
     <div className="shadow-brutal border-2 border-black bg-white p-4 md:p-5">
@@ -96,8 +100,16 @@ export function FilterBar({
 
       <div className="mt-4 border-t-2 border-black pt-4">
         <div className="flex items-center gap-2">
-          <Filter className="size-4" />
-          <span className="font-mono text-[10px] font-bold tracking-widest text-black/70 uppercase">Tags</span>
+          <button
+            type="button"
+            onClick={() => setShowTags((o) => !o)}
+            className="inline-flex cursor-pointer items-center gap-1 font-mono text-[10px] font-bold tracking-widest text-black/70 uppercase hover:text-yellow-500"
+            aria-expanded={showTags}
+            aria-controls="filter-tags-section"
+          >
+            {showTags ? <ChevronDown className="size-3" /> : <ChevronRight className="size-3" />}
+            Tags
+          </button>
           {state.tags.length > 0 && (
             <button
               onClick={() => setState({ ...state, tags: [], page: 1 })}
@@ -107,9 +119,11 @@ export function FilterBar({
             </button>
           )}
         </div>
-        <div className="mt-2">
-          <TagChips tags={tagChips} selected={state.tags} onSelect={selectTag} emptyMessage="No tags available" />
-        </div>
+        {showTags && (
+          <div id="filter-tags-section" className="mt-2">
+            <TagChips tags={tagChips} selected={state.tags} onSelect={selectTag} emptyMessage="No tags available" />
+          </div>
+        )}
       </div>
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] tracking-widest text-black/60 uppercase">
