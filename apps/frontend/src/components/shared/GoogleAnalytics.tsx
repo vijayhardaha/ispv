@@ -15,8 +15,10 @@ export function GoogleAnalytics(): JSX.Element | null {
   if (process.env.NODE_ENV !== 'production') {
     return null;
   }
+
   if (!GOOGLE_ANALYTICS_ID) {
     return null;
   }
+
   return <NextGoogleAnalytics gaId={GOOGLE_ANALYTICS_ID} />;
 }

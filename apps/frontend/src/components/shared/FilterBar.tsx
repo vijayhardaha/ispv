@@ -108,7 +108,7 @@ export function FilterBar({
             aria-controls="filter-tags-section"
           >
             {showTags ? <ChevronDown className="size-3" /> : <ChevronRight className="size-3" />}
-            Tags
+            {showTags ? 'Hide Tags' : 'Show Tags'}
           </button>
           {state.tags.length > 0 && (
             <button
