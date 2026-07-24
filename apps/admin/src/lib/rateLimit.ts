@@ -2,15 +2,22 @@ import { Redis } from '@upstash/redis';
 
 let redis: Redis | null = null;
 
+/** Whether we've already logged the Redis-configuration warning once. */
+let redisWarningLogged = false;
+
 /**
  * Returns the Redis client, lazily initialized from env vars.
  * Caches the client after first successful creation; resets when env vars are absent.
  *
+ * Supports both naming conventions:
+ *   - KV_REST_API_URL / KV_REST_API_TOKEN       (Vercel KV integration)
+ *   - UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN  (native Upstash SDK)
+ *
  * @returns {Redis | null} The Redis client, or null if not configured.
  */
-function getRedis(): Redis | null {
-  const upstashUrl = process.env.KV_REST_API_URL;
-  const upstashToken = process.env.KV_REST_API_TOKEN;
+export function getRedis(): Redis | null {
+  const upstashUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+  const upstashToken = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
   if (upstashUrl && upstashToken) {
     if (redis) return redis;
     try {
@@ -21,6 +28,17 @@ function getRedis(): Redis | null {
   } else {
     redis = null;
   }
+
+  if (!redis && !redisWarningLogged) {
+    redisWarningLogged = true;
+    console.warn(
+      '[rateLimit] Upstash Redis not configured. '
+        + 'Set KV_REST_API_URL / KV_REST_API_TOKEN (or UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN) '
+        + 'in your environment for distributed rate-limiting. '
+        + 'Falling back to per-instance in-memory rate-limiting (ineffective on Vercel serverless).'
+    );
+  }
+
   return redis;
 }
 
@@ -70,8 +88,11 @@ const tryUseUpstashRateLimit = async (key: string, limit: number, windowSec: num
       await client.expire(key, windowSec);
     }
     return value <= limit;
-  } catch {
-    // On any error, signal caller to fall back to in-memory limiter
+  } catch (err) {
+    console.error(
+      '[rateLimit] Upstash Redis error, falling back to in-memory:',
+      err instanceof Error ? err.message : err
+    );
     return null;
   }
 };
