@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server';
 
 import { jsonError, requireUser } from '@/lib/api-utils';
 import { createServerSupabase } from '@/lib/supabase-server';
+import { deleteBlob } from '@/lib/upload';
 
 const VALID_STATUSES = ['draft', 'pending_review', 'published', 'rejected'] as const;
 
@@ -32,6 +33,12 @@ export async function POST(req: Request): Promise<NextResponse> {
 
   switch (action) {
     case 'delete': {
+      // Fetch thumbnail_urls before bulk-deleting records
+      const { data: videos } = await supabase.from('videos').select('thumbnail_url').in('id', ids);
+      if (videos) {
+        await Promise.all(videos.map((v: { thumbnail_url: string | null }) => deleteBlob(v.thumbnail_url)));
+      }
+
       const { error } = await supabase.from('videos').delete().in('id', ids);
       const err = jsonError(error);
       if (err) {

@@ -1,6 +1,8 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
+import { deleteBlob } from '@/lib/upload';
+
 /**
  * Guards a route handler by requiring an authenticated Supabase user.
  * Returns a 401 response if no user is found, or `null` to allow the handler to proceed.
@@ -37,6 +39,7 @@ export const jsonError = (error: { message: string } | null, status: number = 50
 
 /**
  * Permanently deletes a single video record by ID.
+ * Also deletes the associated blob thumbnail if present.
  * Returns a JSON error response on failure, or a success response on completion.
  *
  * @param {SupabaseClient} supabase - Authenticated Supabase client.
@@ -45,6 +48,13 @@ export const jsonError = (error: { message: string } | null, status: number = 50
  * @returns {Promise<NextResponse>} Success or error response.
  */
 export const deleteVideoById = async (supabase: SupabaseClient, id: string): Promise<NextResponse> => {
+  // Fetch thumbnail_url before deleting the record
+  const { data: video } = await supabase.from('videos').select('thumbnail_url').eq('id', id).maybeSingle();
+
+  if (video?.thumbnail_url) {
+    await deleteBlob(video.thumbnail_url);
+  }
+
   const { error } = await supabase.from('videos').delete().eq('id', id);
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

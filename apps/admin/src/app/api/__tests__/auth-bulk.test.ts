@@ -92,6 +92,8 @@ describe('POST /api/auth/videos/bulk', () => {
   });
 
   it('bulk deletes videos', async () => {
+    // select(thumbnail_url) resolves first, then delete() resolves
+    mockFromDataQueue.push({ data: null, error: null });
     mockFromDataQueue.push({ error: null });
 
     const res = await POST(makeRequest({ action: 'delete', ids: ['vid-1', 'vid-2'] }));
@@ -142,6 +144,8 @@ describe('POST /api/auth/videos/bulk', () => {
   });
 
   it('handles database errors on delete', async () => {
+    // select(thumbnail_url) resolves first, then delete() fails
+    mockFromDataQueue.push({ data: null, error: null });
     mockFromDataQueue.push({ error: { message: 'Delete failed' } });
 
     const res = await POST(makeRequest({ action: 'delete', ids: ['vid-1'] }));

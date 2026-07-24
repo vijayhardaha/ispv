@@ -24,9 +24,9 @@ describe('uploadBuffer', () => {
     const buffer = Buffer.from('test');
     const url = await uploadBuffer(buffer, 'test.jpg');
 
-    expect(put).toHaveBeenCalledWith('test.jpg', expect.any(Buffer), {
+    expect(put).toHaveBeenCalledWith('test.jpg', expect.any(Blob), {
       access: 'public',
-      addRandomSuffix: true,
+      addRandomSuffix: false,
       allowOverwrite: true,
     });
     expect(url).toBe('https://blob.vercel.com/test.jpg');

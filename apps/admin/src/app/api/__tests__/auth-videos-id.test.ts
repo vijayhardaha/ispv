@@ -196,6 +196,8 @@ describe('POST /api/auth/videos/[id] (actions)', () => {
   });
 
   it('permanently deletes a video via supabase delete', async () => {
+    // select(thumbnail_url) resolves first, then delete() resolves
+    mockFromDataQueue.push({ data: null, error: null });
     mockFromDataQueue.push({ error: null });
 
     const res = await POST(makeRequest({ action: 'delete' }), makeParams());
@@ -235,6 +237,8 @@ describe('DELETE /api/auth/videos/[id]', () => {
   });
 
   it('deletes a video permanently', async () => {
+    // select(thumbnail_url) resolves first, then delete() resolves
+    mockFromDataQueue.push({ data: null, error: null });
     mockFromDataQueue.push({ error: null });
 
     const req = new Request('http://localhost:3001/api/auth/videos/vid-1', { method: 'DELETE' });
@@ -245,6 +249,8 @@ describe('DELETE /api/auth/videos/[id]', () => {
   });
 
   it('handles delete errors', async () => {
+    // select(thumbnail_url) resolves first, then delete() fails
+    mockFromDataQueue.push({ data: null, error: null });
     mockFromDataQueue.push({ error: { message: 'Delete failed' } });
 
     const req = new Request('http://localhost:3001/api/auth/videos/vid-1', { method: 'DELETE' });
