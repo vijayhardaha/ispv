@@ -31,8 +31,8 @@ export function Header(): JSX.Element {
               src="/logo.svg"
               alt="Indian Students Protest Vault"
               className="h-8 w-auto"
-              width={40}
-              height={21}
+              width={62}
+              height={32}
               priority
             />
             <div className="flex flex-col gap-0.5 leading-tight">

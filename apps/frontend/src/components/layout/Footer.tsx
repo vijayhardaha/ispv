@@ -116,8 +116,14 @@ export function Footer(): JSX.Element {
         <Container className="grid grid-cols-1 gap-10 py-12 md:grid-cols-12">
           {/* Brand */}
           <div className="md:col-span-4">
-            <div className="flex flex-col gap-2 text-yellow-500">
-              <Image src="/logo.svg" alt="Indian Students Protest Vault" width={40} height={21} />
+            <div className="flex flex-col items-start gap-2 text-yellow-500">
+              <Image
+                src="/logo.svg"
+                alt="Indian Students Protest Vault"
+                width={116}
+                height={60}
+                className="h-15 w-auto"
+              />
               <span className="font-display text-xl font-extrabold tracking-tight uppercase">
                 Indian Students Protest Vault
               </span>
