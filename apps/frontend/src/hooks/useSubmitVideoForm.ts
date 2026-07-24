@@ -11,7 +11,7 @@ import { extractInstagramId } from '@/lib/instagram';
 /**
  * Zod schema validating the public video submission form.
  */
-export const submitVideoFormSchema = z.object({
+const submitVideoFormSchema = z.object({
   url: z.string().min(1, 'URL is required'),
   location: z.string().min(1, 'Location is required'),
   city: z.string().max(30, 'City must be 30 characters or less'),
@@ -23,7 +23,7 @@ export const submitVideoFormSchema = z.object({
  *
  * @type {SubmitVideoForm}
  */
-export type SubmitVideoForm = z.infer<typeof submitVideoFormSchema>;
+type SubmitVideoForm = z.infer<typeof submitVideoFormSchema>;
 
 /**
  * Optional configuration for the useSubmitVideoForm hook.

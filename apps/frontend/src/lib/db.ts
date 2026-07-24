@@ -77,12 +77,14 @@ export async function getTags(): Promise<string[]> {
  *
  * @param {string} url - The Instagram URL to check.
  *
- * @returns {Promise<{exists: boolean, trashed?: boolean, status?: string}>} Duplicate check result.
+ * @returns {Promise<{exists: boolean, trashed?: boolean, status?: string, error?: string}>} Duplicate check result.
  */
-export async function checkVideoExists(url: string): Promise<{ exists: boolean; trashed?: boolean; status?: string }> {
+export async function checkVideoExists(
+  url: string
+): Promise<{ exists: boolean; trashed?: boolean; status?: string; error?: string }> {
   const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
   if (!adminUrl) {
-    return { exists: false };
+    return { exists: false, error: 'Admin URL is not configured.' };
   }
 
   try {
@@ -90,17 +92,22 @@ export async function checkVideoExists(url: string): Promise<{ exists: boolean; 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url }),
-      // Skip Next.js caching for this data-sensitive check
       cache: 'no-store',
     });
 
-    if (!response.ok) {
-      return { exists: false };
+    const data = (await response.json().catch(() => ({}))) as {
+      exists?: boolean;
+      trashed?: boolean;
+      status?: string;
+      error?: string;
+    };
+
+    if (!response.ok || data.error) {
+      return { exists: false, error: data.error ?? `Check failed with status ${response.status}` };
     }
 
-    const data = (await response.json()) as { exists: boolean; trashed?: boolean; status?: string };
-    return data;
-  } catch {
-    return { exists: false };
+    return { exists: data.exists ?? false, trashed: data.trashed, status: data.status };
+  } catch (err) {
+    return { exists: false, error: err instanceof Error ? err.message : 'Network error' };
   }
 }
