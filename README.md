@@ -31,31 +31,31 @@ See [`PHILOSOPHY.md`](./PHILOSOPHY.md) for the full philosophy document.
 
 This is a **Bun monorepo** with three packages:
 
-| Package | Path | Description |
-| ------- | ---- | ----------- |
-| [`@ispv/frontend`](./apps/frontend) | `apps/frontend/` | Public-facing Next.js static archive site (port 3000) |
-| [`@ispv/admin`](./apps/admin) | `apps/admin/` | Next.js admin panel (port 3001) |
+| Package                                 | Path                | Description                                             |
+| --------------------------------------- | ------------------- | ------------------------------------------------------- |
+| [`@ispv/frontend`](./apps/frontend)     | `apps/frontend/`    | Public-facing Next.js static archive site (port 3000)   |
+| [`@ispv/admin`](./apps/admin)           | `apps/admin/`       | Next.js admin panel (port 3001)                         |
 | [`@ispv/extension`](./chrome-extension) | `chrome-extension/` | Chrome extension for collecting Instagram reel metadata |
 
 ## Stack
 
-| Layer | Choice |
-| ----- | ------ |
-| **Monorepo** | Bun workspaces |
-| **Framework** | Next.js 16 (App Router, Turbopack) |
-| **Language** | TypeScript 6, React 19 |
-| **Styling** | Tailwind CSS 4 with `@tailwindcss/postcss` |
-| **Animations** | `tw-animate-css` |
-| **UI Primitives** | Radix UI (Dialog, DropdownMenu, Select, Slot) |
-| **Icons** | lucide-react |
-| **Database** | Supabase (Postgres with RPC functions) |
-| **Blob Storage** | Vercel Blob (thumbnails) |
-| **Image Processing** | sharp |
-| **Validation** | Zod |
-| **Testing** | Vitest (~133 tests) |
-| **Linting** | ESLint 10 via `@vijayhardaha/dev-config` |
-| **Formatting** | Prettier 3 + `prettier-plugin-tailwindcss` |
-| **Package Manager** | Bun |
+| Layer                | Choice                                        |
+| -------------------- | --------------------------------------------- |
+| **Monorepo**         | Bun workspaces                                |
+| **Framework**        | Next.js 16 (App Router, Turbopack)            |
+| **Language**         | TypeScript 6, React 19                        |
+| **Styling**          | Tailwind CSS 4 with `@tailwindcss/postcss`    |
+| **Animations**       | `tw-animate-css`                              |
+| **UI Primitives**    | Radix UI (Dialog, DropdownMenu, Select, Slot) |
+| **Icons**            | lucide-react                                  |
+| **Database**         | Supabase (Postgres with RPC functions)        |
+| **Blob Storage**     | Vercel Blob (thumbnails)                      |
+| **Image Processing** | sharp                                         |
+| **Validation**       | Zod                                           |
+| **Testing**          | Vitest (~133 tests)                           |
+| **Linting**          | ESLint 10 via `@vijayhardaha/dev-config`      |
+| **Formatting**       | Prettier 3 + `prettier-plugin-tailwindcss`    |
+| **Package Manager**  | Bun                                           |
 
 ## Design
 
@@ -64,6 +64,7 @@ This is a **Bun monorepo** with three packages:
 The design echoes the rawness of protest footage: unpolished, direct, honest. The site should feel like a filing cabinet, not a magazine — prioritising **findability over flourish**.
 
 Typography:
+
 - **Body:** Space Grotesk
 - **Display/Headings:** Poppins (extrabold, tracking-tight)
 - **Mono:** JetBrains Mono
@@ -93,6 +94,7 @@ cp .env.example .env.local
 ```
 
 Required variables (see `.env.example` for the full list):
+
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
@@ -119,20 +121,20 @@ bun run build   # Production build for both apps
 
 ## Scripts
 
-| Command | Action |
-| ------- | ------ |
-| `bun run dev` | Start both frontend (:3000) and admin (:3001) |
-| `bun run dev:frontend` | Frontend dev server with Turbopack |
-| `bun run dev:admin` | Admin dev server on port 3001 |
-| `bun run build` | Production build for both apps |
-| `bun run lint` | ESLint check across all workspaces |
-| `bun run lint:fix` | ESLint auto-fix |
-| `bun run format` | Prettier format all |
-| `bun run format:check` | Prettier check |
-| `bun run tsc` | TypeScript type-check (`tsc --noEmit`) |
-| `bun run test` | Run all tests (Vitest) across workspaces |
-| `bun run test:watch` | Watch mode for tests |
-| `bun run test:coverage` | Run tests with coverage report |
+| Command                 | Action                                        |
+| ----------------------- | --------------------------------------------- |
+| `bun run dev`           | Start both frontend (:3000) and admin (:3001) |
+| `bun run dev:frontend`  | Frontend dev server with Turbopack            |
+| `bun run dev:admin`     | Admin dev server on port 3001                 |
+| `bun run build`         | Production build for both apps                |
+| `bun run lint`          | ESLint check across all workspaces            |
+| `bun run lint:fix`      | ESLint auto-fix                               |
+| `bun run format`        | Prettier format all                           |
+| `bun run format:check`  | Prettier check                                |
+| `bun run tsc`           | TypeScript type-check (`tsc --noEmit`)        |
+| `bun run test`          | Run all tests (Vitest) across workspaces      |
+| `bun run test:watch`    | Watch mode for tests                          |
+| `bun run test:coverage` | Run tests with coverage report                |
 
 ## Project Structure
 
@@ -172,6 +174,7 @@ bun run build   # Production build for both apps
 All video data is stored in **Supabase** (`videos`, `categories`, `locations` tables). The frontend fetches from Supabase via server components or client-side `useEffect`. A DB adapter (`dbRowToVideoEntry`) normalises raw database rows into `VideoEntry` objects for the frontend.
 
 Key types:
+
 - **`VideoEntry`** — full video record (id, description, url, thumbnail, city, location, category, tags, hashtags, trending flag, etc.)
 - **`VideoRecord`** (admin) — full DB row type (includes status, trashed_at, view_count, etc.)
 
@@ -179,15 +182,15 @@ See [`apps/frontend/knowledge.md`](./apps/frontend/knowledge.md) and [`apps/admi
 
 ## API Routes (Admin)
 
-| Endpoint | Auth | Purpose |
-| -------- | ---- | ------- |
-| `POST /api/public/submit` | Public (rate-limited) | Video submission from the frontend |
-| `POST /api/public/views` | Public (rate-limited) | View count increment |
-| `GET /api/auth/videos` | Auth required | List videos (paginated, filterable) |
-| `POST /api/auth/videos` | Auth required | Create video |
-| `PUT /api/auth/videos` | Auth required | Update video |
-| `POST /api/auth/videos/bulk` | Auth required | Bulk actions (trash/restore/delete) |
-| `POST /api/auth/enrich` | Auth required | Enrich video metadata |
+| Endpoint                     | Auth                  | Purpose                             |
+| ---------------------------- | --------------------- | ----------------------------------- |
+| `POST /api/public/submit`    | Public (rate-limited) | Video submission from the frontend  |
+| `POST /api/public/views`     | Public (rate-limited) | View count increment                |
+| `GET /api/auth/videos`       | Auth required         | List videos (paginated, filterable) |
+| `POST /api/auth/videos`      | Auth required         | Create video                        |
+| `PUT /api/auth/videos`       | Auth required         | Update video                        |
+| `POST /api/auth/videos/bulk` | Auth required         | Bulk actions (trash/restore/delete) |
+| `POST /api/auth/enrich`      | Auth required         | Enrich video metadata               |
 
 ## Data Ethos
 
