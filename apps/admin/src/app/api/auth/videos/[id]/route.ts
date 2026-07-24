@@ -28,23 +28,23 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid request body' }, { status: 400 });
   }
 
-  if (body.video_url) {
-    const dup = await checkDuplicate(supabase, 'video_url', body.video_url, id);
+  if (parsed.data.video_url) {
+    const dup = await checkDuplicate(supabase, 'video_url', parsed.data.video_url, id);
     if (dup) {
       return dup;
     }
   }
 
-  if (body.video_id) {
-    const dup = await checkDuplicate(supabase, 'video_id', body.video_id, id);
+  if (parsed.data.video_id) {
+    const dup = await checkDuplicate(supabase, 'video_id', parsed.data.video_id, id);
     if (dup) {
       return dup;
     }
   }
 
-  const { data, error } = await supabase.from('videos').update(body).eq('id', id).select().single();
+  const { data, error } = await supabase.from('videos').update(parsed.data).eq('id', id).select().single();
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Update failed' }, { status: 500 });
   }
   return NextResponse.json(data);
 }
