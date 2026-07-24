@@ -1,10 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, Suspense, type ComponentPropsWithoutRef, type JSX } from 'react';
+import { Suspense, type ComponentPropsWithoutRef, type JSX } from 'react';
 
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-
-import { useToast } from '@/components/Toast';
+import { useVideosPageState } from '@/app/videos/useVideosPageState';
 import { Button } from '@/components/ui/Button';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { Pagination } from '@/components/ui/Pagination';
@@ -14,37 +12,10 @@ import { VideoFormModal } from '@/components/VideoFormModal';
 import { CATEGORIES } from '@/constants/categories';
 import { TAG_VARIANTS, type TagVariant } from '@/constants/colors';
 import { LOCATIONS } from '@/constants/locations';
-import { usePagination } from '@/hooks/usePagination';
+import { STATUSES, STATUS_LABELS, BULK_STATUS_OPTIONS } from '@/constants/status';
 import { cn } from '@/lib/cn';
 import { displayVideoUrl } from '@/lib/instagram';
-import { getVideosForApi } from '@/lib/rpc';
-import { createClient } from '@/lib/supabase';
 import type { VideoRecord } from '@/lib/types';
-
-/**
- * All possible video statuses for filtering, including empty string for "All" and "trashed".
- */
-const STATUSES = ['', 'draft', 'pending_review', 'published', 'rejected', 'trashed'] as const;
-
-/**
- * Human-readable labels for each video status value.
- */
-const STATUS_LABELS: Record<string, string> = {
-  '': 'All',
-  draft: 'Draft',
-  pending_review: 'Pending',
-  published: 'Published',
-  rejected: 'Rejected',
-  trashed: 'Trashed',
-};
-
-/**
- * Number of videos displayed per page in the table.
- */
-const PER_PAGE = 15;
-
-/** Valid status values for bulk updates, in display order. */
-const BULK_STATUS_OPTIONS = ['draft', 'pending_review', 'published', 'rejected'] as const;
 
 /**
  * Videos management page with filtering, pagination, bulk operations, and CRUD.
@@ -448,69 +419,17 @@ function VideosTable({
             </tr>
           ) : (
             videos.map((v) => (
-              <tr
+              <VideoRow
                 key={v.id}
-                className={cn(
-                  'border-b border-black/10 hover:bg-yellow-50',
-                  selectedIds.has(v.id) && 'bg-yellow-100',
-                  isTrashed && 'opacity-80'
-                )}
-              >
-                <Td>
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 cursor-pointer accent-yellow-500"
-                    checked={selectedIds.has(v.id)}
-                    onChange={(e) => onSelectOne(v.id, e.target.checked)}
-                    aria-label={`Select video ${v.video_id ?? v.video_url}`}
-                  />
-                </Td>
-                <Td>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={v.thumbnail_url ?? '/sample.svg'}
-                    alt=""
-                    loading="lazy"
-                    className="h-10 w-10 border border-black object-cover"
-                    onError={(e) => {
-                      const el = e.target as HTMLImageElement;
-                      if (!el.src.endsWith('/sample.svg')) {
-                        el.src = '/sample.svg';
-                      }
-                    }}
-                  />
-                </Td>
-                <Td className="max-w-50 truncate font-bold">
-                  <a
-                    href={displayVideoUrl(v)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-yellow-500"
-                  >
-                    {v.video_id ?? '–'}
-                  </a>
-                </Td>
-                <Td>{v.city ?? '–'}</Td>
-                <Td>
-                  <CategoryBadge category={v.category} />
-                </Td>
-                <Td className="max-w-40 truncate">{v.tags?.length ? v.tags.join(', ') : '–'}</Td>
-                <Td>
-                  <StatusCell
-                    video={v}
-                    isTrashed={isTrashed}
-                    changingStatus={changingStatus}
-                    onChange={onInlineStatusChange}
-                  />
-                </Td>
-                <Td>{formatDate(v.created_at)}</Td>
-                <Td>{formatDate(v.updated_at)}</Td>
-                <Td>{formatDate(v.video_post_date)}</Td>
-                {isTrashed && <Td className="text-black/60">{formatDate(v.trashed_at)}</Td>}
-                <Td>
-                  <VideoActions video={v} isTrashed={isTrashed} onEdit={onEdit} onAction={onAction} />
-                </Td>
-              </tr>
+                video={v}
+                isTrashed={isTrashed}
+                selected={selectedIds.has(v.id)}
+                changingStatus={changingStatus}
+                onSelectOne={onSelectOne}
+                onEdit={onEdit}
+                onAction={onAction}
+                onInlineStatusChange={onInlineStatusChange}
+              />
             ))
           )}
         </tbody>
@@ -519,228 +438,150 @@ function VideosTable({
   );
 }
 
+// ─── VideoRow sub-component ───────────────────────────────────────────────────
+
+/**
+ * A single table row for a video entry.
+ *
+ * @param {object} props - Component properties.
+ * @param {VideoRecord} props.video - Video record to display.
+ * @param {boolean} props.isTrashed - Whether the trashed filter is active.
+ * @param {boolean} props.selected - Whether this video is selected.
+ * @param {Set<string>} props.changingStatus - Set of video IDs whose status is being updated.
+ * @param {(id: string, checked: boolean) => void} props.onSelectOne - Callback when checkbox toggles.
+ * @param {(video: VideoRecord) => void} props.onEdit - Callback to open edit modal.
+ * @param {(id: string, action: 'trash' | 'restore' | 'delete') => void} props.onAction - Callback for trash/restore/delete.
+ * @param {(id: string, newStatus: string) => void} props.onInlineStatusChange - Callback for inline status change.
+ *
+ * @returns {JSX.Element} Rendered table row.
+ */
+function VideoRow({
+  video,
+  isTrashed,
+  selected,
+  changingStatus,
+  onSelectOne,
+  onEdit,
+  onAction,
+  onInlineStatusChange,
+}: {
+  video: VideoRecord;
+  isTrashed: boolean;
+  selected: boolean;
+  changingStatus: Set<string>;
+  onSelectOne: (id: string, checked: boolean) => void;
+  onEdit: (video: VideoRecord) => void;
+  onAction: (id: string, action: 'trash' | 'restore' | 'delete') => void;
+  onInlineStatusChange: (id: string, newStatus: string) => void;
+}): JSX.Element {
+  return (
+    <tr
+      className={cn(
+        'border-b border-black/10 hover:bg-yellow-50',
+        selected && 'bg-yellow-100',
+        isTrashed && 'opacity-80'
+      )}
+    >
+      <Td>
+        <input
+          type="checkbox"
+          className="h-4 w-4 cursor-pointer accent-yellow-500"
+          checked={selected}
+          onChange={(e) => onSelectOne(video.id, e.target.checked)}
+          aria-label={`Select video ${video.video_id ?? video.video_url}`}
+        />
+      </Td>
+      <Td>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={video.thumbnail_url ?? '/sample.svg'}
+          alt=""
+          loading="lazy"
+          className="h-10 w-10 border border-black object-cover"
+          onError={(e) => {
+            const el = e.target as HTMLImageElement;
+            if (!el.src.endsWith('/sample.svg')) {
+              el.src = '/sample.svg';
+            }
+          }}
+        />
+      </Td>
+      <Td className="max-w-50 truncate font-bold">
+        <a
+          href={displayVideoUrl(video)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-yellow-500"
+        >
+          {video.video_id ?? '\u2013'}
+        </a>
+      </Td>
+      <Td>{video.city ?? '\u2013'}</Td>
+      <Td>
+        <CategoryBadge category={video.category} />
+      </Td>
+      <Td className="max-w-40 truncate">{video.tags?.length ? video.tags.join(', ') : '\u2013'}</Td>
+      <Td>
+        <StatusCell
+          video={video}
+          isTrashed={isTrashed}
+          changingStatus={changingStatus}
+          onChange={onInlineStatusChange}
+        />
+      </Td>
+      <Td>{formatDate(video.created_at)}</Td>
+      <Td>{formatDate(video.updated_at)}</Td>
+      <Td>{formatDate(video.video_post_date)}</Td>
+      {isTrashed && <Td className="text-black/60">{formatDate(video.trashed_at)}</Td>}
+      <Td>
+        <VideoActions video={video} isTrashed={isTrashed} onEdit={onEdit} onAction={onAction} />
+      </Td>
+    </tr>
+  );
+}
+
 // ─── Main page content ───────────────────────────────────────────────────────
 
 /**
- * Inner component that uses URL-based search params for status filtering and pagination.
+ * Inner component that uses the useVideosPageState hook for state management.
  *
  * @returns {JSX.Element} Rendered videos page content with table, filters, and modals.
  */
 function VideosPageContent(): JSX.Element {
-  const [videos, setVideos] = useState<VideoRecord[]>([]);
-  const [editVideo, setEditVideo] = useState<VideoRecord | null>(null);
-  const [showAdd, setShowAdd] = useState(false);
-  const [totalCount, setTotalCount] = useState(0);
-  const [actionConfirm, setActionConfirm] = useState<{ id: string; action: 'trash' | 'restore' | 'delete' } | null>(
-    null
-  );
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [bulkLoading, setBulkLoading] = useState(false);
-  const [bulkAction, setBulkAction] = useState<string>('');
-  const [bulkConfirm, setBulkConfirm] = useState<{ action: string } | null>(null);
-  const [changingStatus, setChangingStatus] = useState<Set<string>>(new Set());
-  const selectAllRef = useRef<HTMLInputElement>(null);
-  const supabase = createClient();
-  const { toast } = useToast();
-  const { page, goToPage } = usePagination();
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const status = searchParams.get('status') || '';
-  const search = searchParams.get('q') || '';
-  const isTrashed = status === 'trashed';
-
-  const setStatus = useCallback(
-    (newStatus: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (newStatus) {
-        params.set('status', newStatus);
-      } else {
-        params.delete('status');
-      }
-      params.delete('page');
-      const qs = params.toString();
-      router.replace(qs ? `${pathname}?${qs}` : pathname);
-    },
-    [router, pathname, searchParams]
-  );
-
-  const handleReset = useCallback(() => {
-    router.replace(pathname);
-  }, [router, pathname]);
-
-  const loadData = useCallback(async () => {
-    if (isTrashed) {
-      const { data } = await supabase
-        .from('videos')
-        .select('*')
-        .not('trashed_at', 'is', null)
-        .order('trashed_at', { ascending: false });
-
-      setVideos((data ?? []) as VideoRecord[]);
-      setTotalCount(data?.length ?? 0);
-    } else {
-      const response = await getVideosForApi(supabase, {
-        status: status || null,
-        search: search || null,
-        page,
-        per_page: PER_PAGE,
-      });
-
-      if (response) {
-        setVideos(response.data);
-        setTotalCount(response.pagination.total_count);
-      }
-    }
-    setSelectedIds(new Set());
-  }, [isTrashed, status, search, page, supabase]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => loadData(), 0);
-    return () => clearTimeout(timer);
-  }, [loadData]);
-
-  /** Update the indeterminate state of the select-all checkbox. */
-  useEffect(() => {
-    const el = selectAllRef.current;
-    if (!el) {
-      return;
-    }
-    const someSelected = selectedIds.size > 0 && selectedIds.size < videos.length;
-    el.indeterminate = someSelected;
-  }, [selectedIds, videos.length]);
-
-  const handleSelectAll = useCallback(
-    (checked: boolean) => {
-      if (checked) {
-        setSelectedIds(new Set(videos.map((v) => v.id)));
-      } else {
-        setSelectedIds(new Set());
-      }
-    },
-    [videos]
-  );
-
-  const handleSelectOne = useCallback((id: string, checked: boolean) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (checked) {
-        next.add(id);
-      } else {
-        next.delete(id);
-      }
-      return next;
-    });
-  }, []);
-
-  const handleSingleAction = useCallback(
-    async (id: string, action: 'trash' | 'restore' | 'delete') => {
-      const res = await fetch(`/api/auth/videos/${id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action }),
-      });
-
-      setActionConfirm(null);
-
-      if (res.ok) {
-        const label = action === 'trash' ? 'trashed' : action === 'restore' ? 'restored' : 'permanently deleted';
-        toast(`Video ${label}`, 'success');
-        loadData();
-      } else {
-        const err = await res.json().catch(() => ({ error: 'Action failed' }));
-        toast(err.error || 'Action failed', 'error');
-      }
-    },
-    [toast, loadData]
-  );
-
-  const executeBulkAction = useCallback(
-    async (action: string) => {
-      setBulkLoading(true);
-      const ids = Array.from(selectedIds);
-      setBulkAction('');
-
-      let body: Record<string, unknown>;
-
-      if (action === 'trash' || action === 'restore' || action === 'delete') {
-        body = { action, ids };
-      } else {
-        body = { action: 'update_status', ids, status: action };
-      }
-
-      const res = await fetch('/api/auth/videos/bulk', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      setBulkLoading(false);
-
-      if (res.ok) {
-        const labels: Record<string, string> = { trash: 'trashed', restore: 'restored', delete: 'permanently deleted' };
-        const label = labels[action] ?? `updated to ${STATUS_LABELS[action] ?? action}`;
-        toast(`${ids.length} video(s) ${label}`, 'success');
-        setSelectedIds(new Set());
-        loadData();
-      } else {
-        const err = await res.json().catch(() => ({ error: 'Bulk operation failed' }));
-        toast(err.error || 'Bulk operation failed', 'error');
-      }
-    },
-    [selectedIds, toast, loadData]
-  );
-
-  const handleApplyBulk = useCallback(() => {
-    if (bulkAction === 'trash' || bulkAction === 'delete') {
-      // Show confirmation for destructive actions
-      setBulkConfirm({ action: bulkAction });
-    } else {
-      // Execute non-destructive actions immediately
-      executeBulkAction(bulkAction);
-    }
-  }, [bulkAction, executeBulkAction]);
-
-  const handleConfirmBulk = useCallback(async () => {
-    if (!bulkConfirm) {
-      return;
-    }
-    setBulkConfirm(null);
-    await executeBulkAction(bulkConfirm.action);
-  }, [bulkConfirm, executeBulkAction]);
-
-  const handleInlineStatusChange = useCallback(
-    async (id: string, newStatus: string) => {
-      setChangingStatus((prev) => new Set(prev).add(id));
-      const res = await fetch(`/api/auth/videos/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      setChangingStatus((prev) => {
-        const next = new Set(prev);
-        next.delete(id);
-        return next;
-      });
-      if (res.ok) {
-        toast(`Status updated to ${STATUS_LABELS[newStatus] ?? newStatus}`, 'success');
-        loadData();
-      } else {
-        const err = await res.json().catch(() => ({ error: 'Failed to update status' }));
-        toast(err.error || 'Failed to update status', 'error');
-      }
-    },
-    [toast, loadData]
-  );
-
-  const allSelected = videos.length > 0 && selectedIds.size === videos.length;
-  const totalPages = isTrashed ? 1 : Math.ceil(totalCount / PER_PAGE);
-
-  const actionConfirmLabel =
-    actionConfirm?.action === 'trash'
-      ? 'Trash'
-      : actionConfirm?.action === 'restore'
-        ? 'Restore'
-        : 'Permanently Delete';
+  const {
+    videos,
+    editVideo,
+    showAdd,
+    actionConfirm,
+    selectedIds,
+    bulkLoading,
+    bulkAction,
+    bulkConfirm,
+    changingStatus,
+    selectAllRef,
+    allSelected,
+    isTrashed,
+    totalPages,
+    actionConfirmLabel,
+    page,
+    goToPage,
+    status,
+    setEditVideo,
+    setShowAdd,
+    setBulkAction,
+    setActionConfirm,
+    setSelectedIds,
+    setBulkConfirm,
+    setStatus,
+    handleReset,
+    handleSelectAll,
+    handleSelectOne,
+    handleSingleAction,
+    handleApplyBulk,
+    handleConfirmBulk,
+    handleInlineStatusChange,
+    loadData,
+  } = useVideosPageState();
 
   return (
     <section className="py-8" aria-labelledby="videos-heading">
