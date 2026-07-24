@@ -96,6 +96,65 @@ const EXCLUDED = [
 ];
 
 /**
+ * Principle card with icon, title, and description body.
+ *
+ * @param {object} props - Component properties.
+ * @param {object} props.icon - Icon element to display.
+ * @param {string} props.title - Principle title.
+ * @param {object} props.children - Description body text.
+ * @param {string} props.color - Tailwind background colour classes.
+ *
+ * @returns {JSX.Element} Rendered principle card.
+ */
+function Principle({
+  icon,
+  title,
+  children,
+  color,
+}: {
+  icon: ReactNode;
+  title: string;
+  children: ReactNode;
+  color: string;
+}): JSX.Element {
+  return (
+    <div className={cn('shadow-brutal border-2 border-black p-5', color)}>
+      <div className="flex items-center gap-4">
+        <div className="shadow-brutal-sm mb-2 flex size-12 items-center justify-center border-2 border-black bg-white text-black">
+          {icon}
+        </div>
+        <h3 className="font-display text-xl font-extrabold uppercase">{title}</h3>
+      </div>
+      <p className="mt-1 leading-relaxed">{children}</p>
+    </div>
+  );
+}
+
+/**
+ * Numbered step card with a step number, title, and description.
+ *
+ * @param {object} props - Component properties.
+ * @param {number} props.n - Step number.
+ * @param {string} props.title - Step title.
+ * @param {object} props.children - Step description text.
+ *
+ * @returns {JSX.Element} Rendered step card.
+ */
+function Step({ n, title, children }: { n: number; title: string; children: ReactNode }): JSX.Element {
+  return (
+    <div className="shadow-brutal flex items-start gap-4 border-2 border-black bg-white p-4">
+      <div className="font-display shadow-brutal-sm flex h-10 w-10 shrink-0 items-center justify-center border-2 border-black bg-yellow-400 text-lg font-extrabold">
+        {n}
+      </div>
+      <div>
+        <h4 className="font-display text-lg font-extrabold uppercase">{title}</h4>
+        <p className="mt-1 text-black/80">{children}</p>
+      </div>
+    </div>
+  );
+}
+
+/**
  * About page explaining the archive's principles, submission process, and mission.
  *
  * @returns {JSX.Element} Rendered about page.
@@ -211,65 +270,6 @@ export default function AboutPage(): JSX.Element {
           </Link>
         </Container>
       </section>
-    </div>
-  );
-}
-
-/**
- * Principle card with icon, title, and description body.
- *
- * @param {object} props - Component properties.
- * @param {object} props.icon - Icon element to display.
- * @param {string} props.title - Principle title.
- * @param {object} props.children - Description body text.
- * @param {string} props.color - Tailwind background colour classes.
- *
- * @returns {JSX.Element} Rendered principle card.
- */
-function Principle({
-  icon,
-  title,
-  children,
-  color,
-}: {
-  icon: ReactNode;
-  title: string;
-  children: ReactNode;
-  color: string;
-}): JSX.Element {
-  return (
-    <div className={cn('shadow-brutal border-2 border-black p-5', color)}>
-      <div className="flex items-center gap-4">
-        <div className="shadow-brutal-sm mb-2 flex size-12 items-center justify-center border-2 border-black bg-white text-black">
-          {icon}
-        </div>
-        <h3 className="font-display text-xl font-extrabold uppercase">{title}</h3>
-      </div>
-      <p className="mt-1 leading-relaxed">{children}</p>
-    </div>
-  );
-}
-
-/**
- * Numbered step card with a step number, title, and description.
- *
- * @param {object} props - Component properties.
- * @param {number} props.n - Step number.
- * @param {string} props.title - Step title.
- * @param {object} props.children - Step description text.
- *
- * @returns {JSX.Element} Rendered step card.
- */
-function Step({ n, title, children }: { n: number; title: string; children: ReactNode }): JSX.Element {
-  return (
-    <div className="shadow-brutal flex items-start gap-4 border-2 border-black bg-white p-4">
-      <div className="font-display shadow-brutal-sm flex h-10 w-10 shrink-0 items-center justify-center border-2 border-black bg-yellow-400 text-lg font-extrabold">
-        {n}
-      </div>
-      <div>
-        <h4 className="font-display text-lg font-extrabold uppercase">{title}</h4>
-        <p className="mt-1 text-black/80">{children}</p>
-      </div>
     </div>
   );
 }
