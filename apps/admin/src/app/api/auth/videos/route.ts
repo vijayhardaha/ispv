@@ -17,9 +17,13 @@ export async function GET(): Promise<NextResponse> {
     return guard;
   }
 
-  const { data, error } = await supabase.from('videos').select('*').order('created_at', { ascending: false });
+  const { data, error } = await supabase
+    .from('videos')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(100);
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch videos' }, { status: 500 });
   }
 
   return NextResponse.json(data);
@@ -47,23 +51,23 @@ export async function POST(req: Request): Promise<NextResponse> {
     return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid request body' }, { status: 400 });
   }
 
-  if (body.video_url) {
-    const dup = await checkDuplicate(supabase, 'video_url', body.video_url);
+  if (parsed.data.video_url) {
+    const dup = await checkDuplicate(supabase, 'video_url', parsed.data.video_url);
     if (dup) {
       return dup;
     }
   }
 
-  if (body.video_id) {
-    const dup = await checkDuplicate(supabase, 'video_id', body.video_id);
+  if (parsed.data.video_id) {
+    const dup = await checkDuplicate(supabase, 'video_id', parsed.data.video_id);
     if (dup) {
       return dup;
     }
   }
 
-  const { data, error } = await supabase.from('videos').insert(body).select().single();
+  const { data, error } = await supabase.from('videos').insert(parsed.data).select().single();
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create video' }, { status: 500 });
   }
 
   return NextResponse.json(data);
