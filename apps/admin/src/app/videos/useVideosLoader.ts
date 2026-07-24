@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
@@ -50,7 +50,7 @@ export interface UseVideosLoaderReturn {
 export function useVideosLoader(): UseVideosLoaderReturn {
   const [videos, setVideos] = useState<VideoRecord[]>([]);
   const [totalCount, setTotalCount] = useState(0);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const { page, goToPage } = usePagination();
   const router = useRouter();
   const pathname = usePathname();
@@ -80,7 +80,7 @@ export function useVideosLoader(): UseVideosLoaderReturn {
 
   const loadData = useCallback(async () => {
     const response = await getVideosForApi(supabase, {
-      status: status || null,
+      status: isTrashed ? null : status || null,
       search: search || null,
       page,
       per_page: PER_PAGE,
