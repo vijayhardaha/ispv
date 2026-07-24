@@ -33,7 +33,9 @@ export function SearchInput({
 
   useEffect(() => {
     return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
     };
   }, []);
 
@@ -56,7 +58,9 @@ export function SearchInput({
     (e: ChangeEvent<HTMLInputElement>) => {
       const newVal = e.target.value;
       setValue(newVal);
-      if (timerRef.current) clearTimeout(timerRef.current);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
       timerRef.current = setTimeout(() => syncToUrl(newVal), debounceMs);
     },
     [syncToUrl, debounceMs]
