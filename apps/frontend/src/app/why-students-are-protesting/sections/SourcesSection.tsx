@@ -5,21 +5,32 @@ import { type JSX } from 'react';
 import { ExternalLink } from 'lucide-react';
 
 import { Container } from '@/components/ui/Container';
-import { SOURCES } from '@/constants/why-protest-data';
+
+/**
+ * A referenced source with title, URL, and description.
+ */
+interface Source {
+  title: string;
+  url: string;
+  description: string;
+}
 
 /**
  * Lists external sources and references for the protest information.
  *
+ * @param {{ sources: Source[] }} props - Component properties.
+ * @param {Source[]} props.sources - Array of source entries to render.
+ *
  * @returns {JSX.Element} Rendered sources section.
  */
-export function SourcesSection(): JSX.Element {
+export function SourcesSection({ sources }: { sources: Source[] }): JSX.Element {
   return (
     <section className="py-12">
       <Container>
         <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase md:text-4xl">Sources</h2>
         <p className="mt-2 text-lg">Information on this page is drawn from the following publicly available sources.</p>
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
-          {SOURCES.map((source) => (
+          {sources.map((source) => (
             <a
               key={source.title}
               href={source.url}
