@@ -24,7 +24,9 @@ export interface UseVideosModalState {
 }
 
 /**
- * Combined return type of the useVideosPageState hook.
+ * Combined return type composing all sub-hook interfaces for the videos page.
+ *
+ * @type {UseVideosPageStateReturn}
  */
 export interface UseVideosPageStateReturn
   extends UseVideosLoaderReturn, UseVideosSelectionReturn, UseVideosActionsReturn, UseVideosModalState {}

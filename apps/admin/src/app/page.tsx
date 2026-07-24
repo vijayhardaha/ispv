@@ -44,11 +44,12 @@ interface LocationWithCount extends LocationRecord {
 }
 
 /**
- * Fetches counts of videos by status.
+ * A single status statistic with display label, colour, and video count.
  *
- * @param {{ from: (table: string) => { select: (columns: string, opts: { count: 'exact'; head: true }) => Promise<{ count: number | null }> } }} supabase - Supabase client.
- *
- * @returns {Promise<Array<{ label: string; color: string; count: number }>>} Array of status stat objects.
+ * @type {StatusStat}
+ * @property {string} label - Display label for the status (e.g. "Published").
+ * @property {string} color - Tailwind background colour class for the badge.
+ * @property {number} count - Number of videos in this status category.
  */
 interface StatusStat {
   label: string;
