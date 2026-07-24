@@ -1,7 +1,7 @@
 import type { ComponentProps, JSX } from 'react';
 
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Slot } from 'radix-ui';
+import { Slot } from '@radix-ui/react-slot';
 
 import { cn } from '@/lib/cn';
 
@@ -143,7 +143,7 @@ function Button({
 }: ComponentProps<'button'>
   & VariantProps<typeof buttonVariants> & { asChild?: boolean; shadow?: boolean; loading?: boolean }): JSX.Element {
   const classes = cn(buttonVariants({ variant, size, className }));
-  const Comp = asChild ? Slot.Root : 'button';
+  const Comp = asChild ? Slot : 'button';
   const isDisabled = disabled || loading;
 
   if (asChild) {
