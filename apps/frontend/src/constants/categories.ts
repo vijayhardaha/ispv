@@ -2,7 +2,6 @@
  * Category record shape.
  */
 export interface DbCategory {
-  id: string;
   slug: string;
   name: string;
   tag: string;
@@ -16,7 +15,6 @@ export interface DbCategory {
  */
 export const CATEGORIES: DbCategory[] = [
   {
-    id: '1',
     slug: 'protest-marches',
     name: 'Protest Marches',
     tag: 'Voices in Motion',
@@ -25,7 +23,6 @@ export const CATEGORIES: DbCategory[] = [
       'Explore publicly shared videos of protest marches across India, featuring peaceful rallies, processions, public gatherings, patriotic songs, and community participation.',
   },
   {
-    id: '2',
     slug: 'police-conduct',
     name: 'Police Conduct',
     tag: 'On the Frontline',
@@ -34,16 +31,6 @@ export const CATEGORIES: DbCategory[] = [
       'Browse videos documenting police presence, crowd management, barricading, detentions, and alleged use of force during student protests across India.',
   },
   {
-    id: '3',
-    slug: 'night-updates',
-    name: 'Night Updates',
-    tag: 'After Sunset',
-    color: 'black',
-    description:
-      'Explore videos from evening and overnight protests, including speeches, volunteer activities, and updates from protest locations.',
-  },
-  {
-    id: '4',
     slug: 'gen-z-moments',
     name: 'Gen Z Moments',
     tag: 'Generation Speaks',
@@ -52,7 +39,6 @@ export const CATEGORIES: DbCategory[] = [
       'Discover videos highlighting the leadership, creativity, participation, and voices of Gen Z students during peaceful protests and public movements.',
   },
   {
-    id: '5',
     slug: 'official-statements',
     name: 'Official Statements',
     tag: 'From the Organizers',
@@ -61,7 +47,6 @@ export const CATEGORIES: DbCategory[] = [
       'Explore official announcements, press briefings, speeches, campaign updates, and public statements shared by protest organizers and representatives.',
   },
   {
-    id: '6',
     slug: 'public-figures-creators',
     name: 'Public Figures & Creators',
     tag: 'Public Voices',
@@ -70,7 +55,6 @@ export const CATEGORIES: DbCategory[] = [
       'Watch videos shared by influencers, journalists, actors, educators, activists, and other public figures documenting or supporting student protests.',
   },
   {
-    id: '7',
     slug: 'news-coverage',
     name: 'News Coverage',
     tag: 'In the Headlines',
@@ -79,7 +63,6 @@ export const CATEGORIES: DbCategory[] = [
       'Browse television reports, digital news clips, interviews, debates, and media coverage documenting student protests and related developments.',
   },
   {
-    id: '8',
     slug: 'protest-vlogs',
     name: 'Protest Vlogs',
     tag: 'Through Their Lens',
@@ -88,7 +71,6 @@ export const CATEGORIES: DbCategory[] = [
       'Explore personal vlog style videos documenting journeys, behind the scenes moments, daily experiences, and firsthand accounts from protest participants.',
   },
   {
-    id: '9',
     slug: 'acts-of-kindness',
     name: 'Acts of Kindness',
     tag: 'Humanity First',
@@ -97,7 +79,6 @@ export const CATEGORIES: DbCategory[] = [
       'Discover inspiring moments of compassion, solidarity, volunteer support, food distribution, medical assistance, and kindness shared during protests.',
   },
   {
-    id: '10',
     slug: 'women-leading-movement',
     name: 'Women Leading the Movement',
     tag: 'Leading the Change',
@@ -106,7 +87,6 @@ export const CATEGORIES: DbCategory[] = [
       'Explore videos highlighting women leading marches, organizing events, delivering speeches, coordinating volunteers, and inspiring peaceful public participation.',
   },
   {
-    id: '11',
     slug: 'solidarity-protection',
     name: 'Solidarity & Protection',
     tag: 'Standing Together',
@@ -115,7 +95,6 @@ export const CATEGORIES: DbCategory[] = [
       'Watch videos showing protesters protecting one another, supporting vulnerable participants, forming human chains, and demonstrating unity during protests.',
   },
   {
-    id: '12',
     slug: 'senior-citizens-voices',
     name: "Senior Citizens' Voices",
     tag: 'Wisdom Speaks',
@@ -124,7 +103,6 @@ export const CATEGORIES: DbCategory[] = [
       'Discover speeches, interviews, and heartfelt messages from senior citizens sharing support, advice, and perspectives on student movements across India.',
   },
   {
-    id: '13',
     slug: 'children-voices',
     name: "Children's Voices",
     tag: 'Voices of Tomorrow',
@@ -133,7 +111,6 @@ export const CATEGORIES: DbCategory[] = [
       'Browse publicly shared videos featuring children expressing messages of hope, participation, awareness, and support alongside peaceful public demonstrations.',
   },
   {
-    id: '14',
     slug: 'human-rights',
     name: 'Human Rights',
     tag: 'Rights & Freedom',
@@ -142,7 +119,6 @@ export const CATEGORIES: DbCategory[] = [
       'Explore videos documenting alleged human rights concerns, civil liberties issues, public accountability, and reported incidents during student protests.',
   },
   {
-    id: '15',
     slug: 'celebrations-cultural-events',
     name: 'Celebrations & Cultural Events',
     tag: 'Culture & Unity',
@@ -151,7 +127,14 @@ export const CATEGORIES: DbCategory[] = [
       'Discover patriotic songs, cultural performances, celebrations, street art, poetry, music, and creative expressions shared during student protests.',
   },
   {
-    id: '16',
+    slug: 'night-updates',
+    name: 'Night Updates',
+    tag: 'After Sunset',
+    color: 'black',
+    description:
+      'Explore videos from evening and overnight protests, including speeches, volunteer activities, and updates from protest locations.',
+  },
+  {
     slug: 'counter-protests-public-reactions',
     name: 'Counter Protests & Public Reactions',
     tag: 'Different Perspectives',
@@ -160,7 +143,6 @@ export const CATEGORIES: DbCategory[] = [
       'Explore videos documenting counter demonstrations, differing viewpoints, public reactions, debates, and discussions surrounding student protests.',
   },
   {
-    id: '17',
     slug: 'media-analysis',
     name: 'Media Analysis',
     tag: 'Media Under Review',
@@ -168,14 +150,7 @@ export const CATEGORIES: DbCategory[] = [
     description:
       'Browse videos discussing, comparing, or analyzing media coverage, reporting styles, public criticism, and journalism related to student protests.',
   },
-  {
-    id: '18',
-    slug: 'other',
-    name: 'Other',
-    tag: 'More Stories',
-    color: 'gray',
-    description: 'Uncategorised protest content.',
-  },
+  { slug: 'other', name: 'Other', tag: 'More Stories', color: 'gray', description: 'Uncategorised protest content.' },
 ];
 
 /**
@@ -185,7 +160,7 @@ export const FEATURED_CATEGORIES_SLUGS = [
   'protest-marches',
   'police-conduct',
   'gen-z-moments',
-  'night-updates',
+  'news-coverage',
   'human-rights',
   'women-leading-movement',
 ];
