@@ -10,13 +10,27 @@
 
 'use strict';
 
+/** Normal button content. */
+const BUTTON_REST = '+';
+
+/** Animated spinner SVG shown while a request is in flight. */
+const BUTTON_SPINNER = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" style="animation:rv-spin .6s linear infinite"><path d="M12 2a10 10 0 0 1 10 10"/></svg>`;
+
+/** Injects the keyframe rule for the spinner animation once. */
+function ensureSpinnerStyles() {
+  if (document.getElementById('rv-spinner-css')) return;
+  const s = document.createElement('style');
+  s.id = 'rv-spinner-css';
+  s.textContent = '@keyframes rv-spin{to{transform:rotate(360deg)}}';
+  document.head.appendChild(s);
+}
+
+/** Shared button style text (sans content). */
+const BTN_STYLE =
+  'position:fixed;bottom:100px;right:40px;z-index:99999;width:56px;height:56px;border:2px solid #000;border-radius:10px;background:#facc15;color:#000;font-size:28px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;';
+
 /** Floating collect button HTML template. */
-const BUTTON_HTML = `
-  <button id="reel-vault-collect" title="Collect to Reel Vault"
-    style="position:fixed;bottom:100px;right:40px;z-index:99999;width:56px;height:56px;border:2px solid #000;border-radius:10px;background:#facc15;color:#000;font-size:28px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;">
-    +
-  </button>
-`;
+const BUTTON_HTML = `<button id="reel-vault-collect" title="Collect to Reel Vault" style="${BTN_STYLE}">${BUTTON_REST}</button>`;
 
 /** Notification toast styles for success, error, and warning states. */
 const NOTIFICATION_STYLES = {
@@ -36,9 +50,13 @@ class ReelVaultCollector {
   /** @type {MutationObserver | null} */
   #observer;
 
+  /** @type {boolean} */
+  #busy;
+
   constructor() {
     this.#lastUrl = location.href;
     this.#observer = null;
+    this.#busy = false;
     this.#init();
   }
 
@@ -50,6 +68,7 @@ class ReelVaultCollector {
    * Sets up DOM-ready injection and SPA navigation observer.
    */
   #init() {
+    ensureSpinnerStyles();
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => this.#injectButton());
     } else {
@@ -163,6 +182,17 @@ class ReelVaultCollector {
    * The background worker handles authentication and API calls securely.
    */
   async #collectData() {
+    if (this.#busy) return;
+    this.#busy = true;
+
+    const btn = document.getElementById('reel-vault-collect');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = BUTTON_SPINNER;
+      btn.style.opacity = '0.7';
+      btn.style.cursor = 'wait';
+    }
+
     const ogImage = this.#getMetaContent('og:image');
     const datetime = this.#findShareDateTime();
 
@@ -185,6 +215,14 @@ class ReelVaultCollector {
         chrome.runtime.openOptionsPage();
       } else {
         this.#showNotification('error');
+      }
+    } finally {
+      this.#busy = false;
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = BUTTON_REST;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
       }
     }
   }
