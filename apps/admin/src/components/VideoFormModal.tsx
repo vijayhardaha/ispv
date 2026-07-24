@@ -54,6 +54,72 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
+  /**
+   * Builds the request body for creating a new video.
+   *
+   * @param {string[]} tagsArr - Parsed tags array.
+   *
+   * @returns {Record<string, unknown>} Body for the creation request.
+   */
+  const buildCreateBody = (tagsArr: string[]): Record<string, unknown> => ({
+    video_url: videoUrl,
+    video_id: extractIgId(videoUrl) ?? undefined,
+    video_src: detectSource(videoUrl),
+    category: category || null,
+    location: location || null,
+    city: city || null,
+    tags: tagsArr,
+    description: description || null,
+    status,
+  });
+
+  /**
+   * Builds the request body for updating an existing video (URL is kept intact).
+   *
+   * @param {string[]} tagsArr - Parsed tags array.
+   *
+   * @returns {Record<string, unknown>} Body for the update request.
+   */
+  const buildUpdateBody = (tagsArr: string[]): Record<string, unknown> => ({
+    category: category || null,
+    location: location || null,
+    city: city || null,
+    tags: tagsArr,
+    description: description || null,
+    status,
+  });
+
+  /**
+   * Sends the form data to the API.
+   *
+   * @param {Record<string, unknown>} body - Request body.
+   *
+   * @returns {Promise<boolean>} True if the request succeeded.
+   */
+  const sendRequest = async (body: Record<string, unknown>): Promise<boolean> => {
+    const parsed = videoFormSchema.safeParse(body);
+    if (!parsed.success) {
+      toast(parsed.error.issues[0]?.message ?? 'Invalid form data', 'error');
+      return false;
+    }
+
+    const res = await fetch(video ? `/api/auth/videos/${video.id}` : '/api/auth/videos', {
+      method: video ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (res.ok) {
+      toast(video ? 'Video updated' : 'Video created', 'success');
+      onSaved();
+      return true;
+    }
+
+    const err = await res.json().catch(() => ({ error: 'Unknown error' }));
+    toast(err.error || 'Failed to save video', 'error');
+    return false;
+  };
+
   const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -63,55 +129,10 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
       .map((t) => t.trim())
       .filter(Boolean);
 
-    let body: Record<string, unknown>;
+    const body = video ? buildUpdateBody(tagsArr) : buildCreateBody(tagsArr);
 
-    if (video) {
-      // Editing — only send mutable fields, keep URL intact
-      body = {
-        category: category || null,
-        location: location || null,
-        city: city || null,
-        tags: tagsArr,
-        description: description || null,
-        status,
-      };
-    } else {
-      // Creating — send everything including URL
-      const video_id = extractIgId(videoUrl) ?? undefined;
-      const video_src = detectSource(videoUrl);
-      body = {
-        video_url: videoUrl,
-        video_id,
-        video_src,
-        category: category || null,
-        location: location || null,
-        city: city || null,
-        tags: tagsArr,
-        description: description || null,
-        status,
-      };
-    }
-
-    const parsed = videoFormSchema.safeParse(body);
-    if (!parsed.success) {
-      setLoading(false);
-      toast(parsed.error.issues[0]?.message ?? 'Invalid form data', 'error');
-      return;
-    }
-
-    const res = await fetch(video ? `/api/auth/videos/${video.id}` : '/api/auth/videos', {
-      method: video ? 'PUT' : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
+    await sendRequest(body);
     setLoading(false);
-    if (res.ok) {
-      toast(video ? 'Video updated' : 'Video created', 'success');
-      onSaved();
-    } else {
-      const err = await res.json().catch(() => ({ error: 'Unknown error' }));
-      toast(err.error || 'Failed to save video', 'error');
-    }
   };
 
   return (
