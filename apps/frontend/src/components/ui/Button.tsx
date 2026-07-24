@@ -1,4 +1,4 @@
-import type { ComponentProps, JSX, ReactNode } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Slot } from 'radix-ui';
@@ -126,7 +126,7 @@ function Spinner(): JSX.Element {
  * @param {boolean} [props.shadow] - Show offset shadow behind the button.
  * @param {boolean} [props.loading] - Show loading spinner and disable interaction.
  * @param {boolean} [props.disabled] - Native disabled attribute.
- * @param {ReactNode} props.children - Button content.
+ * @param {import('react').ReactNode} props.children - Button content.
  *
  * @returns {JSX.Element} Rendered button element.
  */
