@@ -105,7 +105,7 @@ export function ShareSection(): JSX.Element {
           </h2>
 
           {/* Pitch */}
-          <p className="mx-auto mt-6 max-w-2xl font-mono text-sm leading-relaxed text-zinc-700 md:text-base">
+          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-zinc-700 md:text-base">
             Indian Students Protest Vault is a free, non-partisan archive indexing publicly shared Instagram reels from
             student protests across India. Every video is organised by city, category, and hashtag — making it easy to
             search, explore, and understand. Share this project with someone who needs to see it.
