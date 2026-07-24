@@ -2,12 +2,10 @@
  * A single location entry used across the admin for filtering and display.
  *
  * @type {LocationRecord}
- * @property {string} id - Unique identifier for the location.
  * @property {string} slug - URL-friendly slug derived from the location name.
  * @property {string} name - Human-readable location name.
  */
 export interface LocationRecord {
-  id: string;
   slug: string;
   name: string;
 }
@@ -17,41 +15,41 @@ export interface LocationRecord {
  * Order here determines display order.
  */
 export const LOCATIONS: LocationRecord[] = [
-  { id: '1', slug: 'delhi', name: 'Delhi' },
-  { id: '2', slug: 'bihar', name: 'Bihar' },
-  { id: '3', slug: 'madhya-pradesh', name: 'Madhya Pradesh' },
-  { id: '4', slug: 'maharashtra', name: 'Maharashtra' },
-  { id: '5', slug: 'punjab', name: 'Punjab' },
-  { id: '6', slug: 'goa', name: 'Goa' },
-  { id: '7', slug: 'arunachal-pradesh', name: 'Arunachal Pradesh' },
-  { id: '8', slug: 'andhra-pradesh', name: 'Andhra Pradesh' },
-  { id: '9', slug: 'assam', name: 'Assam' },
-  { id: '10', slug: 'chhattisgarh', name: 'Chhattisgarh' },
-  { id: '11', slug: 'gujarat', name: 'Gujarat' },
-  { id: '12', slug: 'haryana', name: 'Haryana' },
-  { id: '13', slug: 'himachal-pradesh', name: 'Himachal Pradesh' },
-  { id: '14', slug: 'jharkhand', name: 'Jharkhand' },
-  { id: '15', slug: 'karnataka', name: 'Karnataka' },
-  { id: '16', slug: 'kerala', name: 'Kerala' },
-  { id: '17', slug: 'manipur', name: 'Manipur' },
-  { id: '18', slug: 'meghalaya', name: 'Meghalaya' },
-  { id: '19', slug: 'mizoram', name: 'Mizoram' },
-  { id: '20', slug: 'nagaland', name: 'Nagaland' },
-  { id: '21', slug: 'odisha', name: 'Odisha' },
-  { id: '22', slug: 'rajasthan', name: 'Rajasthan' },
-  { id: '23', slug: 'sikkim', name: 'Sikkim' },
-  { id: '24', slug: 'tamil-nadu', name: 'Tamil Nadu' },
-  { id: '25', slug: 'telangana', name: 'Telangana' },
-  { id: '26', slug: 'tripura', name: 'Tripura' },
-  { id: '27', slug: 'uttar-pradesh', name: 'Uttar Pradesh' },
-  { id: '28', slug: 'uttarakhand', name: 'Uttarakhand' },
-  { id: '29', slug: 'west-bengal', name: 'West Bengal' },
-  { id: '30', slug: 'chandigarh', name: 'Chandigarh' },
-  { id: '31', slug: 'andaman-nicobar-islands', name: 'Andaman and Nicobar Islands' },
-  { id: '32', slug: 'dadra-nagar-haveli-daman-diu', name: 'Dadra and Nagar Haveli and Daman and Diu' },
-  { id: '33', slug: 'jammu-kashmir', name: 'Jammu and Kashmir' },
-  { id: '34', slug: 'ladakh', name: 'Ladakh' },
-  { id: '35', slug: 'lakshadweep', name: 'Lakshadweep' },
-  { id: '36', slug: 'puducherry', name: 'Puducherry' },
-  { id: '37', slug: 'foreign', name: 'Foreign (Outside India)' },
+  { slug: 'delhi', name: 'Delhi' },
+  { slug: 'bihar', name: 'Bihar' },
+  { slug: 'madhya-pradesh', name: 'Madhya Pradesh' },
+  { slug: 'maharashtra', name: 'Maharashtra' },
+  { slug: 'punjab', name: 'Punjab' },
+  { slug: 'goa', name: 'Goa' },
+  { slug: 'arunachal-pradesh', name: 'Arunachal Pradesh' },
+  { slug: 'andhra-pradesh', name: 'Andhra Pradesh' },
+  { slug: 'assam', name: 'Assam' },
+  { slug: 'chhattisgarh', name: 'Chhattisgarh' },
+  { slug: 'gujarat', name: 'Gujarat' },
+  { slug: 'haryana', name: 'Haryana' },
+  { slug: 'himachal-pradesh', name: 'Himachal Pradesh' },
+  { slug: 'jharkhand', name: 'Jharkhand' },
+  { slug: 'karnataka', name: 'Karnataka' },
+  { slug: 'kerala', name: 'Kerala' },
+  { slug: 'manipur', name: 'Manipur' },
+  { slug: 'meghalaya', name: 'Meghalaya' },
+  { slug: 'mizoram', name: 'Mizoram' },
+  { slug: 'nagaland', name: 'Nagaland' },
+  { slug: 'odisha', name: 'Odisha' },
+  { slug: 'rajasthan', name: 'Rajasthan' },
+  { slug: 'sikkim', name: 'Sikkim' },
+  { slug: 'tamil-nadu', name: 'Tamil Nadu' },
+  { slug: 'telangana', name: 'Telangana' },
+  { slug: 'tripura', name: 'Tripura' },
+  { slug: 'uttar-pradesh', name: 'Uttar Pradesh' },
+  { slug: 'uttarakhand', name: 'Uttarakhand' },
+  { slug: 'west-bengal', name: 'West Bengal' },
+  { slug: 'chandigarh', name: 'Chandigarh' },
+  { slug: 'andaman-nicobar-islands', name: 'Andaman and Nicobar Islands' },
+  { slug: 'dadra-nagar-haveli-daman-diu', name: 'Dadra and Nagar Haveli and Daman and Diu' },
+  { slug: 'jammu-kashmir', name: 'Jammu and Kashmir' },
+  { slug: 'ladakh', name: 'Ladakh' },
+  { slug: 'lakshadweep', name: 'Lakshadweep' },
+  { slug: 'puducherry', name: 'Puducherry' },
+  { slug: 'foreign', name: 'Foreign (Outside India)' },
 ];
