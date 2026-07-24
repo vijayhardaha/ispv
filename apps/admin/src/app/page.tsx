@@ -116,7 +116,7 @@ export default async function DashboardPage(): Promise<JSX.Element> {
       <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
         {statusStats.map((s) => (
           <article key={s.label} className="border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_#18181b]">
-            <div className={`mb-2 h-3 w-3 ${s.color}`} />
+            <div className={`mb-2 size-3 ${s.color}`} />
             <div className="text-3xl font-extrabold">{s.count}</div>
             <div className="text-xs font-bold uppercase">{s.label}</div>
           </article>
@@ -152,7 +152,7 @@ export default async function DashboardPage(): Promise<JSX.Element> {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {locationCounts.map((loc) => (
           <article
-            key={loc.id}
+            key={loc.slug}
             className="flex items-center justify-between border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_#18181b]"
           >
             <div>
