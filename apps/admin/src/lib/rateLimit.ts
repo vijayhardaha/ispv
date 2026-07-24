@@ -15,7 +15,7 @@ let redisWarningLogged = false;
  *
  * @returns {Redis | null} The Redis client, or null if not configured.
  */
-export function getRedis(): Redis | null {
+function getRedis(): Redis | null {
   const upstashUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
   const upstashToken = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
   if (upstashUrl && upstashToken) {

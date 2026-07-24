@@ -7,6 +7,9 @@ import { jsonError, requireUser } from '@/lib/api-utils';
 import { createServerSupabase } from '@/lib/supabase-server';
 import { deleteBlob } from '@/lib/upload';
 
+/**
+ * Valid status values for the update_status bulk action.
+ */
 const VALID_STATUSES = ['draft', 'pending_review', 'published', 'rejected'] as const;
 
 /**
