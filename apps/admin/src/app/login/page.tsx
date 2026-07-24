@@ -1,11 +1,14 @@
 'use client';
 
-import { useState, type JSX, type SubmitEvent } from 'react';
+import { useRef, useState, type JSX, type SubmitEvent } from 'react';
 
 import { Box } from '@/components/ui/Box';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Modal';
 import { createClient } from '@/lib/supabase';
+
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_MS = 60_000;
 
 /**
  * Login page with email and password authentication form.
@@ -17,17 +20,36 @@ export default function LoginPage(): JSX.Element {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const attempts = useRef(0);
+  const lockedUntil = useRef(0);
   const supabase = createClient();
 
   const handleLogin = async (e: SubmitEvent) => {
     e.preventDefault();
+
+    const now = Date.now();
+    if (now < lockedUntil.current) {
+      const remaining = Math.ceil((lockedUntil.current - now) / 1000);
+      setError(`Too many attempts. Try again in ${remaining}s`);
+      return;
+    }
+
     setLoading(true);
     setError(null);
     const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
+
     if (authError) {
-      setError(authError.message);
+      attempts.current += 1;
+      if (attempts.current >= MAX_ATTEMPTS) {
+        lockedUntil.current = now + LOCKOUT_MS;
+        attempts.current = 0;
+        setError('Too many attempts. Try again in 60s');
+      } else {
+        setError('Invalid email or password');
+      }
     } else {
+      attempts.current = 0;
       window.location.href = '/';
     }
   };
