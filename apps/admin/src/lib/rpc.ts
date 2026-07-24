@@ -58,6 +58,7 @@ export const getVideosForApi = async (
       search: filters.search || null,
       category: filters.category || null,
       location: filters.location || null,
+      trashed: filters.trashed || null,
       page: filters.page || 1,
       per_page: filters.per_page || 50,
     },
