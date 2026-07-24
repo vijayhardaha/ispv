@@ -15,6 +15,26 @@ export const extractIgId = (url: string): string | null => {
 };
 
 /**
+ * Normalizes an Instagram URL to a canonical form for reliable comparison.
+ * Strips query/hash, removes www, lowercases domain, ensures single trailing slash.
+ *
+ * @param {string} url - Instagram content URL.
+ *
+ * @returns {string} Canonicalized URL or original if not an Instagram URL.
+ */
+export function normalizeIgUrl(url: string): string {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase().replace(/^www\./, '');
+    const path = parsed.pathname.replace(/\/+$/, '') || '/';
+    const canonical = `https://${host}${path}/`;
+    return canonical;
+  } catch {
+    return url;
+  }
+}
+
+/**
  * Detects the source platform from a video URL.
  *
  * @param {string} url - Video URL to inspect.
