@@ -184,7 +184,7 @@ export const CATEGORIES: DbCategory[] = [
 export const FEATURED_CATEGORIES_SLUGS = [
   'protest-marches',
   'police-conduct',
-  'gen-z-movement',
+  'gen-z-moments',
   'night-updates',
   'human-rights',
   'women-leading-movement',
