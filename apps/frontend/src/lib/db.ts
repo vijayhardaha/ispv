@@ -111,3 +111,118 @@ export async function checkVideoExists(
     return { exists: false, error: err instanceof Error ? err.message : 'Network error' };
   }
 }
+
+/**
+ * Returns the total count of published videos.
+ *
+ * @returns {Promise<number>} Published video count.
+ */
+export async function getPublishedVideoCount(): Promise<number> {
+  const { count, error } = await supabase
+    .from('videos')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'published');
+
+  if (error || count === null) {
+    return 0;
+  }
+
+  return count;
+}
+
+/**
+ * Returns the total number of unique cities among published videos.
+ *
+ * @returns {Promise<number>} Unique city count.
+ */
+export async function getCityCounts(): Promise<number> {
+  const { data, error } = await supabase.rpc('get_city_counts');
+
+  if (error || !data) {
+    return 0;
+  }
+
+  return data.length;
+}
+
+/**
+ * Returns the total number of unique locations among published videos.
+ *
+ * @returns {Promise<number>} Unique location count.
+ */
+export async function getLocationCounts(): Promise<number> {
+  const { data, error } = await supabase.rpc('get_location_counts');
+
+  if (error || !data) {
+    return 0;
+  }
+
+  return data.length;
+}
+
+/**
+ * Returns per-location video counts for all published videos.
+ * Used by LocationsMap to display counts per state/UT.
+ *
+ * @returns {Promise<{ slug: string; count: number }[]>} Location slug and video count pairs.
+ */
+export async function getLocationVideoCounts(): Promise<{ slug: string; count: number }[]> {
+  const { data, error } = await supabase.rpc('get_location_counts');
+
+  if (error || !data) {
+    return [];
+  }
+
+  return data.map((r: { location: string; count: number }) => ({ slug: r.location, count: r.count }));
+}
+
+/**
+ * Returns per-category video counts for all published videos.
+ *
+ * @returns {Promise<{ slug: string; count: number }[]>} Category slug and video count pairs.
+ */
+export async function getCategoryCounts(): Promise<{ slug: string; count: number }[]> {
+  const { data, error } = await supabase.rpc('get_category_counts');
+
+  if (error || !data) {
+    return [];
+  }
+
+  return data.map((r: { slug: string; count: number }) => ({ slug: r.slug, count: r.count }));
+}
+
+/**
+ * Shape returned by the get_homepage_stats RPC.
+ *
+ * @type {HomepageStats}
+ * @property {number} totalVideos - Total count of published videos.
+ * @property {number} totalCities - Count of distinct cities with published videos.
+ * @property {number} totalLocations - Count of distinct locations with published videos.
+ * @property {{ slug: string; count: number }[]} locationCounts - Per-location video counts.
+ */
+export interface HomepageStats {
+  totalVideos: number;
+  totalCities: number;
+  totalLocations: number;
+  locationCounts: { slug: string; count: number }[];
+}
+
+/**
+ * Fetches all homepage aggregate stats in a single RPC call.
+ *
+ * @returns {Promise<HomepageStats>} Aggregated homepage statistics.
+ */
+export async function getHomepageStats(): Promise<HomepageStats> {
+  const { data, error } = await supabase.rpc('get_homepage_stats');
+
+  if (error || !data) {
+    return { totalVideos: 0, totalCities: 0, totalLocations: 0, locationCounts: [] };
+  }
+
+  return {
+    totalVideos: data.total_videos ?? 0,
+    totalCities: data.total_cities ?? 0,
+    totalLocations: data.total_locations ?? 0,
+    locationCounts: data.location_counts ?? [],
+  };
+}
