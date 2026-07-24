@@ -76,7 +76,7 @@ const VideoCard = memo(function VideoCard({
 
       <div className="absolute top-2 right-2 left-2 z-10 flex items-start justify-between gap-1">
         <Badge className="bg-yellow-400 text-black">{video.categoryName}</Badge>
-        {video.featured && <Badge className="bg-red-500 text-white">Featured</Badge>}
+        {video.trending && <Badge className="bg-red-500 text-white">Trending</Badge>}
       </div>
 
       <div className="absolute inset-0 z-10 flex items-center justify-center">

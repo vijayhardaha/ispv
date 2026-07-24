@@ -97,22 +97,22 @@ describe('dbRowToVideoEntry', () => {
     expect(entry.categoryName).toBe('unknown-category');
   });
 
-  it('determines featured based on view_count > 1000', () => {
-    const notFeatured = dbRowToVideoEntry(makeRow({ view_count: 500 }));
-    expect(notFeatured.featured).toBe(false);
+  it('determines trending based on view_count > 1000', () => {
+    const notTrending = dbRowToVideoEntry(makeRow({ view_count: 500 }));
+    expect(notTrending.trending).toBe(false);
 
-    const featured = dbRowToVideoEntry(makeRow({ view_count: 1001 }));
-    expect(featured.featured).toBe(true);
+    const trending = dbRowToVideoEntry(makeRow({ view_count: 1001 }));
+    expect(trending.trending).toBe(true);
 
     const exactlyThreshold = dbRowToVideoEntry(makeRow({ view_count: 1000 }));
-    expect(exactlyThreshold.featured).toBe(false);
+    expect(exactlyThreshold.trending).toBe(false);
   });
 
   it('handles null view_count', () => {
     const row = makeRow({ view_count: null });
     const entry = dbRowToVideoEntry(row);
 
-    expect(entry.featured).toBe(false);
+    expect(entry.trending).toBe(false);
   });
 
   it('handles empty city for hashtag generation', () => {

@@ -24,12 +24,20 @@ const makeVideo = (overrides: Partial<VideoEntry> = {}): VideoEntry => ({
   viewCount: 0,
   videoPostDate: null,
   createdAt: '2026-01-01T00:00:00Z',
-  featured: false,
+  trending: false,
   ...overrides,
 });
 
 describe('filterVideos', () => {
-  const baseState: FilterState = { query: '', category: 'all', location: 'all', tags: [], page: 1, perPage: 36, sort: 'views' };
+  const baseState: FilterState = {
+    query: '',
+    category: 'all',
+    location: 'all',
+    tags: [],
+    page: 1,
+    perPage: 36,
+    sort: 'views',
+  };
 
   it('returns all videos with default filter state', () => {
     const videos = [makeVideo({ id: '1' }), makeVideo({ id: '2', city: 'Mumbai' })];

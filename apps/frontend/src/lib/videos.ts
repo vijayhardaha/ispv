@@ -19,7 +19,7 @@ import { supabase } from '@/lib/supabase';
  * @property {number} viewCount - Number of video views.
  * @property {string | null} videoPostDate - Post date from Instagram (ISO string).
  * @property {string} createdAt - Timestamp of record creation (ISO string).
- * @property {boolean} [featured] - Whether the video is featured on the homepage.
+ * @property {boolean} [trending] - Whether the video is trending (high view count).
  */
 export interface VideoEntry {
   id: string;
@@ -36,7 +36,7 @@ export interface VideoEntry {
   viewCount: number;
   videoPostDate: string | null;
   createdAt: string;
-  featured?: boolean;
+  trending?: boolean;
 }
 
 /**
