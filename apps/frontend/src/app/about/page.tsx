@@ -14,18 +14,21 @@ import { buildMetadata } from '@/lib/meta';
 import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
 import { siteUrl } from '@/lib/seo';
 
-const title = 'About — Indian Students Protest Vault';
-const description =
+const PAGE_TITLE = 'About — Indian Students Protest Vault';
+const PAGE_DESCRIPTION =
   'Learn about the Indian Students Protest Vault — an independent archive of publicly shared videos documenting student protests across India. Our principles, submission process, and mission.';
-const path = '/about';
-const rootUrl = siteUrl();
+const PAGE_PATH = '/about';
+const ROOT_URL = siteUrl();
 
-export const metadata: Metadata = buildMetadata({ title, description, path });
+export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH });
 
-const schemaData = [
+const SCHEMA_DATA = [
   ...globalSchema(),
-  aboutPageSchema({ rootUrl, path, breadcrumb: true }, { name: title, description }),
-  breadcrumbSchema({ rootUrl, items: buildBreadcrumbs(path, 'About') }),
+  aboutPageSchema(
+    { rootUrl: ROOT_URL, path: PAGE_PATH, breadcrumb: true },
+    { name: PAGE_TITLE, description: PAGE_DESCRIPTION }
+  ),
+  breadcrumbSchema({ rootUrl: ROOT_URL, items: buildBreadcrumbs(PAGE_PATH, 'About') }),
 ];
 
 const PRINCIPLES = [
@@ -100,7 +103,7 @@ const EXCLUDED = [
 export default function AboutPage(): JSX.Element {
   return (
     <div>
-      <JsonLd data={schemaData} />
+      <JsonLd data={SCHEMA_DATA} />
       {/* Hero */}
       <PageHero breadcrumb="About" title="What is Indian Students Protest Vault?">
         <p className="mt-2 text-white/80">

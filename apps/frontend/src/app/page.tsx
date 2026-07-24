@@ -21,14 +21,17 @@ import { globalSchema } from '@/lib/schema';
 import { siteUrl } from '@/lib/seo';
 import { getAllVideosFromDb } from '@/lib/videos';
 
-const title = SITE_CONFIG.title;
-const description = SITE_CONFIG.description;
-const path = '/';
-const rootUrl = siteUrl();
+const PAGE_TITLE = SITE_CONFIG.title;
+const PAGE_DESCRIPTION = SITE_CONFIG.description;
+const PAGE_PATH = '/';
+const ROOT_URL = siteUrl();
 
-export const metadata: Metadata = buildMetadata({ title, description, path });
+export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH });
 
-const schemaData = [...globalSchema(), webPageSchema({ rootUrl, path }, { name: title, description })];
+const SCHEMA_DATA = [
+  ...globalSchema(),
+  webPageSchema({ rootUrl: ROOT_URL, path: PAGE_PATH }, { name: PAGE_TITLE, description: PAGE_DESCRIPTION }),
+];
 
 /**
  * Home page — fetches videos and categories, renders hero, sections, and map.
@@ -50,7 +53,7 @@ export default async function HomePage(): Promise<JSX.Element> {
 
   return (
     <>
-      <JsonLd data={schemaData} />
+      <JsonLd data={SCHEMA_DATA} />
       <HeroSection totalVideos={videos.length} totalCities={totalCities} totalStates={totalStates} />
       <SloganTicker />
       <ShareSection />

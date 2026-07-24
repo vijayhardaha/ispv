@@ -9,15 +9,18 @@ import { buildMetadata } from '@/lib/meta';
 import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
 import { siteUrl } from '@/lib/seo';
 
-const title = 'DMCA — Indian Students Protest Vault';
-const description =
+const PAGE_TITLE = 'DMCA — Indian Students Protest Vault';
+const PAGE_DESCRIPTION =
   'DMCA copyright takedown notice policy for Indian Students Protest Vault. Learn how to submit a removal request for copyrighted content.';
-const path = '/dmca';
-const rootUrl = siteUrl();
+const PAGE_PATH = '/dmca';
+const ROOT_URL = siteUrl();
 
-export const metadata: Metadata = buildMetadata({ title, description, path });
+export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH });
 
-const schemaData = [...globalSchema(), breadcrumbSchema({ rootUrl, items: buildBreadcrumbs(path, 'DMCA') })];
+const SCHEMA_DATA = [
+  ...globalSchema(),
+  breadcrumbSchema({ rootUrl: ROOT_URL, items: buildBreadcrumbs(PAGE_PATH, 'DMCA') }),
+];
 
 /**
  * DMCA / Copyright Takedown notice page.
@@ -27,7 +30,7 @@ const schemaData = [...globalSchema(), breadcrumbSchema({ rootUrl, items: buildB
 export default function DmcaPage(): JSX.Element {
   return (
     <div>
-      <JsonLd data={schemaData} />
+      <JsonLd data={SCHEMA_DATA} />
       <div className="py-12 md:py-16">
         <Container>
           <div className="mx-auto max-w-3xl">

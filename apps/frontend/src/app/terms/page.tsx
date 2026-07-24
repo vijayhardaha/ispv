@@ -9,17 +9,17 @@ import { buildMetadata } from '@/lib/meta';
 import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
 import { siteUrl } from '@/lib/seo';
 
-const title = 'Terms of Service — Indian Students Protest Vault';
-const description =
+const PAGE_TITLE = 'Terms of Service — Indian Students Protest Vault';
+const PAGE_DESCRIPTION =
   'Terms of service for Indian Students Protest Vault. Understand the rules and guidelines for using this archive.';
-const path = '/terms';
-const rootUrl = siteUrl();
+const PAGE_PATH = '/terms';
+const ROOT_URL = siteUrl();
 
-export const metadata: Metadata = buildMetadata({ title, description, path });
+export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH });
 
-const schemaData = [
+const SCHEMA_DATA = [
   ...globalSchema(),
-  breadcrumbSchema({ rootUrl, items: buildBreadcrumbs(path, 'Terms of Service') }),
+  breadcrumbSchema({ rootUrl: ROOT_URL, items: buildBreadcrumbs(PAGE_PATH, 'Terms of Service') }),
 ];
 
 /**
@@ -30,7 +30,7 @@ const schemaData = [
 export default function TermsPage(): JSX.Element {
   return (
     <div>
-      <JsonLd data={schemaData} />
+      <JsonLd data={SCHEMA_DATA} />
       <div className="py-12 md:py-16">
         <Container>
           <div className="mx-auto max-w-3xl">

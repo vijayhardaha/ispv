@@ -13,8 +13,8 @@ import type { DbCategory } from '@/lib/db';
 import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
 import { siteUrl } from '@/lib/seo';
 
-const rootUrl = siteUrl();
-const pathPrefix = '/categories';
+const ROOT_URL = siteUrl();
+const PATH_PREFIX = '/categories';
 
 /**
  * Individual category page with filtered videos, search, and pagination.
@@ -43,8 +43,8 @@ export default function CategoryPage(): JSX.Element {
     );
   }
 
-  const catPath = `${pathPrefix}/${value}`;
-  const schemaData = buildCategorySchema(rootUrl, catPath, cat);
+  const catPath = `${PATH_PREFIX}/${value}`;
+  const schemaData = buildCategorySchema(ROOT_URL, catPath, cat);
 
   return (
     <div>

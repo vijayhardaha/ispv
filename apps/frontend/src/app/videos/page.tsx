@@ -16,16 +16,16 @@ import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
 import { siteUrl } from '@/lib/seo';
 import { getAllVideosFromDb, type VideoEntry } from '@/lib/videos';
 
-const title = 'All Videos — Full Archive';
-const description =
+const PAGE_TITLE = 'All Videos — Full Archive';
+const PAGE_DESCRIPTION =
   'Browse every reel in the Indian Students Protest Vault archive. Search by city, category, or hashtag and filter to find specific protest recordings.';
-const path = '/videos';
-const rootUrl = siteUrl();
+const PAGE_PATH = '/videos';
+const ROOT_URL = siteUrl();
 
-const schemaData = [
+const SCHEMA_DATA = [
   ...globalSchema(),
-  collectionPageSchema({ rootUrl, path }, { name: title, description }),
-  breadcrumbSchema({ rootUrl, items: buildBreadcrumbs(path, 'All Videos') }),
+  collectionPageSchema({ rootUrl: ROOT_URL, path: PAGE_PATH }, { name: PAGE_TITLE, description: PAGE_DESCRIPTION }),
+  breadcrumbSchema({ rootUrl: ROOT_URL, items: buildBreadcrumbs(PAGE_PATH, 'All Videos') }),
 ];
 
 /**
@@ -70,7 +70,7 @@ function VideosPageInner(): JSX.Element {
 
   return (
     <div className="bg-gray-100">
-      <JsonLd data={schemaData} />
+      <JsonLd data={SCHEMA_DATA} />
       <PageHero breadcrumb="All Videos" title="The Full Archive">
         <p className="mt-2 text-white/80">
           Every reel we have on file. Use the search, tags, and category filters to narrow it down.

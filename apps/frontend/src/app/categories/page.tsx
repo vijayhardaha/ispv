@@ -17,16 +17,16 @@ import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
 import { siteUrl } from '@/lib/seo';
 import { getAllVideosFromDb, type VideoEntry } from '@/lib/videos';
 
-const title = 'Categories — Browse by Category';
-const description =
+const PAGE_TITLE = 'Categories — Browse by Category';
+const PAGE_DESCRIPTION =
   'Browse all categories in the Indian Students Protest Vault archive. Explore protest marches, police conduct, Gen Z movement, acts of kindness, women leading, and more.';
-const path = '/categories';
-const rootUrl = siteUrl();
+const PAGE_PATH = '/categories';
+const ROOT_URL = siteUrl();
 
-const schemaData = [
+const SCHEMA_DATA = [
   ...globalSchema(),
-  collectionPageSchema({ rootUrl, path }, { name: title, description }),
-  breadcrumbSchema({ rootUrl, items: buildBreadcrumbs(path, 'Categories') }),
+  collectionPageSchema({ rootUrl: ROOT_URL, path: PAGE_PATH }, { name: PAGE_TITLE, description: PAGE_DESCRIPTION }),
+  breadcrumbSchema({ rootUrl: ROOT_URL, items: buildBreadcrumbs(PAGE_PATH, 'Categories') }),
 ];
 
 /**
@@ -58,7 +58,7 @@ export default function CategoriesPage(): JSX.Element {
 
   return (
     <div>
-      <JsonLd data={schemaData} />
+      <JsonLd data={SCHEMA_DATA} />
       <PageHero breadcrumb="Categories" title="Browse by Category">
         <p className="mt-2 max-w-2xl text-white/80">
           All categories from the archive. Click into any to see the full list, or jump to{' '}
