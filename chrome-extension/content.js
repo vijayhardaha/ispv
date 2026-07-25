@@ -13,21 +13,40 @@
 /** Normal button content. */
 const BUTTON_REST = '+';
 
-/** Animated spinner SVG shown while a request is in flight. */
-const BUTTON_SPINNER = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" style="animation:rv-spin .6s linear infinite"><path d="M12 2a10 10 0 0 1 10 10"/></svg>`;
+/**
+ * Creates an animated SVG spinner element using the Web Animations API.
+ * Avoids CSS keyframes and innerHTML SVG parsing for MV3 extension reliability.
+ *
+ * @returns {SVGSVGElement} Animated spinner SVG element.
+ */
+function createSpinner() {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('width', '24');
+  svg.setAttribute('height', '24');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', '#000');
+  svg.setAttribute('stroke-width', '2.5');
+  svg.setAttribute('stroke-linecap', 'round');
 
-/** Injects the keyframe rule for the spinner animation once. */
-function ensureSpinnerStyles() {
-  if (document.getElementById('rv-spinner-css')) return;
-  const s = document.createElement('style');
-  s.id = 'rv-spinner-css';
-  s.textContent = '@keyframes rv-spin{to{transform:rotate(360deg)}}';
-  document.head.appendChild(s);
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', 'M12 2a10 10 0 0 1 10 10');
+  svg.appendChild(path);
+
+  // Animate using Web Animations API — no CSS keyframes needed
+  // Apply animation to the SVG root, centered at 50% 50% (12px of 24px viewBox)
+  svg.style.transformOrigin = '50% 50%';
+  svg.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
+    duration: 600,
+    iterations: Infinity,
+  });
+
+  return svg;
 }
 
 /** Shared button style text (sans content). */
 const BTN_STYLE =
-  'position:fixed;bottom:100px;right:40px;z-index:99999;width:56px;height:56px;border:2px solid #000;border-radius:10px;background:#facc15;color:#000;font-size:28px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;';
+  'position:fixed;bottom:100px;right:40px;z-index:99999;width:56px;height:56px;border:2px solid #000;background:#facc15;color:#000;font-size:28px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;';
 
 /** Floating collect button HTML template. */
 const BUTTON_HTML = `<button id="reel-vault-collect" title="Collect to Reel Vault" style="${BTN_STYLE}">${BUTTON_REST}</button>`;
@@ -68,7 +87,6 @@ class ReelVaultCollector {
    * Sets up DOM-ready injection and SPA navigation observer.
    */
   #init() {
-    ensureSpinnerStyles();
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => this.#injectButton());
     } else {
@@ -188,7 +206,8 @@ class ReelVaultCollector {
     const btn = document.getElementById('reel-vault-collect');
     if (btn) {
       btn.disabled = true;
-      btn.innerHTML = BUTTON_SPINNER;
+      btn.textContent = '';
+      btn.appendChild(createSpinner());
       btn.style.opacity = '0.7';
       btn.style.cursor = 'wait';
     }
@@ -220,7 +239,7 @@ class ReelVaultCollector {
       this.#busy = false;
       if (btn) {
         btn.disabled = false;
-        btn.innerHTML = BUTTON_REST;
+        btn.textContent = BUTTON_REST;
         btn.style.opacity = '1';
         btn.style.cursor = 'pointer';
       }
