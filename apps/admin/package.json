@@ -35,7 +35,7 @@
     "@types/react-dom": "^19.2.3",
     "@vijayhardaha/dev-config": "^2.2.0",
     "@vitest/coverage-v8": "^4.1.10",
-    "postcss": "^8.5.22",
+    "postcss": "^8.5.23",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10"
   }
