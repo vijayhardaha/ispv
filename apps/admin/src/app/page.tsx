@@ -14,23 +14,53 @@ import { CATEGORIES, type CategoryRecord } from '@/constants/categories';
 import { TAG_VARIANTS, type TagVariant } from '@/constants/colors';
 import { LOCATIONS, type LocationRecord } from '@/constants/locations';
 import { SITE_CONFIG } from '@/constants/seo';
-import { cn } from '@/lib/cn';
-import { createServerSupabase } from '@/lib/supabase-server';
+import { createServerSupabase } from '@/lib/db/supabase-server';
+import { cn } from '@/lib/utils';
 
+/**
+ * Category record with aggregate video count from the dashboard RPC.
+ *
+ * @type {CategoryWithCount}
+ * @property {number} video_count - Number of videos in this category.
+ */
 interface CategoryWithCount extends CategoryRecord {
   video_count: number;
 }
 
+/**
+ * Location record with aggregate video count from the dashboard RPC.
+ *
+ * @type {LocationWithCount}
+ * @property {number} video_count - Number of videos at this location.
+ */
 interface LocationWithCount extends LocationRecord {
   video_count: number;
 }
 
+/**
+ * Dashboard status stat card data.
+ *
+ * @type {StatusStat}
+ * @property {string} label - Display label for the stat (e.g. "Total", "Draft").
+ * @property {string} color - Tailwind background colour class for the indicator dot.
+ * @property {number} count - Number of videos in this status category.
+ */
 interface StatusStat {
   label: string;
   color: string;
   count: number;
 }
 
+/**
+ * Raw response shape from the get_dashboard_stats RPC.
+ *
+ * @type {DashboardStats}
+ * @property {number} total_videos - Total number of videos across all categories.
+ * @property {number} trashed_count - Number of videos in the trashed state.
+ * @property {{ status: string; count: number }[]} status_counts - Per-status counts array.
+ * @property {{ slug: string; count: number }[]} category_counts - Per-category counts array.
+ * @property {{ slug: string; count: number }[]} location_counts - Per-location counts array.
+ */
 interface DashboardStats {
   total_videos: number;
   trashed_count: number;
@@ -119,7 +149,7 @@ export default async function DashboardPage(): Promise<JSX.Element> {
         Dashboard
       </h1>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {statusStats.map((s) => (
           <article key={s.label} className="border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_#18181b]">
             <div className={`mb-2 size-3 ${s.color}`} />

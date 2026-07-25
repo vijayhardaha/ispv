@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useVideosActions, type UseVideosActionsReturn } from '@/app/videos/useVideosActions';
 import { useVideosLoader, type UseVideosLoaderReturn } from '@/app/videos/useVideosLoader';
 import { useVideosSelection, type UseVideosSelectionReturn } from '@/app/videos/useVideosSelection';
-import type { VideoRecord } from '@/lib/types';
+import type { VideoRecord } from '@/lib/db';
 
 /**
  * UI state for modals on the videos page.

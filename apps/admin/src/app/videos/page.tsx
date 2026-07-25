@@ -13,9 +13,8 @@ import { CATEGORIES } from '@/constants/categories';
 import { TAG_VARIANTS, type TagVariant } from '@/constants/colors';
 import { LOCATIONS } from '@/constants/locations';
 import { STATUSES, STATUS_LABELS, BULK_STATUS_OPTIONS } from '@/constants/status';
-import { cn } from '@/lib/cn';
-import { displayVideoUrl } from '@/lib/instagram';
-import type { VideoRecord } from '@/lib/types';
+import type { VideoRecord } from '@/lib/db';
+import { cn, displayVideoUrl } from '@/lib/utils';
 
 /**
  * Videos management page with filtering, pagination, bulk operations, and CRUD.

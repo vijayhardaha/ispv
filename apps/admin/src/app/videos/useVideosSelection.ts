@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 
-import type { VideoRecord } from '@/lib/types';
+import type { VideoRecord } from '@/lib/db';
 
 /**
  * Return type of the useVideosSelection hook.

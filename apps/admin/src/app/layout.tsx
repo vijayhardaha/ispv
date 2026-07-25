@@ -8,7 +8,7 @@ import { AdminHeader } from '@/components/layout/AdminHeader';
 import { AdminMain } from '@/components/layout/AdminMain';
 import { SkipContent } from '@/components/layout/SkipContent';
 import { SITE_METADATA } from '@/constants/seo';
-import { createServerSupabase } from '@/lib/supabase-server';
+import { createServerSupabase } from '@/lib/db/supabase-server';
 
 import './globals.css';
 

@@ -5,7 +5,7 @@ import { useRef, useState, type JSX, type SubmitEvent } from 'react';
 import { Box } from '@/components/ui/Box';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Modal';
-import { createClient } from '@/lib/supabase';
+import { createClient } from '@/lib/db';
 
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_MS = 60_000;

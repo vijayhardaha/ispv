@@ -5,9 +5,8 @@ import { useState, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
 import { usePagination } from '@/hooks/usePagination';
-import { getVideosForApi } from '@/lib/rpc';
-import { createClient } from '@/lib/supabase';
-import type { VideoRecord } from '@/lib/types';
+import { getVideosForApi, createClient } from '@/lib/db';
+import type { VideoRecord } from '@/lib/db';
 
 /** Number of videos displayed per page in the table. */
 const PER_PAGE = 15;
