@@ -11,16 +11,12 @@ import { POST } from '@/app/api/public/check-video/route';
 
 const mockCreateServiceSupabase = vi.hoisted(() => vi.fn());
 
-vi.mock('@/lib/api-utils', () => ({
+vi.mock('@/lib/api', () => ({
   createServiceSupabase: mockCreateServiceSupabase,
-  requireUser: vi.fn(),
-  jsonError: vi.fn(),
-  deleteVideoById: vi.fn(),
   checkRateLimit: vi.fn(async () => true),
-  rateLimitMiddleware: vi.fn(async () => null),
 }));
 
-vi.mock('@/lib/instagram', () => ({
+vi.mock('@/lib/utils', () => ({
   extractIgId: vi.fn((url: string) => {
     const match = url.match(/\/([a-zA-Z0-9_-]+)\/?$/);
     return match ? match[1] : null;
@@ -29,11 +25,6 @@ vi.mock('@/lib/instagram', () => ({
     (url: string) => `https://instagram.com/reel/${url.match(/\/([a-zA-Z0-9_-]+)\/?$/)?.[1] || 'unknown'}/`
   ),
   detectSource: vi.fn(() => 'instagram'),
-}));
-
-vi.mock('@/lib/rateLimit', () => ({
-  checkRateLimit: vi.fn(async () => true),
-  tryUseUpstashRateLimit: vi.fn(async () => false),
 }));
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────

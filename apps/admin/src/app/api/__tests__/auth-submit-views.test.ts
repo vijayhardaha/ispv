@@ -15,7 +15,7 @@ const mockGetUser = vi.fn();
 
 const mockSupabase = { auth: { getUser: mockGetUser }, from: vi.fn(), rpc: mockRpc };
 
-vi.mock('@/lib/supabase-server', () => ({ createServerSupabase: vi.fn(async () => mockSupabase) }));
+vi.mock('@/lib/db/supabase-server', () => ({ createServerSupabase: vi.fn(async () => mockSupabase) }));
 
 // ─── Submit Tests ──────────────────────────────────────────────────────────
 

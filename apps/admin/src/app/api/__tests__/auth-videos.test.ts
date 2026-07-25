@@ -67,7 +67,7 @@ function makeChain(): Record<string, (...args: unknown[]) => unknown> {
 
 const mockSupabase = { auth: { getUser: mockGetUser }, from: vi.fn(() => makeChain()), rpc: vi.fn() };
 
-vi.mock('@/lib/supabase-server', () => ({ createServerSupabase: vi.fn(async () => mockSupabase) }));
+vi.mock('@/lib/db/supabase-server', () => ({ createServerSupabase: vi.fn(async () => mockSupabase) }));
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
