@@ -36,11 +36,6 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'blob.vercel-storage.com', pathname: '/**' },
     ],
   },
-
-  // Rewrite /og/preview.png to the OG image route for static file compatibility
-  async rewrites() {
-    return [{ source: '/og/preview.png', destination: '/og' }];
-  },
 };
 
 export default nextConfig;
