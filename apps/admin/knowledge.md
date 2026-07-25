@@ -2,17 +2,18 @@
 
 ## Stack
 
-- **Framework:** Next.js 16 (App Router, Turbopak)
-- **Language:** TypeScript 6, React 19
-- **Styling:** Tailwind CSS 4, `tw-animate-css`
-- **UI Primitives:** Radix UI (Dialog, Select, Slot)
+- **Framework:** Next.js ^16.2.11 (App Router, Turbopack)
+- **Language:** TypeScript ^6.0.3, React ^19.2.8
+- **Styling:** Tailwind CSS ^4.3.3 (`@tailwindcss/postcss`), `tw-animate-css` ^1.4.0
+- **UI Primitives:** Radix UI (Dialog, Select, Slot) — via apps/frontend, not direct
 - **Icons:** lucide-react
-- **Database:** Supabase (server client via `@supabase/ssr`, browser client via `@supabase/supabase-js`)
-- **Blob Storage:** Vercel Blob (thumbnails)
-- **Image Processing:** sharp (thumbnail optimisation)
-- **Validation:** Zod, server-side via schemas
-- **Testing:** Vitest (node env, 8 test files — utilities + API routes)
-- **Linting:** ESLint via `@vijayhardaha/dev-config`
+- **Database:** Supabase (server client via `@supabase/ssr` ^0.12.3, browser client via `@supabase/supabase-js` ^2.110.8)
+- **Blob Storage:** `@vercel/blob` ^2.6.1 (thumbnails)
+- **Image Processing:** sharp ^0.35.3 (thumbnail optimisation)
+- **Validation:** Zod ^4.4.3, server-side via schemas (submitVideoBodySchema, enrichVideoBodySchema, videoFormSchema)
+- **Redis:** `@upstash/redis` ^1.38.0 (rate limiting, fallback to in-memory)
+- **Testing:** Vitest ^4.1.10 (node env, 16 test files — utilities + API routes)
+- **Linting:** ESLint via `@vijayhardaha/dev-config` ^2.2.0
 
 ## Project Structure
 
@@ -20,44 +21,51 @@
 src/
 ├── app/
 │   ├── layout.tsx              # Root layout (auth guard, SkipContent, AdminHeader, AdminMain, AdminFooter)
-│   ├── page.tsx                # Dashboard — status counts, categories with counts, locations with counts
+│   ├── loading.tsx             # Loading fallback
+│   ├── error.tsx               # Error boundary
 │   ├── Providers.tsx           # ToastProvider + QueryProvider wrapper
+│   ├── page.tsx                # Dashboard — status counts, categories with counts, locations with counts
 │   ├── login/page.tsx          # Login page with email/password
-│   ├── videos/
-│   │   ├── page.tsx            # Videos CRUD table (filterable, paginated, bulk actions, inline status)
-│   │   ├── useVideosPageState.ts  # Composes useVideosLoader + useVideosSelection + useVideosActions
-│   │   ├── useVideosLoader.ts     # Data fetching, URL params, pagination
-│   │   ├── useVideosSelection.ts  # Checkbox selection state
-│   │   └── useVideosActions.ts    # Single/bulk/inline status actions
-│   └── api/
-│       ├── auth/               # Authenticated API routes (behind Supabase auth)
-│       │   ├── videos/         # GET list, POST create, PUT update, POST single action
-│       │   ├── videos/[id]/    # PUT update, POST single action (trash/restore/delete)
-│       │   ├── videos/bulk/    # POST bulk action
-│       │   ├── views/          # POST view count increment (auth version)
-│       │   ├── enrich/         # POST enrich metadata (nodejs, sharp-based thumbnail processing)
-│       │   └── submit/         # POST create from admin form
-│       └── public/             # Public API routes (no auth, rate-limited)
-│           ├── submit/         # POST video submission from frontend
-│           └── views/          # POST view count increment
+│   └── videos/
+│       ├── page.tsx            # Videos CRUD table (filterable, paginated, bulk actions, inline status)
+│       ├── useVideosPageState.ts  # Composes useVideosLoader + useVideosSelection + useVideosActions
+│       ├── useVideosLoader.ts     # Data fetching, URL params, pagination
+│       ├── useVideosSelection.ts  # Checkbox selection state
+│       └── useVideosActions.ts    # Single/bulk/inline status actions
+├── app/api/
+│   ├── auth/               # Authenticated API routes (behind Supabase auth)
+│   │   ├── videos/         # GET list, POST create
+│   │   ├── videos/[id]/    # PUT update, POST single action (trash/restore/delete)
+│   │   ├── videos/bulk/    # POST bulk action
+│   │   ├── views/          # POST view count increment
+│   │   ├── enrich/         # POST enrich metadata (Node.js runtime, sharp-based thumbnail processing)
+│   │   └── submit/         # POST create from admin form
+│   └── public/             # Public API routes (no auth, rate-limited)
+│       ├── submit/         # POST video submission from frontend
+│       ├── views/          # POST view count increment
+│       └── check-video/    # GET duplicate check
 ├── components/
-│   ├── layout/                 # AdminHeader, AdminMain, AdminFooter, SkipContent
-│   ├── ui/                     # Button, Container, Box, Select, Modal, Pagination, SearchInput, DeleteConfirmDialog
-│   └── features/               # VideoFormModal, LogoutButton, Toast
-├── constants/                  # categories, colors, locations, navlinks, seo, status
-├── hooks/                      # usePagination
+│   ├── layout/             # AdminHeader, AdminMain, AdminFooter, SkipContent
+│   ├── ui/                 # Button, Container, Box, Select, Modal, Pagination, SearchInput, DeleteConfirmDialog
+│   ├── VideoFormModal.tsx  # Add/edit video modal form
+│   ├── LogoutButton.tsx
+│   └── Toast.tsx           # Toast notification component + useToast hook
+├── constants/              # categories.ts, colors.ts, locations.ts, navlinks.ts, seo.ts, status.ts
+├── hooks/                  # usePagination.ts
 ├── lib/
-│   ├── api-utils.ts            # requireUser, jsonError, deleteVideoById, createServiceSupabase, checkDuplicate
-│   ├── cn.ts                   # clsx + tailwind-merge
-│   ├── instagram.ts            # extractIgId, detectSource, displayVideoUrl, reconstructIgUrl
-│   ├── rateLimit.ts            # checkRateLimit (Upstash Redis + in-memory fallback)
-│   ├── rpc.ts                  # getVideosForApi (pagination-aware RPC)
-│   ├── schemas.ts              # Zod schemas: submitVideoBody, enrichVideoBody, videoForm
-│   ├── types.ts                # VideoRecord, GetVideosApiResponse, PaginationMeta (re-exports)
-│   ├── supabase.ts             # createClient (browser client)
-│   ├── supabase-server.ts      # createServerSupabase (server client with cookies)
-│   └── upload.ts               # uploadBuffer (Vercel Blob)
-└── proxy.ts                    # Middleware: auth guard, CSRF, security headers, rate limiting
+│   ├── api-utils.ts        # requireUser, jsonError, deleteVideoById, createServiceSupabase, checkDuplicate
+│   ├── cn.ts               # clsx + tailwind-merge
+│   ├── instagram.ts        # extractIgId, detectSource, displayVideoUrl, reconstructIgUrl
+│   ├── rateLimit.ts        # checkRateLimit (Upstash Redis + in-memory fallback)
+│   ├── rpc.ts              # getVideosForApi (pagination-aware RPC)
+│   ├── schemas.ts          # Zod schemas: submitVideoBodySchema, enrichVideoBodySchema, videoFormSchema + VideoRecord interface
+│   ├── types.ts            # Re-exports VideoRecord, defines GetVideosApiResponse, PaginationMeta
+│   ├── supabase.ts         # createClient (browser client)
+│   ├── supabase-server.ts  # createServerSupabase (server client with cookies)
+│   ├── seo.ts              # siteUrl
+│   ├── upload.ts           # sanitizeFilename, uploadBuffer, deleteBlob (Vercel Blob)
+│   └── rateLimit.ts        # checkRateLimit (Upstash Redis + in-memory fallback)
+└── proxy.ts                # Middleware: auth guard, CSRF, security headers, rate limiting
 ```
 
 ## Authentication
@@ -66,21 +74,23 @@ src/
 - Middleware (`proxy.ts`) protects all routes except `/login` and `/api/public/*`
 - API routes use `createServerSupabase()` to verify session via cookies
 - The middleware also refreshes expired access tokens transparently
+- `/api/auth/enrich` uses a separate Bearer token (`ENRICH_API_TOKEN`) for extension API access
 
 ## API Routes
 
-| Route                   | Method | Auth         | Runtime | Purpose                              |
-| ----------------------- | ------ | ------------ | ------- | ------------------------------------ |
-| `/api/auth/videos`      | GET    | Required     | Edge    | List all videos                      |
-| `/api/auth/videos`      | POST   | Required     | Edge    | Create video                         |
-| `/api/auth/videos/[id]` | PUT    | Required     | Edge    | Update video                         |
-| `/api/auth/videos/[id]` | POST   | Required     | Edge    | Single action (trash/restore/delete) |
-| `/api/auth/videos/bulk` | POST   | Required     | Edge    | Bulk action                          |
-| `/api/auth/views`       | POST   | Required     | Edge    | Increment view count                 |
-| `/api/auth/enrich`      | POST   | Bearer token | Node.js | Enrich video metadata (thumbnail)    |
-| `/api/auth/submit`      | POST   | Required     | Edge    | Create from admin form               |
-| `/api/public/submit`    | POST   | Public       | Edge    | Frontend video submission            |
-| `/api/public/views`     | POST   | Public       | Edge    | Public view count increment          |
+| Route                     | Method | Auth         | Runtime | Purpose                                 |
+| ------------------------- | ------ | ------------ | ------- | --------------------------------------- |
+| `/api/auth/videos`        | GET    | Required     | Edge    | List all videos (paginated, filterable) |
+| `/api/auth/videos`        | POST   | Required     | Edge    | Create video                            |
+| `/api/auth/videos/[id]`   | PUT    | Required     | Edge    | Update video                            |
+| `/api/auth/videos/[id]`   | POST   | Required     | Edge    | Single action (trash/restore/delete)    |
+| `/api/auth/videos/bulk`   | POST   | Required     | Edge    | Bulk action                             |
+| `/api/auth/views`         | POST   | Required     | Edge    | Increment view count                    |
+| `/api/auth/enrich`        | POST   | Bearer token | Node.js | Enrich video metadata (thumbnail)       |
+| `/api/auth/submit`        | POST   | Required     | Edge    | Create from admin form                  |
+| `/api/public/submit`      | POST   | Public       | Edge    | Frontend video submission               |
+| `/api/public/views`       | POST   | Public       | Edge    | Public view count increment             |
+| `/api/public/check-video` | GET    | Public       | Edge    | Check if video already exists           |
 
 ## Data Schema (Supabase)
 
@@ -136,6 +146,15 @@ These are composed by `useVideosPageState` which also adds modal UI state (edit/
 - `VideoActions` — Edit/Trash or Restore/Purge buttons
 - `Td` — Consistent table cell wrapper
 
+### VideoFormModal
+
+- Modal for creating/editing videos
+- Fields: Instagram URL, Category (with "— Select —" placeholder), Location (with "—" placeholder), City, Tags, Description, Status
+- Category defaults to empty string when no category is set (fixes issue where editing a video with no category required selecting twice)
+- Location defaults to "delhi"
+- Status defaults to "draft"
+- URL field is disabled when editing
+
 ## Rate Limiting
 
 - Public endpoints (`/api/public/*`) are rate-limited via `checkRateLimit()`
@@ -154,12 +173,14 @@ These are composed by `useVideosPageState` which also adds modal UI state (edit/
 
 ## Testing
 
-- Vitest, node environment
-- Test files cover: constants, API routes, instagram utilities, cn, schemas
+- Vitest ^4.1.10, node environment
+- Test files: `auth-videos.test.ts`, `auth-videos-id.test.ts`, `auth-bulk.test.ts`, `auth-enrich.test.ts`, `auth-submit-views.test.ts`, `public-submit.test.ts`, `public-views.test.ts`, `public-check-video.test.ts`, `status.test.ts`, `constants.test.ts`, `cn.test.ts`, `instagram.test.ts`, `rateLimit.test.ts`, `rpc.test.ts`, `seo.test.ts`, `upload.test.ts`
+- Covers: API route handlers, constants validation, URL parsing, rate limiting, RPC, class merging, SEO, upload
 - No component tests or E2E tests
 
 ## Configuration
 
-- `next.config.ts` — Image remote patterns for Instagram CDN, Vercel Blob
+- `next.config.ts` — Image remote patterns for Instagram CDN, Vercel Blob, Unsplash
 - All Supabase + Vercel env vars in `.env.local` (not tracked in git)
 - Edge runtime for most API routes, Node.js for enrich route (sharp dependency)
+- `vercel.json` — Build: `bun run build`, install: `bun install`
