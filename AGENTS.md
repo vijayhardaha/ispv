@@ -279,7 +279,7 @@ Admin-specific types:
 
 | File                                | Purpose                                                                      |
 | ----------------------------------- | ---------------------------------------------------------------------------- |
-| `next.config.ts`                    | Image remote patterns (Instagram CDN, Vercel Blob), rewrites                 |
+| `next.config.ts`                    | Image remote patterns (Instagram CDN, Vercel Blob)                           |
 | `tsconfig.json`                     | Extends `@vijayhardaha/dev-config/tsconfig`, `@/*` path alias                |
 | `eslint.config.mjs`                 | Delegates to `@vijayhardaha/dev-config/eslint/next`                          |
 | `prettier.config.mjs`               | Extends `@vijayhardaha/dev-config/prettier` + `prettier-plugin-tailwindcss`  |

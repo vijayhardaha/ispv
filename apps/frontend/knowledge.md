@@ -27,8 +27,7 @@ src/
 │   ├── categories/page.tsx
 │   ├── categories/[id]/page.tsx (with useCategoryPage hook, CategoryHero, CategoryVideos)
 │   ├── dmca/page.tsx
-│   ├── og/route.tsx  # OG image generation
-│   ├── api/og/preview.png/route.tsx  # OG preview API endpoint
+│   │   ├── api/og/preview.png/route.tsx  # OG preview API endpoint
 │   ├── privacy/page.tsx
 │   ├── sitemap/page.tsx
 │   ├── terms/page.tsx
@@ -170,7 +169,7 @@ HomepageStats {
 
 | File                     | Purpose                                                                  |
 | ------------------------ | ------------------------------------------------------------------------ |
-| `next.config.ts`         | Image remote patterns (Unsplash, Vercel Blob), rewrites for OG preview   |
+| `next.config.ts`         | Image remote patterns (Unsplash, Vercel Blob)                            |
 | `postcss.config.mjs`     | `@tailwindcss/postcss` plugin                                            |
 | `tsconfig.json`          | Extends `@vijayhardaha/dev-config/tsconfig`, `@/*` alias, vitest globals |
 | `eslint.config.mjs`      | Delegates to `@vijayhardaha/dev-config/eslint/next`                      |
