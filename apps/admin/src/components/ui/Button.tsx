@@ -2,7 +2,7 @@
 
 import type { ComponentPropsWithoutRef, JSX } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 const variantStyles = {
   primary: 'border-2 border-black bg-yellow-400 text-black hover:bg-yellow-300',

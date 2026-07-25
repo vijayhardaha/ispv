@@ -4,7 +4,7 @@ import { useEffect, type ComponentPropsWithoutRef, type JSX, type ReactNode } fr
 
 import { Box } from '@/components/ui/Box';
 import { Button } from '@/components/ui/Button';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /* ── Modal shell ─────────────────────────────────────────────── */
 

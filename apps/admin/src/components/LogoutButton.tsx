@@ -3,7 +3,7 @@
 import { useState, type JSX } from 'react';
 
 import { Button } from '@/components/ui/Button';
-import { createClient } from '@/lib/supabase';
+import { createClient } from '@/lib/db';
 
 /**
  * Logout button that signs out client-side and redirects to login.

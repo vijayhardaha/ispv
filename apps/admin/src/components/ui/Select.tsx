@@ -2,7 +2,7 @@
 
 import type { ComponentPropsWithoutRef, JSX } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * Visual style variants for the Select component.

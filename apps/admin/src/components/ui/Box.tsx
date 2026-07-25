@@ -1,6 +1,6 @@
 import type { ComponentPropsWithoutRef, JSX } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 const boxBase = 'border-2 border-black bg-white shadow-[8px_8px_0px_0px_#18181b]';
 

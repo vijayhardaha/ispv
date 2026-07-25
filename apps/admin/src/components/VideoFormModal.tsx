@@ -7,9 +7,9 @@ import { Field, Input, ModalActions, ModalOverlay, ModalTitle, Textarea } from '
 import { Select } from '@/components/ui/Select';
 import type { CategoryRecord } from '@/constants/categories';
 import type { LocationRecord } from '@/constants/locations';
-import { extractIgId, reconstructIgUrl, detectSource } from '@/lib/instagram';
-import { videoFormSchema } from '@/lib/schemas';
-import type { VideoRecord } from '@/lib/types';
+import { videoFormSchema } from '@/lib/db';
+import type { VideoRecord } from '@/lib/db';
+import { extractIgId, reconstructIgUrl, detectSource } from '@/lib/utils';
 
 /**
  * Properties for the VideoFormModal component.
@@ -126,7 +126,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
 
     const tagsArr = tags
       .split(',')
-      .map((t) => t.trim())
+      .map((t) => t.trim().toLowerCase())
       .filter(Boolean);
 
     const body = video ? buildUpdateBody(tagsArr) : buildCreateBody(tagsArr);
@@ -162,7 +162,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
           </Field>
           <Field label="Location">
             <Select value={location} onChange={(e) => setLocation(e.target.value)}>
-              <option value="">—</option>
+              <option value="">— Select —</option>
               {locations.map((s) => (
                 <option key={s.slug} value={s.slug}>
                   {s.name}
