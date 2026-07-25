@@ -9,6 +9,9 @@ import { SectionHeader } from '@/components/shared/SectionHeader';
 import { Container } from '@/components/ui/Container';
 import type { DbCategory } from '@/lib/db';
 
+/**
+ * Lucide icon components keyed by featured category slug for the quick-link cards.
+ */
 const FEATURED_ICONS: Record<string, typeof Flag> = {
   'protest-marches': Flag,
   'police-conduct': Shield,
@@ -18,6 +21,9 @@ const FEATURED_ICONS: Record<string, typeof Flag> = {
   'human-rights': ShieldAlert,
 };
 
+/**
+ * Fallback Lucide icon used when a category slug has no matching icon entry.
+ */
 const FALLBACK_ICON = FileText;
 
 /**
