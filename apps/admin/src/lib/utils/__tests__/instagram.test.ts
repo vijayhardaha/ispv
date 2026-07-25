@@ -5,7 +5,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { detectSource, displayVideoUrl, extractIgId, reconstructIgUrl } from '@/lib/instagram';
+import { detectSource, displayVideoUrl, extractIgId, reconstructIgUrl } from '@/lib/utils';
 
 describe('extractIgId', () => {
   it('extracts ID from a standard post URL', () => {

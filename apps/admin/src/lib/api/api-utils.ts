@@ -1,7 +1,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
-import { deleteBlob } from '@/lib/upload';
+import { deleteBlob } from './upload';
 
 /**
  * Guards a route handler by requiring an authenticated Supabase user.
