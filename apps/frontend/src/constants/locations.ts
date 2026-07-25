@@ -1,5 +1,9 @@
 /**
- * Location record shape.
+ * Location record shape used across the frontend for filtering and display.
+ *
+ * @type {DbLocation}
+ * @property {string} slug - URL-safe location identifier.
+ * @property {string} name - Display name for the location.
  */
 export interface DbLocation {
   slug: string;

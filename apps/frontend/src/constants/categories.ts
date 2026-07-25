@@ -1,5 +1,12 @@
 /**
- * Category record shape.
+ * Category record shape used across the frontend for filtering and display.
+ *
+ * @type {DbCategory}
+ * @property {string} slug - URL-safe category identifier.
+ * @property {string} name - Display name for the category.
+ * @property {string} tag - Short promotional tagline for the category.
+ * @property {string} color - Theme colour key for the category.
+ * @property {string | null} description - Detailed description of the category.
  */
 export interface DbCategory {
   slug: string;
