@@ -58,6 +58,7 @@ Textarea.displayName = 'Textarea';
  * @param {object} props.children - Label text content.
  * @param {boolean} [props.required] - Shows a red asterisk when true.
  * @param {string} [props.hint] - Optional hint text displayed beside the label.
+ * @param {string} [props.className] - Additional CSS classes to merge onto the label element.
  *
  * @returns {JSX.Element} Rendered label element.
  */
@@ -66,14 +67,16 @@ export function FieldLabel({
   children,
   required,
   hint,
+  className,
 }: {
   htmlFor?: string;
   children: ReactNode;
   required?: boolean;
   hint?: string;
+  className?: string;
 }): JSX.Element {
   return (
-    <label htmlFor={htmlFor} className="flex items-center gap-1 text-sm font-bold">
+    <label htmlFor={htmlFor} className={cn('flex items-center gap-1 text-sm font-bold', className)}>
       {children}
       {required && <span className="text-yellow-500"> *</span>}
       {hint && <span className="ml-2 font-normal text-black/50 normal-case">{hint}</span>}
