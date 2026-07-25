@@ -80,7 +80,7 @@ describe('POST /api/public/submit', () => {
       p_video_url: 'https://www.instagram.com/reel/ABC123xyz/',
       p_video_id: 'ABC123xyz',
       p_video_src: 'instagram',
-      p_tags: 'Protest,Delhi',
+      p_tags: 'protest,delhi',
       p_category: 'delhi',
       p_location: null,
       p_city: 'New Delhi',
@@ -97,7 +97,7 @@ describe('POST /api/public/submit', () => {
 
     expect(mockRpc).toHaveBeenCalledWith(
       'submit_video',
-      expect.objectContaining({ p_tags: 'Protest,Delhi,FunnyMoment' })
+      expect.objectContaining({ p_tags: 'protest,delhi,funnymoment' })
     );
   });
 
