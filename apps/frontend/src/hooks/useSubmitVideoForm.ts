@@ -6,7 +6,7 @@ import { z } from 'zod/v4';
 
 import type { DbLocation } from '@/lib/db';
 import { checkVideoExists, getLocations } from '@/lib/db';
-import { extractInstagramId } from '@/lib/instagram';
+import { extractInstagramId } from '@/lib/utils';
 
 /**
  * Zod schema validating the public video submission form.

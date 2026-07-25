@@ -5,7 +5,7 @@ import { useCallback, useState, type JSX } from 'react';
 import { ChevronDown, ChevronRight, MapPin, Search, X } from 'lucide-react';
 
 import { TagChips } from '@/components/shared/TagChips';
-import type { FilterState } from '@/helpers/filterVideos';
+import type { FilterState } from '@/lib/helpers/filterVideos';
 
 /**
  * Search, location, and tag filter bar for the video archive.

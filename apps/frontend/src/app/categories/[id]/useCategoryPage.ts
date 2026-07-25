@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 
-import type { FilterState } from '@/helpers/filterVideos';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 import { getCategoryByValue, getLocations, getTags, type DbCategory } from '@/lib/db';
+import type { FilterState } from '@/lib/helpers/filterVideos';
 import { getPublishedVideos, type VideoEntry } from '@/lib/videos';
 
 /**

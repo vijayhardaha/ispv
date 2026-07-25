@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 import { Button } from '@/components/ui/Button';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * Builds a URL search params string with the given page number, preserving other params.

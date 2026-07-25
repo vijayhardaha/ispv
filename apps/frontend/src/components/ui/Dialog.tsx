@@ -4,7 +4,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 
 import { toneMap, type Tone } from '@/constants/colors';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * Root dialog component that manages open/close state.

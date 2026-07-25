@@ -4,9 +4,9 @@ import { useEffect, useRef, useState, type JSX } from 'react';
 
 import { PageHero } from '@/components/shared/PageHero';
 import { VideoGridSection } from '@/components/shared/VideoGridSection';
-import type { FilterState } from '@/helpers/filterVideos';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 import { getLocations, getTags } from '@/lib/db';
+import type { FilterState } from '@/lib/helpers/filterVideos';
 import { getPublishedVideos, type VideoEntry } from '@/lib/videos';
 
 const DEFAULT_FILTERS: FilterState = {

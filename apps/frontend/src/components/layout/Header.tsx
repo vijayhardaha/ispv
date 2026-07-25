@@ -11,7 +11,7 @@ import { SubmitVideoDialog } from '@/components/features/SubmitVideoDialog';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 import { HEADER_NAV_LINKS } from '@/constants/navlinks';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * Site-wide sticky header with navigation, branding, and mobile menu.

@@ -3,7 +3,7 @@
 import { type JSX } from 'react';
 
 import { Container } from '@/components/ui/Container';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * A single protest demand with its display styling and description.

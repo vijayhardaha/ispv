@@ -2,9 +2,9 @@ import { memo, type JSX, type ReactNode } from 'react';
 
 import { Eye, Play, MapPin } from 'lucide-react';
 
-import { formatLocationLabel } from '@/helpers/formatLocation';
-import { getThumbnailSrc } from '@/helpers/media';
-import { cn } from '@/lib/cn';
+import { formatLocationLabel } from '@/lib/helpers/formatLocation';
+import { getThumbnailSrc } from '@/lib/helpers/media';
+import { cn } from '@/lib/utils';
 import type { VideoEntry } from '@/lib/videos';
 
 /**

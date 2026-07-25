@@ -2,7 +2,7 @@
 
 import { memo, type JSX } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * Selectable tag chip buttons for filtering by hashtag or category.

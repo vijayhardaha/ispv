@@ -4,10 +4,9 @@ import { useState, type JSX } from 'react';
 
 import { Eye } from 'lucide-react';
 
-import { formatLocationLabel } from '@/helpers/formatLocation';
-import { getThumbnailSrc } from '@/helpers/media';
-import { cn } from '@/lib/cn';
-import { extractInstagramId } from '@/lib/instagram';
+import { formatLocationLabel } from '@/lib/helpers/formatLocation';
+import { getThumbnailSrc } from '@/lib/helpers/media';
+import { cn, extractInstagramId } from '@/lib/utils';
 import type { VideoEntry } from '@/lib/videos';
 
 /**

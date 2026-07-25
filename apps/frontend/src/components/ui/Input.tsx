@@ -1,6 +1,6 @@
 import { forwardRef, type InputHTMLAttributes, type TextareaHTMLAttributes, type JSX, type ReactNode } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * Props for the Input component.

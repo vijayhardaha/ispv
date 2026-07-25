@@ -1,8 +1,11 @@
 import type { JSX } from 'react';
 
 import { SLOGANS } from '@/constants/slogans';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
+/**
+ * Rotational colour and shadow variants applied to each slogan placard in the marquee.
+ */
 const PLACARD_STYLES = [
   'border-red-500 shadow-brutal-red-600 rotate-placard-1',
   'border-yellow-400 shadow-brutal-yellow-500 rotate-placard-2',
