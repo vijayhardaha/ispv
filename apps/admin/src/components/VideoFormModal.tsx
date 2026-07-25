@@ -160,6 +160,17 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
               ))}
             </Select>
           </Field>
+          <Field label="Status">
+            <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+              <option value="draft">Draft</option>
+              <option value="pending_review">Pending Review</option>
+              <option value="published">Published</option>
+              <option value="rejected">Rejected</option>
+            </Select>
+          </Field>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
           <Field label="Location">
             <Select value={location} onChange={(e) => setLocation(e.target.value)}>
               <option value="">— Select —</option>
@@ -170,11 +181,10 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
               ))}
             </Select>
           </Field>
+          <Field label="City">
+            <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="e.g. Delhi, Mumbai, Bangalore" />
+          </Field>
         </div>
-
-        <Field label="City">
-          <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="e.g. Delhi, Mumbai, Bangalore" />
-        </Field>
 
         <Field label="Tags (comma-separated)">
           <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="e.g. protest, students, peace" />
@@ -186,15 +196,6 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Brief description of the video"
           />
-        </Field>
-
-        <Field label="Status">
-          <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option value="draft">Draft</option>
-            <option value="pending_review">Pending Review</option>
-            <option value="published">Published</option>
-            <option value="rejected">Rejected</option>
-          </Select>
         </Field>
 
         <ModalActions onClose={onClose} loading={loading} />
