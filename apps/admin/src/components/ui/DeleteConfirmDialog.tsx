@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button';
  * @param {object} props - Component properties.
  * @param {string} props.label - Entity name shown in the heading (e.g. "Video", "Category").
  * @param {'trash' | 'restore' | 'delete'} [props.action] - Type of action being confirmed.
+ * @param {string} [props.message] - Custom confirmation message (overrides default).
  * @param {() => void} props.onCancel - Cancel handler.
  * @param {() => Promise<void> | void} props.onConfirm - Confirm handler.
  *
@@ -20,11 +21,13 @@ import { Button } from '@/components/ui/Button';
 export function DeleteConfirmDialog({
   label,
   action = 'delete',
+  message,
   onCancel,
   onConfirm,
 }: {
   label: string;
   action?: 'trash' | 'restore' | 'delete';
+  message?: string;
   onCancel: () => void;
   onConfirm: () => Promise<void> | void;
 }): JSX.Element {
@@ -55,18 +58,19 @@ export function DeleteConfirmDialog({
   const isRestore = action === 'restore';
 
   const title = isRestore ? `Restore ${label}?` : isTrash ? `Trash ${label}?` : `Delete ${label}?`;
-  const message = isRestore
+  const defaultMessage = isRestore
     ? 'This video will reappear in the main list.'
     : isTrash
       ? 'This video will be hidden from the main list. You can restore it later from the Trashed view.'
       : 'This action cannot be undone. The video will be permanently removed.';
+  const displayMessage = message ?? defaultMessage;
   const buttonLabel = isRestore ? 'Restore' : isTrash ? 'Trash' : loading ? 'Deleting…' : 'Delete';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <Box className="w-full max-w-sm p-6">
         <h2 className="mb-2 text-lg font-extrabold uppercase">{title}</h2>
-        <p className="mb-4 text-sm text-black/70">{message}</p>
+        <p className="mb-4 text-sm text-black/70">{displayMessage}</p>
         <div className="flex justify-end gap-2">
           <Button onClick={onCancel} variant="secondary" disabled={loading}>
             Cancel
