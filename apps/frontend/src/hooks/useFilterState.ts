@@ -63,18 +63,23 @@ export function useFilterState({ videos, defaults }: UseFilterStateProps): {
     if (state.query) {
       next.set('q', state.query);
     }
+
     if (state.category !== 'all') {
       next.set('category', state.category);
     }
+
     if (state.location !== 'all') {
       next.set('location', state.location);
     }
+
     if (state.tags.length) {
       next.set('tag', state.tags[0]);
     }
+
     if (state.page !== 1) {
       next.set('page', String(state.page));
     }
+
     window.history.replaceState(null, '', `?${next.toString()}`);
   }, [state]);
 
