@@ -20,7 +20,6 @@ const siteDomain = 'https://ispv.vercel.app';
 const CATEGORY_SLUGS = [
   'protest-marches',
   'police-conduct',
-  'night-updates',
   'gen-z-moments',
   'official-statements',
   'public-figures-creators',
@@ -33,6 +32,7 @@ const CATEGORY_SLUGS = [
   'children-voices',
   'human-rights',
   'celebrations-cultural-events',
+  'night-updates',
   'counter-protests-public-reactions',
   'media-analysis',
   'other',
