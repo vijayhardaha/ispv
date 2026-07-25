@@ -42,5 +42,6 @@ export function useReelPlayer(): ReelPlayerContextValue {
   if (!ctx) {
     throw new Error('useReelPlayer must be used within ReelPlayerProvider');
   }
+
   return ctx;
 }
