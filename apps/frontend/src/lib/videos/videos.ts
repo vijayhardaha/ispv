@@ -16,7 +16,6 @@ import { supabase } from '../db/supabase';
  * @property {string} category - Category value slug.
  * @property {string} categoryName - Resolved category display name.
  * @property {string[]} tags - Searchable tags.
- * @property {string[]} hashtags - Hashtags with hash prefix.
  * @property {number} duration - Video duration in seconds.
  * @property {number} viewCount - Number of video views.
  * @property {string | null} videoPostDate - Post date from Instagram (ISO string).
@@ -33,7 +32,6 @@ export interface VideoEntry {
   category: string;
   categoryName: string;
   tags: string[];
-  hashtags: string[];
   duration: number;
   viewCount: number;
   videoPostDate: string | null;

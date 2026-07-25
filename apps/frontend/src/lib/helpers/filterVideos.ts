@@ -115,7 +115,7 @@ export function filterVideos(videos: VideoEntry[], state: FilterState): VideoEnt
       v.description.toLowerCase().includes(q)
       || v.city.toLowerCase().includes(q)
       || v.location.toLowerCase().includes(q)
-      || v.hashtags.some((h) => h.toLowerCase().includes(q))
+      || v.tags.some((t) => t.toLowerCase().includes(q))
       || v.tags.some((t) => t.toLowerCase().includes(q))
     );
   });

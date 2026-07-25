@@ -50,9 +50,6 @@ export interface VideoRow {
  */
 export function dbRowToVideoEntry(row: VideoRow): VideoEntry {
   const tags = row.tags ?? [];
-  const hashtags = Array.from(
-    new Set([...tags.map((t: string) => `#${t}`), row.city ? `#${row.city.replace(/\s+/g, '')}` : ''].filter(Boolean))
-  );
   const matchedCategory = CATEGORIES.find((c) => c.slug === row.category);
 
   return {
@@ -65,7 +62,6 @@ export function dbRowToVideoEntry(row: VideoRow): VideoEntry {
     category: row.category ?? '',
     categoryName: matchedCategory?.name ?? row.category ?? '',
     tags,
-    hashtags,
     duration: 0,
     viewCount: row.view_count ?? 0,
     videoPostDate: row.video_post_date,

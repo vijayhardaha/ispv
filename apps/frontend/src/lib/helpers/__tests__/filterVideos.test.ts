@@ -18,8 +18,7 @@ const makeVideo = (overrides: Partial<VideoEntry> = {}): VideoEntry => ({
   location: 'Delhi',
   category: 'protest-marches',
   categoryName: 'Protest Marches',
-  tags: ['peaceful', 'students', 'delhi'],
-  hashtags: ['#peaceful', '#students', '#Delhi'],
+  tags: ['peaceful', 'students', 'Delhi'],
   duration: 0,
   viewCount: 0,
   videoPostDate: null,
@@ -139,30 +138,20 @@ describe('filterVideos', () => {
       expect(result[0].id).toBe('2');
     });
 
-    it('matches hashtags', () => {
+    it('matches tags', () => {
       const videos = [
-        makeVideo({
-          id: '1',
-          hashtags: ['#peaceful', '#students'],
-          tags: ['peaceful', 'students'],
-          description: 'Delhi protest',
-        }),
-        makeVideo({ id: '2', hashtags: ['#women', '#rights'], tags: ['women', 'rights'], description: 'Mumbai rally' }),
+        makeVideo({ id: '1', tags: ['peaceful', 'students'], description: 'Delhi protest' }),
+        makeVideo({ id: '2', tags: ['women', 'rights'], description: 'Mumbai rally' }),
       ];
       const result = filterVideos(videos, { ...baseState, query: 'peaceful' });
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe('1');
     });
 
-    it('matches tags (without hash prefix)', () => {
+    it('matches tags by description', () => {
       const videos = [
-        makeVideo({
-          id: '1',
-          tags: ['peaceful', 'students'],
-          hashtags: ['#peaceful', '#students'],
-          description: 'Delhi protest',
-        }),
-        makeVideo({ id: '2', tags: ['women', 'rights'], hashtags: ['#women', '#rights'], description: 'Mumbai rally' }),
+        makeVideo({ id: '1', tags: ['peaceful', 'students'], description: 'Delhi protest' }),
+        makeVideo({ id: '2', tags: ['women', 'rights'], description: 'Mumbai rally' }),
       ];
       const result = filterVideos(videos, { ...baseState, query: 'peaceful' });
       expect(result).toHaveLength(1);
