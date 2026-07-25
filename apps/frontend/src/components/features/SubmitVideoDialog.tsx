@@ -4,7 +4,7 @@ import { type JSX, type ReactNode } from 'react';
 
 import { Send, Link2, MapPin, Building2 } from 'lucide-react';
 
-import { HashtagArea } from '@/components/features/HashtagArea';
+import { TagArea } from '@/components/features/TagArea';
 import { SuccessState } from '@/components/shared/SuccessState';
 import { Button } from '@/components/ui/Button';
 import {
@@ -79,7 +79,7 @@ export function SubmitVideoDialog({
                 {form.checkingUrl && <p className="mt-1 text-xs text-black/50">Checking archive…</p>}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-1">
                   <FieldLabel htmlFor="reel-location">
                     <MapPin className="h-3.5 w-3.5" /> Location
@@ -112,7 +112,7 @@ export function SubmitVideoDialog({
                 </div>
               </div>
 
-              <HashtagArea hashtags={form.hashtags} setHashtags={form.setHashtags} disabled={form.submitting} />
+              <TagArea tags={form.tags} setTags={form.setTags} disabled={form.submitting} />
 
               <p className="text-sm leading-relaxed text-black/80">
                 Add keywords like{' '}
@@ -131,7 +131,7 @@ export function SubmitVideoDialog({
               </p>
 
               <DialogFooter>
-                <Button type="submit" variant="default" shadow loading={form.submitting}>
+                <Button type="submit" variant="default" shadow loading={form.submitting} disabled={!form.canSubmit}>
                   <Send className="size-4" /> {form.submitting ? 'Submitting…' : 'Submit Reel'}
                 </Button>
               </DialogFooter>
