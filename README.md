@@ -52,10 +52,11 @@ This is a **Bun monorepo** with three packages:
 | **Blob Storage**     | Vercel Blob (thumbnails)                      |
 | **Image Processing** | sharp                                         |
 | **Validation**       | Zod                                           |
-| **Testing**          | Vitest (~133 tests)                           |
+| **Testing**          | Vitest (~313 tests)                           |
 | **Linting**          | ESLint 10 via `@vijayhardaha/dev-config`      |
 | **Formatting**       | Prettier 3 + `prettier-plugin-tailwindcss`    |
 | **Package Manager**  | Bun                                           |
+| **Hooks**            | Husky + commitlint                            |
 
 ## Design
 
@@ -80,8 +81,8 @@ Typography:
 ### Installation
 
 ```bash
-git clone https://github.com/vijayhardaha/indian-students-protest.git
-cd indian-students-protest
+git clone https://github.com/vijayhardaha/ispv.git
+cd ispv
 bun install
 ```
 
@@ -142,23 +143,24 @@ bun run build   # Production build for both apps
 ├── apps/
 │   ├── frontend/              # @ispv/frontend — public archive site
 │   │   └── src/
-│   │       ├── app/           # Next.js App Router pages
+│   │       ├── app/           # Next.js App Router pages + layouts
 │   │       ├── components/    # React components (features/, layout/, shared/, ui/)
 │   │       ├── constants/     # SEO, colors, nav, categories, locations, slogans
 │   │       ├── hooks/         # useFilterState, useReelPlayer, useSubmitVideoForm
-│   │       ├── helpers/       # filterVideos, formatLocation, buildThumbnailSrc
-│   │       └── lib/           # db, adapt, cn, videos, format, instagram, schemas
+│   │       └── lib/           # db/, videos/, seo/, utils/, helpers/ (barrel-exported)
 │   └── admin/                 # @ispv/admin — admin panel
 │       └── src/
-│           ├── app/           # Pages (login, dashboard, videos) + API routes
+│           ├── app/           # Pages (login, dashboard, videos) + API routes (auth/, public/)
 │           ├── components/    # layout/, ui/, features/
 │           ├── constants/     # categories, colors, locations, status, etc.
 │           ├── hooks/         # usePagination
-│           └── lib/           # api-utils, cn, instagram, rateLimit, rpc, schemas, types, supabase, upload
-├── chrome-extension/          # @ispv/extension — Chrome extension
-│   ├── manifest.json
-│   ├── content.js
-│   └── icons/
+│           └── lib/           # db/, utils/, api/ (barrel-exported)
+├── chrome-extension/          # @ispv/extension — ISPV Helper Chrome extension
+│   ├── manifest.json          # Manifest V3
+│   ├── content.js             # Injects floating collect button on Instagram reel pages
+│   ├── background.js          # Service worker: proxies API requests with Bearer token
+│   ├── options.js             # Options page: manages API token + admin URL
+│   └── options.html           # Options page UI
 ├── PHILOSOPHY.md              # Project philosophy and ethos
 ├── AGENTS.md                  # Detailed developer knowledge base
 ├── package.json               # Root monorepo configuration
@@ -177,20 +179,26 @@ Key types:
 
 - **`VideoEntry`** — full video record (id, description, url, thumbnail, city, location, category, tags, hashtags, trending flag, etc.)
 - **`VideoRecord`** (admin) — full DB row type (includes status, trashed_at, view_count, etc.)
+- **`VideoFilters`** — paginated filter shape for published video queries
+- **`HomepageStats`** — aggregate stats from the homepage RPC
 
 See [`apps/frontend/knowledge.md`](./apps/frontend/knowledge.md) and [`apps/admin/knowledge.md`](./apps/admin/knowledge.md) for detailed documentation.
 
 ## API Routes (Admin)
 
-| Endpoint                     | Auth                  | Purpose                             |
-| ---------------------------- | --------------------- | ----------------------------------- |
-| `POST /api/public/submit`    | Public (rate-limited) | Video submission from the frontend  |
-| `POST /api/public/views`     | Public (rate-limited) | View count increment                |
-| `GET /api/auth/videos`       | Auth required         | List videos (paginated, filterable) |
-| `POST /api/auth/videos`      | Auth required         | Create video                        |
-| `PUT /api/auth/videos`       | Auth required         | Update video                        |
-| `POST /api/auth/videos/bulk` | Auth required         | Bulk actions (trash/restore/delete) |
-| `POST /api/auth/enrich`      | Auth required         | Enrich video metadata               |
+| Endpoint                      | Auth                  | Purpose                              |
+| ----------------------------- | --------------------- | ------------------------------------ |
+| `GET /api/public/check-video` | Public (rate-limited) | Check if a video already exists      |
+| `POST /api/public/submit`     | Public (rate-limited) | Video submission from the frontend   |
+| `POST /api/public/views`      | Public (rate-limited) | View count increment                 |
+| `GET /api/auth/videos`        | Auth required         | List videos (paginated, filterable)  |
+| `POST /api/auth/videos`       | Auth required         | Create video                         |
+| `PUT /api/auth/videos/[id]`   | Auth required         | Update video                         |
+| `POST /api/auth/videos/[id]`  | Auth required         | Single action (trash/restore/delete) |
+| `POST /api/auth/videos/bulk`  | Auth required         | Bulk actions                         |
+| `POST /api/auth/views`        | Auth required         | View count increment                 |
+| `POST /api/auth/enrich`       | Bearer token          | Enrich video metadata (thumbnail)    |
+| `POST /api/auth/submit`       | Auth required         | Create from admin form               |
 
 ## Data Ethos
 
@@ -198,6 +206,7 @@ See [`apps/frontend/knowledge.md`](./apps/frontend/knowledge.md) and [`apps/admi
 - **Removal is respected.** Video owners can request removal via Instagram DM.
 - **No personal data is collected.** The submission form asks for nothing beyond the Instagram URL and optional metadata tags.
 - **The archive is auditable.** The code is open source (MIT). Data flows are transparent.
+- **Rate-limited public endpoints.** Public submissions and views are throttled via Upstash Redis (with in-memory fallback).
 
 ## Contributing
 
@@ -206,12 +215,12 @@ Contributions are welcome! Please read the project philosophy first, then:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Run `bun run lint && bun run tsc && bun run test` to verify
+4. Run `bun run lint:fix && bun run format && bun run tsc && bun run test` to verify
 5. Submit a pull request
 
 ### Commit Convention
 
-This repo uses [Conventional Commits](https://www.conventionalcommits.org/) with `commitlint`. Commit messages are automatically linted via Husky.
+This repo uses [Conventional Commits](https://www.conventionalcommits.org/) with `commitlint`. Commit messages are automatically linted via Husky on commit and validated on push.
 
 ## License
 
