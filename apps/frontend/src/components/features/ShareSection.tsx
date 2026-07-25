@@ -232,7 +232,7 @@ export function ShareSection(): JSX.Element {
   return (
     <section className="border-y-2 border-black bg-gray-100 py-12 md:py-16">
       <Container>
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="mx-auto max-w-3xl space-y-8 text-center">
           <ShareHeader />
           <ShareButtons />
           <ShareDivider />
