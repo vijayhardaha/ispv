@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { createServiceSupabase } from '@/lib/api-utils';
-import { checkRateLimit } from '@/lib/rateLimit';
+import { createServiceSupabase, checkRateLimit } from '@/lib/api';
 
 /**
  * Increments the view count for a video via the increment_video_view RPC.

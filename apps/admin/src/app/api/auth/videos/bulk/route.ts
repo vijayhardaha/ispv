@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 
-import { jsonError, requireUser } from '@/lib/api-utils';
-import { createServerSupabase } from '@/lib/supabase-server';
-import { deleteBlob } from '@/lib/upload';
+import { jsonError, requireUser, deleteBlob } from '@/lib/api';
+import { createServerSupabase } from '@/lib/db/supabase-server';
 
 /**
  * Valid status values for the update_status bulk action.

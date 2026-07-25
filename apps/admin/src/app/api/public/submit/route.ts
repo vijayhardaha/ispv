@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 
-import { createServiceSupabase } from '@/lib/api-utils';
-import { checkRateLimit } from '@/lib/rateLimit';
-import { submitVideoBodySchema } from '@/lib/schemas';
-import { extractIgId, detectSource } from '@/lib/instagram';
+import { createServiceSupabase, checkRateLimit } from '@/lib/api';
+import { submitVideoBodySchema } from '@/lib/db';
+import { extractIgId, detectSource } from '@/lib/utils';
 
 /**
  * Handles public video submission from the frontend submit dialog.
@@ -24,7 +23,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     const body = await req.json();
     const parsed = submitVideoBodySchema.safeParse({
       video_url: body.url ?? body.video_url,
-      tags: body.hashtags ? body.hashtags.split(',').map((s: string) => s.trim()).filter(Boolean) : undefined,
+      tags: (body.tags || body.hashtags) ? (body.tags || body.hashtags).split(',').map((s: string) => s.trim().toLowerCase()).filter(Boolean) : undefined,
       category: body.location ?? null,
       location: null,
       city: body.city ?? null,

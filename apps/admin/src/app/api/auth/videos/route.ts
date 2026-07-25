@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 
-import { checkDuplicate, requireUser } from '@/lib/api-utils';
-import { videoFormSchema } from '@/lib/schemas';
-import { createServerSupabase } from '@/lib/supabase-server';
+import { checkDuplicate, requireUser } from '@/lib/api';
+import { videoFormSchema } from '@/lib/db';
+import { createServerSupabase } from '@/lib/db/supabase-server';
 
 /**
  * Retrieves all videos ordered by creation date.

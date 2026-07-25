@@ -7,10 +7,9 @@ import net from 'node:net';
 import { NextResponse } from 'next/server';
 import sharp from 'sharp';
 
-import { createServiceSupabase } from '@/lib/api-utils';
-import { detectSource, extractIgId } from '@/lib/instagram';
-import { enrichVideoBodySchema } from '@/lib/schemas';
-import { sanitizeFilename, uploadBuffer } from '@/lib/upload';
+import { createServiceSupabase, sanitizeFilename, uploadBuffer } from '@/lib/api';
+import { enrichVideoBodySchema } from '@/lib/db';
+import { detectSource, extractIgId } from '@/lib/utils';
 
 /** Maximum allowed image size in bytes (5 MB) for enrichment. */
 const MAX_BYTES = 5 * 1024 * 1024;

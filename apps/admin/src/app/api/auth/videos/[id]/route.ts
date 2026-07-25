@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 
-import { checkDuplicate, deleteVideoById, requireUser } from '@/lib/api-utils';
-import { videoFormSchema } from '@/lib/schemas';
-import { createServerSupabase } from '@/lib/supabase-server';
+import { checkDuplicate, deleteVideoById, requireUser } from '@/lib/api';
+import { videoFormSchema } from '@/lib/db';
+import { createServerSupabase } from '@/lib/db/supabase-server';
 
 /**
  * Updates an existing video record by ID with duplicate validation.

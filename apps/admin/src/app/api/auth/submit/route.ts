@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 
-import { requireUser } from '@/lib/api-utils';
-import { extractIgId, detectSource } from '@/lib/instagram';
-import { submitVideoBodySchema } from '@/lib/schemas';
-import { createServerSupabase } from '@/lib/supabase-server';
+import { requireUser } from '@/lib/api';
+import { submitVideoBodySchema } from '@/lib/db';
+import { createServerSupabase } from '@/lib/db/supabase-server';
+import { extractIgId, detectSource } from '@/lib/utils';
 
 /**
  * Handles public video submission via RPC call with URL validation.

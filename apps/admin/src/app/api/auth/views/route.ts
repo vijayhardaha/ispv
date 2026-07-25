@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-import { requireUser } from '@/lib/api-utils';
-import { createServerSupabase } from '@/lib/supabase-server';
+import { requireUser } from '@/lib/api';
+import { createServerSupabase } from '@/lib/db/supabase-server';
 
 /**
  * Increments the view count for a specific video.

@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 
-import { createServiceSupabase } from '@/lib/api-utils';
-import { checkRateLimit } from '@/lib/rateLimit';
-import { extractIgId, normalizeIgUrl } from '@/lib/instagram';
+import { createServiceSupabase, checkRateLimit } from '@/lib/api';
+import { extractIgId, normalizeIgUrl } from '@/lib/utils';
 
 /**
  * Checks whether a video with the given Instagram URL or extracted video ID
