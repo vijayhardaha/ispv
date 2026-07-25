@@ -1,12 +1,47 @@
 'use client';
 
-import { useCallback, useEffect, useState, type SubmitEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState, type SubmitEvent } from 'react';
 
 import { z } from 'zod/v4';
 
 import type { DbLocation } from '@/lib/db';
 import { checkVideoExists, getLocations } from '@/lib/db';
 import { extractInstagramId } from '@/lib/utils';
+
+/** Maximum number of tags allowed. */
+const MAX_TAGS = 15;
+
+/** Maximum number of words allowed across all tags combined. */
+const MAX_WORDS = 50;
+
+/**
+ * Parse a comma-separated tag string into a unique list of trimmed tags.
+ *
+ * @param {string} input - Raw tag input (comma or newline separated).
+ *
+ * @returns {string[]} Deduplicated array of trimmed tag strings.
+ */
+function parseTags(input: string): string[] {
+  return Array.from(
+    new Set(
+      input
+        .split(/[,]+/)
+        .map((t) => t.trim())
+        .filter(Boolean)
+    )
+  );
+}
+
+/**
+ * Counts the total number of words across all tags.
+ *
+ * @param {string[]} tags - Array of tag strings.
+ *
+ * @returns {number} Total word count.
+ */
+function countWords(tags: string[]): number {
+  return tags.reduce((sum, tag) => sum + tag.split(/\s+/).filter(Boolean).length, 0);
+}
 
 /**
  * Zod schema validating the public video submission form.
@@ -15,7 +50,7 @@ const submitVideoFormSchema = z.object({
   url: z.string().min(1, 'URL is required'),
   location: z.string().min(1, 'Location is required'),
   city: z.string().max(30, 'City must be 30 characters or less'),
-  hashtags: z.string(),
+  tags: z.string(),
 });
 
 /**
@@ -49,13 +84,14 @@ export interface UseSubmitVideoFormOptions {
  * @property {(location: string) => void} setLocation - Sets the location value.
  * @property {string} city - Current city input value.
  * @property {(city: string) => void} setCity - Sets the city value.
- * @property {string} hashtags - Current hashtags input value.
- * @property {(hashtags: string) => void} setHashtags - Sets the hashtags value.
+ * @property {string} tags - Current tags input value (comma-separated).
+ * @property {(tags: string) => void} setTags - Sets the tags value.
  * @property {string | null} error - Current validation error message.
  * @property {(error: string | null) => void} setError - Sets the error message.
  * @property {boolean} success - Whether the submission succeeded.
  * @property {boolean} submitting - Whether a submission is in progress.
  * @property {boolean} checkingUrl - Whether a duplicate URL check is running.
+ * @property {boolean} canSubmit - Whether the submit button should be enabled.
  * @property {DbLocation[]} locations - Available location options.
  * @property {() => void} handleBlur - URL blur handler for duplicate check.
  * @property {(e: SubmitEvent<HTMLFormElement>) => void} handleSubmit - Form submit handler.
@@ -70,13 +106,14 @@ export interface UseSubmitVideoFormReturn {
   setLocation: (location: string) => void;
   city: string;
   setCity: (city: string) => void;
-  hashtags: string;
-  setHashtags: (hashtags: string) => void;
+  tags: string;
+  setTags: (tags: string) => void;
   error: string | null;
   setError: (error: string | null) => void;
   success: boolean;
   submitting: boolean;
   checkingUrl: boolean;
+  canSubmit: boolean;
   locations: DbLocation[];
   handleBlur: () => void;
   handleSubmit: (e: SubmitEvent<HTMLFormElement>) => void;
@@ -100,7 +137,7 @@ export function useSubmitVideoForm({
   const [url, setUrl] = useState('');
   const [location, setLocation] = useState('Delhi');
   const [city, setCity] = useState('');
-  const [hashtags, setHashtags] = useState('');
+  const [tags, setTags] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -117,7 +154,7 @@ export function useSubmitVideoForm({
     setUrl('');
     setLocation('Delhi');
     setCity('');
-    setHashtags('');
+    setTags('');
     setError(null);
     setSuccess(false);
     setSubmitting(false);
@@ -159,39 +196,80 @@ export function useSubmitVideoForm({
     }
   }, [url, error, checkForDuplicate]);
 
+  /**
+   * Whether the URL is a valid Instagram reel URL.
+   */
+  const isValidUrl = useMemo(() => {
+    if (!url) {
+      return false;
+    }
+    return extractInstagramId(url) !== null;
+  }, [url]);
+
+  /**
+   * Whether the tags pass validation.
+   */
+  const isValidTags = useMemo(() => {
+    if (!tags.trim()) {
+      return true; // tags are optional
+    }
+    const parsed = parseTags(tags);
+    if (parsed.length > MAX_TAGS) {
+      return false;
+    }
+    if (countWords(parsed) > MAX_WORDS) {
+      return false;
+    }
+    return true;
+  }, [tags]);
+
+  /**
+   * Whether the submit button should be enabled.
+   * Disabled by default — enabled only when URL is valid and tags are valid.
+   */
+  const canSubmit = useMemo(() => {
+    return isValidUrl && isValidTags;
+  }, [isValidUrl, isValidTags]);
+
   const validateForm = useCallback((): string | null => {
-    const parsed = submitVideoFormSchema.safeParse({ url, location, city, hashtags } satisfies SubmitVideoForm);
+    const parsed = submitVideoFormSchema.safeParse({ url, location, city, tags } satisfies SubmitVideoForm);
     if (!parsed.success) {
       return parsed.error.issues[0]?.message ?? 'Invalid form data';
     }
+
     if (!extractInstagramId(url)) {
       return 'That does not look like a valid Instagram reel URL.';
     }
+
+    const parsedTags = parseTags(tags);
+    if (parsedTags.length > MAX_TAGS) {
+      return `Maximum ${MAX_TAGS} tags allowed. You have ${parsedTags.length}.`;
+    }
+    if (countWords(parsedTags) > MAX_WORDS) {
+      return `Maximum ${MAX_WORDS} words allowed across all tags. You have ${countWords(parsedTags)}.`;
+    }
+
     return null;
-  }, [url, location, city, hashtags]);
+  }, [url, location, city, tags]);
 
   const submitVideo = useCallback(async () => {
     const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
     if (!adminUrl) {
       throw new Error('Admin URL is not configured. Set NEXT_PUBLIC_ADMIN_URL in your environment.');
     }
-    const cleanTags = hashtags
-      .split(/\s+/)
-      .map((h) => h.trim())
-      .filter((h) => h.startsWith('#'))
-      .map((h) => h.replace(/^#+/, ''))
-      .join(',');
+
+    const cleanTags = parseTags(tags).join(',');
     const response = await fetch(`${adminUrl}/api/public/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url, location, city, hashtags: cleanTags }),
+      body: JSON.stringify({ url, location, city, tags: cleanTags }),
     });
 
     if (!response.ok) {
       const data = (await response.json().catch(() => ({}))) as { error?: string };
       throw new Error(data.error ?? 'Something went wrong');
     }
-  }, [url, location, city, hashtags]);
+  }, [url, location, city, tags]);
 
   const handleSubmit = useCallback(
     async (e: SubmitEvent<HTMLFormElement>) => {
@@ -213,6 +291,7 @@ export function useSubmitVideoForm({
         } else {
           setError('This reel is already in the archive. Submit another one!');
         }
+
         setSubmitting(false);
         return;
       }
@@ -239,13 +318,14 @@ export function useSubmitVideoForm({
     setLocation,
     city,
     setCity,
-    hashtags,
-    setHashtags,
+    tags,
+    setTags,
     error,
     setError,
     success,
     submitting,
     checkingUrl,
+    canSubmit,
     locations,
     handleBlur,
     handleSubmit,
