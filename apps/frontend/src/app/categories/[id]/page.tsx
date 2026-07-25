@@ -10,8 +10,7 @@ import { CategoryHero } from '@/app/categories/[id]/CategoryHero';
 import { CategoryVideos } from '@/app/categories/[id]/CategoryVideos';
 import { useCategoryPage } from '@/app/categories/[id]/useCategoryPage';
 import type { DbCategory } from '@/lib/db';
-import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
-import { siteUrl } from '@/lib/seo';
+import { buildBreadcrumbs, globalSchema, siteUrl } from '@/lib/seo';
 
 const ROOT_URL = siteUrl();
 const PATH_PREFIX = '/categories';
@@ -25,7 +24,7 @@ const PATH_PREFIX = '/categories';
  *
  * @returns {Array<object>} Array of JSON-LD schema objects.
  */
-function buildCategorySchema(rootUrl: string, catPath: string, cat: DbCategory) {
+function buildCategorySchema(rootUrl: string, catPath: string, cat: DbCategory): Array<object> {
   return [
     ...globalSchema(),
     webPageSchema({ rootUrl, path: catPath, breadcrumb: true }, { name: cat.name, description: cat.description ?? '' }),

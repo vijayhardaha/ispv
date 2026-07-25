@@ -12,27 +12,44 @@ import { Button } from '@/components/ui/Button';
 import { CATEGORIES } from '@/constants/categories';
 import type { DbCategory } from '@/constants/categories';
 import { getCategoryCounts } from '@/lib/db';
-import { buildMetadata } from '@/lib/meta';
-import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
-import { siteUrl } from '@/lib/seo';
+import { buildMetadata, buildBreadcrumbs, globalSchema, siteUrl } from '@/lib/seo';
 import { getPublishedVideos } from '@/lib/videos';
 
-const PAGE_TITLE = 'Categories — Browse by Category';
-const PAGE_DESCRIPTION =
-  'Browse all categories in the Indian Students Protest Vault archive. Explore protest marches, police conduct, Gen Z movement, acts of kindness, women leading, and more.';
-const PAGE_PATH = '/categories';
+// ── Categories page config ─────────────────────────────────────────────────
+
+/** Site URL used in JSON-LD schemas. */
 const ROOT_URL = siteUrl();
 
-export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH });
+/** Page title displayed in SEO metadata. */
+const PAGE_TITLE = 'Categories — Browse by Category';
+/** Page description used in SEO metadata and Open Graph tags. */
+const PAGE_DESCRIPTION =
+  'Browse all categories in the Indian Students Protest Vault archive. Explore protest marches, police conduct, Gen Z movement, acts of kindness, women leading, and more.';
+/** URL path segment used for canonical links and breadcrumbs. */
+const PAGE_PATH = '/categories';
 
-export const revalidate = 300;
-
-const SCHEMA_DATA = [
+/** JSON-LD schemas for the categories page. */
+export const PAGE_SCHEMA = [
   ...globalSchema(),
   collectionPageSchema({ rootUrl: ROOT_URL, path: PAGE_PATH }, { name: PAGE_TITLE, description: PAGE_DESCRIPTION }),
   breadcrumbSchema({ rootUrl: ROOT_URL, items: buildBreadcrumbs(PAGE_PATH, 'Categories') }),
 ];
 
+// ── Page metadata ──────────────────────────────────────────────────────────
+
+/** SEO metadata for the categories page, rendered server-side via next/js. */
+export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH });
+
+// ── ISR config ─────────────────────────────────────────────────────────────
+
+/** Revalidate the categories page every 5 minutes for Incremental Static Regeneration. */
+export const revalidate = 300;
+
+/**
+ * Sorts the categories array with the "Other" category pinned to the end.
+ *
+ * @returns {DbCategory[]} Reordered category list with "Other" last.
+ */
 function sortCategoriesWithOtherLast(): DbCategory[] {
   const list = [...CATEGORIES];
   const other = list.findIndex((c) => c.slug === 'other');
@@ -43,6 +60,15 @@ function sortCategoriesWithOtherLast(): DbCategory[] {
   return list;
 }
 
+/**
+ * Category card linking to the category detail page with name, description, and video count.
+ *
+ * @param {object} props - Component props.
+ * @param {DbCategory} props.category - Category data to display.
+ * @param {number} props.videoCount - Number of videos in this category.
+ *
+ * @returns {JSX.Element} Rendered category card.
+ */
 function CategoryCard({ category, videoCount }: { category: DbCategory; videoCount: number }): JSX.Element {
   return (
     <Link
@@ -64,6 +90,15 @@ function CategoryCard({ category, videoCount }: { category: DbCategory; videoCou
   );
 }
 
+/**
+ * Responsive grid of all category cards with their video counts.
+ *
+ * @param {object} props - Component props.
+ * @param {DbCategory[]} props.categories - All categories to display.
+ * @param {Record<string, number>} props.categoryCounts - Map of category slug to video count.
+ *
+ * @returns {JSX.Element} Rendered category grid.
+ */
 function CategoryGrid({
   categories,
   categoryCounts,
@@ -82,6 +117,11 @@ function CategoryGrid({
   );
 }
 
+/**
+ * Call-to-action banner linking to the full video archive.
+ *
+ * @returns {JSX.Element} Rendered CTA banner.
+ */
 function FullArchiveCta(): JSX.Element {
   return (
     <section className="border-t-2 border-black bg-yellow-400 py-10">
@@ -112,7 +152,7 @@ export default async function CategoriesPage(): Promise<JSX.Element> {
 
   return (
     <div>
-      <JsonLd data={SCHEMA_DATA} />
+      <JsonLd data={PAGE_SCHEMA} />
 
       <PageHero breadcrumb="Categories" title="Browse by Category">
         <p className="mt-2 max-w-2xl text-white/80">

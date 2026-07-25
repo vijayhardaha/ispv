@@ -5,22 +5,28 @@ import { JsonLd } from '@vijayhardaha/schema-builder/react';
 import type { Metadata } from 'next';
 
 import { Container } from '@/components/ui/Container';
-import { buildMetadata } from '@/lib/meta';
-import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
-import { siteUrl } from '@/lib/seo';
+import { buildMetadata, buildBreadcrumbs, globalSchema, siteUrl } from '@/lib/seo';
+
+// ── DMCA page config ───────────────────────────────────────────────────────
+
+/** Site URL used in JSON-LD schemas. */
+const ROOT_URL = siteUrl();
 
 const PAGE_TITLE = 'DMCA — Indian Students Protest Vault';
 const PAGE_DESCRIPTION =
   'DMCA copyright takedown notice policy for Indian Students Protest Vault. Learn how to submit a removal request for copyrighted content.';
 const PAGE_PATH = '/dmca';
-const ROOT_URL = siteUrl();
 
-export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH });
-
-const SCHEMA_DATA = [
+/** JSON-LD schemas for the DMCA page. */
+export const PAGE_SCHEMA = [
   ...globalSchema(),
   breadcrumbSchema({ rootUrl: ROOT_URL, items: buildBreadcrumbs(PAGE_PATH, 'DMCA') }),
 ];
+
+// ── Page metadata ──────────────────────────────────────────────────────────
+
+/** SEO metadata for the DMCA page, rendered server-side via next/js. */
+export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH });
 
 /**
  * DMCA / Copyright Takedown notice page.
@@ -30,7 +36,7 @@ const SCHEMA_DATA = [
 export default function DmcaPage(): JSX.Element {
   return (
     <div>
-      <JsonLd data={SCHEMA_DATA} />
+      <JsonLd data={PAGE_SCHEMA} />
       <div className="py-12 md:py-16">
         <Container>
           <div className="mx-auto max-w-3xl">

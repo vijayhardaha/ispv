@@ -6,22 +6,28 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { Container } from '@/components/ui/Container';
-import { buildMetadata } from '@/lib/meta';
-import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
-import { siteUrl } from '@/lib/seo';
+import { buildMetadata, buildBreadcrumbs, globalSchema, siteUrl } from '@/lib/seo';
+
+// ── Sitemap page config ────────────────────────────────────────────────────
+
+/** Site URL used in JSON-LD schemas. */
+const ROOT_URL = siteUrl();
 
 const PAGE_TITLE = 'Sitemap — Indian Students Protest Vault';
 const PAGE_DESCRIPTION =
   'Browse all pages and sections of Indian Students Protest Vault — an archive of publicly shared videos documenting student protests across India.';
 const PAGE_PATH = '/sitemap';
-const ROOT_URL = siteUrl();
 
-export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH });
-
-const SCHEMA_DATA = [
+/** JSON-LD schemas for the sitemap page. */
+export const PAGE_SCHEMA = [
   ...globalSchema(),
   breadcrumbSchema({ rootUrl: ROOT_URL, items: buildBreadcrumbs(PAGE_PATH, 'Sitemap') }),
 ];
+
+// ── Page metadata ──────────────────────────────────────────────────────────
+
+/** SEO metadata for the sitemap page, rendered server-side via next/js. */
+export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH });
 
 const pages: { label: string; href: string; description: string }[] = [
   {
@@ -74,7 +80,7 @@ const pages: { label: string; href: string; description: string }[] = [
 export default function SitemapPage(): JSX.Element {
   return (
     <div>
-      <JsonLd data={SCHEMA_DATA} />
+      <JsonLd data={PAGE_SCHEMA} />
       <div className="py-12 md:py-16">
         <Container>
           <div className="mx-auto max-w-3xl">

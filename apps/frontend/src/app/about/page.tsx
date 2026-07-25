@@ -9,20 +9,21 @@ import Link from 'next/link';
 import { PageHero } from '@/components/shared/PageHero';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
-import { cn } from '@/lib/cn';
-import { buildMetadata } from '@/lib/meta';
-import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
-import { siteUrl } from '@/lib/seo';
+import { buildMetadata, buildBreadcrumbs, globalSchema, siteUrl } from '@/lib/seo';
+import { cn } from '@/lib/utils';
+
+// ── About page config ─────────────────────────────────────────────────────
+
+/** Site URL used in JSON-LD schemas. */
+const ROOT_URL = siteUrl();
 
 const PAGE_TITLE = 'About — Indian Students Protest Vault';
 const PAGE_DESCRIPTION =
   'Learn about the Indian Students Protest Vault — an independent archive of publicly shared videos documenting student protests across India. Our principles, submission process, and mission.';
 const PAGE_PATH = '/about';
-const ROOT_URL = siteUrl();
 
-export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH });
-
-const SCHEMA_DATA = [
+/** JSON-LD schemas for the about page. */
+export const PAGE_SCHEMA = [
   ...globalSchema(),
   aboutPageSchema(
     { rootUrl: ROOT_URL, path: PAGE_PATH, breadcrumb: true },
@@ -31,6 +32,14 @@ const SCHEMA_DATA = [
   breadcrumbSchema({ rootUrl: ROOT_URL, items: buildBreadcrumbs(PAGE_PATH, 'About') }),
 ];
 
+// ── Page metadata ──────────────────────────────────────────────────────────
+
+/** SEO metadata for the about page, rendered server-side via next/js. */
+export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH });
+
+/**
+ * Archive principles displayed as cards: public recordings, preservation, attribution, and searchability.
+ */
 const PRINCIPLES = [
   {
     icon: <Link2 className="size-6" />,
@@ -77,6 +86,9 @@ const STEPS = [
   },
 ];
 
+/**
+ * Content types that are accepted into the archive.
+ */
 const INCLUDED = [
   'Peaceful marches',
   'Student speeches',
@@ -87,6 +99,9 @@ const INCLUDED = [
   'Cultural and awareness events related to student movements',
 ];
 
+/**
+ * Content types that are explicitly excluded from the archive.
+ */
 const EXCLUDED = [
   'Private content',
   'Videos without a public source',
@@ -162,7 +177,7 @@ function Step({ n, title, children }: { n: number; title: string; children: Reac
 export default function AboutPage(): JSX.Element {
   return (
     <div>
-      <JsonLd data={SCHEMA_DATA} />
+      <JsonLd data={PAGE_SCHEMA} />
       {/* Hero */}
       <PageHero breadcrumb="About" title="What is Indian Students Protest Vault?">
         <p className="mt-2 text-white/80">

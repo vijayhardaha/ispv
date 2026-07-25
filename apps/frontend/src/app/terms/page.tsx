@@ -5,22 +5,28 @@ import { JsonLd } from '@vijayhardaha/schema-builder/react';
 import type { Metadata } from 'next';
 
 import { Container } from '@/components/ui/Container';
-import { buildMetadata } from '@/lib/meta';
-import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
-import { siteUrl } from '@/lib/seo';
+import { buildMetadata, buildBreadcrumbs, globalSchema, siteUrl } from '@/lib/seo';
+
+// ── Terms page config ──────────────────────────────────────────────────────
+
+/** Site URL used in JSON-LD schemas. */
+const ROOT_URL = siteUrl();
 
 const PAGE_TITLE = 'Terms of Service — Indian Students Protest Vault';
 const PAGE_DESCRIPTION =
   'Terms of service for Indian Students Protest Vault. Understand the rules and guidelines for using this archive.';
 const PAGE_PATH = '/terms';
-const ROOT_URL = siteUrl();
 
-export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH });
-
-const SCHEMA_DATA = [
+/** JSON-LD schemas for the terms page. */
+export const PAGE_SCHEMA = [
   ...globalSchema(),
   breadcrumbSchema({ rootUrl: ROOT_URL, items: buildBreadcrumbs(PAGE_PATH, 'Terms of Service') }),
 ];
+
+// ── Page metadata ──────────────────────────────────────────────────────────
+
+/** SEO metadata for the terms page, rendered server-side via next/js. */
+export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH });
 
 /**
  * Terms of Service page.
@@ -30,7 +36,7 @@ const SCHEMA_DATA = [
 export default function TermsPage(): JSX.Element {
   return (
     <div>
-      <JsonLd data={SCHEMA_DATA} />
+      <JsonLd data={PAGE_SCHEMA} />
       <div className="py-12 md:py-16">
         <Container>
           <div className="mx-auto max-w-3xl">

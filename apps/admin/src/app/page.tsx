@@ -3,11 +3,17 @@ import type { JSX } from 'react';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
-export const metadata: Metadata = { title: 'Dashboard' };
+// ── Dashboard page config ──────────────────────────────────────────────────
+
+// ── Page metadata ──────────────────────────────────────────────────────────
+
+/** Admin dashboard page title rendered as an absolute title, bypassing the layout template. */
+export const metadata: Metadata = { title: { absolute: SITE_CONFIG.title } };
 
 import { CATEGORIES, type CategoryRecord } from '@/constants/categories';
 import { TAG_VARIANTS, type TagVariant } from '@/constants/colors';
 import { LOCATIONS, type LocationRecord } from '@/constants/locations';
+import { SITE_CONFIG } from '@/constants/seo';
 import { cn } from '@/lib/cn';
 import { createServerSupabase } from '@/lib/supabase-server';
 

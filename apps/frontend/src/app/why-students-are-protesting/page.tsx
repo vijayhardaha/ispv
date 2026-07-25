@@ -13,9 +13,7 @@ import { WhatIsSection } from '@/app/why-students-are-protesting/sections/WhatIs
 import { WhereSpreadSection } from '@/app/why-students-are-protesting/sections/WhereSpreadSection';
 import { WhyDidBeginSection } from '@/app/why-students-are-protesting/sections/WhyDidBeginSection';
 import { WhyThisArchiveExistsSection } from '@/app/why-students-are-protesting/sections/WhyThisArchiveExistsSection';
-import { buildMetadata } from '@/lib/meta';
-import { buildBreadcrumbs, globalSchema } from '@/lib/schema';
-import { siteUrl } from '@/lib/seo';
+import { buildMetadata, buildBreadcrumbs, globalSchema, siteUrl } from '@/lib/seo';
 
 /**
  * A single protest demand with its display styling and description.
@@ -132,20 +130,18 @@ const SOURCES: Source[] = [
   },
 ];
 
+// ── Why Students Are Protesting page config ───────────────────────────────
+
+/** Site URL used in JSON-LD schemas. */
+const ROOT_URL = siteUrl();
+
 const PAGE_TITLE = 'Why Students Are Protesting — Understanding the Movement';
 const PAGE_DESCRIPTION =
   'Understand why Indian students are protesting — the origins, demands, timeline, and purpose behind the student movement documented in the Indian Students Protest Vault archive.';
 const PAGE_PATH = '/why-students-are-protesting';
-const ROOT_URL = siteUrl();
 
-export const metadata: Metadata = buildMetadata({
-  title: PAGE_TITLE,
-  description: PAGE_DESCRIPTION,
-  path: PAGE_PATH,
-  postfix: true,
-});
-
-const SCHEMA_DATA = [
+/** JSON-LD schemas for the movement overview page. */
+export const PAGE_SCHEMA = [
   ...globalSchema(),
   webPageSchema(
     { rootUrl: ROOT_URL, path: PAGE_PATH, breadcrumb: true },
@@ -153,6 +149,16 @@ const SCHEMA_DATA = [
   ),
   breadcrumbSchema({ rootUrl: ROOT_URL, items: buildBreadcrumbs(PAGE_PATH, 'Why Students Are Protesting') }),
 ];
+
+// ── Page metadata ──────────────────────────────────────────────────────────
+
+/** SEO metadata for the movement overview page, rendered server-side via next/js. */
+export const metadata: Metadata = buildMetadata({
+  title: PAGE_TITLE,
+  description: PAGE_DESCRIPTION,
+  path: PAGE_PATH,
+  postfix: true,
+});
 
 /**
  * The Movement page — explains why students are protesting, the movement's origins,
@@ -163,7 +169,7 @@ const SCHEMA_DATA = [
 export default function MovementPage(): JSX.Element {
   return (
     <div>
-      <JsonLd data={SCHEMA_DATA} />
+      <JsonLd data={PAGE_SCHEMA} />
       <MovementHero />
       <WhatIsSection />
       <WhyDidBeginSection />

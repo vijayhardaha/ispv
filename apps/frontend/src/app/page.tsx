@@ -18,24 +18,38 @@ import { LOCATIONS } from '@/constants/locations';
 import type { DbLocation } from '@/constants/locations';
 import { SITE_CONFIG } from '@/constants/seo';
 import { getHomepageStats } from '@/lib/db';
-import { buildMetadata } from '@/lib/meta';
-import { globalSchema } from '@/lib/schema';
-import { siteUrl } from '@/lib/seo';
+import { buildMetadata, globalSchema, siteUrl } from '@/lib/seo';
 import { getCategorySectionVideos } from '@/lib/videos';
+
+// ── Home page config ──────────────────────────────────────────────────────
+
+/** Site URL used in JSON-LD schemas. */
+const ROOT_URL = siteUrl();
 
 const PAGE_TITLE = SITE_CONFIG.title;
 const PAGE_DESCRIPTION = SITE_CONFIG.description;
 const PAGE_PATH = '/';
-const ROOT_URL = siteUrl();
 
-export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH });
-
-export const revalidate = 300;
-
-const SCHEMA_DATA = [
+/** JSON-LD schema for the home page. */
+const PAGE_SCHEMA = [
   ...globalSchema(),
   webPageSchema({ rootUrl: ROOT_URL, path: PAGE_PATH }, { name: PAGE_TITLE, description: PAGE_DESCRIPTION }),
 ];
+
+// ── Page metadata ──────────────────────────────────────────────────────────
+
+/** SEO metadata for the home page, rendered server-side via next/js. */
+export const metadata: Metadata = buildMetadata({
+  title: PAGE_TITLE,
+  description: PAGE_DESCRIPTION,
+  path: PAGE_PATH,
+  postfix: false,
+});
+
+// ── ISR config ─────────────────────────────────────────────────────────────
+
+/** Revalidate the home page every 5 minutes for Incremental Static Regeneration. */
+export const revalidate = 300;
 
 function sortCategoriesWithOtherLast(): DbCategory[] {
   const list = [...CATEGORIES];
@@ -83,7 +97,7 @@ export default async function HomePage(): Promise<JSX.Element> {
 
   return (
     <>
-      <JsonLd data={SCHEMA_DATA} />
+      <JsonLd data={PAGE_SCHEMA} />
       <HeroSection totalVideos={stats.totalVideos} totalCities={stats.totalCities} totalStates={stats.totalLocations} />
       <SloganTicker />
       <ShareSection />
