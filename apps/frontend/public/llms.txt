@@ -1,0 +1,124 @@
+# Indian Students Protest Vault (ISPV)
+
+> A non-partisan, searchable archive of publicly shared Instagram Reels documenting peaceful student protests across India. Videos are organised by event category and geographic location, with every entry linking back to the original Instagram post.
+
+**URL:** https://ispv.vercel.app/
+
+## Mission & Principles
+
+The Indian Students Protest Vault is an independent, non-partisan digital archive that indexes publicly shared Instagram Reels related to student protests across India[reference:0][reference:1]. The project aims to preserve public recordings so they remain easy to discover today and valuable tomorrow[reference:2]. It operates on several core principles:
+
+- **Public Recordings:** Archives only videos that have been publicly shared by their original creators[reference:3].
+- **Preservation, Not Persuasion:** Exists to organise public recordings, not to promote a political party, endorse opinions, or rewrite events[reference:4].
+- **Attribution Matters:** Every embedded video links directly to its original creator[reference:5].
+- **Searchable History:** Videos are organised by state, city, event, date, creator, and topic[reference:6].
+
+**Disclaimer:** ISPV is not affiliated with Instagram/Meta, the Government of India, or any political party[reference:7].
+
+## Site Structure & Pages
+
+### Core Pages
+
+- **Home:** https://ispv.vercel.app/ — Archive statistics, featured categories, location map, and latest videos[reference:8].
+- **Browse Videos:** https://ispv.vercel.app/videos — Paginated video grid with filtering by category, location, tags, and text search[reference:9].
+- **Categories:** https://ispv.vercel.app/categories — Overview of all protest categories with video counts[reference:10].
+- **Why Students Are Protesting:** https://ispv.vercel.app/why-students-are-protesting — Multi-section explainer about the protest context and movement[reference:11].
+- **About:** https://ispv.vercel.app/about — Project mission, scope, and guiding principles[reference:12].
+
+### Legal & Administrative Pages
+
+- **Privacy Policy:** https://ispv.vercel.app/privacy — Data collection and Google Analytics disclosure[reference:13].
+- **Terms of Service:** https://ispv.vercel.app/terms — Terms governing archive usage[reference:14].
+- **DMCA:** https://ispv.vercel.app/dmca — Copyright removal request process[reference:15].
+- **Sitemap:** https://ispv.vercel.app/sitemap — HTML sitemap of all public pages[reference:16].
+
+## Video Categories
+
+The archive organises videos into the following categories:
+
+| Category | Description | URL |
+|----------|-------------|-----|
+| Protest Marches | Peaceful rallies, processions, public gatherings, patriotic songs, and community participation[reference:17] | `/categories/protest-marches` |
+| Police Conduct | Police presence, crowd management, barricading, detentions, and alleged use of force[reference:18] | `/categories/police-conduct` |
+| Gen Z Moments | Leadership, creativity, participation, and voices of Gen Z students[reference:19] | `/categories/gen-z-moments` |
+| Official Statements | Announcements, press briefings, speeches, campaign updates, and public statements[reference:20] | `/categories/official-statements` |
+| Public Figures & Creators | Videos shared by influencers, journalists, actors, educators, activists[reference:21] | `/categories/public-figures-creators` |
+| News Coverage | Television reports, digital news clips, interviews, debates, and media coverage[reference:22] | `/categories/news-coverage` |
+| Protest Vlogs | Personal vlog-style videos, behind-the-scenes moments, firsthand accounts[reference:23] | `/categories/protest-vlogs` |
+| Acts of Kindness | Compassion, solidarity, volunteer support, food distribution, medical assistance[reference:24] | `/categories/acts-of-kindness` |
+| Women Leading the Movement | Women leading marches, organising events, delivering speeches[reference:25] | `/categories/women-leading-movement` |
+| Solidarity & Protection | Protesters protecting one another, human chains, unity[reference:26] | `/categories/solidarity-protection` |
+| Senior Citizens' Voices | Speeches, interviews, messages from senior citizens[reference:27] | `/categories/senior-citizens-voices` |
+| Children's Voices | Children expressing messages of hope and support[reference:28] | `/categories/children-voices` |
+| Human Rights | Human rights concerns, civil liberties issues, public accountability[reference:29] | `/categories/human-rights` |
+| Celebrations & Cultural Events | Patriotic songs, cultural performances, street art, poetry[reference:30] | `/categories/celebrations-cultural-events` |
+| Night Updates | Evening and overnight protests, speeches, volunteer activities[reference:31] | `/categories/night-updates` |
+| Counter Protests & Public Reactions | Counter-demonstrations, differing viewpoints, debates[reference:32] | `/categories/counter-protests-public-reactions` |
+| Media Analysis | Discussions comparing or analysing media coverage[reference:33] | `/categories/media-analysis` |
+
+## Movement Context
+
+The movement documented in this archive began as a student-led response to concerns over:
+
+- Integrity of competitive examinations and repeated paper leak allegations[reference:34]
+- Youth unemployment and economic anxiety[reference:35][reference:36]
+- Demands for greater institutional accountability[reference:37]
+
+Organised primarily under the banner of the Cockroach Janta Party (CJP), the movement describes itself as a youth-focused initiative centred on transparency, accountability, democratic participation, and reform advocacy — distinct from traditional electoral politics[reference:38].
+
+### Core Demands[reference:39]
+
+- **Justice:** Fair and impartial investigation into all incidents of violence
+- **Safety:** Guarantee of safe campus environments for all students
+- **Accountability:** Holding authorities and institutions accountable
+- **Dialogue:** Open channels of communication between students, faculty, and administration
+- **Rights:** Protection of constitutional rights including freedom of speech, expression, and peaceful assembly
+- **Transparency:** Clear communication from institutions regarding policy changes
+
+Peaceful demonstrations have been documented in cities across India — from Delhi and Mumbai to smaller towns and university campuses[reference:40].
+
+## Features
+
+- **Reel Player** — Full-screen viewer for Instagram Reels with vertical snap-scroll, keyboard navigation, and auto view counting[reference:41].
+- **Filter System** — Interactive category, location, and tag filters synced to URL so filters are shareable[reference:42].
+- **Search** — Full-text search across video descriptions and tags[reference:43].
+- **Submit Video** — Visitors can submit Instagram Reel URLs for curation via a floating dialog[reference:44].
+
+## How to Submit a Video[reference:45]
+
+1. **Discover:** Find a publicly shared Instagram Reel documenting a student protest.
+2. **Submit:** Paste the public Instagram URL through the submission form and optionally add useful tags or event information.
+3. **Review:** Each submission is checked to ensure the link works, the content is publicly accessible, and the metadata is accurate.
+4. **Archive:** Approved videos become part of the archive and can be discovered through search, events, locations, and categories.
+
+### What Gets Archived[reference:46]
+
+- Peaceful marches
+- Student speeches
+- Public meetings
+- Press interactions
+- Eyewitness recordings
+- Campus demonstrations
+- Cultural and awareness events related to student movements
+
+### What Does Not Get Archived[reference:47]
+
+- Private content
+- Videos without a public source
+- Edited compilations without attribution
+- Spam or duplicate submissions
+- Content removed by its original creator
+
+## Content Removal
+
+If you are the original creator of a video indexed on this site and wish to have it removed, please DM [@vegan.vijay](https://www.instagram.com/vegan.vijay/) on Instagram with the link and reason[reference:48]. Removal requests from video owners are prioritised and typically processed within 48 hours[reference:49].
+
+For DMCA takedown notices, please include: identification of the copyrighted work, identification of the infringing material, your contact information, a statement of good faith belief, and a statement under penalty of perjury[reference:50].
+
+## Source Repository
+
+https://github.com/vijayhardaha/ispv[reference:51]
+
+---
+
+*Last updated: Based on site content as of July 2026.*
