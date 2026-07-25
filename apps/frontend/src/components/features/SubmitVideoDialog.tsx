@@ -1,6 +1,6 @@
 'use client';
 
-import { type ReactNode } from 'react';
+import { type JSX, type ReactNode } from 'react';
 
 import { Send, Link2, MapPin, Building2 } from 'lucide-react';
 
@@ -36,7 +36,7 @@ export function SubmitVideoDialog({
 }: {
   trigger: ReactNode;
   onOpenChange?: (open: boolean) => void;
-}) {
+}): JSX.Element {
   const form = useSubmitVideoForm({ onOpenChange });
 
   return (

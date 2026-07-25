@@ -7,6 +7,24 @@ import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 
 /**
+ * Statistic display box with a large number and small label.
+ *
+ * @param {object} props - Component properties.
+ * @param {string} props.n - Statistic value to display.
+ * @param {string} props.label - Descriptive label for the statistic.
+ *
+ * @returns {JSX.Element} Rendered stat box.
+ */
+function Stat({ n, label }: { n: string; label: string }): JSX.Element {
+  return (
+    <div className="shadow-brutal-sm border-2 border-black bg-white p-3">
+      <div className="font-display text-2xl font-extrabold">{n}</div>
+      <div className="font-mono text-[10px] font-bold tracking-widest text-black/60 uppercase">{label}</div>
+    </div>
+  );
+}
+
+/**
  * Homepage hero section with headline, call-to-action buttons, and stats.
  *
  * @param {object} props - Component props.
@@ -101,23 +119,5 @@ export function HeroSection({
         </div>
       </Container>
     </section>
-  );
-}
-
-/**
- * Statistic display box with a large number and small label.
- *
- * @param {object} props - Component properties.
- * @param {string} props.n - Statistic value to display.
- * @param {string} props.label - Descriptive label for the statistic.
- *
- * @returns {JSX.Element} Rendered stat box.
- */
-function Stat({ n, label }: { n: string; label: string }): JSX.Element {
-  return (
-    <div className="shadow-brutal-sm border-2 border-black bg-white p-3">
-      <div className="font-display text-2xl font-extrabold">{n}</div>
-      <div className="font-mono text-[10px] font-bold tracking-widest text-black/60 uppercase">{label}</div>
-    </div>
   );
 }

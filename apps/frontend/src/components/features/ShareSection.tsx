@@ -8,7 +8,7 @@ import { FaFacebook, FaInstagram, FaWhatsapp, FaXTwitter } from 'react-icons/fa6
 
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 const SHARE_MESSAGE = `🇮🇳 Discover the Indian Students Protest Vault — a searchable archive of publicly shared protest videos from across India.
 
@@ -72,115 +72,171 @@ const PLATFORMS: SharePlatform[] = [
 ];
 
 /**
+ * Rotated badge label displayed at the top of the share section.
+ *
+ * @returns {JSX.Element} The "Spread the word" badge.
+ */
+function ShareTag(): JSX.Element {
+  return (
+    <div className="mb-6 inline-block -rotate-2 border-2 border-black bg-yellow-400 px-4 py-2 shadow-[4px_4px_0px_0px_#000]">
+      <span className="font-mono text-sm font-bold tracking-tight uppercase">Spread the word</span>
+    </div>
+  );
+}
+
+/**
+ * Heading and pitch text encouraging users to share the archive.
+ *
+ * @returns {JSX.Element} The heading and description paragraph.
+ */
+function ShareHeader(): JSX.Element {
+  return (
+    <>
+      <ShareTag />
+      <h2 className="font-display text-4xl leading-[0.9] font-black tracking-tighter uppercase md:text-5xl">
+        Help us preserve
+        <br />
+        <span className="underline decoration-yellow-400 decoration-[6px] underline-offset-4">public memory</span>
+      </h2>
+      <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-zinc-700 md:text-base">
+        Indian Students Protest Vault is a free, non-partisan archive indexing publicly shared Instagram reels from
+        student protests across India. Every video is organised by city, category, and hashtag — making it easy to
+        search, explore, and understand. Share this project with someone who needs to see it.
+      </p>
+    </>
+  );
+}
+
+/**
+ * Copies the share message to the clipboard and toggles the copied state for 2 seconds.
+ *
+ * @param {(value: boolean) => void} setter - State setter to toggle the copied indicator.
+ *
+ * @returns {void}
+ */
+function copyMessage(setter: (value: boolean) => void): void {
+  navigator.clipboard.writeText(SHARE_MESSAGE).then(() => {
+    setter(true);
+    setTimeout(() => setter(false), 2000);
+  });
+}
+
+/**
+ * Clickable social media buttons for sharing the archive on external platforms.
+ *
+ * @returns {JSX.Element} Row of platform share buttons.
+ */
+function ShareButtons(): JSX.Element {
+  const [igCopied, setIgCopied] = useState(false);
+
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-3">
+      {PLATFORMS.map((platform) => {
+        const Icon = platform.icon;
+
+        if (platform.name === 'Instagram') {
+          return (
+            <button
+              key={platform.name}
+              onClick={() => copyMessage(setIgCopied)}
+              className={cn(
+                'shadow-brutal hover:shadow-brutal-lg inline-flex items-center gap-2 border-2 border-black px-5 py-3 text-sm font-bold text-white uppercase transition-transform duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5',
+                platform.bg,
+                platform.hoverBg
+              )}
+            >
+              {igCopied ? <Check className="size-4" /> : <Icon className="size-4" />}
+              {igCopied ? 'Copied!' : platform.name}
+            </button>
+          );
+        }
+
+        const shareUrl = platform.getShareUrl(SHARE_TEXT, SHARE_URL);
+        return (
+          <a
+            key={platform.name}
+            href={shareUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              'shadow-brutal hover:shadow-brutal-lg inline-flex items-center gap-2 border-2 border-black px-5 py-3 text-sm font-bold text-white uppercase transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5',
+              platform.bg,
+              platform.hoverBg
+            )}
+          >
+            <Icon className="size-4" />
+            {platform.name}
+          </a>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * Divider line with "Or copy the message to share anywhere" label.
+ *
+ * @returns {JSX.Element} A horizontal divider with centred text.
+ */
+function ShareDivider(): JSX.Element {
+  return (
+    <div className="mt-10 flex items-center gap-4">
+      <div className="h-px flex-1 bg-black" />
+      <span className="shrink-0 font-mono text-[11px] font-bold tracking-[0.15em] text-black uppercase">
+        Or copy the message to share anywhere
+      </span>
+      <div className="h-px flex-1 bg-black" />
+    </div>
+  );
+}
+
+/**
+ * Message preview box with a copy-to-clipboard button.
+ *
+ * @returns {JSX.Element} A dashed-border preview of the share message and a copy button.
+ */
+function ShareMessageCopy(): JSX.Element {
+  const [copied, setCopied] = useState(false);
+
+  return (
+    <>
+      <div className="border-2 border-dashed border-zinc-300 bg-gray-50 p-4 text-left font-medium text-zinc-700">
+        {SHARE_MESSAGE.split('\n').map((line, i) => (
+          <p key={i}>{line || '\u00A0'}</p>
+        ))}
+      </div>
+      <div className="mt-6">
+        <Button onClick={() => copyMessage(setCopied)} variant="default" size="lg" shadow>
+          {copied ? (
+            <>
+              <Check className="size-3.5" /> Copied
+            </>
+          ) : (
+            <>
+              <Copy className="size-3.5" /> Copy & Share
+            </>
+          )}
+        </Button>
+      </div>
+    </>
+  );
+}
+
+/**
  * Share section with a pitch message and social media buttons for spreading the word.
  * Placed after the SloganTicker on the homepage.
  *
  * @returns {JSX.Element} Rendered share section.
  */
 export function ShareSection(): JSX.Element {
-  const [copied, setCopied] = useState(false);
-  const [igCopied, setIgCopied] = useState(false);
-
-  const copyMessage = (setter: (v: boolean) => void): void => {
-    navigator.clipboard.writeText(SHARE_MESSAGE).then(() => {
-      setter(true);
-      setTimeout(() => setter(false), 2000);
-    });
-  };
-
   return (
     <section className="border-y-2 border-black bg-gray-100 py-12 md:py-16">
       <Container>
         <div className="mx-auto max-w-3xl text-center">
-          {/* Tag */}
-          <div className="mb-6 inline-block -rotate-2 border-2 border-black bg-yellow-400 px-4 py-2 shadow-[4px_4px_0px_0px_#000]">
-            <span className="font-mono text-sm font-bold tracking-tight uppercase">Spread the word</span>
-          </div>
-
-          {/* Heading */}
-          <h2 className="font-display text-4xl leading-[0.9] font-black tracking-tighter uppercase md:text-5xl">
-            Help us preserve
-            <br />
-            <span className="underline decoration-yellow-400 decoration-[6px] underline-offset-4">public memory</span>
-          </h2>
-
-          {/* Pitch */}
-          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-zinc-700 md:text-base">
-            Indian Students Protest Vault is a free, non-partisan archive indexing publicly shared Instagram reels from
-            student protests across India. Every video is organised by city, category, and hashtag — making it easy to
-            search, explore, and understand. Share this project with someone who needs to see it.
-          </p>
-
-          {/* Share buttons */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            {PLATFORMS.map((platform) => {
-              const Icon = platform.icon;
-
-              if (platform.name === 'Instagram') {
-                return (
-                  <button
-                    key={platform.name}
-                    onClick={() => copyMessage(setIgCopied)}
-                    className={cn(
-                      'shadow-brutal hover:shadow-brutal-lg inline-flex items-center gap-2 border-2 border-black px-5 py-3 text-sm font-bold text-white uppercase transition-transform duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5',
-                      platform.bg,
-                      platform.hoverBg
-                    )}
-                  >
-                    {igCopied ? <Check className="size-4" /> : <Icon className="size-4" />}
-                    {igCopied ? 'Copied!' : platform.name}
-                  </button>
-                );
-              }
-
-              const shareUrl = platform.getShareUrl(SHARE_TEXT, SHARE_URL);
-              return (
-                <a
-                  key={platform.name}
-                  href={shareUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn(
-                    'shadow-brutal hover:shadow-brutal-lg inline-flex items-center gap-2 border-2 border-black px-5 py-3 text-sm font-bold text-white uppercase transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5',
-                    platform.bg,
-                    platform.hoverBg
-                  )}
-                >
-                  <Icon className="size-4" />
-                  {platform.name}
-                </a>
-              );
-            })}
-          </div>
-
-          {/* Divider with text */}
-          <div className="mt-10 flex items-center gap-4">
-            <div className="h-px flex-1 bg-black" />
-            <span className="shrink-0 font-mono text-[11px] font-bold tracking-[0.15em] text-black uppercase">
-              Or copy the message to share anywhere
-            </span>
-            <div className="h-px flex-1 bg-black" />
-          </div>
-
-          {/* Message preview + copy button */}
-          <div className="mt-6 space-y-6">
-            <div className="border-2 border-dashed border-zinc-300 bg-gray-50 p-4 text-left font-medium text-zinc-700">
-              {SHARE_MESSAGE.split('\n').map((line, i) => (
-                <p key={i}>{line || '\u00A0'}</p>
-              ))}
-            </div>
-            <Button onClick={() => copyMessage(setCopied)} variant="default" size="lg" shadow>
-              {copied ? (
-                <>
-                  <Check className="size-3.5" /> Copied
-                </>
-              ) : (
-                <>
-                  <Copy className="size-3.5" /> Copy & Share
-                </>
-              )}
-            </Button>
-          </div>
+          <ShareHeader />
+          <ShareButtons />
+          <ShareDivider />
+          <ShareMessageCopy />
         </div>
       </Container>
     </section>

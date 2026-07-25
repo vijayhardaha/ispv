@@ -10,11 +10,15 @@ import type { VideoEntry } from '@/lib/videos';
 import { CategorySection } from './CategorySection';
 import { PullQuoteSection } from './PullQuoteSection';
 
+/**
+ * Skeleton placeholder for an entire category section while video data loads.
+ *
+ * @returns {JSX.Element} A full-width skeleton section with a grid of 4 card skeletons.
+ */
 function SectionSkeleton(): JSX.Element {
   return (
     <section className="bg-gray-100 py-12 md:py-16">
       <Container>
-        <div className="mb-6 h-8 w-48 animate-pulse bg-zinc-300" />
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 4 }, (_, i) => (
             <VideoCardSkeleton key={i} />
@@ -25,6 +29,18 @@ function SectionSkeleton(): JSX.Element {
   );
 }
 
+/**
+ * Resolves the shared videos promise and renders the category section with an
+ * interspersed pull-quote. Used as the resolved child inside the Suspense boundary.
+ *
+ * @param {object} props - Component props.
+ * @param {DbCategory} props.cat - Category to display.
+ * @param {number} props.index - Index in the sections list.
+ * @param {number} props.totalSections - Total number of category sections.
+ * @param {Promise<Record<string, VideoEntry[]>>} props.videosPromise - Shared promise resolving to all category videos.
+ *
+ * @returns {Promise<JSX.Element>} The resolved category section with an optional pull-quote.
+ */
 async function CategorySectionContent({
   cat,
   index,
