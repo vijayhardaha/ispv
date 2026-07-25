@@ -2,6 +2,33 @@ import { createServerClient, type CookieMethodsServer } from '@supabase/ssr';
 import { type NextRequest, NextResponse } from 'next/server';
 
 /**
+ * Adds common security headers to a response object.
+ *
+ * @param {NextResponse} res - Response to add headers to.
+ *
+ * @returns {NextResponse} The response with security headers attached.
+ */
+function addSecurityHeaders(res: NextResponse): NextResponse {
+  res.headers.set('X-Content-Type-Options', 'nosniff');
+  res.headers.set('X-Frame-Options', 'DENY');
+  res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  return res;
+}
+
+/** Maximum request body size in bytes (100 KB) for API requests. */
+const MAX_BODY_BYTES = 100_000;
+
+/**
+ * Routes that bypass authentication entirely.
+ */
+const PUBLIC_PATHS = ['/login', '/api/public', '/api/auth/enrich'];
+
+/**
+ * Next.js middleware matcher config — runs on all routes except static assets.
+ */
+export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'] };
+
+/**
  * Middleware that enforces authentication on all routes except /login and public API endpoints.
  *
  * The `@supabase/ssr` client refreshes the session automatically when `getUser()` is
@@ -107,30 +134,3 @@ export async function proxy(req: NextRequest): Promise<NextResponse> {
 
   return addSecurityHeaders(response);
 }
-
-/**
- * Adds common security headers to a response object.
- *
- * @param {NextResponse} res - Response to add headers to.
- *
- * @returns {NextResponse} The response with security headers attached.
- */
-function addSecurityHeaders(res: NextResponse): NextResponse {
-  res.headers.set('X-Content-Type-Options', 'nosniff');
-  res.headers.set('X-Frame-Options', 'DENY');
-  res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  return res;
-}
-
-/** Maximum request body size in bytes (100 KB) for API requests. */
-const MAX_BODY_BYTES = 100_000;
-
-/**
- * Routes that bypass authentication entirely.
- */
-const PUBLIC_PATHS = ['/login', '/api/public', '/api/auth/enrich'];
-
-/**
- * Next.js middleware matcher config — runs on all routes except static assets.
- */
-export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'] };
