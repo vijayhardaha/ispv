@@ -1,5 +1,13 @@
 {
   "name": "@ispv/extension",
   "version": "0.1.0",
-  "private": true
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vijayhardaha/ispv.git"
+  },
+  "homepage": "https://github.com/vijayhardaha/ispv#readme",
+  "bugs": {
+    "url": "https://github.com/vijayhardaha/ispv/issues"
+  }
 }

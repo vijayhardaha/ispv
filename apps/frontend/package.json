@@ -11,6 +11,14 @@
     "test:coverage": "vitest run --coverage",
     "tsc": "tsc --noEmit"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vijayhardaha/ispv.git"
+  },
+  "homepage": "https://github.com/vijayhardaha/ispv#readme",
+  "bugs": {
+    "url": "https://github.com/vijayhardaha/ispv/issues"
+  },
   "author": {
     "name": "Vijay Hardaha",
     "url": "https://github.com/vijayhardaha/"

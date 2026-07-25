@@ -46,6 +46,14 @@
     "typescript-eslint": "^8.65.0",
     "vitest": "^4.1.10"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vijayhardaha/ispv.git"
+  },
+  "homepage": "https://github.com/vijayhardaha/ispv#readme",
+  "bugs": {
+    "url": "https://github.com/vijayhardaha/ispv/issues"
+  },
   "author": {
     "name": "Vijay Hardaha",
     "url": "https://github.com/vijayhardaha/"
