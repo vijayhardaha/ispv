@@ -18,8 +18,12 @@ import { LOCATIONS } from '@/constants/locations';
 export function formatLocationLabel(city: string, location: string): string {
   const matchedLoc = LOCATIONS.find((l) => l.slug === location);
   const locName = matchedLoc?.name ?? location ?? '';
-  if (!city && !locName) return '';
+  if (!city && !locName) {
+    return '';
+  }
 
-  if (locName.toLowerCase() === city.toLowerCase()) return city;
+  if (locName.toLowerCase() === city.toLowerCase()) {
+    return city;
+  }
   return [city, locName].filter(Boolean).join(', ');
 }
