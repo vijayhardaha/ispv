@@ -12,23 +12,28 @@ import { cn } from '@/lib/utils';
  * @param {object} props - Component properties.
  * @param {string} [props.className] - Additional CSS classes for the label wrapper.
  * @param {import('react').ReactNode} [props.label] - Optional label text rendered next to the circle.
+ * @param {string} [props.labelClassName] - Additional CSS classes for the label text.
  * @param {boolean} [props.checked] - Whether the radio is selected.
  * @param {import('react').ChangeEventHandler<HTMLInputElement>} [props.onChange] - Change handler.
  * @param {boolean} [props.disabled] - Whether the radio is disabled.
+ * @param {string} [props.id] - Unique ID linking the input to its label.
  *
  * @returns {JSX.Element} Rendered radio with label.
  */
 export function Radio({
   className,
   label,
+  labelClassName,
   checked,
   onChange,
   disabled,
+  id,
   ...props
-}: ComponentPropsWithoutRef<'input'> & { label?: string }): JSX.Element {
+}: ComponentPropsWithoutRef<'input'> & { label?: string; labelClassName?: string }): JSX.Element {
   return (
-    <label className={cn('group inline-flex cursor-pointer items-center gap-2', className)}>
+    <label htmlFor={id} className={cn('group inline-flex cursor-pointer items-center gap-2', className)}>
       <input
+        id={id}
         type="radio"
         checked={checked}
         onChange={onChange}
@@ -46,7 +51,7 @@ export function Radio({
       >
         <span className="h-2.5 w-2.5 rounded-full bg-purple-600 opacity-0 transition-opacity" />
       </span>
-      {label && <span className="text-sm font-bold uppercase">{label}</span>}
+      {label && <span className={cn('text-sm', labelClassName)}>{label}</span>}
     </label>
   );
 }
