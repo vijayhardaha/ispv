@@ -2,28 +2,34 @@
 
 import { useState, type FormEvent, type JSX } from 'react';
 
+import { Search } from 'lucide-react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
+import { Button } from '@/components/ui/Button';
+
 /**
- * Search input that syncs its value to the `?q=` URL param on Enter.
+ * Search input that syncs its value to the `?q=` URL param on Enter or submit.
  *
- * Uses local state for keyboard feedback; submitting the form (Enter key)
- * updates the URL, and the parent page reloads data from the new URL params.
- * The local value re-syncs from the URL whenever the param changes
- * externally (e.g. after Reset or browser back/forward).
+ * Uses local state for keyboard feedback; submitting the form (Enter key or
+ * the submit button) updates the URL, and the parent page reloads data from
+ * the new URL params. The local value re-syncs from the URL whenever the
+ * param changes externally (e.g. after Reset or browser back/forward).
  *
  * @param {object} props - Component properties.
  * @param {string} [props.placeholder] - Input placeholder text.
  * @param {string} [props.paramName] - URL search param name (default "q").
+ * @param {string} [props.submitLabel] - Label for the submit button (default "Search").
  *
- * @returns {JSX.Element} Rendered search form.
+ * @returns {JSX.Element} Rendered search form with submit button.
  */
 export function SearchInput({
   placeholder = 'Search\u2026',
   paramName = 'q',
+  submitLabel = 'Search',
 }: {
   placeholder?: string;
   paramName?: string;
+  submitLabel?: string;
 }): JSX.Element {
   const router = useRouter();
   const pathname = usePathname();
@@ -58,15 +64,19 @@ export function SearchInput({
   };
 
   return (
-    <form role="search" onSubmit={handleSubmit}>
+    <form role="search" onSubmit={handleSubmit} className="flex items-center gap-2">
       <input
         type="search"
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="w-full max-w-xs border-2 border-black px-3 py-2 text-sm placeholder:text-black/30 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+        className="w-full max-w-xs border border-gray-300 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 focus:outline-none"
       />
+      <Button type="submit" size="sm">
+        <Search className="h-3.5 w-3.5" aria-hidden="true" />
+        {submitLabel}
+      </Button>
     </form>
   );
 }

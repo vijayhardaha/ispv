@@ -40,8 +40,10 @@ export function ModalOverlay({
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <Box className={cn('w-full max-w-2xl p-6', className)}>{children}</Box>
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/40 backdrop-blur-sm">
+      <div className="flex min-h-full items-center justify-center p-4">
+        <Box className={cn('my-auto w-full max-w-2xl p-6', className)}>{children}</Box>
+      </div>
     </div>
   );
 }
@@ -87,7 +89,8 @@ export function ModalActions({ onClose, loading = false }: { onClose: () => void
 
 /* ── Form controls ───────────────────────────────────────────── */
 
-const inputBase = 'w-full border-2 border-black px-3 py-2 text-sm';
+const inputBase =
+  'w-full border border-gray-300 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 focus:outline-none';
 
 /**
  * Styled text input for admin forms.

@@ -2,6 +2,7 @@
 
 import type { JSX } from 'react';
 
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 
@@ -26,17 +27,18 @@ function getPageNumbers(current: number, total: number, buildHref: (n: number) =
   const showRightEllipsis = current < total - range + 1;
 
   const addPage = (n: number) => {
-    const baseClass = 'min-w-[32px] border-2 border-black px-3 py-1 text-center text-xs font-bold uppercase';
+    const baseClass =
+      'inline-flex min-w-8 h-8 items-center justify-center border border-gray-300 px-2 text-xs font-semibold';
     if (n === current) {
       items.push(
-        <span key={n} className={cn(baseClass, 'bg-yellow-400 text-black')} aria-current="page">
+        <span key={n} className={cn(baseClass, 'border-purple-600 bg-purple-600 text-white')} aria-current="page">
           {n}
         </span>
       );
       return;
     }
     items.push(
-      <Link key={n} href={buildHref(n)} className={cn(baseClass, 'bg-white text-black hover:bg-gray-100')}>
+      <Link key={n} href={buildHref(n)} className={cn(baseClass, 'bg-white text-gray-700 hover:bg-gray-100')}>
         {n}
       </Link>
     );
@@ -44,7 +46,7 @@ function getPageNumbers(current: number, total: number, buildHref: (n: number) =
 
   const addEllipsis = (key: string) => {
     items.push(
-      <span key={key} className="px-1 text-xs font-bold text-black/40">
+      <span key={key} className="px-1 text-xs font-semibold text-gray-400">
         …
       </span>
     );
@@ -154,40 +156,41 @@ export function Pagination({
     return qs ? `${pathname}?${qs}` : pathname;
   };
 
-  const navBase = 'border-2 border-black px-3 py-1 text-xs font-bold uppercase';
-  const enabledClass = cn(navBase, 'bg-white text-black hover:bg-gray-100');
-  const disabledClass = cn(navBase, 'bg-white text-black/40');
+  const navBase =
+    'inline-flex min-w-8 h-8 items-center justify-center border border-gray-300 px-2 text-xs font-semibold';
+  const enabledClass = cn(navBase, 'bg-white text-gray-700 hover:bg-gray-100');
+  const disabledClass = cn(navBase, 'bg-white text-gray-400');
 
   return (
     <nav className={cn('flex items-center justify-center gap-1', className)} aria-label="Pagination">
       {hasPager && (
         <div className="flex items-center gap-1">
           {page <= 1 ? (
-            <span className={disabledClass} aria-disabled="true">
-              Prev
+            <span className={disabledClass} aria-disabled="true" aria-label="Previous page">
+              <ChevronLeft className="size-4" aria-hidden="true" />
             </span>
           ) : (
-            <Link href={buildHref(page - 1)} className={enabledClass}>
-              Prev
+            <Link href={buildHref(page - 1)} className={enabledClass} aria-label="Previous page">
+              <ChevronLeft className="size-4" aria-hidden="true" />
             </Link>
           )}
 
           {getPageNumbers(page, totalPages, buildHref)}
 
           {page >= totalPages ? (
-            <span className={disabledClass} aria-disabled="true">
-              Next
+            <span className={disabledClass} aria-disabled="true" aria-label="Next page">
+              <ChevronRight className="size-4" aria-hidden="true" />
             </span>
           ) : (
-            <Link href={buildHref(page + 1)} className={enabledClass}>
-              Next
+            <Link href={buildHref(page + 1)} className={enabledClass} aria-label="Next page">
+              <ChevronRight className="size-4" aria-hidden="true" />
             </Link>
           )}
         </div>
       )}
 
       {hasLabel && (
-        <span className="ml-auto text-xs font-bold tracking-wide text-black/50 uppercase">
+        <span className="ml-auto text-xs font-semibold tracking-wide text-gray-500">
           {formatResultsLabel(clampPage(page, totalPages), perPage, totalCount)}
         </span>
       )}

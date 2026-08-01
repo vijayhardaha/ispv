@@ -2,10 +2,10 @@ import type { ComponentPropsWithoutRef, JSX } from 'react';
 
 import { cn } from '@/lib/utils';
 
-const boxBase = 'border-2 border-black bg-white shadow-[8px_8px_0px_0px_#18181b]';
+const boxBase = 'rounded-none border border-gray-200 bg-white';
 
 /**
- * Reusable brutalism card container with consistent border, background, and shadow.
+ * Reusable card container with a subtle border and neutral background.
  *
  * @param {object} props - Component properties.
  * @param {string} [props.className] - Additional CSS classes to extend or override.

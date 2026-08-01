@@ -85,19 +85,21 @@ export function DeleteConfirmDialog({
     : displayConfirmLabel;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <Box className="w-full max-w-sm p-6">
-        <h2 className="mb-2 text-lg font-extrabold uppercase">{displayTitle}</h2>
-        <p className="mb-4 text-sm text-black/70">{displayMessage}</p>
-        <div className="flex justify-end gap-2">
-          <Button onClick={onCancel} variant="secondary" disabled={loading}>
-            Cancel
-          </Button>
-          <Button onClick={handleConfirm} variant={isRestore ? 'primary' : 'danger'} loading={loading}>
-            {loadingLabel}
-          </Button>
-        </div>
-      </Box>
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/40 backdrop-blur-sm">
+      <div className="flex min-h-full items-center justify-center p-4">
+        <Box className="my-auto w-full max-w-sm p-6">
+          <h2 className="mb-2 text-lg font-extrabold uppercase">{displayTitle}</h2>
+          <p className="mb-4 text-sm text-black/70">{displayMessage}</p>
+          <div className="flex justify-end gap-2">
+            <Button onClick={onCancel} variant="secondary" disabled={loading}>
+              Cancel
+            </Button>
+            <Button onClick={handleConfirm} variant={isRestore ? 'primary' : 'danger'} loading={loading}>
+              {loadingLabel}
+            </Button>
+          </div>
+        </Box>
+      </div>
     </div>
   );
 }

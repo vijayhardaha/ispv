@@ -17,11 +17,12 @@ import { cn } from '@/lib/utils';
 type SelectVariant = 'form' | 'filter' | 'bulk' | 'inline';
 
 const variantStyles: Record<SelectVariant, string> = {
-  form: 'w-full border-2 border-black px-3 py-2 text-sm',
-  filter: 'border-2 border-black bg-white px-3 py-2 text-sm font-bold uppercase',
-  bulk: 'border-2 border-black bg-white px-2 py-1 text-xs font-bold uppercase',
+  form: 'w-full border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 focus:outline-none',
+  filter:
+    'border border-gray-300 bg-white px-3 py-2 text-sm font-semibold focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 focus:outline-none',
+  bulk: 'border border-gray-300 bg-white px-2 py-1 text-xs font-semibold focus:border-purple-500 focus:outline-none',
   inline:
-    'border border-black px-1.5 py-0.5 text-xs font-bold uppercase disabled:pointer-events-none disabled:opacity-50',
+    'border border-gray-300 px-1.5 py-0.5 text-xs font-semibold disabled:pointer-events-none disabled:opacity-50 focus:border-purple-500 focus:outline-none',
 };
 
 /**

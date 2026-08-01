@@ -59,8 +59,8 @@ export function ToastProvider({ children }: { children: ReactNode }): JSX.Elemen
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`animate-slide-up border-2 border-black px-4 py-2 text-sm font-bold uppercase shadow-[4px_4px_0px_0px_#18181b] ${
-              t.type === 'success' ? 'bg-green-400 text-black' : 'bg-red-400 text-white'
+            className={`animate-slide-up border border-gray-200 px-4 py-2 text-sm font-semibold ${
+              t.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
             }`}
           >
             {t.message}
