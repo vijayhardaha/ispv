@@ -13,9 +13,12 @@ import { createClient } from '@/lib/db';
  * Uses the browser Supabase client to clear auth cookies directly,
  * avoiding stale session state in server-rendered layouts.
  *
+ * @param {object} props - Component properties.
+ * @param {string} [props.className] - Additional CSS classes for the button.
+ *
  * @returns {JSX.Element} Rendered logout button.
  */
-export function LogoutButton(): JSX.Element {
+export function LogoutButton({ className }: { className?: string }): JSX.Element {
   const [showConfirm, setShowConfirm] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const supabase = createClient();
@@ -29,7 +32,13 @@ export function LogoutButton(): JSX.Element {
 
   return (
     <>
-      <Button type="button" variant="danger" onClick={() => setShowConfirm(true)} disabled={loggingOut}>
+      <Button
+        type="button"
+        variant="danger"
+        className={className}
+        onClick={() => setShowConfirm(true)}
+        disabled={loggingOut}
+      >
         {loggingOut ? 'Signing out...' : 'Logout'}
       </Button>
 
