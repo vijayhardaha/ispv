@@ -27,7 +27,7 @@ export function normalizeIgUrl(url: string): string {
     const parsed = new URL(url);
     const host = parsed.hostname.toLowerCase().replace(/^www\./, '');
     const path = parsed.pathname.replace(/\/+$/, '') || '/';
-    const canonical = `https://${host}${path}/`;
+    const canonical = `https://${host}${path}${path === '/' ? '' : '/'}`;
     return canonical;
   } catch {
     return url;

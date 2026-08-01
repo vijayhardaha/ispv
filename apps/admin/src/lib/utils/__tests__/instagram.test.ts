@@ -5,7 +5,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { detectSource, displayVideoUrl, extractIgId, reconstructIgUrl } from '@/lib/utils';
+import { detectSource, displayVideoUrl, extractIgId, normalizeIgUrl, reconstructIgUrl } from '@/lib/utils';
 
 describe('extractIgId', () => {
   it('extracts ID from a standard post URL', () => {
@@ -104,6 +104,36 @@ describe('displayVideoUrl', () => {
       video_url: 'https://www.instagram.com/p/ID_FROM_URL/',
     });
     expect(result).toBe('https://www.instagram.com/p/ID_FROM_ID/');
+  });
+});
+
+describe('normalizeIgUrl', () => {
+  it('strips www prefix and lowercases the hostname', () => {
+    expect(normalizeIgUrl('https://www.Instagram.com/p/ABC123xyz/')).toBe('https://instagram.com/p/ABC123xyz/');
+  });
+
+  it('strips query parameters and hash fragments', () => {
+    expect(normalizeIgUrl('https://www.instagram.com/p/ABC123xyz/?utm_source=ig_web_copy_link#top')).toBe(
+      'https://instagram.com/p/ABC123xyz/'
+    );
+  });
+
+  it('ensures a single trailing slash on the path', () => {
+    expect(normalizeIgUrl('https://www.instagram.com/p/ABC123xyz')).toBe('https://instagram.com/p/ABC123xyz/');
+    expect(normalizeIgUrl('https://www.instagram.com/p/ABC123xyz///')).toBe('https://instagram.com/p/ABC123xyz/');
+  });
+
+  it('normalizes reel and reels URLs', () => {
+    expect(normalizeIgUrl('https://www.instagram.com/reel/DEF456abc/')).toBe('https://instagram.com/reel/DEF456abc/');
+    expect(normalizeIgUrl('https://www.instagram.com/reels/GHI789mno/')).toBe('https://instagram.com/reels/GHI789mno/');
+  });
+
+  it('returns the original string for invalid URLs', () => {
+    expect(normalizeIgUrl('not-a-url')).toBe('not-a-url');
+  });
+
+  it('handles the bare domain path', () => {
+    expect(normalizeIgUrl('https://www.instagram.com/')).toBe('https://instagram.com/');
   });
 });
 
