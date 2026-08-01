@@ -64,6 +64,7 @@ export default function LoginPage(): JSX.Element {
               Email
             </label>
             <Input
+              name="email"
               id="email"
               type="email"
               value={email}
@@ -77,6 +78,7 @@ export default function LoginPage(): JSX.Element {
               Password
             </label>
             <Input
+              name="password"
               id="password"
               type="password"
               value={password}
