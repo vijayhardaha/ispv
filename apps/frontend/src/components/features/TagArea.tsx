@@ -5,12 +5,7 @@ import { type JSX } from 'react';
 import { Hash, X as XIcon } from 'lucide-react';
 
 import { FieldLabel, Textarea } from '@/components/ui/Input';
-
-/** Maximum number of tags allowed. */
-const MAX_TAGS = 15;
-
-/** Maximum number of words allowed across all tags combined. */
-const MAX_WORDS = 50;
+import { countWords, MAX_TAGS, MAX_WORDS, parseTags } from '@/lib/helpers/tags';
 
 /**
  * Suggested tags shown when none are currently added.
@@ -27,35 +22,6 @@ const SUGGESTED_TAGS = [
   'Experience',
   'Women Leadership',
 ];
-
-/**
- * Parse a comma-separated tag string into a unique list of trimmed tags.
- *
- * @param {string} input - Raw tag input (comma or newline separated).
- *
- * @returns {string[]} Deduplicated array of trimmed tag strings.
- */
-function parseTags(input: string): string[] {
-  return Array.from(
-    new Set(
-      input
-        .split(/[,]+/)
-        .map((t) => t.trim())
-        .filter(Boolean)
-    )
-  );
-}
-
-/**
- * Counts the total number of words across all tags.
- *
- * @param {string[]} tags - Array of tag strings.
- *
- * @returns {number} Total word count.
- */
-function countWords(tags: string[]): number {
-  return tags.reduce((sum, tag) => sum + tag.split(/\s+/).filter(Boolean).length, 0);
-}
 
 /**
  * Tag input area with textarea, tag chips display, suggestion buttons, and validation.
