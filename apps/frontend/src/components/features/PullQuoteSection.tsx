@@ -1,35 +1,35 @@
 import type { JSX } from 'react';
 
+import { CoverWaves } from '@/components/ui/CoverWaves';
+
 /**
- * Alternating background styles for pull quote sections.
+ * Alternating colourway configs for pull quote sections.
+ * Each entry pairs a wave background hex with matching text and shadow colours.
+ *
+ * @type {PullQuoteColourway}
+ * @property {string} bg - Base hex colour for the wave cover background.
+ * @property {string} text - Text colour class for content on top of the waves.
+ * @property {string} shadow - Hex colour for the quote card shadow.
+ */
+interface PullQuoteColourway {
+  bg: string;
+  text: string;
+  shadow: string;
+}
+
+/**
  * Cycles through 4 distinct brutalist-friendly colourways.
  */
-const QUOTE_BG_CYCLE = ['bg-yellow-400', 'bg-gray-200', 'bg-green-700', 'bg-zinc-900'] as const;
-
-/**
- * Maps background index to text colour for child elements.
- */
-const TEXT_COLORS: Record<string, string> = {
-  'bg-yellow-400': 'text-black',
-  'bg-gray-200': 'text-black',
-  'bg-green-700': 'text-white',
-  'bg-zinc-900': 'text-white',
-};
-
-/**
- * Maps background index to the card shadow colour.
- * Uses a lighter shadow on dark backgrounds so it remains visible.
- */
-const SHADOW_COLORS: Record<string, string> = {
-  'bg-yellow-400': '#18181b',
-  'bg-gray-200': '#18181b',
-  'bg-green-700': '#18181b',
-  'bg-zinc-900': '#52525b',
-};
+const QUOTE_COLORWAYS: PullQuoteColourway[] = [
+  { bg: '#fdc700', text: 'text-black', shadow: '#18181b' },
+  { bg: '#e5e7eb', text: 'text-black', shadow: '#18181b' },
+  { bg: '#00a63e', text: 'text-white', shadow: '#18181b' },
+  { bg: '#18181b', text: 'text-white', shadow: '#f1f1f1' },
+];
 
 /**
  * A single pull quote with person attribution, displayed as a full-width section
- * with alternating background colour and a card-in-card brutalist layout.
+ * with an alternating layered-wave cover background and a card-in-card layout.
  *
  * @param {object} props - Component properties.
  * @param {string} props.quote - The quote text.
@@ -47,22 +47,23 @@ export function PullQuoteSection({
   person: string;
   index?: number;
 }): JSX.Element {
-  const bg = QUOTE_BG_CYCLE[index % QUOTE_BG_CYCLE.length];
-  const textColor = TEXT_COLORS[bg];
-  const shadowColor = SHADOW_COLORS[bg];
+  const colourway = QUOTE_COLORWAYS[index % QUOTE_COLORWAYS.length];
 
   return (
-    <section className={`relative overflow-hidden py-14 md:py-18 ${bg} ${textColor}`}>
-      <div className="mx-auto max-w-4xl px-4 md:px-6">
+    <section className={`relative overflow-hidden py-14 md:py-18 ${colourway.text}`}>
+      <CoverWaves color={colourway.bg} className="absolute inset-0" />
+      <div className="relative z-10 mx-auto max-w-4xl px-4 md:px-6">
         {/* Rotated decorative badge */}
         <div className="mb-4 inline-block origin-bottom-left -rotate-1 border-2 border-black bg-white px-3 py-1 pb-1.5 shadow-[4px_4px_0px_0px_#000]">
-          <span className="text-xs leading-none font-bold text-black uppercase">{person}</span>
+          <span className="text-xs leading-none font-bold text-black uppercase">
+            {'//'} {person}
+          </span>
         </div>
 
         {/* Quote card with heavy shadow */}
         <div
           className="border-2 border-black bg-white p-6 md:p-10"
-          style={{ boxShadow: `8px 8px 0px 0px ${shadowColor}` }}
+          style={{ boxShadow: `8px 8px 0px 0px ${colourway.shadow}` }}
         >
           <div className="flex items-start gap-2">
             <span
