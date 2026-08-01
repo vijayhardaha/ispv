@@ -14,6 +14,9 @@ const TAG_VARIANTS = {
   white: 'bg-white text-black',
 } as const;
 
+/**
+ * Valid color variant names for the Tag component.
+ */
 export type TagVariant = keyof typeof TAG_VARIANTS;
 
 /**
