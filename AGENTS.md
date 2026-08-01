@@ -9,31 +9,32 @@
 - **Version**: 0.0.0
 - **License**: MIT
 - **Author**: Vijay Hardaha
-- **Design**: Brutalist aesthetic — heavy black borders, hard shadows, rotated card, bold uppercase fonts, saffron/navy/white/green colour palette (Indian flag inspired)
+- **Design**: Frontend uses a brutalist aesthetic — heavy black borders, hard shadows, rotated cards, bold uppercase fonts, saffron/navy/white/green colour palette (Indian flag inspired). Admin uses a clean, simple UI with purple primary, light-gray backgrounds, rounded corners, and striped tables.
 - **Design philosophy**: Documented in `PHILOSOPHY.md` at repo root
 
 ## Stack
 
-| Layer            | Choice                                                           |
-| ---------------- | ---------------------------------------------------------------- |
-| Monorepo         | Bun workspaces                                                   |
-| Framework        | Next.js ^16.2.11 (App Router, Turbopack)                         |
-| Language         | TypeScript ^6.0.3, React ^19.2.8                                 |
-| Styling          | Tailwind CSS ^4.3.3 with `@tailwindcss/postcss`                  |
-| Animations       | `tw-animate-css` ^1.4.0                                          |
-| UI Primitives    | Radix UI (Dialog, DropdownMenu, Select, Slot)                    |
-| Icons            | lucide-react ^1.26.0                                             |
-| Class Utils      | clsx + tailwind-merge (`cn()` helper)                            |
-| Variants         | class-variance-authority ^0.7.1                                  |
-| Validation       | Zod ^4.4.3                                                       |
-| Linting          | ESLint ^10.7.0 (flat config via `@vijayhardaha/dev-config`)      |
-| Formatting       | Prettier ^3.9.6 + `prettier-plugin-tailwindcss`                  |
-| Package Manager  | Bun (see `bun.lock`)                                             |
-| Database         | Supabase (Postgres)                                              |
-| Storage          | Vercel Blob (thumbnails)                                         |
-| Image Processing | sharp (thumbnail optimisation)                                   |
-| Hooks            | Husky ^9.1.7 (commit-msg: commitlint, pre-push: format+tsc+lint) |
-| Commitlint       | Conventional commits via `@commitlint/config-conventional`       |
+| Layer            | Choice                                                                                                                                          |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Monorepo         | Bun workspaces                                                                                                                                  |
+| Framework        | Next.js ^16.2.11 (App Router, Turbopack)                                                                                                        |
+| Language         | TypeScript ^6.0.3, React ^19.2.8                                                                                                                |
+| Styling          | Tailwind CSS ^4.3.3 with `@tailwindcss/postcss`                                                                                                 |
+| Animations       | `tw-animate-css` ^1.4.0                                                                                                                         |
+| UI Primitives    | Radix UI (frontend: Dialog, DropdownMenu, Select, Slot); admin uses custom primitives (Button, Input, Select, Checkbox, Radio, Textarea, Modal) |
+| Notifications    | react-hot-toast ^2.6.0 (admin, top-center)                                                                                                      |
+| Icons            | lucide-react ^1.28.0                                                                                                                            |
+| Class Utils      | clsx + tailwind-merge (`cn()` helper)                                                                                                           |
+| Variants         | class-variance-authority ^0.7.1                                                                                                                 |
+| Validation       | Zod ^4.4.3                                                                                                                                      |
+| Linting          | ESLint ^10.7.0 (flat config via `@vijayhardaha/dev-config`)                                                                                     |
+| Formatting       | Prettier ^3.9.6 + `prettier-plugin-tailwindcss`                                                                                                 |
+| Package Manager  | Bun (see `bun.lock`)                                                                                                                            |
+| Database         | Supabase (Postgres)                                                                                                                             |
+| Storage          | Vercel Blob (thumbnails)                                                                                                                        |
+| Image Processing | sharp (thumbnail optimisation)                                                                                                                  |
+| Hooks            | Husky ^9.1.7 (commit-msg: commitlint, pre-push: format+tsc+lint)                                                                                |
+| Commitlint       | Conventional commits via `@commitlint/config-conventional`                                                                                      |
 
 ## 🚫 Strict Rules: Package Manager
 
@@ -118,9 +119,9 @@ apps/
 │   │   ├── app/          # Next.js App Router pages
 │   │   ├── components/   # features/, layout/, shared/, ui/
 │   │   ├── constants/    # seo.ts, colors.ts, categories.ts, locations.ts, slogans.ts, navlinks.ts
-│   │   ├── hooks/        # useFilterState, useReelPlayer, useSubmitVideoForm
-│   │   ├── helpers/      # filterVideos, formatLocation, media.ts
-│   │   └── lib/          # db.ts, adapt.ts, cn.ts, videos.ts, format.ts, instagram.ts, schema.ts, seo.ts, supabase.ts, meta.ts
+│   │   ├── hooks/        # useFilterState (URL-driven), usePagedVideos, useFilterOptions, useReelPlayer, useSubmitVideoForm
+│   │   ├── helpers/      # filterVideos, formatLocation, media, categories, tags
+│   │   └── lib/          # subdirs: utils/, videos/, db/, seo/, helpers/ + index.ts
 │   ├── public/
 │   ├── next.config.ts
 │   ├── vitest.config.ts
@@ -129,10 +130,10 @@ apps/
 ├── admin/                # @ispv/admin — admin panel
 │   ├── src/
 │   │   ├── app/          # Pages (login, dashboard, videos) + API routes (auth/, public/)
-│   │   ├── components/   # layout/, ui/, features/ (VideoFormModal, LogoutButton, Toast)
-│   │   ├── constants/    # categories, colors, locations, navlinks, seo, status
+│   │   ├── components/   # layout/ (AdminSidebar), ui/ (Button, Input, Select, Checkbox, Radio, Textarea, Modal, SearchInput, Pagination, Box, Container, DeleteConfirmDialog), VideoFormModal, LogoutButton
+│   │   ├── constants/    # categories, colors, locations, navlinks, seo, status, cache
 │   │   ├── hooks/        # usePagination
-│   │   ├── lib/          # api-utils, cn, instagram, rateLimit, rpc, schemas, types, supabase, supabase-server, upload
+│   │   ├── lib/          # subdirs: utils/ (cn, format, instagram, seo), db/ (rpc, schemas, types, supabase, supabase-server), api/ (api-utils, rateLimit, upload)
 │   │   └── proxy.ts      # Middleware (auth guard, CSRF, security headers)
 │   ├── supabase/
 │   │   └── migrations/   # SQL migrations
@@ -200,19 +201,20 @@ See `apps/admin/knowledge.md` for full details.
 
 ### Typography
 
-- Body: Instrument Sans (`--font-body`)
+- Body: Instrument Sans on frontend, Bricolage Grotesque on admin (`--font-body`)
 - Display/Headings: Poppins (`--font-display`)
 - Mono: JetBrains Mono (`--font-mono`)
-- All headings: `font-display`, `font-extrabold`, `tracking-tight`
+- Font variables loaded as `bodyFont`, `headingFont`, `monoFont` in each app layout
+- Frontend headings: `font-display`, `font-extrabold`, `tracking-tight`; admin uses the default font stack
 
 ## Data Architecture
 
-All video data is stored in Supabase (`videos`, `categories`, `locations` tables). The frontend fetches from Supabase via `lib/db.ts` (server components) or `useEffect` (client components). See `apps/frontend/knowledge.md` for full Data Architecture details.
+All video data is stored in Supabase (`videos`, `categories`, `locations` tables). The frontend fetches from Supabase via `lib/db/db.ts` (server components) or `useEffect` (client components). See `apps/frontend/knowledge.md` for full Data Architecture details.
 
 Key types:
 
-- `VideoEntry` — full video record (id, description, url, thumbnail, city, location, category, categoryName, tags, hashtags, duration, trending?, videoPostDate?, createdAt, viewCount?)
-- `VideoRow` — raw Supabase row shape (id, video_url, video_id, video_src, category, location, city, tags, description, thumbnail_url, video_post_date, view_count, status, created_at, updated_at)
+- `VideoEntry` — full video record (id, description, url, thumbnail, city, location, category, categories[], categoryName, tags, duration, viewCount, videoPostDate, createdAt, trending?)
+- `VideoRow` — raw Supabase row shape (id, video_url, video_id, video_src, categories[], location, city, tags, description, thumbnail_url, video_post_date, view_count, status, created_at, updated_at)
 - `DbCategory` — `{ slug, name, tag, color, description | null }`
 - `DbLocation` — `{ slug, name }`
 - `VideoFilters` — `{ category?, location?, tag?, query?, sort?, page?, perPage? }`
@@ -234,8 +236,8 @@ Admin-specific types:
 
 **Frontend (`lib/`):**
 
-- `getCategories()` — returns `DbCategory[]` with "Other" pinned last
-- `getLocations()` — returns `DbLocation[]` with "Foreign" pinned last
+- `getCategories()` — returns `DbCategory[]` with "Other" pinned last (in `lib/db/db.ts`)
+- `getLocations()` — returns `DbLocation[]` with "Foreign" pinned last (in `lib/db/db.ts`)
 - `getCategoryByValue(value)` — single lookup by slug
 - `getFeaturedCategories()` — returns 6 featured categories in display order
 - `getTags()` — via `get_tags` RPC, sorted by frequency
@@ -243,20 +245,21 @@ Admin-specific types:
 - `getCategorySectionVideos(slugs, perCategory)` — per-category video sections via `get_frontend_category_videos` RPC
 - `getHomepageStats()` — aggregate homepage stats via `get_homepage_stats` RPC
 - `checkVideoExists(url)` — checks admin public API for duplicate URL
-- `getPublishedVideoCount()`, `getCityCounts()`, `getLocationCounts()` — count helpers
-- `getLocationVideoCounts()`, `getCategoryCounts()` — per-location/per-category counts
-- `siteUrl()`, `getPermaLink(path)` — URL utilities (in `lib/seo.ts`)
-- `buildMetadata(props)` — Next.js Metadata builder (in `lib/meta.ts`)
+- `getCategoryVideoCounts()`, `getLocationVideoCounts()` — per-category/per-location counts
+- `siteUrl()`, `getPermaLink(path)` — URL utilities (in `lib/seo/seo.ts`)
+- `buildMetadata(props)` — Next.js Metadata builder (in `lib/seo/meta.ts`)
 - `buildBreadcrumbs(path, currentPage)` — breadcrumb item builder
 - `globalSchema()` — global JSON-LD schema objects (Person, Organization, WebSite)
-- `formatNumber(n)`, `timeAgo(iso)` — formatting utilities (in `lib/format.ts`)
-- `extractInstagramId(url)` — extracts media ID from Instagram URL (in `lib/instagram.ts`)
+- `formatNumber(n)`, `timeAgo(iso)`, `capitalizeCity(city)` — formatting utilities (in `lib/utils/format.ts`)
+- `extractInstagramId(url)` — extracts media ID from Instagram URL (in `lib/utils/instagram.ts`)
 
 **Frontend (`helpers/`):**
 
 - `filterVideos(videos, state)` — AND filter + sort by category, location, tags, query
 - `formatLocationLabel(city, location)` — location label with deduplication (in `helpers/formatLocation.ts`)
 - `getThumbnailSrc(thumbnail, fallback?)` — thumbnail URL with fallback (in `helpers/media.ts`)
+- `getCategoryBadges(video)` — resolves category names, truncates to 2 badges (in `helpers/categories.ts`)
+- `parseTags(input)`, `countWords(tags)`, `MAX_TAGS`, `MAX_WORDS` — tag parsing/limits (in `helpers/tags.ts`)
 
 **DB Adapter (`lib/adapt.ts`):**
 
@@ -265,15 +268,17 @@ Admin-specific types:
 
 **Admin (`lib/`):**
 
-- `getVideosForApi(supabase, filters)` — paginated video list RPC (in `lib/rpc.ts`)
-- `requireUser(supabase)` — auth guard returning 401 or null
+- `getVideosForApi(supabase, filters)` — paginated video list RPC (in `lib/db/rpc.ts`)
+- `requireUser(supabase)` — auth guard returning 401 or null (in `lib/api/api-utils.ts`)
 - `jsonError(error, status?)` — builds JSON error response
 - `deleteVideoById(supabase, id)` — permanent delete with blob cleanup
 - `createServiceSupabase()` — service-role client for public endpoints
 - `checkDuplicate(supabase, field, value, excludeId?)` — duplicate URL/ID check
-- `checkRateLimit(req, prefix, limit, windowSec)` — Redis/in-memory rate limiting
-- `extractIgId(url)`, `normalizeIgUrl(url)`, `detectSource(url)`, `displayVideoUrl(v)`, `reconstructIgUrl(id)` — Instagram URL utilities
-- `sanitizeFilename(name)`, `uploadBuffer(buffer, filename)`, `deleteBlob(url)` — Vercel Blob utilities
+- `checkRateLimit(req, prefix, limit, windowSec)` — Redis/in-memory rate limiting (in `lib/api/rateLimit.ts`)
+- `extractIgId(url)`, `normalizeIgUrl(url)`, `detectSource(url)`, `displayVideoUrl(v)`, `reconstructIgUrl(id)` — Instagram URL utilities (in `lib/utils/instagram.ts`)
+- `sanitizeFilename(name)`, `uploadBuffer(buffer, filename)`, `deleteBlob(url)` — Vercel Blob utilities (in `lib/api/upload.ts`)
+- `revalidateDashboardStats()` — revalidates cached dashboard stats tag (in `constants/cache.ts`)
+- Zod schemas — `submitVideoBodySchema`, `enrichVideoBodySchema`, `videoFormSchema` + `VideoRecord` interface (in `lib/db/schemas.ts`)
 
 ## Config files
 
@@ -281,6 +286,7 @@ Admin-specific types:
 | ----------------------------------- | ---------------------------------------------------------------------------- |
 | `next.config.ts`                    | Image remote patterns (Instagram CDN, Vercel Blob)                           |
 | `tsconfig.json`                     | Extends `@vijayhardaha/dev-config/tsconfig`, `@/*` path alias                |
+| `apps/admin/src/app/Providers.tsx`  | Wraps app with react-hot-toast `Toaster` (top-center)                        |
 | `eslint.config.mjs`                 | Delegates to `@vijayhardaha/dev-config/eslint/next`                          |
 | `prettier.config.mjs`               | Extends `@vijayhardaha/dev-config/prettier` + `prettier-plugin-tailwindcss`  |
 | `components.json` (frontend)        | shadcn/ui config (new-york style, RSC enabled)                               |
@@ -295,10 +301,12 @@ Admin-specific types:
 
 ## Project state
 
-- **Vitest ^4.1.10** configured per-app with **164 tests total** (admin: 8+ files, frontend: 5+ files)
+- **Vitest ^4.1.10** configured per-app with **416 tests total** (admin: 221 tests across 20 files, frontend: 195 tests across 16 files)
 - **No env files** tracked in git (`.env.example` files exist locally)
 - **No CI/CD** (no `.github/` directory)
-- **No analytics, no i18n, no PWA, no service worker** — GoogleAnalytics component gated to production + non-empty GA ID (currently disabled)
-- **VercelAnalytics** component exists in frontend but not wired in layout
+- **No i18n, no PWA, no service worker** — GoogleAnalytics component gated to production + non-empty GA ID (currently disabled)
+- **VercelAnalytics** and **GoogleAnalytics** components both wired in the frontend root layout
+- Admin uses **react-hot-toast** (top-center) for save/edit/add notifications
+- Admin videos table: URL-driven filters/sort/pagination, sortable columns (Status, Created, Posted, City, Category, Location), WordPress-style row action links on hover, inline status dropdown
 - Data is entirely dynamic from Supabase (not hardcoded)
 - **Design philosophy** documented in `PHILOSOPHY.md` at repo root
