@@ -29,7 +29,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid request body' }, { status: 400 });
   }
 
-  const { video_url, tags, category, location, city } = parsed.data;
+  const { video_url, tags, category, categories, location, city } = parsed.data;
   const video_id = extractIgId(video_url);
   const video_src = detectSource(video_url);
   if (!video_id) {
@@ -42,6 +42,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     p_video_src: video_src,
     p_tags: tags || null,
     p_category: category || null,
+    p_categories: categories ?? null,
     p_location: location || null,
     p_city: city || null,
   });

@@ -18,12 +18,14 @@ function normalizeTags(tags: string[] | null | undefined): string[] | null | und
 
 /**
  * Zod schema validating the public video submission request body.
- * City is trimmed and title-cased; tags are trimmed of surrounding whitespace.
+ * City is trimmed and title-cased; tags are trimmed of surrounding whitespace;
+ * up to three category slugs are allowed.
  */
 export const submitVideoBodySchema = z.object({
   video_url: z.string().min(1, 'video_url is required'),
   tags: z.array(z.string()).nullable().optional().transform(normalizeTags),
   category: z.string().nullable().optional(),
+  categories: z.array(z.string()).max(3, 'Select up to 3 categories').optional(),
   location: z.string().nullable().optional(),
   city: z
     .string()
