@@ -167,7 +167,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
           </Field>
 
           <Field label="Categories" htmlFor={categories[0] ? `category-${categories[0].slug}` : undefined}>
-            <div className="flex max-h-44 flex-wrap gap-2 overflow-y-auto rounded-md border border-gray-200 bg-white p-3">
+            <div className="flex flex-wrap gap-x-4 gap-y-2 rounded-md border border-gray-300 bg-white p-3">
               {categories.map((c) => (
                 <Checkbox
                   key={c.slug}
@@ -183,7 +183,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
           </Field>
 
           <Field label="Status" htmlFor={BULK_STATUS_OPTIONS[0] ? `status-${BULK_STATUS_OPTIONS[0]}` : undefined}>
-            <div className="flex flex-wrap gap-x-4 gap-y-2 rounded-md border border-gray-200 bg-white p-3">
+            <div className="flex flex-wrap gap-x-4 gap-y-2 rounded-md border border-gray-300 bg-white p-3">
               {BULK_STATUS_OPTIONS.map((s) => (
                 <Radio
                   key={s}
