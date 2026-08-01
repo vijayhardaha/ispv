@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
  */
 export function Container({ className, children, ...props }: ComponentPropsWithoutRef<'div'>): JSX.Element {
   return (
-    <div className={cn('mx-auto max-w-[1470] px-4 md:px-6', className)} {...props}>
+    <div className={cn('mx-auto max-w-[1600] px-4 md:px-6', className)} {...props}>
       {children}
     </div>
   );
