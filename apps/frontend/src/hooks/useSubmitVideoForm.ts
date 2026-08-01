@@ -6,42 +6,11 @@ import { z } from 'zod/v4';
 
 import type { DbLocation } from '@/lib/db';
 import { checkVideoExists, getLocations } from '@/lib/db';
+import { countWords, MAX_TAGS, MAX_WORDS, parseTags } from '@/lib/helpers/tags';
 import { capitalizeCity, extractInstagramId } from '@/lib/utils';
 
-/** Maximum number of tags allowed. */
-const MAX_TAGS = 15;
-
-/** Maximum number of words allowed across all tags combined. */
-const MAX_WORDS = 50;
-
-/**
- * Parse a comma-separated tag string into a unique list of trimmed tags.
- *
- * @param {string} input - Raw tag input (comma or newline separated).
- *
- * @returns {string[]} Deduplicated array of trimmed tag strings.
- */
-function parseTags(input: string): string[] {
-  return Array.from(
-    new Set(
-      input
-        .split(/[,]+/)
-        .map((t) => t.trim())
-        .filter(Boolean)
-    )
-  );
-}
-
-/**
- * Counts the total number of words across all tags.
- *
- * @param {string[]} tags - Array of tag strings.
- *
- * @returns {number} Total word count.
- */
-function countWords(tags: string[]): number {
-  return tags.reduce((sum, tag) => sum + tag.split(/\s+/).filter(Boolean).length, 0);
-}
+/** Maximum number of categories that can be selected. */
+export const MAX_CATEGORIES = 3;
 
 /**
  * Zod schema validating the public video submission form.
@@ -51,6 +20,7 @@ const submitVideoFormSchema = z.object({
   location: z.string().min(1, 'Location is required'),
   city: z.string().max(30, 'City must be 30 characters or less'),
   tags: z.string(),
+  categories: z.array(z.string()).max(MAX_CATEGORIES, `Select up to ${MAX_CATEGORIES} categories`),
 });
 
 /**
@@ -86,6 +56,8 @@ export interface UseSubmitVideoFormOptions {
  * @property {(city: string) => void} setCity - Sets the city value.
  * @property {string} tags - Current tags input value (comma-separated).
  * @property {(tags: string) => void} setTags - Sets the tags value.
+ * @property {string[]} categories - Selected category slugs (max 3).
+ * @property {(slug: string) => void} toggleCategory - Adds or removes a category slug.
  * @property {string | null} error - Current validation error message.
  * @property {(error: string | null) => void} setError - Sets the error message.
  * @property {boolean} success - Whether the submission succeeded.
@@ -108,6 +80,8 @@ export interface UseSubmitVideoFormReturn {
   setCity: (city: string) => void;
   tags: string;
   setTags: (tags: string) => void;
+  categories: string[];
+  toggleCategory: (slug: string) => void;
   error: string | null;
   setError: (error: string | null) => void;
   success: boolean;
@@ -138,6 +112,7 @@ export function useSubmitVideoForm({
   const [location, setLocation] = useState('Delhi');
   const [city, setCity] = useState('');
   const [tags, setTags] = useState('');
+  const [categories, setCategories] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -155,10 +130,29 @@ export function useSubmitVideoForm({
     setLocation('Delhi');
     setCity('');
     setTags('');
+    setCategories([]);
     setError(null);
     setSuccess(false);
     setSubmitting(false);
     setCheckingUrl(false);
+  }, []);
+
+  /**
+   * Toggles a category slug in the selection, capping at MAX_CATEGORIES.
+   * Unchecking is always allowed; adding is blocked once the cap is reached.
+   *
+   * @param {string} slug - Category slug to add or remove.
+   */
+  const toggleCategory = useCallback((slug: string) => {
+    setCategories((prev) => {
+      if (prev.includes(slug)) {
+        return prev.filter((s) => s !== slug);
+      }
+      if (prev.length >= MAX_CATEGORIES) {
+        return prev;
+      }
+      return [...prev, slug];
+    });
   }, []);
 
   const handleOpen = useCallback(
@@ -232,7 +226,7 @@ export function useSubmitVideoForm({
   }, [isValidUrl, isValidTags]);
 
   const validateForm = useCallback((): string | null => {
-    const parsed = submitVideoFormSchema.safeParse({ url, location, city, tags } satisfies SubmitVideoForm);
+    const parsed = submitVideoFormSchema.safeParse({ url, location, city, tags, categories } satisfies SubmitVideoForm);
     if (!parsed.success) {
       return parsed.error.issues[0]?.message ?? 'Invalid form data';
     }
@@ -250,7 +244,7 @@ export function useSubmitVideoForm({
     }
 
     return null;
-  }, [url, location, city, tags]);
+  }, [url, location, city, tags, categories]);
 
   const submitVideo = useCallback(async () => {
     const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
@@ -262,14 +256,14 @@ export function useSubmitVideoForm({
     const response = await fetch(`${adminUrl}/api/public/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url, location, city: capitalizeCity(city), tags: cleanTags }),
+      body: JSON.stringify({ url, location, city: capitalizeCity(city), tags: cleanTags, categories }),
     });
 
     if (!response.ok) {
       const data = (await response.json().catch(() => ({}))) as { error?: string };
       throw new Error(data.error ?? 'Something went wrong');
     }
-  }, [url, location, city, tags]);
+  }, [url, location, city, tags, categories]);
 
   const handleSubmit = useCallback(
     async (e: SubmitEvent<HTMLFormElement>) => {
@@ -320,6 +314,8 @@ export function useSubmitVideoForm({
     setCity,
     tags,
     setTags,
+    categories,
+    toggleCategory,
     error,
     setError,
     success,

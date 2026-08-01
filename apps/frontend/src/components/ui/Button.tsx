@@ -147,9 +147,11 @@ function Button({
   const classes = cn(buttonVariants({ variant, size, className }));
   const Comp = asChild ? Slot : 'button';
   const isDisabled = disabled || loading;
+  // Propagate full-width requests to the inner styled span so the visible box stretches.
+  const isFullWidth = className?.includes('w-full') ?? false;
 
   if (asChild) {
-    const asChildClasses = cn(classes, spanVariants({ variant, size }));
+    const asChildClasses = cn(classes, spanVariants({ variant, size }), isFullWidth && 'w-full');
     return (
       <Comp
         data-slot="button"
@@ -159,7 +161,7 @@ function Button({
         disabled={isDisabled}
         {...props}
       >
-        <span className={spanVariants({ variant, size })}>
+        <span className={cn(spanVariants({ variant, size }), isFullWidth && 'w-full')}>
           {loading && <Spinner />}
           {children}
         </span>
@@ -177,7 +179,7 @@ function Button({
       {...props}
     >
       {shadow && <div className={offsetVariants({ color: VARIANT_OFFSET_COLOR[variant!] })} aria-hidden="true" />}
-      <span className={spanVariants({ variant, size })}>
+      <span className={cn(spanVariants({ variant, size }), isFullWidth && 'w-full')}>
         {loading && <Spinner />}
         {children}
       </span>

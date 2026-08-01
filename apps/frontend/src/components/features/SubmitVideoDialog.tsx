@@ -2,11 +2,12 @@
 
 import { type JSX, type ReactNode } from 'react';
 
-import { Send, Link2, MapPin, Building2 } from 'lucide-react';
+import { Send, Link2, MapPin, Building2, LayoutGrid } from 'lucide-react';
 
 import { TagArea } from '@/components/features/TagArea';
 import { SuccessState } from '@/components/shared/SuccessState';
 import { Button } from '@/components/ui/Button';
+import { Checkbox } from '@/components/ui/Checkbox';
 import {
   Dialog,
   DialogContent,
@@ -19,7 +20,8 @@ import {
 } from '@/components/ui/Dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Dropdown';
 import { FieldLabel, Input } from '@/components/ui/Input';
-import { useSubmitVideoForm } from '@/hooks/useSubmitVideoForm';
+import { CATEGORIES } from '@/constants/categories';
+import { MAX_CATEGORIES, useSubmitVideoForm } from '@/hooks/useSubmitVideoForm';
 
 /**
  * Dialog for submitting an Instagram reel URL to the protest archive.
@@ -55,8 +57,8 @@ export function SubmitVideoDialog({
             <SuccessState title="Submitted!" message="We will review and add it shortly." />
           </DialogBody>
         ) : (
-          <form onSubmit={form.handleSubmit}>
-            <DialogBody className="space-y-4">
+          <form onSubmit={form.handleSubmit} className="flex min-h-0 flex-1 flex-col">
+            <DialogBody className="min-h-0 flex-1 space-y-4 overflow-y-auto">
               <div className="space-y-1">
                 <FieldLabel htmlFor="reel-url" required>
                   <Link2 className="h-3.5 w-3.5" /> Instagram Reel URL
@@ -79,7 +81,7 @@ export function SubmitVideoDialog({
                 {form.checkingUrl && <p className="mt-1 text-xs text-black/50">Checking archive…</p>}
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <FieldLabel htmlFor="reel-location">
                     <MapPin className="h-3.5 w-3.5" /> Location
@@ -112,6 +114,38 @@ export function SubmitVideoDialog({
                 </div>
               </div>
 
+              <div className="space-y-1">
+                <FieldLabel htmlFor="reel-categories">
+                  <LayoutGrid className="h-3.5 w-3.5" /> Category
+                  <span className="ml-2 font-normal text-black/50 normal-case">
+                    {form.categories.length}/{MAX_CATEGORIES} selected
+                  </span>
+                </FieldLabel>
+                <div className="flex flex-wrap gap-x-4 gap-y-2">
+                  {CATEGORIES.map((cat) => {
+                    const checked = form.categories.includes(cat.slug);
+                    const atLimit = form.categories.length >= MAX_CATEGORIES && !checked;
+                    return (
+                      <Checkbox
+                        key={cat.slug}
+                        id={`reel-category-${cat.slug}`}
+                        name="categories"
+                        value={cat.slug}
+                        label={cat.name}
+                        checked={checked}
+                        disabled={form.submitting || atLimit}
+                        onChange={() => form.toggleCategory(cat.slug)}
+                      />
+                    );
+                  })}
+                </div>
+                {form.categories.length >= MAX_CATEGORIES && (
+                  <p className="text-xs text-black/50">
+                    Maximum {MAX_CATEGORIES} categories. Uncheck one to pick another.
+                  </p>
+                )}
+              </div>
+
               <TagArea tags={form.tags} setTags={form.setTags} disabled={form.submitting} />
 
               <p className="text-sm leading-relaxed text-black/80">
@@ -129,13 +163,20 @@ export function SubmitVideoDialog({
                 </span>{' '}
                 so others can find this video easily.
               </p>
-
-              <DialogFooter>
-                <Button type="submit" variant="default" shadow loading={form.submitting} disabled={!form.canSubmit}>
-                  <Send className="size-4" /> {form.submitting ? 'Submitting…' : 'Submit Reel'}
-                </Button>
-              </DialogFooter>
             </DialogBody>
+
+            <DialogFooter className="shrink-0">
+              <Button
+                type="submit"
+                variant="default"
+                shadow
+                loading={form.submitting}
+                disabled={!form.canSubmit}
+                className="w-full"
+              >
+                <Send className="size-4" /> {form.submitting ? 'Submitting…' : 'Submit Reel'}
+              </Button>
+            </DialogFooter>
           </form>
         )}
       </DialogContent>

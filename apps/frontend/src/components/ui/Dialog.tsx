@@ -54,9 +54,9 @@ export const DialogContent = forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          'fixed top-1/2 left-1/2 z-50 w-[95vw] max-w-2xl -translate-x-1/2 -translate-y-1/2',
+          'fixed top-1/2 left-1/2 z-50 flex max-h-[90vh] w-[95vw] max-w-2xl -translate-x-1/2 -translate-y-1/2 flex-col',
           'shadow-brutal-xl border-2 border-black',
-          'max-h-[90vh] overflow-y-auto',
+          'overflow-hidden',
           'animate-snapIn',
           toneMap[tone],
           className
@@ -82,7 +82,7 @@ DialogContent.displayName = 'DialogContent';
 export function DialogHeader({ className, children, ...props }: HTMLAttributes<HTMLDivElement>): JSX.Element {
   return (
     <div
-      className={cn('flex items-start justify-between gap-4 border-b-2 border-black px-6 py-4', className)}
+      className={cn('flex shrink-0 items-start justify-between gap-4 border-b-2 border-black px-6 py-4', className)}
       {...props}
     >
       <div className="flex-1">{children}</div>
@@ -131,7 +131,7 @@ DialogDescription.displayName = 'DialogDescription';
  * @returns {JSX.Element} Rendered dialog body.
  */
 export function DialogBody({ className, ...props }: HTMLAttributes<HTMLDivElement>): JSX.Element {
-  return <div className={cn('px-6 py-5', className)} {...props} />;
+  return <div className={cn('min-h-0 flex-1 overflow-y-auto px-6 py-5', className)} {...props} />;
 }
 
 /**
@@ -145,7 +145,10 @@ export function DialogBody({ className, ...props }: HTMLAttributes<HTMLDivElemen
 export function DialogFooter({ className, ...props }: HTMLAttributes<HTMLDivElement>): JSX.Element {
   return (
     <div
-      className={cn('flex flex-wrap items-center justify-end gap-3 border-t-2 border-black bg-white pt-3', className)}
+      className={cn(
+        'flex shrink-0 flex-wrap items-center justify-end gap-3 border-t-2 border-black bg-white p-4',
+        className
+      )}
       {...props}
     />
   );
