@@ -22,14 +22,6 @@ export interface DbCategory {
  */
 export const CATEGORIES: DbCategory[] = [
   {
-    slug: 'protest-marches',
-    name: 'Protest Marches',
-    tag: 'Voices in Motion',
-    color: 'yellow',
-    description:
-      'Explore publicly shared videos of protest marches across India, featuring peaceful rallies, processions, public gatherings, patriotic songs, and community participation.',
-  },
-  {
     slug: 'police-conduct',
     name: 'Police Conduct',
     tag: 'On the Frontline',
@@ -46,28 +38,12 @@ export const CATEGORIES: DbCategory[] = [
       'Discover videos highlighting the leadership, creativity, participation, and voices of Gen Z students during peaceful protests and public movements.',
   },
   {
-    slug: 'official-statements',
-    name: 'Official Statements',
-    tag: 'From the Organizers',
-    color: 'blue',
+    slug: 'protest-marches',
+    name: 'Protest Marches',
+    tag: 'Voices in Motion',
+    color: 'yellow',
     description:
-      'Explore official announcements, press briefings, speeches, campaign updates, and public statements shared by protest organizers and representatives.',
-  },
-  {
-    slug: 'public-figures-creators',
-    name: 'Public Figures & Creators',
-    tag: 'Public Voices',
-    color: 'green',
-    description:
-      'Watch videos shared by influencers, journalists, actors, educators, activists, and other public figures documenting or supporting student protests.',
-  },
-  {
-    slug: 'news-coverage',
-    name: 'News Coverage',
-    tag: 'In the Headlines',
-    color: 'black',
-    description:
-      'Browse television reports, digital news clips, interviews, debates, and media coverage documenting student protests and related developments.',
+      'Explore publicly shared videos of protest marches across India, featuring peaceful rallies, processions, public gatherings, patriotic songs, and community participation.',
   },
   {
     slug: 'protest-vlogs',
@@ -78,6 +54,22 @@ export const CATEGORIES: DbCategory[] = [
       'Explore personal vlog style videos documenting journeys, behind the scenes moments, daily experiences, and firsthand accounts from protest participants.',
   },
   {
+    slug: 'news-coverage',
+    name: 'News Coverage',
+    tag: 'In the Headlines',
+    color: 'black',
+    description:
+      'Browse television reports, digital news clips, interviews, debates, and media coverage documenting student protests and related developments.',
+  },
+  {
+    slug: 'public-figures-creators',
+    name: 'Public Figures & Creators',
+    tag: 'Public Voices',
+    color: 'green',
+    description:
+      'Watch videos shared by influencers, journalists, actors, educators, activists, and other public figures documenting or supporting student protests.',
+  },
+  {
     slug: 'acts-of-kindness',
     name: 'Acts of Kindness',
     tag: 'Humanity First',
@@ -86,12 +78,36 @@ export const CATEGORIES: DbCategory[] = [
       'Discover inspiring moments of compassion, solidarity, volunteer support, food distribution, medical assistance, and kindness shared during protests.',
   },
   {
+    slug: 'counter-protests-public-reactions',
+    name: 'Counter Protests & Public Reactions',
+    tag: 'Different Perspectives',
+    color: 'yellow',
+    description:
+      'Explore videos documenting counter demonstrations, differing viewpoints, public reactions, debates, and discussions surrounding student protests.',
+  },
+  {
+    slug: 'official-statements',
+    name: 'Official Statements',
+    tag: 'From the Organizers',
+    color: 'blue',
+    description:
+      'Explore official announcements, press briefings, speeches, campaign updates, and public statements shared by protest organizers and representatives.',
+  },
+  {
     slug: 'women-leading-movement',
     name: 'Women Leading the Movement',
     tag: 'Leading the Change',
     color: 'yellow',
     description:
       'Explore videos highlighting women leading marches, organizing events, delivering speeches, coordinating volunteers, and inspiring peaceful public participation.',
+  },
+  {
+    slug: 'human-rights',
+    name: 'Human Rights',
+    tag: 'Rights & Freedom',
+    color: 'red',
+    description:
+      'Explore videos documenting alleged human rights concerns, civil liberties issues, public accountability, and reported incidents during student protests.',
   },
   {
     slug: 'solidarity-protection',
@@ -118,14 +134,6 @@ export const CATEGORIES: DbCategory[] = [
       'Browse publicly shared videos featuring children expressing messages of hope, participation, awareness, and support alongside peaceful public demonstrations.',
   },
   {
-    slug: 'human-rights',
-    name: 'Human Rights',
-    tag: 'Rights & Freedom',
-    color: 'red',
-    description:
-      'Explore videos documenting alleged human rights concerns, civil liberties issues, public accountability, and reported incidents during student protests.',
-  },
-  {
     slug: 'celebrations-cultural-events',
     name: 'Celebrations & Cultural Events',
     tag: 'Culture & Unity',
@@ -140,14 +148,6 @@ export const CATEGORIES: DbCategory[] = [
     color: 'black',
     description:
       'Explore videos from evening and overnight protests, including speeches, volunteer activities, and updates from protest locations.',
-  },
-  {
-    slug: 'counter-protests-public-reactions',
-    name: 'Counter Protests & Public Reactions',
-    tag: 'Different Perspectives',
-    color: 'yellow',
-    description:
-      'Explore videos documenting counter demonstrations, differing viewpoints, public reactions, debates, and discussions surrounding student protests.',
   },
   {
     slug: 'media-analysis',
