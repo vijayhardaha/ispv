@@ -8,9 +8,7 @@
 
 /* ─── Design tokens ─────────────────────────────────────────────────── */
 @theme inline {
-  --font-body: "Instrument Sans", "system-ui", sans-serif;
-  --font-display: "Poppins", "system-ui", sans-serif;
-  --font-mono: "JetBrains Mono", "ui-monospace", monospace;
+  --font-display: var(--font-display);
   --font-sans: var(--font-body);
 }
 
