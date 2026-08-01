@@ -1,7 +1,7 @@
 import type { JSX, ReactNode } from 'react';
 
 import type { Metadata } from 'next';
-import { Instrument_Sans, JetBrains_Mono, Poppins } from 'next/font/google';
+import { Bricolage_Grotesque, JetBrains_Mono, Poppins } from 'next/font/google';
 
 import { AdminFooter } from '@/components/layout/AdminFooter';
 import { AdminHeader } from '@/components/layout/AdminHeader';
@@ -12,7 +12,7 @@ import { createServerSupabase } from '@/lib/db/supabase-server';
 
 import './globals.css';
 
-const bodyFont = Instrument_Sans({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
+const bodyFont = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
 
 const headingFont = Poppins({
   subsets: ['latin'],
