@@ -6,6 +6,7 @@ import { Search } from 'lucide-react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Modal';
 
 /**
  * Search input that syncs its value to the `?q=` URL param on Enter or submit.
@@ -65,15 +66,17 @@ export function SearchInput({
 
   return (
     <form role="search" onSubmit={handleSubmit} className="flex items-center gap-2">
-      <input
+      <Input
         type="search"
+        name={paramName}
+        id={`search-${paramName}`}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="w-full max-w-xs border border-gray-300 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 focus:outline-none"
+        className="w-full max-w-xs"
       />
-      <Button type="submit" size="sm">
+      <Button type="submit">
         <Search className="h-3.5 w-3.5" aria-hidden="true" />
         {submitLabel}
       </Button>
