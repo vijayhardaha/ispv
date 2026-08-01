@@ -64,14 +64,14 @@ export function DeleteConfirmDialog({
   const isTrash = action === 'trash';
   const isRestore = action === 'restore';
 
-  const derivedTitle = isRestore ? `Restore ${label}?` : isTrash ? `Trash ${label}?` : `Delete ${label}?`;
+  const derivedTitle = isRestore ? `Restore ${label}?` : isTrash ? 'Move to Trash?' : `Delete ${label}?`;
   const defaultMessage = isRestore
     ? 'This video will reappear in the main list.'
     : isTrash
       ? 'This video will be hidden from the main list. You can restore it later from the Trashed view.'
       : 'This action cannot be undone. The video will be permanently removed.';
   const displayMessage = message ?? defaultMessage;
-  const derivedLabel = isRestore ? 'Restore' : isTrash ? 'Trash' : 'Delete';
+  const derivedLabel = isRestore ? 'Restore' : isTrash ? 'Move to Trash' : 'Delete';
   const displayTitle = title ?? derivedTitle;
   const displayConfirmLabel = confirmLabel ?? derivedLabel;
   const loadingLabel = loading
@@ -80,17 +80,21 @@ export function DeleteConfirmDialog({
       : isRestore
         ? 'Restoring…'
         : isTrash
-          ? 'Trashing…'
+          ? 'Moving to Trash…'
           : 'Deleting…'
     : displayConfirmLabel;
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/40 backdrop-blur-sm">
       <div className="flex min-h-full items-center justify-center p-4">
-        <Box className="my-auto w-full max-w-sm p-6">
-          <h2 className="mb-2 text-lg font-extrabold uppercase">{displayTitle}</h2>
-          <p className="mb-4 text-sm text-black/70">{displayMessage}</p>
-          <div className="flex justify-end gap-2">
+        <Box className="my-auto w-full max-w-sm">
+          <div className="border-b border-gray-200 px-4 py-3">
+            <h2 className="text-lg font-extrabold uppercase">{displayTitle}</h2>
+          </div>
+          <div className="p-4">
+            <p className="text-sm text-black/70">{displayMessage}</p>
+          </div>
+          <div className="flex justify-end gap-2 border-t border-gray-200 px-4 py-3">
             <Button onClick={onCancel} variant="secondary" disabled={loading}>
               Cancel
             </Button>
