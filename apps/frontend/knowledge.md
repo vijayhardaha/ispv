@@ -104,13 +104,13 @@ HomepageStats {
 ## Filter Architecture
 
 - `FilterState` (`helpers/filterVideos.ts`): `{ query, category, location, tags[], page, perPage, sort }`
-- `useFilterState` (`hooks/useFilterState.ts`): Reads URL params on init, syncs back via `replaceState`
-- `filterVideos()` (`helpers/filterVideos.ts`): AND logic across category, location, tags, query, then sorts by selected option
+- `useFilterState` (`hooks/useFilterState.ts`): **URL-driven** — reads `q`, `location`, `tag`, `sort`, `page` from `useSearchParams` and exposes `setFilter(param, value)` which rewrites the URL via `router.replace` (resets `page`). Used by both the videos page and category pages so filters/sort/pagination live in the URL
+- `filterVideos()` (`helpers/filterVideos.ts`): AND logic across category, location, tags, query, then sorts by selected option (pure helper — client pages filter server-side via the RPC)
 - `SORT_OPTIONS` (`helpers/filterVideos.ts`): label/value pairs for sort dropdown
 - `SortOption` type: `views_desc`, `views_asc`, `posted_date_desc`, `posted_date_asc`, `created_date_desc`, `created_date_asc`, `city_asc`, `city_desc`, `location_asc`, `location_desc`
+- URL params: `q` (search, committed on Enter), `location` (slug), `tag` (single), `sort` (SortOption), `page` (1-based; also driven by `Pagination` links)
 - Tags: single-select toggle, capped at 100 chips, **hidden by default** (toggle button to show)
-- Location: select dropdown, "All locations" default
-- Sort options: views (default), posted date, created date, city, location
+- Location: select dropdown, "All locations" default (`location=all` clears the param)
 - Tags section in FilterBar has show/hide toggle button (collapsed by default) with `aria-expanded` for accessibility
 
 ## Reel Player
