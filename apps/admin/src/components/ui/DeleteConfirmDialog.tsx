@@ -8,11 +8,14 @@ import { Button } from '@/components/ui/Button';
 /**
  * Reusable confirmation dialog with loading state.
  * Supports trash, restore, and permanent-delete actions with contextual messaging.
+ * Custom title and confirm button labels override the action-derived defaults.
  *
  * @param {object} props - Component properties.
  * @param {string} props.label - Entity name shown in the heading (e.g. "Video", "Category").
  * @param {'trash' | 'restore' | 'delete'} [props.action] - Type of action being confirmed.
  * @param {string} [props.message] - Custom confirmation message (overrides default).
+ * @param {string} [props.title] - Custom heading text (overrides action-derived title).
+ * @param {string} [props.confirmLabel] - Custom confirm button label (overrides action-derived label).
  * @param {() => void} props.onCancel - Cancel handler.
  * @param {() => Promise<void> | void} props.onConfirm - Confirm handler.
  *
@@ -22,12 +25,16 @@ export function DeleteConfirmDialog({
   label,
   action = 'delete',
   message,
+  title,
+  confirmLabel,
   onCancel,
   onConfirm,
 }: {
   label: string;
   action?: 'trash' | 'restore' | 'delete';
   message?: string;
+  title?: string;
+  confirmLabel?: string;
   onCancel: () => void;
   onConfirm: () => Promise<void> | void;
 }): JSX.Element {
@@ -57,26 +64,37 @@ export function DeleteConfirmDialog({
   const isTrash = action === 'trash';
   const isRestore = action === 'restore';
 
-  const title = isRestore ? `Restore ${label}?` : isTrash ? `Trash ${label}?` : `Delete ${label}?`;
+  const derivedTitle = isRestore ? `Restore ${label}?` : isTrash ? `Trash ${label}?` : `Delete ${label}?`;
   const defaultMessage = isRestore
     ? 'This video will reappear in the main list.'
     : isTrash
       ? 'This video will be hidden from the main list. You can restore it later from the Trashed view.'
       : 'This action cannot be undone. The video will be permanently removed.';
   const displayMessage = message ?? defaultMessage;
-  const buttonLabel = isRestore ? 'Restore' : isTrash ? 'Trash' : loading ? 'Deleting…' : 'Delete';
+  const derivedLabel = isRestore ? 'Restore' : isTrash ? 'Trash' : 'Delete';
+  const displayTitle = title ?? derivedTitle;
+  const displayConfirmLabel = confirmLabel ?? derivedLabel;
+  const loadingLabel = loading
+    ? confirmLabel
+      ? `${confirmLabel}…`
+      : isRestore
+        ? 'Restoring…'
+        : isTrash
+          ? 'Trashing…'
+          : 'Deleting…'
+    : displayConfirmLabel;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <Box className="w-full max-w-sm p-6">
-        <h2 className="mb-2 text-lg font-extrabold uppercase">{title}</h2>
+        <h2 className="mb-2 text-lg font-extrabold uppercase">{displayTitle}</h2>
         <p className="mb-4 text-sm text-black/70">{displayMessage}</p>
         <div className="flex justify-end gap-2">
           <Button onClick={onCancel} variant="secondary" disabled={loading}>
             Cancel
           </Button>
           <Button onClick={handleConfirm} variant={isRestore ? 'primary' : 'danger'} loading={loading}>
-            {loading ? (isRestore ? 'Restoring…' : isTrash ? 'Trashing…' : 'Deleting…') : buttonLabel}
+            {loadingLabel}
           </Button>
         </div>
       </Box>

@@ -35,9 +35,11 @@ export function LogoutButton(): JSX.Element {
 
       {showConfirm && (
         <DeleteConfirmDialog
-          label="Session"
+          label="Logout"
           action="delete"
-          message="Are you sure you want to logout?"
+          title="Logout?"
+          message="You will be signed out of your admin account. You can sign back in anytime."
+          confirmLabel="Logout"
           onCancel={() => setShowConfirm(false)}
           onConfirm={handleConfirm}
         />
