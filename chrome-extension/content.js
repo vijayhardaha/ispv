@@ -49,11 +49,11 @@ const BTN_STYLE =
   'position:fixed;bottom:100px;right:40px;z-index:99999;width:56px;height:56px;border:2px solid #000;background:#facc15;color:#000;font-size:28px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;';
 
 /** Floating collect button HTML template. */
-const BUTTON_HTML = `<button id="reel-vault-collect" title="Collect to Reel Vault" style="${BTN_STYLE}">${BUTTON_REST}</button>`;
+const BUTTON_HTML = `<button id="ispv-collect" title="Collect to ISPV" style="${BTN_STYLE}">${BUTTON_REST}</button>`;
 
 /** Notification toast styles for success, error, and warning states. */
 const NOTIFICATION_STYLES = {
-  success: { bg: '#22c55e', text: 'white', icon: '\u2713', message: 'Submitted to Reel Vault' },
+  success: { bg: '#22c55e', text: 'white', icon: '\u2713', message: 'Submitted to ISPV' },
   error: { bg: '#ef4444', text: 'white', icon: '\u2717', message: 'Failed to submit' },
   warning: { bg: '#facc15', text: 'black', icon: '\u26A0', message: '' },
 };
@@ -62,7 +62,7 @@ const NOTIFICATION_STYLES = {
  * Collects Instagram reel metadata and submits it to the ISPV Admin API
  * via the background service worker (token never touches the content script).
  */
-class ReelVaultCollector {
+class ISPVCollector {
   /** @type {string | null} */
   #lastUrl;
 
@@ -116,7 +116,7 @@ class ReelVaultCollector {
    * Retries once if document.body is not yet available.
    */
   #injectButton() {
-    if (document.getElementById('reel-vault-collect')) {
+    if (document.getElementById('ispv-collect')) {
       return;
     }
 
@@ -126,7 +126,7 @@ class ReelVaultCollector {
     }
 
     document.body.insertAdjacentHTML('beforeend', BUTTON_HTML);
-    document.getElementById('reel-vault-collect').addEventListener('click', () => this.#collectData());
+    document.getElementById('ispv-collect').addEventListener('click', () => this.#collectData());
   }
 
   // --------------------------------------------------------------------
@@ -203,7 +203,7 @@ class ReelVaultCollector {
     if (this.#busy) return;
     this.#busy = true;
 
-    const btn = document.getElementById('reel-vault-collect');
+    const btn = document.getElementById('ispv-collect');
     if (btn) {
       btn.disabled = true;
       btn.textContent = '';
@@ -224,10 +224,10 @@ class ReelVaultCollector {
         throw new Error(response?.error ?? 'No response from background worker');
       }
 
-      console.log('[Reel Vault] Enriched:', response.data);
+      console.log('[ISPV] Enriched:', response.data);
       this.#showNotification('success');
     } catch (err) {
-      console.error('[Reel Vault] Error:', err);
+      console.error('[ISPV] Error:', err);
 
       if (err.message && err.message.includes('token not configured')) {
         this.#showNotification('warning', 'Configure API token in extension options');
@@ -289,4 +289,4 @@ class ReelVaultCollector {
   }
 }
 
-new ReelVaultCollector();
+new ISPVCollector();
