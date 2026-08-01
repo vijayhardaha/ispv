@@ -1,15 +1,13 @@
 'use client';
 
-import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
+import { useCallback, useMemo } from 'react';
 
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { filterVideos } from '@/lib/helpers/filterVideos';
-import type { FilterState } from '@/lib/helpers/filterVideos';
-import type { VideoEntry } from '@/lib/videos';
+import { SORT_OPTIONS, type FilterState, type SortOption } from '@/lib/helpers/filterVideos';
 
 /**
- * Default filter state used when no URL params or overrides are provided.
+ * Default filter values used when no URL search param is present.
  */
 const DEFAULT_STATE: FilterState = {
   query: '',
@@ -25,66 +23,67 @@ const DEFAULT_STATE: FilterState = {
  * Configuration options for the useFilterState hook.
  *
  * @type {UseFilterStateProps}
- * @property {VideoEntry[]} videos - Full list of videos to filter.
- * @property {Partial<FilterState>} [defaults] - Default filter values to override initial state.
+ * @property {string} [category] - Fixed category slug scoping all results (e.g. from the URL path).
  */
 export interface UseFilterStateProps {
-  videos: VideoEntry[];
-  defaults?: Partial<FilterState>;
+  category?: string;
 }
 
 /**
- * Manages filter state for the video archive, syncing with URL search params.
+ * Manages video filter state driven entirely by URL search params.
  *
- * @param {object} props - Hook options.
- * @param {VideoEntry[]} props.videos - Full list of videos to filter.
- * @param {Partial<FilterState>} [props.defaults] - Default filter values to override initial state.
+ * Reads the `q`, `location`, `tag`, `sort`, and `page` params from the URL,
+ * builds a FilterState, and exposes setFilter() which rewrites the URL
+ * (resetting pagination). Data fetching must happen in the caller's effect
+ * keyed on the returned state.
  *
- * @returns {{ state: FilterState; setState: (s: FilterState) => void; filtered: VideoEntry[]; total: number }} Filter state, setter, filtered results, and total count.
+ * @param {UseFilterStateProps} [props] - Hook options.
+ * @param {string} [props.category] - Fixed category slug scoping all results.
+ *
+ * @returns {{ state: FilterState; setFilter: (param: string, value: string) => void }} URL-derived filter state and URL updater.
  */
-export function useFilterState({ videos, defaults }: UseFilterStateProps): {
+export function useFilterState({ category }: UseFilterStateProps = {}): {
   state: FilterState;
-  setState: Dispatch<SetStateAction<FilterState>>;
-  filtered: VideoEntry[];
-  total: number;
+  setFilter: (param: string, value: string) => void;
 } {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [state, setState] = useState<FilterState>(() => ({
-    ...DEFAULT_STATE,
-    ...defaults,
-    query: searchParams?.get('q') ?? defaults?.query ?? '',
-    category: searchParams?.get('category') ?? defaults?.category ?? 'all',
-    location: searchParams?.get('location') ?? defaults?.location ?? 'all',
-    tags: searchParams?.get('tag') ? [searchParams.get('tag')!] : (defaults?.tags ?? []),
-  }));
 
-  useEffect(() => {
-    const next = new URLSearchParams();
-    if (state.query) {
-      next.set('q', state.query);
-    }
+  const query = searchParams.get('q') ?? '';
+  const location = searchParams.get('location') ?? 'all';
+  const tag = searchParams.get('tag') ?? '';
+  const rawSort = searchParams.get('sort');
+  const sort = SORT_OPTIONS.some((o) => o.value === rawSort) ? (rawSort as SortOption) : DEFAULT_STATE.sort;
+  const page = Math.max(1, Number(searchParams.get('page')) || 1);
 
-    if (state.category !== 'all') {
-      next.set('category', state.category);
-    }
+  const state = useMemo<FilterState>(
+    () => ({
+      query,
+      category: category ?? 'all',
+      location,
+      tags: tag ? [tag] : [],
+      page,
+      perPage: DEFAULT_STATE.perPage,
+      sort,
+    }),
+    [query, category, location, tag, page, sort]
+  );
 
-    if (state.location !== 'all') {
-      next.set('location', state.location);
-    }
+  const setFilter = useCallback(
+    (param: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value) {
+        params.set(param, value);
+      } else {
+        params.delete(param);
+      }
+      params.delete('page');
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname);
+    },
+    [router, pathname, searchParams]
+  );
 
-    if (state.tags.length) {
-      next.set('tag', state.tags[0]);
-    }
-
-    if (state.page !== 1) {
-      next.set('page', String(state.page));
-    }
-
-    window.history.replaceState(null, '', `?${next.toString()}`);
-  }, [state]);
-
-  const filtered = useMemo(() => filterVideos(videos, state), [videos, state]);
-  const total = filtered.length;
-
-  return { state, setState, filtered, total };
+  return { state, setFilter };
 }

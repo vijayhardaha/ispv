@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, type JSX } from 'react';
+import { useCallback, useState, type FormEvent, type JSX } from 'react';
 
 import { ChevronDown, ChevronRight, MapPin, Search, X } from 'lucide-react';
 
@@ -9,10 +9,11 @@ import type { FilterState } from '@/lib/helpers/filterVideos';
 
 /**
  * Search, location, and tag filter bar for the video archive.
+ * All filter changes are written to URL search params via setFilter.
  *
  * @param {object} props - Component properties.
- * @param {FilterState} props.state - Current filter state.
- * @param {(s: FilterState) => void} props.setState - Callback to update filter state.
+ * @param {FilterState} props.state - Current filter state read from the URL.
+ * @param {(param: string, value: string) => void} props.setFilter - Updates a URL search param and resets page.
  * @param {number} props.total - Total number of filtered results.
  * @param {string[]} props.allTags - All available tags for the filter chips (capped at 100).
  * @param {Array<{ slug: string; name: string }>} [props.allLocations] - All available locations for the location dropdown.
@@ -21,25 +22,43 @@ import type { FilterState } from '@/lib/helpers/filterVideos';
  */
 export function FilterBar({
   state,
-  setState,
+  setFilter,
   total,
   allTags,
   allLocations = [],
 }: {
   state: FilterState;
-  setState: (s: FilterState) => void;
+  setFilter: (param: string, value: string) => void;
   total: number;
   allTags: string[];
   allLocations?: { slug: string; name: string }[];
 }): JSX.Element {
   const [showTags, setShowTags] = useState(false);
+  const [searchValue, setSearchValue] = useState(state.query);
+  const [prevUrlQuery, setPrevUrlQuery] = useState(state.query);
   const tagChips = allTags.slice(0, 100);
+
+  // Re-sync from the URL when it changes externally (reset, back/forward).
+  // Uses the render-time adjustment pattern so it never clobbers typing:
+  // while typing, the URL param is untouched and this branch does not run.
+  if (state.query !== prevUrlQuery) {
+    setPrevUrlQuery(state.query);
+    setSearchValue(state.query);
+  }
+
+  const commitSearch = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setFilter('q', searchValue);
+    },
+    [searchValue, setFilter]
+  );
 
   const selectTag = useCallback(
     (tag: string) => {
-      setState({ ...state, tags: state.tags.includes(tag) ? [] : [tag], page: 1 });
+      setFilter('tag', state.tags.includes(tag) ? '' : tag);
     },
-    [state, setState]
+    [state.tags, setFilter]
   );
 
   return (
@@ -52,25 +71,30 @@ export function FilterBar({
           >
             Search
           </label>
-          <div className="relative mt-1">
+          <form role="search" onSubmit={commitSearch} className="relative mt-1">
             <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-black/50" />
             <input
               id="filter-search"
-              value={state.query}
-              onChange={(e) => setState({ ...state, query: e.target.value, page: 1 })}
+              type="search"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
               placeholder="Search by city, hashtag, or title…"
               className="font-body w-full border-2 border-black bg-white px-3 py-2.5 pr-9 pl-9 placeholder:text-black/40 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
             />
-            {state.query && (
+            {searchValue && (
               <button
-                onClick={() => setState({ ...state, query: '', page: 1 })}
+                type="button"
+                onClick={() => {
+                  setSearchValue('');
+                  setFilter('q', '');
+                }}
                 className="absolute top-1/2 right-2 -translate-y-1/2 border-2 border-black bg-white p-1 hover:bg-yellow-400 hover:text-white"
                 aria-label="Clear search"
               >
                 <X className="size-3" />
               </button>
             )}
-          </div>
+          </form>
         </div>
         <div className="md:col-span-4">
           <label
@@ -84,7 +108,7 @@ export function FilterBar({
             <select
               id="filter-location"
               value={state.location}
-              onChange={(e) => setState({ ...state, location: e.target.value, page: 1 })}
+              onChange={(e) => setFilter('location', e.target.value === 'all' ? '' : e.target.value)}
               className="font-body w-full appearance-none border-2 border-black bg-white px-3 py-2.5 pr-9 pl-9 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
             >
               <option value="all">All locations</option>
@@ -112,7 +136,7 @@ export function FilterBar({
           </button>
           {state.tags.length > 0 && (
             <button
-              onClick={() => setState({ ...state, tags: [], page: 1 })}
+              onClick={() => setFilter('tag', '')}
               className="ml-auto font-mono text-[10px] font-bold uppercase underline hover:text-yellow-500"
             >
               Clear

@@ -1,6 +1,6 @@
 'use client';
 
-import type { JSX } from 'react';
+import { Suspense, type JSX } from 'react';
 
 import { breadcrumbSchema, webPageSchema } from '@vijayhardaha/schema-builder';
 import { JsonLd } from '@vijayhardaha/schema-builder/react';
@@ -52,10 +52,25 @@ function CategoryHeroSkeleton(): JSX.Element {
 
 /**
  * Individual category page with filtered videos, search, and pagination.
+ * Filters, sort, and pagination are read from and written to URL search params.
+ * Wrapped in Suspense for useSearchParams during static prerendering.
  *
  * @returns {JSX.Element} Rendered category page.
  */
 export default function CategoryPage(): JSX.Element {
+  return (
+    <Suspense fallback={<CategoryHeroSkeleton />}>
+      <CategoryPageContent />
+    </Suspense>
+  );
+}
+
+/**
+ * Inner content of the category page that reads the URL params and category slug.
+ *
+ * @returns {JSX.Element} Rendered category page content.
+ */
+function CategoryPageContent(): JSX.Element {
   const params = useParams<{ id: string }>();
   const value = params?.id ?? '';
   const { cat, allLocations, allTags, loading, filters, play } = useCategoryPage(value);

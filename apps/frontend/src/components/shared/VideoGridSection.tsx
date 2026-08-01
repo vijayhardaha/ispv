@@ -14,7 +14,7 @@ import type { VideoEntry } from '@/lib/videos';
  *
  * @type {VideoGridSectionProps}
  * @property {FilterState} state - Current filter values.
- * @property {(state: FilterState) => void} setState - Updates the filter state.
+ * @property {(param: string, value: string) => void} setFilter - Updates a URL search param and resets page.
  * @property {number} total - Total number of filtered videos.
  * @property {string[]} allTags - Available tags for filtering.
  * @property {{ slug: string; name: string }[]} allLocations - Available locations for filtering.
@@ -26,7 +26,7 @@ import type { VideoEntry } from '@/lib/videos';
  */
 export interface VideoGridSectionProps {
   state: FilterState;
-  setState: (state: FilterState) => void;
+  setFilter: (param: string, value: string) => void;
   total: number;
   allTags: string[];
   allLocations: { slug: string; name: string }[];
@@ -102,7 +102,7 @@ function SkeletonCard(): JSX.Element {
  */
 export function VideoGridSection({
   state,
-  setState,
+  setFilter,
   total,
   allTags,
   allLocations,
@@ -118,7 +118,7 @@ export function VideoGridSection({
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-8 md:px-6">
-      <FilterBar state={state} setState={setState} total={total} allTags={allTags} allLocations={allLocations} />
+      <FilterBar state={state} setFilter={setFilter} total={total} allTags={allTags} allLocations={allLocations} />
 
       {loading ? (
         <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
@@ -132,7 +132,7 @@ export function VideoGridSection({
             <div className="text-[10px] tracking-widest text-black/60 uppercase">
               Page {safePage} of {totalPages} · {total} videos
             </div>
-            <SortControls sort={state.sort} onSortChange={(sort) => setState({ ...state, sort, page: 1 })} />
+            <SortControls sort={state.sort} onSortChange={(sort) => setFilter('sort', sort)} />
           </div>
 
           {paged.length === 0 ? (

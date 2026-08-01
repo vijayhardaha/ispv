@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
+import { useFilterState } from '@/hooks/useFilterState';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 import { getCategoryByValue, getLocations, getTags, type DbCategory } from '@/lib/db';
 import type { FilterState } from '@/lib/helpers/filterVideos';
@@ -29,8 +30,8 @@ export interface CategoryPageData {
  * Filter state and pagination data for the category page video grid.
  *
  * @type {CategoryPageFilter}
- * @property {FilterState} state - Current filter values.
- * @property {(value: FilterState) => void} setState - Updates the filter state.
+ * @property {FilterState} state - Current filter values read from the URL.
+ * @property {(param: string, value: string) => void} setFilter - Updates a URL search param and resets page.
  * @property {number} total - Total number of filtered videos.
  * @property {number} totalPages - Total number of paginated pages.
  * @property {number} safePage - Current page clamped to valid range.
@@ -38,25 +39,16 @@ export interface CategoryPageData {
  */
 export interface CategoryPageFilter {
   state: FilterState;
-  setState: Dispatch<SetStateAction<FilterState>>;
+  setFilter: (param: string, value: string) => void;
   total: number;
   totalPages: number;
   safePage: number;
   paged: VideoEntry[];
 }
 
-const DEFAULT_STATE: FilterState = {
-  query: '',
-  category: 'all',
-  location: 'all',
-  tags: [],
-  page: 1,
-  perPage: 72,
-  sort: 'posted_date_desc',
-};
-
 /**
  * Manages category page data fetching, filtering, and pagination state.
+ * Filters, sort, and pagination are read from and written to URL search params.
  *
  * @param {string} value - Category slug from the URL.
  *
@@ -71,7 +63,7 @@ export function useCategoryPage(
   const [allLocations, setAllLocations] = useState<{ slug: string; name: string }[]>([]);
   const [allTags, setAllTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [state, setState] = useState<FilterState>(() => ({ ...DEFAULT_STATE, category: value }));
+  const { state, setFilter } = useFilterState({ category: value });
   const { play } = useReelPlayer();
   const loadedStatic = useRef(false);
 
@@ -114,7 +106,7 @@ export function useCategoryPage(
     allLocations,
     allTags,
     loading,
-    filters: { state, setState, total, totalPages, safePage, paged },
+    filters: { state, setFilter, total, totalPages, safePage, paged },
     play,
   };
 }

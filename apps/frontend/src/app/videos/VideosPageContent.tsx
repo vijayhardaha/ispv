@@ -4,23 +4,14 @@ import { useEffect, useRef, useState, type JSX } from 'react';
 
 import { PageHero } from '@/components/shared/PageHero';
 import { VideoGridSection } from '@/components/shared/VideoGridSection';
+import { useFilterState } from '@/hooks/useFilterState';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
 import { getLocations, getTags } from '@/lib/db';
-import type { FilterState } from '@/lib/helpers/filterVideos';
 import { getPublishedVideos, type VideoEntry } from '@/lib/videos';
-
-const DEFAULT_FILTERS: FilterState = {
-  query: '',
-  category: 'all',
-  location: 'all',
-  tags: [],
-  page: 1,
-  perPage: 72,
-  sort: 'posted_date_desc',
-};
 
 /**
  * Client-bound content for the videos page. Loads videos, renders filter bar, grid, and pagination.
+ * Filters, sort, and pagination are read from and written to URL search params.
  * Wrapped in Suspense by the server parent.
  *
  * @returns {JSX.Element} Rendered videos page content.
@@ -31,7 +22,7 @@ export function VideosPageContent(): JSX.Element {
   const [allTags, setAllTags] = useState<string[]>([]);
   const [allLocations, setAllLocations] = useState<{ slug: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
-  const [state, setState] = useState<FilterState>(DEFAULT_FILTERS);
+  const { state, setFilter } = useFilterState();
   const { play } = useReelPlayer();
   const loadedStatic = useRef(false);
 
@@ -77,7 +68,7 @@ export function VideosPageContent(): JSX.Element {
 
       <VideoGridSection
         state={state}
-        setState={setState}
+        setFilter={setFilter}
         total={total}
         allTags={allTags}
         allLocations={allLocations}
