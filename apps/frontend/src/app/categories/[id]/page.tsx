@@ -33,6 +33,24 @@ function buildCategorySchema(rootUrl: string, catPath: string, cat: DbCategory):
 }
 
 /**
+ * Skeleton placeholder for the category hero while category data is fetched.
+ *
+ * @returns {JSX.Element} Animated hero skeleton.
+ */
+function CategoryHeroSkeleton(): JSX.Element {
+  return (
+    <section className="border-b-2 border-black bg-gray-100 py-8">
+      <div className="mx-auto max-w-7xl px-4 md:px-6">
+        <div className="h-3 w-24 animate-pulse bg-zinc-300" />
+        <div className="mt-3 h-4 w-32 animate-pulse border-2 border-zinc-900 bg-zinc-300" />
+        <div className="mt-4 h-10 w-2/3 max-w-xl animate-pulse bg-zinc-300 md:h-16" />
+        <div className="mt-3 h-3 w-3/4 max-w-md animate-pulse bg-zinc-300" />
+      </div>
+    </section>
+  );
+}
+
+/**
  * Individual category page with filtered videos, search, and pagination.
  *
  * @returns {JSX.Element} Rendered category page.
@@ -42,15 +60,7 @@ export default function CategoryPage(): JSX.Element {
   const value = params?.id ?? '';
   const { cat, allLocations, allTags, loading, filters, play } = useCategoryPage(value);
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-100">
-        <div className="text-sm font-bold text-black/50 uppercase">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!cat) {
+  if (!cat && !loading) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
         <h1 className="font-display text-3xl font-extrabold uppercase">Category not found</h1>
@@ -60,13 +70,13 @@ export default function CategoryPage(): JSX.Element {
   }
 
   const catPath = `${PATH_PREFIX}/${value}`;
-  const schemaData = buildCategorySchema(ROOT_URL, catPath, cat);
+  const schemaData = cat ? buildCategorySchema(ROOT_URL, catPath, cat) : null;
 
   return (
     <div>
-      <JsonLd data={schemaData} />
-      <CategoryHero cat={cat} value={value} />
-      <CategoryVideos {...filters} allTags={allTags} allLocations={allLocations} onPlay={play} />
+      {schemaData ? <JsonLd data={schemaData} /> : null}
+      {cat ? <CategoryHero cat={cat} value={value} /> : <CategoryHeroSkeleton />}
+      <CategoryVideos {...filters} allTags={allTags} allLocations={allLocations} onPlay={play} loading={loading} />
     </div>
   );
 }

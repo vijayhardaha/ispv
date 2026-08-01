@@ -60,7 +60,7 @@ const DEFAULT_STATE: FilterState = {
  *
  * @param {string} value - Category slug from the URL.
  *
- * @returns {Promise<CategoryPageData & { filters: CategoryPageFilter; play: ReturnType<typeof useReelPlayer>['play'] }>} Category data, filter state, and reel player.
+ * @returns {CategoryPageData & { filters: CategoryPageFilter; play: ReturnType<typeof useReelPlayer>['play'] }} Category data, filter state, and reel player.
  */
 export function useCategoryPage(
   value: string
@@ -113,7 +113,7 @@ export function useCategoryPage(
     cat,
     allLocations,
     allTags,
-    loading: loading && cat === null,
+    loading,
     filters: { state, setState, total, totalPages, safePage, paged },
     play,
   };

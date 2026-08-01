@@ -17,8 +17,9 @@ import { VideoGridSection, type VideoGridSectionProps } from '@/components/share
  * @property {VideoGridSectionProps['totalPages']} totalPages - Total number of pages.
  * @property {VideoGridSectionProps['safePage']} safePage - Current page clamped to valid range.
  * @property {VideoGridSectionProps['onPlay']} onPlay - Opens the reel player.
+ * @property {boolean} [loading] - Whether videos are still loading.
  */
-export type CategoryVideosProps = Omit<VideoGridSectionProps, 'loading' | 'children'>;
+export type CategoryVideosProps = Omit<VideoGridSectionProps, 'children'>;
 
 /**
  * Video grid with filter bar and pagination for a single category.
