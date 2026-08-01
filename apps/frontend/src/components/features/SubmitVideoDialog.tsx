@@ -107,7 +107,7 @@ export function SubmitVideoDialog({
                     id="reel-city"
                     value={form.city}
                     onChange={(e) => form.setCity(e.target.value.slice(0, 30))}
-                    placeholder="e.g. Mumbai"
+                    placeholder="e.g. Delhi, Mumbai, Bangalore"
                     maxLength={30}
                     disabled={form.submitting}
                   />
