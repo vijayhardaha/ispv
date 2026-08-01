@@ -10,15 +10,15 @@ const variantStyles = {
   danger: 'border border-red-600 bg-red-600 text-white hover:bg-red-700 hover:border-red-700',
   'danger-ghost': 'border border-red-600 bg-red-600 text-white hover:bg-red-700 hover:border-red-700',
   'danger-outline': 'border border-red-300 bg-transparent text-red-600 hover:bg-red-50 hover:border-red-400',
-  ghost: 'text-gray-600 hover:text-gray-900',
+  link: 'text-gray-700 hover:text-purple-600 hover:underline hover:underline-offset-2',
 } as const;
 
-const sizeStyles = { default: 'px-4 py-2 text-sm', sm: 'px-3 py-1 text-xs', xs: 'px-2 py-1 text-xs' } as const;
+const sizeStyles = { sm: 'h-7 px-1.5 text-xs', md: 'h-8 px-2.5 text-sm', lg: 'h-10 px-3.5 text-base' } as const;
 
 /** Visual style variants for the Button component. */
 type ButtonVariant = keyof typeof variantStyles;
 
-/** Size variants for the Button component. */
+/** Size variants for the Button component (md is default). */
 type ButtonSize = keyof typeof sizeStyles;
 
 /**
@@ -37,7 +37,7 @@ type ButtonSize = keyof typeof sizeStyles;
 export function Button({
   className,
   variant = 'primary',
-  size = 'default',
+  size = 'md',
   loading = false,
   children,
   disabled,
@@ -53,7 +53,7 @@ export function Button({
         'inline-flex items-center justify-center gap-1.5 font-semibold transition-colors',
         'disabled:pointer-events-none disabled:opacity-40',
         variantStyles[variant],
-        sizeStyles[size],
+        variant === 'link' ? 'h-auto px-0' : sizeStyles[size],
         className
       )}
       disabled={disabled || loading}
