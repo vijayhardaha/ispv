@@ -18,7 +18,7 @@ const PAGE_DESCRIPTION =
 const PAGE_PATH = '/dmca';
 
 /** JSON-LD schemas for the DMCA page. */
-export const PAGE_SCHEMA = [
+const PAGE_SCHEMA = [
   ...globalSchema(),
   breadcrumbSchema({ rootUrl: ROOT_URL, items: buildBreadcrumbs(PAGE_PATH, 'DMCA') }),
 ];

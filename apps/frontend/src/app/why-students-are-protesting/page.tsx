@@ -141,7 +141,7 @@ const PAGE_DESCRIPTION =
 const PAGE_PATH = '/why-students-are-protesting';
 
 /** JSON-LD schemas for the movement overview page. */
-export const PAGE_SCHEMA = [
+const PAGE_SCHEMA = [
   ...globalSchema(),
   webPageSchema(
     { rootUrl: ROOT_URL, path: PAGE_PATH, breadcrumb: true },

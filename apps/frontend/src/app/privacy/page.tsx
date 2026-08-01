@@ -18,7 +18,7 @@ const PAGE_DESCRIPTION =
 const PAGE_PATH = '/privacy';
 
 /** JSON-LD schemas for the privacy page. */
-export const PAGE_SCHEMA = [
+const PAGE_SCHEMA = [
   ...globalSchema(),
   breadcrumbSchema({ rootUrl: ROOT_URL, items: buildBreadcrumbs(PAGE_PATH, 'Privacy Policy') }),
 ];

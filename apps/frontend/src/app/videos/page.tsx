@@ -19,7 +19,7 @@ const PAGE_DESCRIPTION =
 const PAGE_PATH = '/videos';
 
 /** JSON-LD schemas for the video archive page. */
-export const PAGE_SCHEMA = [
+const PAGE_SCHEMA = [
   ...globalSchema(),
   collectionPageSchema({ rootUrl: ROOT_URL, path: PAGE_PATH }, { name: PAGE_TITLE, description: PAGE_DESCRIPTION }),
   breadcrumbSchema({ rootUrl: ROOT_URL, items: buildBreadcrumbs(PAGE_PATH, 'All Videos') }),
