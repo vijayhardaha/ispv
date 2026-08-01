@@ -2,6 +2,7 @@ import { memo, type JSX, type ReactNode } from 'react';
 
 import { Eye, Play, MapPin } from 'lucide-react';
 
+import { getCategoryBadges } from '@/lib/helpers/categories';
 import { formatLocationLabel } from '@/lib/helpers/formatLocation';
 import { getThumbnailSrc } from '@/lib/helpers/media';
 import { cn } from '@/lib/utils';
@@ -51,13 +52,14 @@ const VideoCard = memo(function VideoCard({
 }): JSX.Element {
   const thumbnailSrc = getThumbnailSrc(video.thumbnail);
   const locationLabel = formatLocationLabel(video.city, video.location ?? '');
+  const { visibleCategories, extraCount } = getCategoryBadges(video);
 
   return (
     <button
       onClick={() => onPlay(video)}
       className={cn(
         'group relative block w-full cursor-pointer overflow-hidden border-2 border-zinc-900 bg-white text-left',
-        'transition-[transform,box-shadow] duration-300',
+        'transition-[transform,translate,box-shadow] duration-300',
         'hover:-translate-y-2 hover:shadow-[8px_8px_0px_0px_#fac800]',
         'aspect-9/16',
         className
@@ -75,7 +77,14 @@ const VideoCard = memo(function VideoCard({
       </div>
 
       <div className="absolute top-2 right-2 left-2 z-10 flex items-start justify-between gap-1">
-        <Badge className="bg-yellow-400 text-black">{video.categoryName}</Badge>
+        <div className="flex min-w-0 flex-wrap gap-1">
+          {visibleCategories.map((name) => (
+            <Badge key={name} className="bg-yellow-400 text-black">
+              {name}
+            </Badge>
+          ))}
+          {extraCount > 0 && <Badge className="bg-zinc-900 text-white">+{extraCount}</Badge>}
+        </div>
         {video.trending && <Badge className="bg-red-500 text-white">Trending</Badge>}
       </div>
 

@@ -4,6 +4,7 @@ import { useState, type JSX } from 'react';
 
 import { Eye } from 'lucide-react';
 
+import { getCategoryBadges } from '@/lib/helpers/categories';
 import { formatLocationLabel } from '@/lib/helpers/formatLocation';
 import { getThumbnailSrc } from '@/lib/helpers/media';
 import { cn, extractInstagramId } from '@/lib/utils';
@@ -22,6 +23,7 @@ export function ReelItem({ video, active }: { video: VideoEntry; active: boolean
   const [embedLoaded, setEmbedLoaded] = useState(false);
   const id = extractInstagramId(video.url);
   const thumbnailSrc = getThumbnailSrc(video.thumbnail);
+  const { visibleCategories, extraCount } = getCategoryBadges(video);
 
   const deduplicated = formatLocationLabel(video.city, video.location ?? '');
 
@@ -58,9 +60,19 @@ export function ReelItem({ video, active }: { video: VideoEntry; active: boolean
 
       <div className="absolute inset-x-0 top-0 z-10 pt-3 pr-3 pb-8 pl-3">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1 border-2 border-black bg-yellow-400 px-2.5 py-0.5 font-mono text-xs font-bold text-black uppercase">
-            {video.categoryName}
-          </span>
+          {visibleCategories.map((name) => (
+            <span
+              key={name}
+              className="inline-flex items-center gap-1 border-2 border-black bg-yellow-400 px-2.5 py-0.5 font-mono text-xs font-bold text-black uppercase"
+            >
+              {name}
+            </span>
+          ))}
+          {extraCount > 0 && (
+            <span className="inline-flex items-center gap-1 border-2 border-black bg-zinc-900 px-2.5 py-0.5 font-mono text-xs font-bold text-white uppercase">
+              +{extraCount}
+            </span>
+          )}
           <span className="inline-flex items-center gap-1 border-2 border-black bg-white px-2.5 py-0.5 font-mono text-xs font-bold text-black uppercase">
             {deduplicated}
           </span>
