@@ -6,7 +6,7 @@ import { Search } from 'lucide-react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Modal';
+import { Input } from '@/components/ui/Input';
 
 /**
  * Search input that syncs its value to the `?q=` URL param on Enter or submit.

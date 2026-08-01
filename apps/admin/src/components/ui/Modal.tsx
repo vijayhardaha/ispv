@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, type ComponentPropsWithoutRef, type JSX, type ReactNode } from 'react';
+import { useEffect, type JSX, type ReactNode } from 'react';
 
 import { Box } from '@/components/ui/Box';
 import { Button } from '@/components/ui/Button';
@@ -90,47 +90,6 @@ export function ModalActions({ onClose, loading = false }: { onClose: () => void
 }
 
 /* ── Form controls ───────────────────────────────────────────── */
-
-const inputBase =
-  'w-full border border-gray-300 placeholder:text-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 focus:outline-none';
-
-/** Size variants for the Input component (md is default). */
-type InputSize = 'sm' | 'md' | 'lg';
-
-const inputSizeStyles: Record<InputSize, string> = {
-  sm: 'h-7 px-1.5 text-xs',
-  md: 'h-8 px-2.5 text-sm',
-  lg: 'h-10 px-3.5 text-base',
-};
-
-/**
- * Styled text input for admin forms.
- *
- * @param {object} props - Component properties.
- * @param {InputSize} [props.size] - Size variant (sm, md, or lg).
- * @param {string} [props.className] - Additional CSS classes.
- *
- * @returns {JSX.Element} Rendered input.
- */
-export function Input({
-  className,
-  size = 'md',
-  ...props
-}: Omit<ComponentPropsWithoutRef<'input'>, 'size'> & { size?: InputSize }): JSX.Element {
-  return <input className={cn(inputBase, inputSizeStyles[size], className)} {...props} />;
-}
-
-/**
- * Styled textarea for admin forms.
- *
- * @param {object} props - Component properties.
- * @param {string} [props.className] - Additional CSS classes.
- *
- * @returns {JSX.Element} Rendered textarea.
- */
-export function Textarea({ className, ...props }: ComponentPropsWithoutRef<'textarea'>): JSX.Element {
-  return <textarea className={cn(inputBase, 'px-3 py-2 text-sm', className)} rows={2} {...props} />;
-}
 
 /**
  * Reusable form field wrapper with label.

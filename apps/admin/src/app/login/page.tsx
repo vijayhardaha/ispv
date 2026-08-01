@@ -4,7 +4,7 @@ import { useRef, useState, type JSX, type SubmitEvent } from 'react';
 
 import { Box } from '@/components/ui/Box';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Modal';
+import { Input } from '@/components/ui/Input';
 import { createClient } from '@/lib/db';
 
 const MAX_ATTEMPTS = 5;
