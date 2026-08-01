@@ -1,10 +1,9 @@
 /** Run on the Edge runtime for faster cold starts and DB response times. */
 export const runtime = 'edge';
 
-import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
-import { DASHBOARD_STATS_REVALIDATE_SECONDS, DASHBOARD_STATS_TAG } from '@/constants/cache';
+import { revalidateDashboardStats } from '@/constants/cache';
 import { checkDuplicate, requireUser } from '@/lib/api';
 import { videoFormSchema } from '@/lib/db';
 import { createServerSupabase } from '@/lib/db/supabase-server';
@@ -75,6 +74,6 @@ export async function POST(req: Request): Promise<NextResponse> {
     return NextResponse.json({ error: 'Failed to create video' }, { status: 500 });
   }
 
-  revalidateTag(DASHBOARD_STATS_TAG, { expire: DASHBOARD_STATS_REVALIDATE_SECONDS });
+  revalidateDashboardStats();
   return NextResponse.json(data);
 }

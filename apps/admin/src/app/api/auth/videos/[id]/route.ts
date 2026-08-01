@@ -1,13 +1,35 @@
 /** Run on the Edge runtime for faster cold starts and DB response times. */
 export const runtime = 'edge';
 
-import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
-import { DASHBOARD_STATS_REVALIDATE_SECONDS, DASHBOARD_STATS_TAG } from '@/constants/cache';
+import { revalidateDashboardStats } from '@/constants/cache';
 import { checkDuplicate, deleteVideoById, requireUser } from '@/lib/api';
 import { videoFormSchema } from '@/lib/db';
 import { createServerSupabase } from '@/lib/db/supabase-server';
+
+/**
+ * Resolves the video ID, creates a Supabase client, and guards for auth.
+ * Returns the resolved ID and client, or an error response when unauthorized.
+ *
+ * @param {Promise<{ id: string }>} params - Route params promise containing the video ID.
+ *
+ * @returns {Promise<{ id: string; supabase: Awaited<ReturnType<typeof createServerSupabase>> } | NextResponse>}
+ * Resolved ID and client, or an auth error response.
+ */
+async function resolveAuthedVideo(
+  params: Promise<{ id: string }>
+): Promise<{ id: string; supabase: Awaited<ReturnType<typeof createServerSupabase>> } | NextResponse> {
+  const { id } = await params;
+  const supabase = await createServerSupabase();
+
+  const guard = await requireUser(supabase);
+  if (guard) {
+    return guard;
+  }
+
+  return { id, supabase };
+}
 
 /**
  * Updates an existing video record by ID with duplicate validation.
@@ -18,13 +40,12 @@ import { createServerSupabase } from '@/lib/db/supabase-server';
  * @returns {Promise<NextResponse>} JSON response with the updated video.
  */
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
-  const { id } = await params;
-  const supabase = await createServerSupabase();
-
-  const guard = await requireUser(supabase);
-  if (guard) {
-    return guard;
+  const ctx = await resolveAuthedVideo(params);
+  if (ctx instanceof NextResponse) {
+    return ctx;
   }
+
+  const { id, supabase } = ctx;
 
   const body = await req.json();
 
@@ -51,7 +72,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   if (error) {
     return NextResponse.json({ error: 'Update failed' }, { status: 500 });
   }
-  revalidateTag(DASHBOARD_STATS_TAG, { expire: DASHBOARD_STATS_REVALIDATE_SECONDS });
+
+  revalidateDashboardStats();
   return NextResponse.json(data);
 }
 
@@ -65,13 +87,12 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
  * @returns {Promise<NextResponse>} JSON response with operation result.
  */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
-  const { id } = await params;
-  const supabase = await createServerSupabase();
-
-  const guard = await requireUser(supabase);
-  if (guard) {
-    return guard;
+  const ctx = await resolveAuthedVideo(params);
+  if (ctx instanceof NextResponse) {
+    return ctx;
   }
+
+  const { id, supabase } = ctx;
 
   const { action, reason } = await req.json();
 
@@ -86,7 +107,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
 
-      revalidateTag(DASHBOARD_STATS_TAG, { expire: DASHBOARD_STATS_REVALIDATE_SECONDS });
+      revalidateDashboardStats();
       return NextResponse.json({ ok: true });
     }
 
@@ -96,15 +117,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
 
-      revalidateTag(DASHBOARD_STATS_TAG, { expire: DASHBOARD_STATS_REVALIDATE_SECONDS });
+      revalidateDashboardStats();
       return NextResponse.json({ ok: true });
     }
 
     case 'delete': {
       const res = await deleteVideoById(supabase, id);
       if (res.ok) {
-        revalidateTag(DASHBOARD_STATS_TAG, { expire: DASHBOARD_STATS_REVALIDATE_SECONDS });
+        revalidateDashboardStats();
       }
+
       return res;
     }
 
@@ -123,17 +145,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
  * @returns {Promise<NextResponse>} JSON response confirming deletion.
  */
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
-  const { id } = await params;
-  const supabase = await createServerSupabase();
-
-  const guard = await requireUser(supabase);
-  if (guard) {
-    return guard;
+  const ctx = await resolveAuthedVideo(params);
+  if (ctx instanceof NextResponse) {
+    return ctx;
   }
+  const { id, supabase } = ctx;
 
   const res = await deleteVideoById(supabase, id);
   if (res.ok) {
-    revalidateTag(DASHBOARD_STATS_TAG, { expire: DASHBOARD_STATS_REVALIDATE_SECONDS });
+    revalidateDashboardStats();
   }
+
   return res;
 }
