@@ -1,3 +1,6 @@
+/** Run on the Edge runtime for faster cold starts and DB response times. */
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
 
 import { createServiceSupabase, checkRateLimit } from '@/lib/api';
@@ -23,7 +26,13 @@ export async function POST(req: Request): Promise<NextResponse> {
     const body = await req.json();
     const parsed = submitVideoBodySchema.safeParse({
       video_url: body.url ?? body.video_url,
-      tags: (body.tags || body.hashtags) ? (body.tags || body.hashtags).split(',').map((s: string) => s.trim().toLowerCase()).filter(Boolean) : undefined,
+      tags:
+        body.tags || body.hashtags
+          ? (body.tags || body.hashtags)
+              .split(',')
+              .map((s: string) => s.trim().toLowerCase())
+              .filter(Boolean)
+          : undefined,
       category: body.location ?? null,
       location: null,
       city: body.city ?? null,

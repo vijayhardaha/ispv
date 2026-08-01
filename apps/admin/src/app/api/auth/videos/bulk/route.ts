@@ -1,3 +1,6 @@
+/** Run on the Edge runtime for faster cold starts and DB response times. */
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
 
 import { jsonError, requireUser, deleteBlob } from '@/lib/api';
