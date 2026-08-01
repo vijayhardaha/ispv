@@ -1,7 +1,7 @@
 import type { ReactNode, JSX } from 'react';
 
 import type { Metadata } from 'next';
-import { Space_Grotesk, Poppins, JetBrains_Mono } from 'next/font/google';
+import { Instrument_Sans, Poppins, JetBrains_Mono } from 'next/font/google';
 
 import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
@@ -11,7 +11,7 @@ import { VercelAnalytics } from '@/components/shared/VercelAnalytics';
 import { SITE_METADATA } from '@/constants/seo';
 import '@/globals.css';
 
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
+const instrumentSans = Instrument_Sans({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -37,7 +37,7 @@ export const metadata: Metadata = SITE_METADATA;
  */
 export default function RootLayout({ children }: { children: ReactNode }): JSX.Element {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${poppins.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${instrumentSans.variable} ${poppins.variable} ${jetbrainsMono.variable}`}>
       <body className="font-body bg-gray-100 text-black antialiased">
         <a
           href="#main-content"

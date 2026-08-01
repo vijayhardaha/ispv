@@ -10,7 +10,7 @@
 
 /* ─── Design tokens ─────────────────────────────────────────────────── */
 @theme inline {
-  --font-body: "Space Grotesk", "system-ui", sans-serif;
+  --font-body: "Instrument Sans", "system-ui", sans-serif;
   --font-display: "Poppins", "system-ui", sans-serif;
   --font-mono: "JetBrains Mono", "ui-monospace", monospace;
   --font-sans: var(--font-body);
