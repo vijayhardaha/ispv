@@ -289,7 +289,7 @@ function CategoryBadge({ categories }: { categories: string[] | null }): JSX.Ele
         <span
           key={cat.slug}
           className={cn(
-            'inline-block px-2 py-0.5 text-xs font-semibold',
+            'inline-block rounded-md px-2 py-0.5 text-xs font-semibold',
             TAG_VARIANTS[cat.color as TagVariant] ?? 'bg-gray-200 text-black'
           )}
         >
