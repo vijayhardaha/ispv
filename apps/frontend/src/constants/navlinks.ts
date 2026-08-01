@@ -30,6 +30,7 @@ export const HEADER_NAV_LINKS: NavLink[] = [
   { label: 'Why Protest', href: '/why-students-are-protesting' },
   { label: 'All Videos', href: '/videos' },
   { label: 'Categories', href: '/categories' },
+  { label: 'Locations', href: '/locations' },
   { label: 'About', href: '/about' },
 ];
 
@@ -41,6 +42,7 @@ export const HEADER_NAV_LINKS: NavLink[] = [
 export const FOOTER_INFO_LINKS: FooterInfoLink[] = [
   { label: 'About the project', href: '/about' },
   { label: 'Browse categories', href: '/categories' },
+  { label: 'Browse locations', href: '/locations' },
   { label: 'All videos', href: '/videos' },
   { label: 'Sitemap', href: '/sitemap' },
   { label: 'DMCA', href: '/dmca' },

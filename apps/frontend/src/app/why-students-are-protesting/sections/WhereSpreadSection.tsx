@@ -26,7 +26,7 @@ export function WhereSpreadSection(): JSX.Element {
           and university campuses. Our archive organises videos by state and city, making it possible to trace how the
           movement spread geographically.
         </p>
-        <Link href="/categories">
+        <Link href="/videos">
           <Button variant="default" shadow className="mt-6">
             Browse by Location <ArrowRight className="size-4" />
           </Button>

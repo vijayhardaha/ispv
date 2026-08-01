@@ -19,7 +19,7 @@ const PAGE_DESCRIPTION =
 const PAGE_PATH = '/sitemap';
 
 /** JSON-LD schemas for the sitemap page. */
-export const PAGE_SCHEMA = [
+const PAGE_SCHEMA = [
   ...globalSchema(),
   breadcrumbSchema({ rootUrl: ROOT_URL, items: buildBreadcrumbs(PAGE_PATH, 'Sitemap') }),
 ];
@@ -49,6 +49,11 @@ const pages: { label: string; href: string; description: string }[] = [
     label: 'Categories',
     href: '/categories',
     description: 'Explore videos grouped by protest category, topic, and movement theme.',
+  },
+  {
+    label: 'Locations',
+    href: '/locations',
+    description: 'Explore videos from across Indian states, union territories, and abroad.',
   },
   {
     label: 'Why Students Are Protesting',

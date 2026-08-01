@@ -111,11 +111,12 @@ describe('locations', () => {
 
 describe('navlinks', () => {
   it('defines header nav links correctly', () => {
-    expect(HEADER_NAV_LINKS).toHaveLength(4);
+    expect(HEADER_NAV_LINKS).toHaveLength(5);
     expect(HEADER_NAV_LINKS[0]).toEqual({ label: 'Why Protest', href: '/why-students-are-protesting' });
     expect(HEADER_NAV_LINKS[1]).toEqual({ label: 'All Videos', href: '/videos' });
     expect(HEADER_NAV_LINKS[2]).toEqual({ label: 'Categories', href: '/categories' });
-    expect(HEADER_NAV_LINKS[3]).toEqual({ label: 'About', href: '/about' });
+    expect(HEADER_NAV_LINKS[3]).toEqual({ label: 'Locations', href: '/locations' });
+    expect(HEADER_NAV_LINKS[4]).toEqual({ label: 'About', href: '/about' });
   });
 
   it('each header nav link has the NavLink shape', () => {
