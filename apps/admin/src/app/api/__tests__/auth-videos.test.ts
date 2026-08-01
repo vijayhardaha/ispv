@@ -84,7 +84,7 @@ const mockVideo = {
   video_url: 'https://www.instagram.com/reel/ABC123xyz/',
   video_id: 'ABC123xyz',
   video_src: 'instagram',
-  category: null,
+  categories: null,
   location: null,
   city: null,
   tags: null,

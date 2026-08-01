@@ -13,7 +13,8 @@ import { supabase } from '../db/supabase';
  * @property {string} thumbnail - Thumbnail image URL.
  * @property {string} city - City where the video was recorded.
  * @property {string} location - State or union territory.
- * @property {string} category - Category value slug.
+ * @property {string} category - Primary category value slug.
+ * @property {string[]} categories - All category slugs (primary first).
  * @property {string} categoryName - Resolved category display name.
  * @property {string[]} tags - Searchable tags.
  * @property {number} duration - Video duration in seconds.
@@ -30,6 +31,7 @@ export interface VideoEntry {
   city: string;
   location: string;
   category: string;
+  categories: string[];
   categoryName: string;
   tags: string[];
   duration: number;

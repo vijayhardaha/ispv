@@ -13,7 +13,7 @@ const makeRow = (overrides: Partial<VideoRow> = {}): VideoRow => ({
   video_url: 'https://www.instagram.com/p/DEF456/',
   video_id: 'DEF456',
   video_src: 'instagram',
-  category: 'protest-marches',
+  categories: ['protest-marches'],
   location: 'Delhi',
   city: 'New Delhi',
   tags: ['peaceful', 'students'],
@@ -73,14 +73,22 @@ describe('dbRowToVideoEntry', () => {
   });
 
   it('resolves category name from CATEGORIES constant', () => {
-    const row = makeRow({ category: 'protest-marches' });
+    const row = makeRow({ categories: ['protest-marches'] });
     const entry = dbRowToVideoEntry(row);
 
     expect(entry.categoryName).toBe('Protest Marches');
   });
 
+  it('uses the first category as primary and keeps all categories', () => {
+    const row = makeRow({ categories: ['protest-marches', 'human-rights'] });
+    const entry = dbRowToVideoEntry(row);
+
+    expect(entry.category).toBe('protest-marches');
+    expect(entry.categories).toEqual(['protest-marches', 'human-rights']);
+  });
+
   it('falls back to category value when not found in CATEGORIES', () => {
-    const row = makeRow({ category: 'unknown-category' });
+    const row = makeRow({ categories: ['unknown-category'] });
     const entry = dbRowToVideoEntry(row);
 
     expect(entry.categoryName).toBe('unknown-category');
@@ -123,10 +131,11 @@ describe('dbRowToVideoEntry', () => {
     expect(entry.location).toBe('');
   });
 
-  it('handles null category', () => {
-    const row = makeRow({ category: null });
+  it('handles null categories', () => {
+    const row = makeRow({ categories: null });
     const entry = dbRowToVideoEntry(row);
     expect(entry.category).toBe('');
+    expect(entry.categories).toEqual([]);
     expect(entry.categoryName).toBe('');
   });
 });

@@ -17,6 +17,7 @@ const makeVideo = (overrides: Partial<VideoEntry> = {}): VideoEntry => ({
   city: 'Delhi',
   location: 'Delhi',
   category: 'protest-marches',
+  categories: ['protest-marches'],
   categoryName: 'Protest Marches',
   tags: ['peaceful', 'students', 'Delhi'],
   duration: 0,
@@ -46,23 +47,29 @@ describe('filterVideos', () => {
   describe('category filter', () => {
     it('filters by category', () => {
       const videos = [
-        makeVideo({ id: '1', category: 'protest-marches' }),
-        makeVideo({ id: '2', category: 'human-rights' }),
+        makeVideo({ id: '1', categories: ['protest-marches'] }),
+        makeVideo({ id: '2', categories: ['human-rights'] }),
       ];
       const result = filterVideos(videos, { ...baseState, category: 'human-rights' });
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe('2');
     });
 
+    it('matches a video with multiple categories', () => {
+      const videos = [makeVideo({ id: '1', categories: ['protest-marches', 'human-rights'] })];
+      const result = filterVideos(videos, { ...baseState, category: 'human-rights' });
+      expect(result).toHaveLength(1);
+    });
+
     it('returns no videos when no category matches', () => {
-      const videos = [makeVideo({ id: '1', category: 'protest-marches' })];
+      const videos = [makeVideo({ id: '1', categories: ['protest-marches'] })];
       expect(filterVideos(videos, { ...baseState, category: 'art' })).toHaveLength(0);
     });
 
     it('passes all videos when category is "all"', () => {
       const videos = [
-        makeVideo({ id: '1', category: 'protest-marches' }),
-        makeVideo({ id: '2', category: 'human-rights' }),
+        makeVideo({ id: '1', categories: ['protest-marches'] }),
+        makeVideo({ id: '2', categories: ['human-rights'] }),
       ];
       expect(filterVideos(videos, { ...baseState, category: 'all' })).toHaveLength(2);
     });
@@ -172,9 +179,9 @@ describe('filterVideos', () => {
 
   it('combines multiple filters (AND logic)', () => {
     const videos = [
-      makeVideo({ id: '1', category: 'protest-marches', location: 'Delhi', tags: ['peaceful'] }),
-      makeVideo({ id: '2', category: 'human-rights', location: 'Delhi', tags: ['peaceful'] }),
-      makeVideo({ id: '3', category: 'protest-marches', location: 'Maharashtra', tags: ['peaceful'] }),
+      makeVideo({ id: '1', categories: ['protest-marches'], location: 'Delhi', tags: ['peaceful'] }),
+      makeVideo({ id: '2', categories: ['human-rights'], location: 'Delhi', tags: ['peaceful'] }),
+      makeVideo({ id: '3', categories: ['protest-marches'], location: 'Maharashtra', tags: ['peaceful'] }),
     ];
     const result = filterVideos(videos, {
       ...baseState,

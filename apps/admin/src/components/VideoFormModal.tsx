@@ -3,10 +3,13 @@
 import { useState, type JSX, type SubmitEvent } from 'react';
 
 import { useToast } from '@/components/Toast';
+import { Checkbox } from '@/components/ui/Checkbox';
 import { Field, Input, ModalActions, ModalOverlay, ModalTitle, Textarea } from '@/components/ui/Modal';
+import { Radio } from '@/components/ui/Radio';
 import { Select } from '@/components/ui/Select';
 import type { CategoryRecord } from '@/constants/categories';
 import type { LocationRecord } from '@/constants/locations';
+import { BULK_STATUS_OPTIONS, STATUS_LABELS } from '@/constants/status';
 import { videoFormSchema } from '@/lib/db';
 import type { VideoRecord } from '@/lib/db';
 import { capitalizeCity, extractIgId, reconstructIgUrl, detectSource } from '@/lib/utils';
@@ -45,7 +48,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
   const [videoUrl, setVideoUrl] = useState(
     video?.video_id ? reconstructIgUrl(video.video_id) : (video?.video_url ?? '')
   );
-  const [category, setCategory] = useState(video?.category ?? '');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(video?.categories ?? []);
   const [location, setLocation] = useState(video?.location ?? 'delhi');
   const [city, setCity] = useState(video?.city ?? '');
   const [tags, setTags] = useState<string>(video?.tags?.join(', ') ?? '');
@@ -53,6 +56,15 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
   const [status, setStatus] = useState<string>(video?.status ?? 'draft');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+
+  /**
+   * Toggles a category slug in the selected categories list.
+   *
+   * @param {string} slug - Category slug to toggle.
+   */
+  const toggleCategory = (slug: string): void => {
+    setSelectedCategories((prev) => (prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]));
+  };
 
   /**
    * Builds the request body for creating a new video.
@@ -65,7 +77,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
     video_url: videoUrl,
     video_id: extractIgId(videoUrl) ?? undefined,
     video_src: detectSource(videoUrl),
-    category: category || null,
+    categories: selectedCategories.length ? selectedCategories : null,
     location: location || null,
     city: city ? capitalizeCity(city) : null,
     tags: tagsArr,
@@ -81,7 +93,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
    * @returns {Record<string, unknown>} Body for the update request.
    */
   const buildUpdateBody = (tagsArr: string[]): Record<string, unknown> => ({
-    category: category || null,
+    categories: selectedCategories.length ? selectedCategories : null,
     location: location || null,
     city: city ? capitalizeCity(city) : null,
     tags: tagsArr,
@@ -149,26 +161,33 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
           />
         </Field>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Category">
-            <Select value={category} onChange={(e) => setCategory(e.target.value)}>
-              <option value="">— Select —</option>
-              {categories.map((c) => (
-                <option key={c.slug} value={c.slug}>
-                  {c.name}
-                </option>
-              ))}
-            </Select>
-          </Field>
-          <Field label="Status">
-            <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value="draft">Draft</option>
-              <option value="pending_review">Pending Review</option>
-              <option value="published">Published</option>
-              <option value="rejected">Rejected</option>
-            </Select>
-          </Field>
-        </div>
+        <Field label="Categories">
+          <div className="grid max-h-44 grid-cols-2 gap-2 overflow-y-auto border border-gray-200 bg-white p-3">
+            {categories.map((c) => (
+              <Checkbox
+                key={c.slug}
+                label={c.name}
+                checked={selectedCategories.includes(c.slug)}
+                onChange={() => toggleCategory(c.slug)}
+              />
+            ))}
+          </div>
+        </Field>
+
+        <Field label="Status">
+          <div className="flex flex-wrap gap-x-4 gap-y-2 border border-gray-200 bg-white p-3">
+            {BULK_STATUS_OPTIONS.map((s) => (
+              <Radio
+                key={s}
+                label={STATUS_LABELS[s]}
+                name="status"
+                value={s}
+                checked={status === s}
+                onChange={() => setStatus(s)}
+              />
+            ))}
+          </div>
+        </Field>
 
         <div className="grid grid-cols-2 gap-3">
           <Field label="Location">

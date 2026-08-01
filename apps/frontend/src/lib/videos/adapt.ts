@@ -10,7 +10,7 @@ import type { VideoEntry } from './videos';
  * @property {string} video_url - Original Instagram URL.
  * @property {string | null} video_id - Extracted Instagram media ID.
  * @property {string | null} video_src - Source platform name.
- * @property {string | null} category - Category value reference.
+ * @property {string[] | null} categories - Category slugs (multiple allowed).
  * @property {string | null} location - State or union territory.
  * @property {string | null} city - City of recording.
  * @property {string[] | null} tags - Searchable tags.
@@ -27,7 +27,7 @@ export interface VideoRow {
   video_url: string;
   video_id: string | null;
   video_src: string | null;
-  category: string | null;
+  categories: string[] | null;
   location: string | null;
   city: string | null;
   tags: string[] | null;
@@ -41,7 +41,7 @@ export interface VideoRow {
 }
 
 /**
- * Maps a raw Supabase video row to a VideoEntry, resolving the category
+ * Maps a raw Supabase video row to a VideoEntry, resolving the first category's
  * display name from the hardcoded CATEGORIES constant.
  *
  * @param {VideoRow} row - Raw row from the videos table.
@@ -50,7 +50,9 @@ export interface VideoRow {
  */
 export function dbRowToVideoEntry(row: VideoRow): VideoEntry {
   const tags = row.tags ?? [];
-  const matchedCategory = CATEGORIES.find((c) => c.slug === row.category);
+  const categories = row.categories ?? [];
+  const primaryCategory = categories[0] ?? '';
+  const matchedCategory = CATEGORIES.find((c) => c.slug === primaryCategory);
 
   return {
     id: row.id,
@@ -59,8 +61,9 @@ export function dbRowToVideoEntry(row: VideoRow): VideoEntry {
     thumbnail: row.thumbnail_url ?? '',
     city: row.city ?? '',
     location: row.location ?? '',
-    category: row.category ?? '',
-    categoryName: matchedCategory?.name ?? row.category ?? '',
+    categories,
+    category: primaryCategory,
+    categoryName: matchedCategory?.name ?? primaryCategory,
     tags,
     duration: 0,
     viewCount: row.view_count ?? 0,

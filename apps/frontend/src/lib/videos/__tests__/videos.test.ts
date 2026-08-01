@@ -36,7 +36,7 @@ describe('videos data', () => {
         thumbnail_url: 'https://example.com/thumb.jpg',
         city: 'Mumbai',
         location: 'Azad Maidan',
-        category: 'protest-marches',
+        categories: ['protest-marches'],
         tags: ['student'],
         view_count: 500,
         status: 'published',
@@ -53,6 +53,7 @@ describe('videos data', () => {
       id: 'vid-1',
       description: 'Test video',
       city: 'Mumbai',
+      categories: ['protest-marches'],
       category: 'protest-marches',
       categoryName: 'Protest Marches',
     });

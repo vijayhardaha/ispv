@@ -88,7 +88,7 @@ const mockVideo = {
   video_id: 'ABC123xyz',
   video_src: 'instagram',
   status: 'draft',
-  category: null,
+  categories: null,
   location: null,
   city: null,
   tags: null,

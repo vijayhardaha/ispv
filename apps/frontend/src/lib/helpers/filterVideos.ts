@@ -95,7 +95,7 @@ export function filterVideos(videos: VideoEntry[], state: FilterState): VideoEnt
   const comparator = SORT_COMPARATORS[state.sort];
 
   const filtered = videos.filter((v) => {
-    if (state.category !== 'all' && v.category !== state.category) {
+    if (state.category !== 'all' && !v.categories.includes(state.category)) {
       return false;
     }
 

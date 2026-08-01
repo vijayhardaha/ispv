@@ -49,14 +49,14 @@ export const enrichVideoBodySchema = z.object({
  * @property {string} video_url - Original video URL.
  * @property {string | null} video_id - Platform-specific video ID.
  * @property {string} video_src - Source platform identifier.
- * @property {string | null} category - Category slug.
+ * @property {string[] | null} categories - Category slugs (multiple allowed).
  * @property {string | null} location - Location slug.
  * @property {string | null} city - City name.
  * @property {string[] | null} tags - Searchable tags array.
  * @property {string | null} description - Video description text.
  * @property {string | null} thumbnail_url - Thumbnail image URL.
  * @property {string | null} video_post_date - Original post date.
- * @property {'draft' | 'pending_review' | 'published' | 'rejected'} status - Moderation status.
+ * @property {'draft' | 'published' | 'rejected'} status - Moderation status.
  * @property {string} created_at - Record creation timestamp.
  * @property {string} updated_at - Record last update timestamp.
  * @property {string | null} category_name - Resolved category display name.
@@ -70,14 +70,14 @@ export interface VideoRecord {
   video_url: string;
   video_id: string | null;
   video_src: string;
-  category: string | null;
+  categories: string[] | null;
   location: string | null;
   city: string | null;
   tags: string[] | null;
   description: string | null;
   thumbnail_url: string | null;
   video_post_date: string | null;
-  status: 'draft' | 'pending_review' | 'published' | 'rejected';
+  status: 'draft' | 'published' | 'rejected';
   created_at: string;
   updated_at: string;
   category_name: string | null;
@@ -89,13 +89,13 @@ export interface VideoRecord {
 
 /**
  * Zod schema validating the admin video create/edit form submission.
- * City is trimmed and title-cased; tags are trimmed of surrounding whitespace.
+ * City is trimmed and title-cased; tags and categories are trimmed of surrounding whitespace.
  */
 export const videoFormSchema = z.object({
   video_url: z.string().optional(),
   video_id: z.string().optional(),
   video_src: z.string().optional(),
-  category: z.string().nullable().optional(),
+  categories: z.array(z.string()).optional().transform(normalizeTags),
   location: z.string().nullable().optional(),
   city: z
     .string()
@@ -104,5 +104,5 @@ export const videoFormSchema = z.object({
     .transform((v) => (v ? capitalizeCity(v) : v)),
   tags: z.array(z.string()).optional().transform(normalizeTags),
   description: z.string().nullable().optional(),
-  status: z.enum(['draft', 'pending_review', 'published', 'rejected']).optional(),
+  status: z.enum(['draft', 'published', 'rejected']).optional(),
 });
