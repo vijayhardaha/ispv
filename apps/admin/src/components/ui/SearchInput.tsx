@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type FormEvent, type JSX } from 'react';
+import { useState, type SubmitEvent, type JSX } from 'react';
 
 import { Search } from 'lucide-react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
@@ -59,7 +59,7 @@ export function SearchInput({
     router.replace(qs ? `${pathname}?${qs}` : pathname);
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     syncToUrl(value);
   };
