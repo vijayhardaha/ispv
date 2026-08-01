@@ -57,11 +57,15 @@ function VideosPageHeader({ isTrashed, onAdd }: { isTrashed: boolean; onAdd: () 
 }
 
 /**
- * Filter bar with search input, status select, and reset button.
+ * Filter bar with search input, status/category/location selects, and reset button.
  *
  * @param {object} props - Component properties.
  * @param {string} props.status - Currently selected status filter value.
  * @param {(newStatus: string) => void} props.onStatusChange - Callback when status filter changes.
+ * @param {string} props.category - Currently selected category filter value.
+ * @param {(newCategory: string) => void} props.onCategoryChange - Callback when category filter changes.
+ * @param {string} props.location - Currently selected location filter value.
+ * @param {(newLocation: string) => void} props.onLocationChange - Callback when location filter changes.
  * @param {() => void} props.onReset - Callback to clear all filters.
  *
  * @returns {JSX.Element} Rendered filter bar.
@@ -69,15 +73,23 @@ function VideosPageHeader({ isTrashed, onAdd }: { isTrashed: boolean; onAdd: () 
 function VideosFilterBar({
   status,
   onStatusChange,
+  category,
+  onCategoryChange,
+  location,
+  onLocationChange,
   onReset,
 }: {
   status: string;
   onStatusChange: (newStatus: string) => void;
+  category: string;
+  onCategoryChange: (newCategory: string) => void;
+  location: string;
+  onLocationChange: (newLocation: string) => void;
   onReset: () => void;
 }): JSX.Element {
   return (
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-      <div className="flex flex-row items-center gap-3">
+      <div className="flex flex-row flex-wrap items-center gap-3">
         <SearchInput placeholder="Search videos…" />
         <Select
           variant="filter"
@@ -85,6 +97,22 @@ function VideosFilterBar({
           onChange={(e) => onStatusChange(e.target.value)}
           aria-label="Status filter"
           options={STATUSES.map((s) => ({ value: s, label: STATUS_LABELS[s] }))}
+        />
+        <Select
+          variant="filter"
+          value={category}
+          onChange={(e) => onCategoryChange(e.target.value)}
+          aria-label="Category filter"
+          placeholder="All categories"
+          options={CATEGORIES.map((c) => ({ value: c.slug, label: c.name }))}
+        />
+        <Select
+          variant="filter"
+          value={location}
+          onChange={(e) => onLocationChange(e.target.value)}
+          aria-label="Location filter"
+          placeholder="All locations"
+          options={LOCATIONS.map((l) => ({ value: l.slug, label: l.name }))}
         />
       </div>
       <Button onClick={onReset} variant="danger-outline">
@@ -652,6 +680,8 @@ function VideosPageContent(): JSX.Element {
     actionConfirmLabel,
     page,
     status,
+    category,
+    location,
     sort,
     dir,
     setSort,
@@ -662,6 +692,8 @@ function VideosPageContent(): JSX.Element {
     setSelectedIds,
     setBulkConfirm,
     setStatus,
+    setCategory,
+    setLocation,
     handleReset,
     handleSelectAll,
     handleSelectOne,
@@ -676,9 +708,17 @@ function VideosPageContent(): JSX.Element {
     <section className="py-8" aria-labelledby="videos-heading">
       <VideosPageHeader isTrashed={isTrashed} onAdd={() => setShowAdd(true)} />
 
-      <Pagination className="mb-4" page={page} totalPages={totalPages} totalCount={totalCount} perPage={perPage} />
+      <VideosFilterBar
+        status={status}
+        onStatusChange={setStatus}
+        category={category}
+        onCategoryChange={setCategory}
+        location={location}
+        onLocationChange={setLocation}
+        onReset={handleReset}
+      />
 
-      <VideosFilterBar status={status} onStatusChange={setStatus} onReset={handleReset} />
+      <Pagination className="mb-4" page={page} totalPages={totalPages} totalCount={totalCount} perPage={perPage} />
 
       {selectedIds.size > 0 && (
         <BulkActionsToolbar

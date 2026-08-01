@@ -23,9 +23,13 @@ const PER_PAGE = 15;
  * @property {number} page - Current page number.
  * @property {string} status - Current status filter value.
  * @property {string} search - Current search query.
+ * @property {string} category - Current category filter value.
+ * @property {string} location - Current location filter value.
  * @property {string} sort - Current sort column key.
  * @property {'asc' | 'desc'} dir - Current sort direction.
  * @property {(newStatus: string) => void} setStatus - Updates the status filter.
+ * @property {(newCategory: string) => void} setCategory - Updates the category filter.
+ * @property {(newLocation: string) => void} setLocation - Updates the location filter.
  * @property {(column: string) => void} setSort - Updates the sort column and toggles direction.
  * @property {() => void} handleReset - Clears all filters.
  * @property {() => void} loadData - Reload videos from the server.
@@ -39,9 +43,13 @@ export interface UseVideosLoaderReturn {
   page: number;
   status: string;
   search: string;
+  category: string;
+  location: string;
   sort: string;
   dir: 'asc' | 'desc';
   setStatus: (newStatus: string) => void;
+  setCategory: (newCategory: string) => void;
+  setLocation: (newLocation: string) => void;
   setSort: (column: string) => void;
   handleReset: () => void;
   loadData: () => void;
@@ -64,17 +72,19 @@ export function useVideosLoader(): UseVideosLoaderReturn {
   const searchParams = useSearchParams();
   const status = searchParams.get('status') || '';
   const search = searchParams.get('q') || '';
+  const category = searchParams.get('category') || '';
+  const location = searchParams.get('location') || '';
   const sort = searchParams.get('sort') || '';
   const dir = searchParams.get('dir') === 'asc' ? 'asc' : 'desc';
   const isTrashed = status === 'trashed';
 
-  const setStatus = useCallback(
-    (newStatus: string) => {
+  const setFilter = useCallback(
+    (param: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
-      if (newStatus) {
-        params.set('status', newStatus);
+      if (value) {
+        params.set(param, value);
       } else {
-        params.delete('status');
+        params.delete(param);
       }
       params.delete('page');
       const qs = params.toString();
@@ -82,6 +92,10 @@ export function useVideosLoader(): UseVideosLoaderReturn {
     },
     [router, pathname, searchParams]
   );
+
+  const setStatus = useCallback((newStatus: string) => setFilter('status', newStatus), [setFilter]);
+  const setCategory = useCallback((newCategory: string) => setFilter('category', newCategory), [setFilter]);
+  const setLocation = useCallback((newLocation: string) => setFilter('location', newLocation), [setFilter]);
 
   const setSort = useCallback(
     (column: string) => {
@@ -106,6 +120,8 @@ export function useVideosLoader(): UseVideosLoaderReturn {
     const response = await getVideosForApi(supabase, {
       status: isTrashed ? null : status || null,
       search: search || null,
+      category: category || null,
+      location: location || null,
       sort_by: sort || null,
       sort_dir: dir,
       page,
@@ -116,7 +132,7 @@ export function useVideosLoader(): UseVideosLoaderReturn {
       setVideos(response.data);
       setTotalCount(response.pagination.total_count);
     }
-  }, [isTrashed, status, search, sort, dir, page, supabase]);
+  }, [isTrashed, status, search, category, location, sort, dir, page, supabase]);
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PER_PAGE));
 
@@ -129,9 +145,13 @@ export function useVideosLoader(): UseVideosLoaderReturn {
     page,
     status,
     search,
+    category,
+    location,
     sort,
     dir,
     setStatus,
+    setCategory,
+    setLocation,
     setSort,
     handleReset,
     loadData,
