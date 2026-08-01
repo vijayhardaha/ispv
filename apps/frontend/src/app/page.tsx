@@ -51,6 +51,11 @@ export const metadata: Metadata = buildMetadata({
 /** Revalidate the home page every 5 minutes for Incremental Static Regeneration. */
 export const revalidate = 300;
 
+/**
+ * Sorts the category list with the "Other" category pinned last.
+ *
+ * @returns {DbCategory[]} Category list with "Other" moved to the end.
+ */
 function sortCategoriesWithOtherLast(): DbCategory[] {
   const list = [...CATEGORIES];
   const other = list.findIndex((c) => c.slug === 'other');
@@ -61,12 +66,22 @@ function sortCategoriesWithOtherLast(): DbCategory[] {
   return list;
 }
 
+/**
+ * Resolves the featured category records from their display slugs.
+ *
+ * @returns {DbCategory[]} Featured categories in display order.
+ */
 function getFeaturedCategories(): DbCategory[] {
   return FEATURED_CATEGORIES_SLUGS.map((slug) => CATEGORIES.find((c) => c.slug === slug)).filter(
     Boolean
   ) as DbCategory[];
 }
 
+/**
+ * Sorts the location list with the "Foreign" location pinned last.
+ *
+ * @returns {DbLocation[]} Location list with "Foreign" moved to the end.
+ */
 function sortLocationsWithForeignLast(): DbLocation[] {
   const list = [...LOCATIONS];
   const foreignIdx = list.findIndex((l) => l.slug === 'foreign');
