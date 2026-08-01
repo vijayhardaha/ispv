@@ -159,12 +159,7 @@ export function useVideosActions(
     [toast, loadData]
   );
 
-  const actionConfirmLabel =
-    actionConfirm?.action === 'trash'
-      ? 'Trash'
-      : actionConfirm?.action === 'restore'
-        ? 'Restore'
-        : 'Permanently Delete';
+  const actionConfirmLabel = 'Video';
 
   return {
     actionConfirm,
