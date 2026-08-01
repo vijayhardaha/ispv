@@ -70,7 +70,7 @@ VideoEntry {
 }
 
 VideoRow {
-  id, video_url, video_id, video_src, category, location, city,
+  id, video_url, video_id, video_src, categories, location, city,
   tags[], description, thumbnail_url, video_post_date, view_count,
   status, created_at, updated_at
 }

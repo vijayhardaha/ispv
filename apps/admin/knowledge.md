@@ -21,7 +21,7 @@
 ```
 src/
 ├── app/
-│   ├── layout.tsx              # Root layout (auth guard, SkipContent, AdminHeader, AdminMain, AdminFooter)
+│   ├── layout.tsx              # Root layout (auth guard, SkipContent, AdminSidebar + AdminMain + AdminFooter)
 │   ├── loading.tsx             # Loading fallback
 │   ├── error.tsx               # Error boundary
 │   ├── Providers.tsx           # ToastProvider + QueryProvider wrapper
@@ -46,7 +46,7 @@ src/
 │       ├── views/          # POST view count increment
 │       └── check-video/    # GET duplicate check
 ├── components/
-│   ├── layout/             # AdminHeader, AdminMain, AdminFooter, SkipContent
+│   ├── layout/             # AdminSidebar, AdminMain, AdminFooter, SkipContent
 │   ├── ui/                 # Button, Container, Box, Select, Modal, Pagination, SearchInput, DeleteConfirmDialog
 │   ├── VideoFormModal.tsx  # Add/edit video modal form
 │   ├── LogoutButton.tsx
@@ -103,7 +103,7 @@ src/
 | `video_url`       | text        | Original Instagram URL                          |
 | `video_id`        | text        | Extracted Instagram media ID                    |
 | `video_src`       | text        | 'instagram' or 'youtube'                        |
-| `category`        | text        | Category slug                                   |
+| `categories`      | text[]      | Category slugs (multiple allowed)               |
 | `location`        | text        | Location slug                                   |
 | `city`            | text        | City name                                       |
 | `tags`            | text[]      | Searchable tags                                 |
@@ -111,7 +111,7 @@ src/
 | `thumbnail_url`   | text        | Vercel Blob URL                                 |
 | `video_post_date` | timestamptz | Instagram post date                             |
 | `view_count`      | integer     | View counter                                    |
-| `status`          | text        | draft/pending_review/published/rejected/trashed |
+| `status`          | text        | draft/published/rejected/trashed                  |
 | `trashed_at`      | timestamptz | Soft-delete timestamp                           |
 | `created_at`      | timestamptz | Record creation                                 |
 | `updated_at`      | timestamptz | Last update                                     |
@@ -129,7 +129,7 @@ src/
 
 The videos page (`app/videos/page.tsx`) is the most complex component. Its state is split across 3 custom hooks:
 
-1. **`useVideosLoader`** — Manages data fetching (trashed vs normal), URL filter params (status, search), and pagination
+1. **`useVideosLoader`** — Manages data fetching (trashed vs normal), URL filter params (status, search, category, location, sort, page), pagination, status tab counts, and `applyFilters`
 2. **`useVideosSelection`** — Manages checkbox selection, select-all, and indeterminate state
 3. **`useVideosActions`** — Handles single actions (trash/restore/delete), bulk actions, and inline status changes
 
@@ -138,8 +138,9 @@ These are composed by `useVideosPageState` which also adds modal UI state (edit/
 ### Sub-components
 
 - `VideosPageHeader` — Title + Add Video button
-- `VideosFilterBar` — Search input + status dropdown + reset
-- `BulkActionsToolbar` — Selection count + bulk action select + apply/clear
+- `StatusTabs` — Status links with counts (All / Draft / Pending / Published / Rejected / Trashed), URL-param driven
+- `SearchInput` — Search box + submit button with icon/label, syncs `?q=` on submit
+- `VideosToolbar` — Row 2 toolbar: bulk action select + Apply/Clear, category/location filter dropdowns + Filter/Reset, results count + pagination on the right
 - `VideosTable` — Sortable table with header, VideoRow per entry
 - `VideoRow` — Single table row with checkbox, thumbnail, URL, city, category badge, tags, status cell, dates, actions
 - `CategoryBadge` — Coloured category chip
@@ -147,14 +148,27 @@ These are composed by `useVideosPageState` which also adds modal UI state (edit/
 - `VideoActions` — Edit/Trash or Restore/Purge buttons
 - `Td` — Consistent table cell wrapper
 
+### Page layout (WordPress-style)
+
+- **Row 1:** Status tabs (left) + search input with submit button (right)
+- **Row 2:** Bulk action dropdown + Apply, then category/location filter dropdowns + Filter/Reset, then results count + pagination (right)
+- **After table:** results count + pagination only (no bulk controls)
+
+### URL param system
+
+- All filters, sorting, and pagination read from and write to URL search params (`status`, `q`, `category`, `location`, `sort`, `dir`, `page`) — the page reloads data from the URL instead of local state
+- Status tabs and pagination are plain links carrying the params; category/location dropdowns are staged locally and applied via the Filter button (`applyFilters`)
+- `useVideosLoader` fetches per-status counts once on mount via `get_dashboard_stats` for the status tabs
+
 ### VideoFormModal
 
 - Modal for creating/editing videos
-- Fields: Instagram URL, Category (with "— Select —" placeholder), Location (with "—" placeholder), City, Tags, Description, Status
-- Category defaults to empty string when no category is set (fixes issue where editing a video with no category required selecting twice)
+- Fields: Instagram URL, Categories (checkbox multi-select), Status (radio buttons), Location (with "—" placeholder), City, Tags, Description
+- Category state is a `string[]` of slugs; empty selection sends `null`
+- Status radios cover draft/published/rejected; defaults to "draft"
 - Location defaults to "delhi"
-- Status defaults to "draft"
 - URL field is disabled when editing
+- Modal content scrolls when taller than the viewport (overflow-y-auto overlay)
 
 ## Rate Limiting
 
