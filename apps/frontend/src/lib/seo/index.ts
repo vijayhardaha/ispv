@@ -1,3 +1,3 @@
-export { buildMetadata, type SeoProps } from './meta';
-export { siteUrl, getPermaLink } from './seo';
-export { buildBreadcrumbs, globalSchema, type BreadcrumbItem } from './schema';
+export { buildMetadata } from './meta';
+export { siteUrl } from './seo';
+export { buildBreadcrumbs, globalSchema } from './schema';
