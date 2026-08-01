@@ -131,7 +131,7 @@ export function FAQSection(): JSX.Element {
           </div>
 
           {/* FAQ Cards */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             {FAQS.map((faq) => (
               <details
                 key={faq.question}

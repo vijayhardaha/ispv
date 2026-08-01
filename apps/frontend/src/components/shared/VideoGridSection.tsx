@@ -121,7 +121,7 @@ export function VideoGridSection({
       <FilterBar state={state} setState={setState} total={total} allTags={allTags} allLocations={allLocations} />
 
       {loading ? (
-        <div className="mt-6 grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 8 }, (_, i) => (
             <SkeletonCard key={i} />
           ))}
@@ -141,7 +141,7 @@ export function VideoGridSection({
               <p className="mt-1 text-black/60">Try a different search term or fewer tags.</p>
             </div>
           ) : (
-            <div className="mt-6 grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
+            <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
               {paged.map((v) => (
                 <VideoCard key={v.id} video={v} onPlay={(video) => onPlay(video, paged)} />
               ))}

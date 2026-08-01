@@ -40,7 +40,7 @@ export function CategorySection({ cat, videos }: { cat: DbCategory; videos: Vide
           buttonIcon={<Grid3x3 className="size-4" />}
         />
 
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
           {items.map((v) => (
             <VideoCard key={v.id} video={v} onPlay={handlePlay} />
           ))}

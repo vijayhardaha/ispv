@@ -16,7 +16,7 @@ export function AdminHeader(): JSX.Element {
   return (
     <header>
       <nav className="border-b-2 border-black bg-white py-3" aria-label="Main navigation">
-        <Container className="flex items-center justify-between gap-6 text-lg">
+        <Container className="flex items-center justify-between gap-4 text-lg">
           <p className="font-display text-2xl font-extrabold uppercase">ISPV Admin</p>
           <div className="flex items-center gap-4">
             {HEADER_NAV_LINKS.map((link) => (

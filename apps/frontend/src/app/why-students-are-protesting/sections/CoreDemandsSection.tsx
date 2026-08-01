@@ -32,7 +32,7 @@ export function CoreDemandsSection({ demands }: { demands: Demand[] }): JSX.Elem
           The movement publicly advocates for the following principles, reflected in its published manifesto and
           official communications.
         </p>
-        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {demands.map((d) => (
             <div key={d.title} className={cn('shadow-brutal border-2 border-black p-5', d.color)}>
               <div className="flex items-center gap-4">

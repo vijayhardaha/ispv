@@ -156,7 +156,7 @@ export function Footer(): JSX.Element {
         </Container>
 
         <Container>
-          <div className="flex flex-col items-start gap-6 py-6">
+          <div className="flex flex-col items-start gap-4 py-6">
             <div className="flex items-start gap-2 text-sm text-zinc-400">
               <p>
                 <span className="font-bold text-yellow-500 uppercase">Disclaimer:</span> Indian Students Protest Vault
@@ -184,7 +184,7 @@ export function Footer(): JSX.Element {
         </Container>
 
         <Container>
-          <div className="flex flex-col items-center justify-between gap-6 border-t-2 border-zinc-800 py-8 text-zinc-400 md:flex-row">
+          <div className="flex flex-col items-center justify-between gap-4 border-t-2 border-zinc-800 py-8 text-zinc-400 md:flex-row">
             <p className="text-sm font-bold tracking-tight uppercase">
               <a
                 href="https://ispv.vercel.app"

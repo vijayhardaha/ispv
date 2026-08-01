@@ -197,7 +197,7 @@ export default function AboutPage(): JSX.Element {
       {/* Principles */}
       <section className="py-12">
         <Container>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {PRINCIPLES.map((p) => (
               <Principle key={p.title} icon={p.icon} title={p.title} color={p.color}>
                 {p.body}
@@ -211,7 +211,7 @@ export default function AboutPage(): JSX.Element {
       <section className="border-y-2 border-black bg-gray-100 py-12">
         <Container>
           <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase md:text-4xl">How It Works</h2>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {STEPS.map((s) => (
               <Step key={s.n} n={s.n} title={s.title}>
                 {s.body}

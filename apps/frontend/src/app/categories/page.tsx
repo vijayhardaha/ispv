@@ -108,7 +108,7 @@ function CategoryGrid({
 }): JSX.Element {
   return (
     <section className="mx-auto max-w-7xl px-4 py-10 md:px-6">
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {categories.map((c) => (
           <CategoryCard key={c.slug} category={c} videoCount={categoryCounts[c.slug] ?? 0} />
         ))}
