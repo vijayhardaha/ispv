@@ -2,6 +2,8 @@
 
 import { Suspense, type ComponentPropsWithoutRef, type JSX } from 'react';
 
+import { ChevronDown, ChevronUp, Plus, SquarePen, Trash2, Undo2 } from 'lucide-react';
+
 import { useVideosPageState } from '@/app/videos/useVideosPageState';
 import { Button } from '@/components/ui/Button';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
@@ -47,7 +49,8 @@ function VideosPageHeader({ isTrashed, onAdd }: { isTrashed: boolean; onAdd: () 
         Videos
       </h1>
       <Button onClick={onAdd} disabled={isTrashed}>
-        + Add Video
+        <Plus className="h-4 w-4" aria-hidden="true" />
+        Add Video
       </Button>
     </header>
   );
@@ -277,9 +280,11 @@ function VideoActions({
     return (
       <div className="flex gap-1">
         <Button onClick={() => onAction(video.id, 'restore')} variant="secondary" size="xs">
+          <Undo2 className="h-3.5 w-3.5" aria-hidden="true" />
           Restore
         </Button>
         <Button onClick={() => onAction(video.id, 'delete')} variant="danger-ghost" size="xs">
+          <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
           Purge
         </Button>
       </div>
@@ -289,13 +294,29 @@ function VideoActions({
   return (
     <div className="flex gap-1">
       <Button onClick={() => onEdit(video)} variant="secondary" size="xs">
+        <SquarePen className="h-3.5 w-3.5" aria-hidden="true" />
         Edit
       </Button>
       <Button onClick={() => onAction(video.id, 'trash')} variant="danger-ghost" size="xs">
+        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
         Trash
       </Button>
     </div>
   );
+}
+
+/**
+ * Resolves a location slug to its display name from the LOCATIONS constant.
+ *
+ * @param {string | null} location - Location slug, or null.
+ *
+ * @returns {string} Location display name, or en-dash if unknown/null.
+ */
+function getLocationName(location: string | null): string {
+  if (!location) {
+    return '\u2013';
+  }
+  return LOCATIONS.find((l) => l.slug === location)?.name ?? location;
 }
 
 /**
@@ -337,6 +358,60 @@ function Td({ className, children, ...props }: ComponentPropsWithoutRef<'td'>): 
 }
 
 /**
+ * Sortable table header button with asc/desc indicator and a faint chevron hint on hover.
+ *
+ * @param {object} props - Component properties.
+ * @param {string} props.label - Column display label.
+ * @param {string} props.sortKey - Column key used in the URL sort param.
+ * @param {string} props.sort - Currently active sort column key.
+ * @param {'asc' | 'desc'} props.dir - Currently active sort direction.
+ * @param {(column: string) => void} props.onSort - Callback to update the sort column.
+ *
+ * @returns {JSX.Element} Rendered sortable header cell.
+ */
+function SortableTh({
+  label,
+  sortKey,
+  sort,
+  dir,
+  onSort,
+}: {
+  label: string;
+  sortKey: string;
+  sort: string;
+  dir: 'asc' | 'desc';
+  onSort: (column: string) => void;
+}): JSX.Element {
+  const active = sort === sortKey;
+  const Icon = active ? (dir === 'asc' ? ChevronUp : ChevronDown) : ChevronDown;
+
+  return (
+    <th
+      className="px-3 py-2 text-sm font-bold uppercase"
+      aria-sort={active ? (dir === 'asc' ? 'ascending' : 'descending') : 'none'}
+    >
+      <button
+        type="button"
+        onClick={() => onSort(sortKey)}
+        className={cn(
+          'group inline-flex items-center gap-1 uppercase hover:text-yellow-500',
+          active && 'text-yellow-600'
+        )}
+      >
+        {label}
+        <Icon
+          className={cn(
+            'h-3.5 w-3.5 transition-opacity',
+            active ? 'opacity-100' : 'opacity-0 group-hover:opacity-40 group-focus-visible:opacity-40'
+          )}
+          aria-hidden="true"
+        />
+      </button>
+    </th>
+  );
+}
+
+/**
  * Full videos table with header and body rows.
  *
  * @param {object} props - Component properties.
@@ -346,6 +421,9 @@ function Td({ className, children, ...props }: ComponentPropsWithoutRef<'td'>): 
  * @param {Set<string>} props.selectedIds - Set of selected video IDs.
  * @param {{ current: HTMLInputElement | null }} props.selectAllRef - Ref object for the select-all checkbox.
  * @param {Set<string>} props.changingStatus - Set of video IDs whose status is being updated.
+ * @param {string} props.sort - Currently active sort column key.
+ * @param {'asc' | 'desc'} props.dir - Currently active sort direction.
+ * @param {(column: string) => void} props.onSort - Callback to update the sort column.
  * @param {(checked: boolean) => void} props.onSelectAll - Callback when select-all checkbox toggles.
  * @param {(id: string, checked: boolean) => void} props.onSelectOne - Callback when a single checkbox toggles.
  * @param {(video: VideoRecord) => void} props.onEdit - Callback to open edit modal.
@@ -361,6 +439,9 @@ function VideosTable({
   selectedIds,
   selectAllRef,
   changingStatus,
+  sort,
+  dir,
+  onSort,
   onSelectAll,
   onSelectOne,
   onEdit,
@@ -373,13 +454,16 @@ function VideosTable({
   selectedIds: Set<string>;
   selectAllRef: { current: HTMLInputElement | null };
   changingStatus: Set<string>;
+  sort: string;
+  dir: 'asc' | 'desc';
+  onSort: (column: string) => void;
   onSelectAll: (checked: boolean) => void;
   onSelectOne: (id: string, checked: boolean) => void;
   onEdit: (video: VideoRecord) => void;
   onAction: (id: string, action: 'trash' | 'restore' | 'delete') => void;
   onInlineStatusChange: (id: string, newStatus: string) => void;
 }): JSX.Element {
-  const colCount = isTrashed ? 12 : 11;
+  const colCount = isTrashed ? 13 : 12;
 
   return (
     <div className="overflow-x-auto border-2 border-black bg-white">
@@ -398,13 +482,14 @@ function VideosTable({
             </th>
             <th className="w-16 px-3 py-2 text-sm font-bold uppercase">Thumb</th>
             <th className="px-3 py-2 text-sm font-bold uppercase">URL</th>
-            <th className="w-28 px-3 py-2 text-sm font-bold uppercase">City</th>
-            <th className="px-3 py-2 text-sm font-bold uppercase">Category</th>
+            <SortableTh label="City" sortKey="city" sort={sort} dir={dir} onSort={onSort} />
+            <SortableTh label="Location" sortKey="location" sort={sort} dir={dir} onSort={onSort} />
+            <SortableTh label="Category" sortKey="category" sort={sort} dir={dir} onSort={onSort} />
             <th className="px-3 py-2 text-sm font-bold uppercase">Tags</th>
-            <th className="w-24 px-3 py-2 text-sm font-bold uppercase">Status</th>
-            <th className="w-28 px-3 py-2 text-sm font-bold uppercase">Created</th>
-            <th className="w-28 px-3 py-2 text-sm font-bold uppercase">Updated</th>
-            <th className="w-28 px-3 py-2 text-sm font-bold uppercase">Posted</th>
+            <SortableTh label="Status" sortKey="status" sort={sort} dir={dir} onSort={onSort} />
+            <SortableTh label="Created" sortKey="created" sort={sort} dir={dir} onSort={onSort} />
+            <SortableTh label="Updated" sortKey="updated" sort={sort} dir={dir} onSort={onSort} />
+            <SortableTh label="Posted" sortKey="posted" sort={sort} dir={dir} onSort={onSort} />
             {isTrashed && <th className="w-32 px-3 py-2 text-sm font-bold uppercase">Trashed At</th>}
             <th className="w-36 px-3 py-2 text-sm font-bold uppercase">Actions</th>
           </tr>
@@ -516,6 +601,7 @@ function VideoRow({
         </a>
       </Td>
       <Td>{video.city ?? '\u2013'}</Td>
+      <Td>{getLocationName(video.location)}</Td>
       <Td>
         <CategoryBadge category={video.category} />
       </Td>
@@ -565,8 +651,10 @@ function VideosPageContent(): JSX.Element {
     totalCount,
     actionConfirmLabel,
     page,
-    goToPage,
     status,
+    sort,
+    dir,
+    setSort,
     setEditVideo,
     setShowAdd,
     setBulkAction,
@@ -588,14 +676,7 @@ function VideosPageContent(): JSX.Element {
     <section className="py-8" aria-labelledby="videos-heading">
       <VideosPageHeader isTrashed={isTrashed} onAdd={() => setShowAdd(true)} />
 
-      <Pagination
-        className="mb-4"
-        page={page}
-        totalPages={totalPages}
-        onPageChange={goToPage}
-        totalCount={totalCount}
-        perPage={perPage}
-      />
+      <Pagination className="mb-4" page={page} totalPages={totalPages} totalCount={totalCount} perPage={perPage} />
 
       <VideosFilterBar status={status} onStatusChange={setStatus} onReset={handleReset} />
 
@@ -618,6 +699,9 @@ function VideosPageContent(): JSX.Element {
         selectedIds={selectedIds}
         selectAllRef={selectAllRef}
         changingStatus={changingStatus}
+        sort={sort}
+        dir={dir}
+        onSort={setSort}
         onSelectAll={handleSelectAll}
         onSelectOne={handleSelectOne}
         onEdit={(video) => setEditVideo(video)}
@@ -625,14 +709,7 @@ function VideosPageContent(): JSX.Element {
         onInlineStatusChange={handleInlineStatusChange}
       />
 
-      <Pagination
-        className="mt-4"
-        page={page}
-        totalPages={totalPages}
-        onPageChange={goToPage}
-        totalCount={totalCount}
-        perPage={perPage}
-      />
+      <Pagination className="mt-4" page={page} totalPages={totalPages} totalCount={totalCount} perPage={perPage} />
 
       {actionConfirm && (
         <DeleteConfirmDialog

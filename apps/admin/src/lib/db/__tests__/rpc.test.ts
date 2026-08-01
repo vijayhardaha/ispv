@@ -15,7 +15,17 @@ describe('getVideosForApi', () => {
     const result = await getVideosForApi(mockSupabase);
 
     expect(mockRpc).toHaveBeenCalledWith('get_videos_for_api', {
-      filters: { status: null, search: null, category: null, location: null, trashed: null, page: 1, per_page: 50 },
+      filters: {
+        status: null,
+        search: null,
+        category: null,
+        location: null,
+        trashed: null,
+        sort_by: null,
+        sort_dir: null,
+        page: 1,
+        per_page: 50,
+      },
     });
     expect(result).toEqual({ data: [], pagination: { page: 1, per_page: 50, total_count: 0, total_pages: 0 } });
   });
@@ -31,6 +41,8 @@ describe('getVideosForApi', () => {
       search: 'protest',
       category: 'police-conduct',
       location: 'delhi',
+      sort_by: 'created',
+      sort_dir: 'asc',
       page: 2,
       per_page: 20,
     });
@@ -42,9 +54,24 @@ describe('getVideosForApi', () => {
         category: 'police-conduct',
         location: 'delhi',
         trashed: null,
+        sort_by: 'created',
+        sort_dir: 'asc',
         page: 2,
         per_page: 20,
       },
+    });
+  });
+
+  it('passes sort_by and sort_dir to the RPC', async () => {
+    mockRpc.mockResolvedValue({
+      data: { data: [], pagination: { page: 1, per_page: 50, total_count: 0, total_pages: 0 } },
+      error: null,
+    });
+
+    await getVideosForApi(mockSupabase, { sort_by: 'status', sort_dir: 'asc' });
+
+    expect(mockRpc).toHaveBeenCalledWith('get_videos_for_api', {
+      filters: expect.objectContaining({ sort_by: 'status', sort_dir: 'asc' }),
     });
   });
 
@@ -57,7 +84,17 @@ describe('getVideosForApi', () => {
     await getVideosForApi(mockSupabase, { status: undefined, search: null, category: '', location: undefined } as any);
 
     expect(mockRpc).toHaveBeenCalledWith('get_videos_for_api', {
-      filters: { status: null, search: null, category: null, location: null, trashed: null, page: 1, per_page: 50 },
+      filters: {
+        status: null,
+        search: null,
+        category: null,
+        location: null,
+        trashed: null,
+        sort_by: null,
+        sort_dir: null,
+        page: 1,
+        per_page: 50,
+      },
     });
   });
 

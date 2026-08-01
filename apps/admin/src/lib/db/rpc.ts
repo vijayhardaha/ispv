@@ -15,6 +15,9 @@ import type { GetVideosApiResponse } from './types';
  * @property {string | null} [search] - Search query across video_url, video_id, description, city.
  * @property {string | null} [category] - Filter by category slug.
  * @property {string | null} [location] - Filter by location slug.
+ * @property {string | null} [sort_by] - Sort column key (status, created, updated, posted, city, category, location).
+ * @property {'asc' | 'desc' | null} [sort_dir] - Sort direction (default: desc).
+ * @property {string | null} [trashed] - Trash filter ('only' shows trashed, otherwise excludes them).
  * @property {number} [page] - Page number (1-based, default: 1).
  * @property {number} [per_page] - Items per page (default: 50, max: 500).
  */
@@ -23,6 +26,8 @@ export interface GetVideosFilters {
   search?: string | null;
   category?: string | null;
   location?: string | null;
+  sort_by?: string | null;
+  sort_dir?: 'asc' | 'desc' | null;
   trashed?: string | null;
   page?: number;
   per_page?: number;
@@ -59,6 +64,8 @@ export const getVideosForApi = async (
       category: filters.category || null,
       location: filters.location || null,
       trashed: filters.trashed || null,
+      sort_by: filters.sort_by || null,
+      sort_dir: filters.sort_dir || null,
       page: filters.page || 1,
       per_page: filters.per_page || 50,
     },
