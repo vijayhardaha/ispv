@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, type FormEvent, type JSX } from 'react';
+import { useCallback, useState, type SubmitEvent, type JSX } from 'react';
 
 import { ChevronDown, ChevronRight, MapPin, Search, X } from 'lucide-react';
 
@@ -47,7 +47,7 @@ export function FilterBar({
   }
 
   const commitSearch = useCallback(
-    (e: FormEvent<HTMLFormElement>) => {
+    (e: SubmitEvent<HTMLFormElement>) => {
       e.preventDefault();
       setFilter('q', searchValue);
     },
