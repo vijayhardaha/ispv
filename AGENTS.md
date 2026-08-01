@@ -200,7 +200,7 @@ See `apps/admin/knowledge.md` for full details.
 
 ### Typography
 
-- Body: Space Grotesk (`--font-body`)
+- Body: Instrument Sans (`--font-body`)
 - Display/Headings: Poppins (`--font-display`)
 - Mono: JetBrains Mono (`--font-mono`)
 - All headings: `font-display`, `font-extrabold`, `tracking-tight`

@@ -66,7 +66,7 @@ The design echoes the rawness of protest footage: unpolished, direct, honest. Th
 
 Typography:
 
-- **Body:** Space Grotesk
+- **Body:** Instrument Sans
 - **Display/Headings:** Poppins (extrabold, tracking-tight)
 - **Mono:** JetBrains Mono
 
