@@ -28,7 +28,7 @@ function getPageNumbers(current: number, total: number, buildHref: (n: number) =
 
   const addPage = (n: number) => {
     const baseClass =
-      'inline-flex min-w-8 h-8 items-center justify-center border border-gray-300 px-2 text-xs font-semibold';
+      'inline-flex min-w-8 h-8 items-center justify-center rounded-md border border-gray-300 px-2 text-xs font-semibold';
     if (n === current) {
       items.push(
         <span key={n} className={cn(baseClass, 'border-purple-600 bg-purple-600 text-white')} aria-current="page">
@@ -157,7 +157,7 @@ export function Pagination({
   };
 
   const navBase =
-    'inline-flex min-w-8 h-8 items-center justify-center border border-gray-300 px-2 text-xs font-semibold';
+    'inline-flex min-w-8 h-8 items-center justify-center rounded-md border border-gray-300 px-2 text-xs font-semibold';
   const enabledClass = cn(navBase, 'bg-white text-gray-700 hover:bg-gray-100');
   const disabledClass = cn(navBase, 'bg-white text-gray-400');
 

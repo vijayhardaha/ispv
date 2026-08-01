@@ -52,7 +52,7 @@ export function Checkbox({
       />
       <span
         className={cn(
-          'grid h-5 w-5 shrink-0 place-items-center border border-gray-300 bg-white',
+          'grid h-5 w-5 shrink-0 place-items-center rounded-sm border border-gray-300 bg-white',
           'transition-colors peer-checked:border-purple-600 peer-checked:bg-purple-600',
           'peer-indeterminate:border-purple-600 peer-indeterminate:bg-purple-600',
           'peer-checked:[&_.cb-check]:opacity-100 peer-indeterminate:[&_.cb-minus]:opacity-100',

@@ -2,7 +2,7 @@ import type { ComponentPropsWithoutRef, JSX } from 'react';
 
 import { cn } from '@/lib/utils';
 
-const boxBase = 'rounded-none border border-gray-200 bg-white';
+const boxBase = 'rounded-lg border border-gray-200 bg-white';
 
 /**
  * Reusable card container with a subtle border and neutral background.

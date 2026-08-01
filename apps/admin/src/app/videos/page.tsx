@@ -99,7 +99,7 @@ function StatusTabs({ status, statusCounts }: { status: string; statusCounts: St
             href={buildHref(s.status)}
             aria-current={active ? 'page' : undefined}
             className={cn(
-              'border border-gray-300 px-3 py-1 text-xs font-semibold transition-colors',
+              'rounded-md border border-gray-300 px-3 py-1 text-xs font-semibold transition-colors',
               active
                 ? isTrashed
                   ? 'border-red-600 bg-red-600 text-white'
@@ -189,7 +189,7 @@ function VideosToolbar({
   }
 
   return (
-    <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border border-gray-200 bg-white px-4 py-3">
+    <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3">
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2">
           <Select
@@ -324,7 +324,7 @@ function StatusCell({
 }): JSX.Element {
   if (isTrashed) {
     return (
-      <span className="inline-block border border-black bg-gray-800 px-2 py-0.5 text-sm font-bold text-white uppercase">
+      <span className="inline-block rounded border border-black bg-gray-800 px-2 py-0.5 text-sm font-bold text-white uppercase">
         Trashed
       </span>
     );
@@ -596,7 +596,7 @@ function VideosTable({
   const colCount = isTrashed ? 11 : 10;
 
   return (
-    <div className="overflow-x-auto border border-gray-200 bg-white">
+    <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
       <table className="w-full text-left text-sm">
         <thead className="border-b border-gray-200 bg-gray-50">
           <tr>
@@ -709,7 +709,7 @@ function VideoRow({
           src={video.thumbnail_url ?? '/sample.svg'}
           alt=""
           loading="lazy"
-          className="h-10 w-10 border border-black object-cover"
+          className="h-10 w-10 rounded border border-black object-cover"
           onError={(e) => {
             const el = e.target as HTMLImageElement;
             if (!el.src.endsWith('/sample.svg')) {
