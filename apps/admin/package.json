@@ -31,6 +31,7 @@
     "next": "^16.2.12",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-hot-toast": "^2.6.0",
     "sharp": "^0.35.3",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.3.3",
@@ -45,6 +46,7 @@
     "@vijayhardaha/dev-config": "^2.2.0",
     "@vitest/coverage-v8": "^4.1.10",
     "postcss": "^8.5.25",
+    "postcss-load-config": "^6.0.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10"
   }
