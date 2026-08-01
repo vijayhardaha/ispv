@@ -73,9 +73,8 @@ export function useVideosPageState(): UseVideosPageStateReturn {
     search: loader.search,
     category: loader.category,
     location: loader.location,
-    setStatus: loader.setStatus,
-    setCategory: loader.setCategory,
-    setLocation: loader.setLocation,
+    statusCounts: loader.statusCounts,
+    applyFilters: loader.applyFilters,
     handleReset: loader.handleReset,
     loadData: loadWithClear,
 

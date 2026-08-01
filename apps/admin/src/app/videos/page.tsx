@@ -1,9 +1,12 @@
 'use client';
 
-import { Suspense, type ComponentPropsWithoutRef, type JSX } from 'react';
+import { Suspense, useState, type ComponentPropsWithoutRef, type JSX } from 'react';
 
-import { ChevronDown, ChevronUp, Plus, SquarePen, Trash2, Undo2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, Filter, Plus } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
 
+import type { StatusCount } from '@/app/videos/useVideosLoader';
 import { useVideosPageState } from '@/app/videos/useVideosPageState';
 import { Button } from '@/components/ui/Button';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
@@ -11,10 +14,10 @@ import { Pagination } from '@/components/ui/Pagination';
 import { SearchInput } from '@/components/ui/SearchInput';
 import { Select } from '@/components/ui/Select';
 import { VideoFormModal } from '@/components/VideoFormModal';
-import { CATEGORIES } from '@/constants/categories';
+import { CATEGORIES, type CategoryRecord } from '@/constants/categories';
 import { TAG_VARIANTS, type TagVariant } from '@/constants/colors';
 import { LOCATIONS } from '@/constants/locations';
-import { STATUSES, STATUS_LABELS, BULK_STATUS_OPTIONS } from '@/constants/status';
+import { STATUS_LABELS, BULK_STATUS_OPTIONS } from '@/constants/status';
 import type { VideoRecord } from '@/lib/db';
 import { cn, displayVideoUrl } from '@/lib/utils';
 
@@ -57,173 +60,240 @@ function VideosPageHeader({ isTrashed, onAdd }: { isTrashed: boolean; onAdd: () 
 }
 
 /**
- * Filter bar with search input, status/category/location selects, and reset button.
+ * Status tab links with per-status counts (e.g. "All (9) | Published (9)").
+ *
+ * Each tab is a plain link carrying the `status` URL param, so the page
+ * reloads data from the URL instead of using local state.
  *
  * @param {object} props - Component properties.
- * @param {string} props.status - Currently selected status filter value.
- * @param {(newStatus: string) => void} props.onStatusChange - Callback when status filter changes.
- * @param {string} props.category - Currently selected category filter value.
- * @param {(newCategory: string) => void} props.onCategoryChange - Callback when category filter changes.
- * @param {string} props.location - Currently selected location filter value.
- * @param {(newLocation: string) => void} props.onLocationChange - Callback when location filter changes.
- * @param {() => void} props.onReset - Callback to clear all filters.
+ * @param {string} props.status - Currently active status filter value.
+ * @param {StatusCount[]} props.statusCounts - Per-status counts for the tabs.
  *
- * @returns {JSX.Element} Rendered filter bar.
+ * @returns {JSX.Element} Rendered status tab links.
  */
-function VideosFilterBar({
-  status,
-  onStatusChange,
-  category,
-  onCategoryChange,
-  location,
-  onLocationChange,
-  onReset,
-}: {
-  status: string;
-  onStatusChange: (newStatus: string) => void;
-  category: string;
-  onCategoryChange: (newCategory: string) => void;
-  location: string;
-  onLocationChange: (newLocation: string) => void;
-  onReset: () => void;
-}): JSX.Element {
+function StatusTabs({ status, statusCounts }: { status: string; statusCounts: StatusCount[] }): JSX.Element {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const buildHref = (tabStatus: string): string => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (tabStatus) {
+      params.set('status', tabStatus);
+    } else {
+      params.delete('status');
+    }
+    params.delete('page');
+    const qs = params.toString();
+    return qs ? `${pathname}?${qs}` : pathname;
+  };
+
   return (
-    <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-      <div className="flex flex-row flex-wrap items-center gap-3">
-        <SearchInput placeholder="Search videos…" />
-        <Select
-          variant="filter"
-          value={status}
-          onChange={(e) => onStatusChange(e.target.value)}
-          aria-label="Status filter"
-          options={STATUSES.map((s) => ({ value: s, label: STATUS_LABELS[s] }))}
-        />
-        <Select
-          variant="filter"
-          value={category}
-          onChange={(e) => onCategoryChange(e.target.value)}
-          aria-label="Category filter"
-          placeholder="All categories"
-          options={CATEGORIES.map((c) => ({ value: c.slug, label: c.name }))}
-        />
-        <Select
-          variant="filter"
-          value={location}
-          onChange={(e) => onLocationChange(e.target.value)}
-          aria-label="Location filter"
-          placeholder="All locations"
-          options={LOCATIONS.map((l) => ({ value: l.slug, label: l.name }))}
-        />
-      </div>
-      <Button onClick={onReset} variant="danger-outline">
-        Reset
-      </Button>
-    </div>
+    <nav className="flex flex-wrap items-center gap-1" aria-label="Video status filters">
+      {statusCounts.map((s) => {
+        const active = (s.status === '' && status === '') || (s.status !== '' && status === s.status);
+        return (
+          <Link
+            key={s.status}
+            href={buildHref(s.status)}
+            aria-current={active ? 'page' : undefined}
+            className={cn(
+              'border border-gray-300 px-3 py-1 text-xs font-semibold transition-colors',
+              active ? 'border-purple-600 bg-purple-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'
+            )}
+          >
+            {STATUS_LABELS[s.status]} ({s.count})
+          </Link>
+        );
+      })}
+    </nav>
   );
 }
 
 /**
- * Bulk actions toolbar shown when one or more videos are selected.
+ * Toolbar row with bulk actions, filter dropdowns, and pagination on the right.
+ *
+ * Bulk action dropdown + Apply, then category/location selects + Filter/Reset
+ * buttons. The right side shows the results count and pagination.
  *
  * @param {object} props - Component properties.
  * @param {number} props.selectedCount - Number of currently selected videos.
  * @param {string} props.bulkAction - Currently selected bulk action value.
  * @param {boolean} props.bulkLoading - Whether a bulk operation is in progress.
  * @param {boolean} props.isTrashed - Whether the trashed filter is active.
+ * @param {string} props.category - Currently applied category filter value.
+ * @param {string} props.location - Currently applied location filter value.
+ * @param {number} props.page - Current active page.
+ * @param {number} props.totalPages - Total number of pages.
+ * @param {number} props.totalCount - Total item count across all pages.
+ * @param {number} props.perPage - Items per page.
  * @param {(action: string) => void} props.onBulkActionChange - Callback when bulk action selection changes.
  * @param {() => void} props.onApplyBulk - Callback to execute the selected bulk action.
  * @param {() => void} props.onClear - Callback to clear all selections.
+ * @param {(category: string, location: string) => void} props.onApplyFilters - Callback to apply filter dropdowns.
+ * @param {() => void} props.onReset - Callback to clear all filters.
  *
- * @returns {JSX.Element} Rendered bulk actions toolbar.
+ * @returns {JSX.Element} Rendered toolbar row.
  */
-function BulkActionsToolbar({
+function VideosToolbar({
   selectedCount,
   bulkAction,
   bulkLoading,
   isTrashed,
+  category,
+  location,
+  page,
+  totalPages,
+  totalCount,
+  perPage,
   onBulkActionChange,
   onApplyBulk,
   onClear,
+  onApplyFilters,
+  onReset,
 }: {
   selectedCount: number;
   bulkAction: string;
   bulkLoading: boolean;
   isTrashed: boolean;
+  category: string;
+  location: string;
+  page: number;
+  totalPages: number;
+  totalCount: number;
+  perPage: number;
   onBulkActionChange: (action: string) => void;
   onApplyBulk: () => void;
   onClear: () => void;
+  onApplyFilters: (category: string, location: string) => void;
+  onReset: () => void;
 }): JSX.Element {
+  const [draftCategory, setDraftCategory] = useState(category);
+  const [draftLocation, setDraftLocation] = useState(location);
+  const [prevCategory, setPrevCategory] = useState(category);
+  const [prevLocation, setPrevLocation] = useState(location);
+
+  // Re-sync staged filter values when the URL changes externally
+  // (reset, back/forward) without clobbering in-progress selections.
+  if (category !== prevCategory) {
+    setPrevCategory(category);
+    setDraftCategory(category);
+  }
+  if (location !== prevLocation) {
+    setPrevLocation(location);
+    setDraftLocation(location);
+  }
+
   return (
-    <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-2 border-black bg-yellow-100 px-4 py-3">
-      <span className="text-sm font-bold uppercase">{selectedCount} selected</span>
+    <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border border-gray-200 bg-white px-4 py-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-2">
+          {selectedCount > 0 && <span className="text-xs font-bold uppercase">{selectedCount} selected</span>}
+          <Select
+            variant="bulk"
+            value={bulkAction}
+            onChange={(e) => onBulkActionChange(e.target.value)}
+            disabled={bulkLoading}
+          >
+            <option value="">Bulk action…</option>
+            {isTrashed ? (
+              <>
+                <option value="restore">Restore</option>
+                <option value="delete">Permanently Delete</option>
+              </>
+            ) : (
+              <>
+                <option value="trash">Trash</option>
+                <optgroup label="Change status to…">
+                  {BULK_STATUS_OPTIONS.map((s) => (
+                    <option key={s} value={s}>
+                      {STATUS_LABELS[s]}
+                    </option>
+                  ))}
+                </optgroup>
+              </>
+            )}
+          </Select>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <Select
-          variant="bulk"
-          value={bulkAction}
-          onChange={(e) => onBulkActionChange(e.target.value)}
-          disabled={bulkLoading}
-        >
-          <option value="">Bulk action…</option>
-          {isTrashed ? (
-            <>
-              <option value="restore">Restore</option>
-              <option value="delete">Permanently Delete</option>
-            </>
-          ) : (
-            <>
-              <option value="trash">Trash</option>
-              <optgroup label="Change status to…">
-                {BULK_STATUS_OPTIONS.map((s) => (
-                  <option key={s} value={s}>
-                    {STATUS_LABELS[s]}
-                  </option>
-                ))}
-              </optgroup>
-            </>
+          <Button
+            size="sm"
+            variant={bulkAction === 'delete' || bulkAction === 'trash' ? 'danger' : 'primary'}
+            disabled={!bulkAction || bulkLoading}
+            loading={bulkLoading}
+            onClick={onApplyBulk}
+          >
+            Apply
+          </Button>
+
+          {selectedCount > 0 && (
+            <Button size="sm" variant="secondary" disabled={bulkLoading} onClick={onClear}>
+              Clear
+            </Button>
           )}
-        </Select>
+        </div>
 
-        <Button
-          size="sm"
-          variant={bulkAction === 'delete' || bulkAction === 'trash' ? 'danger' : 'primary'}
-          disabled={!bulkAction || bulkLoading}
-          loading={bulkLoading}
-          onClick={onApplyBulk}
-        >
-          Apply
-        </Button>
+        <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
 
-        <Button size="sm" variant="secondary" disabled={bulkLoading} onClick={onClear}>
-          Clear
-        </Button>
+        <div className="flex items-center gap-2">
+          <Select
+            variant="filter"
+            value={draftCategory}
+            onChange={(e) => setDraftCategory(e.target.value)}
+            aria-label="Category filter"
+            placeholder="All categories"
+            options={CATEGORIES.map((c) => ({ value: c.slug, label: c.name }))}
+          />
+          <Select
+            variant="filter"
+            value={draftLocation}
+            onChange={(e) => setDraftLocation(e.target.value)}
+            aria-label="Location filter"
+            placeholder="All locations"
+            options={LOCATIONS.map((l) => ({ value: l.slug, label: l.name }))}
+          />
+          <Button size="sm" onClick={() => onApplyFilters(draftCategory, draftLocation)}>
+            <Filter className="h-3.5 w-3.5" aria-hidden="true" />
+            Filter
+          </Button>
+          <Button size="sm" variant="secondary" onClick={onReset}>
+            Reset
+          </Button>
+        </div>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} totalCount={totalCount} perPage={perPage} />
     </div>
   );
 }
 
 /**
- * Category badge with colour chip.
+ * Category badge group rendering one colour chip per assigned category.
  *
  * @param {object} props - Component properties.
- * @param {string | null} props.category - Category value reference.
+ * @param {string[] | null} props.categories - Category slug list, or null.
  *
- * @returns {JSX.Element} Rendered category badge or en-dash fallback.
+ * @returns {JSX.Element} Rendered category badges or en-dash fallback.
  */
-function CategoryBadge({ category }: { category: string | null }): JSX.Element {
-  const cat = CATEGORIES.find((c) => c.slug === category);
-  if (!cat) {
+function CategoryBadge({ categories }: { categories: string[] | null }): JSX.Element {
+  const list = (categories ?? [])
+    .map((slug) => CATEGORIES.find((c) => c.slug === slug))
+    .filter((cat): cat is CategoryRecord => Boolean(cat));
+  if (list.length === 0) {
     return <span className="text-sm text-black/40">–</span>;
   }
   return (
-    <span
-      className={cn(
-        'inline-block border border-black px-2 py-0.5 text-xs font-bold uppercase',
-        TAG_VARIANTS[cat.color as TagVariant] ?? 'bg-gray-200 text-black'
-      )}
-    >
-      {cat.name}
-    </span>
+    <div className="flex max-w-48 flex-wrap gap-1">
+      {list.map((cat) => (
+        <span
+          key={cat.slug}
+          className={cn(
+            'inline-block border border-gray-200 px-2 py-0.5 text-xs font-semibold',
+            TAG_VARIANTS[cat.color as TagVariant] ?? 'bg-gray-200 text-black'
+          )}
+        >
+          {cat.name}
+        </span>
+      ))}
+    </div>
   );
 }
 
@@ -264,12 +334,12 @@ function StatusCell({
       disabled={changingStatus.has(video.id)}
       className={cn(
         video.status === 'published'
-          ? 'bg-green-500 text-white'
+          ? 'border-green-600 bg-green-600 text-white'
           : video.status === 'draft'
-            ? 'bg-gray-400'
+            ? 'border-gray-300 bg-gray-100 text-gray-800'
             : video.status === 'rejected'
-              ? 'bg-red-500 text-white'
-              : 'bg-yellow-400'
+              ? 'border-red-600 bg-red-600 text-white'
+              : 'border-purple-600 bg-purple-600 text-white'
       )}
       onChange={(e) => onChange(video.id, e.target.value)}
     >
@@ -283,7 +353,9 @@ function StatusCell({
 }
 
 /**
- * Action buttons for a video row — Edit/Trash in active view, Restore/Purge in trashed view.
+ * Row action links for a video — Edit/Trash in active view, Restore/Purge in trashed view.
+ *
+ * WordPress-style text links shown under the URL when the row is hovered.
  *
  * @param {object} props - Component properties.
  * @param {VideoRecord} props.video - The video record.
@@ -291,9 +363,9 @@ function StatusCell({
  * @param {(video: VideoRecord) => void} props.onEdit - Callback to open edit modal.
  * @param {(id: string, action: 'trash' | 'restore' | 'delete') => void} props.onAction - Callback for trash/restore/delete actions.
  *
- * @returns {JSX.Element} Rendered action buttons.
+ * @returns {JSX.Element} Rendered row action links.
  */
-function VideoActions({
+function VideoRowActions({
   video,
   isTrashed,
   onEdit,
@@ -306,29 +378,41 @@ function VideoActions({
 }): JSX.Element {
   if (isTrashed) {
     return (
-      <div className="flex gap-1">
-        <Button onClick={() => onAction(video.id, 'restore')} variant="secondary" size="xs">
-          <Undo2 className="h-3.5 w-3.5" aria-hidden="true" />
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => onAction(video.id, 'restore')}
+          className="text-xs font-semibold underline underline-offset-2 hover:text-purple-600"
+        >
           Restore
-        </Button>
-        <Button onClick={() => onAction(video.id, 'delete')} variant="danger-ghost" size="xs">
-          <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          onClick={() => onAction(video.id, 'delete')}
+          className="text-xs font-semibold text-red-600 underline underline-offset-2 hover:text-red-700"
+        >
           Purge
-        </Button>
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="flex gap-1">
-      <Button onClick={() => onEdit(video)} variant="secondary" size="xs">
-        <SquarePen className="h-3.5 w-3.5" aria-hidden="true" />
+    <div className="flex items-center gap-3">
+      <button
+        type="button"
+        onClick={() => onEdit(video)}
+        className="text-xs font-semibold underline underline-offset-2 hover:text-purple-600"
+      >
         Edit
-      </Button>
-      <Button onClick={() => onAction(video.id, 'trash')} variant="danger-ghost" size="xs">
-        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+      </button>
+      <button
+        type="button"
+        onClick={() => onAction(video.id, 'trash')}
+        className="text-xs font-bold text-red-500 underline underline-offset-2 hover:text-red-700"
+      >
         Trash
-      </Button>
+      </button>
     </div>
   );
 }
@@ -415,16 +499,13 @@ function SortableTh({
 
   return (
     <th
-      className="px-3 py-2 text-sm font-bold uppercase"
+      className="px-3 py-2 text-sm font-bold"
       aria-sort={active ? (dir === 'asc' ? 'ascending' : 'descending') : 'none'}
     >
       <button
         type="button"
         onClick={() => onSort(sortKey)}
-        className={cn(
-          'group inline-flex items-center gap-1 uppercase hover:text-yellow-500',
-          active && 'text-yellow-600'
-        )}
+        className={cn('group inline-flex items-center gap-1 hover:text-purple-600', active && 'text-purple-700')}
       >
         {label}
         <Icon
@@ -491,35 +572,33 @@ function VideosTable({
   onAction: (id: string, action: 'trash' | 'restore' | 'delete') => void;
   onInlineStatusChange: (id: string, newStatus: string) => void;
 }): JSX.Element {
-  const colCount = isTrashed ? 13 : 12;
+  const colCount = isTrashed ? 11 : 10;
 
   return (
-    <div className="overflow-x-auto border-2 border-black bg-white">
+    <div className="overflow-x-auto border border-gray-200 bg-white">
       <table className="w-full text-left text-sm">
-        <thead className="border-b-2 border-black bg-gray-100">
+        <thead className="border-b border-gray-200 bg-gray-50">
           <tr>
             <th className="w-10 px-3 py-2">
               <input
                 ref={selectAllRef}
                 type="checkbox"
-                className="h-4 w-4 cursor-pointer accent-yellow-500"
+                className="h-4 w-4 cursor-pointer accent-purple-600"
                 checked={allSelected}
                 onChange={(e) => onSelectAll(e.target.checked)}
                 aria-label="Select all videos"
               />
             </th>
-            <th className="w-16 px-3 py-2 text-sm font-bold uppercase">Thumb</th>
-            <th className="px-3 py-2 text-sm font-bold uppercase">URL</th>
+            <th className="w-16 px-3 py-2 text-sm font-bold">Thumb</th>
+            <th className="px-3 py-2 text-sm font-bold">URL</th>
             <SortableTh label="City" sortKey="city" sort={sort} dir={dir} onSort={onSort} />
             <SortableTh label="Location" sortKey="location" sort={sort} dir={dir} onSort={onSort} />
             <SortableTh label="Category" sortKey="category" sort={sort} dir={dir} onSort={onSort} />
-            <th className="px-3 py-2 text-sm font-bold uppercase">Tags</th>
+            <th className="px-3 py-2 text-sm font-bold">Tags</th>
             <SortableTh label="Status" sortKey="status" sort={sort} dir={dir} onSort={onSort} />
             <SortableTh label="Created" sortKey="created" sort={sort} dir={dir} onSort={onSort} />
-            <SortableTh label="Updated" sortKey="updated" sort={sort} dir={dir} onSort={onSort} />
             <SortableTh label="Posted" sortKey="posted" sort={sort} dir={dir} onSort={onSort} />
-            {isTrashed && <th className="w-32 px-3 py-2 text-sm font-bold uppercase">Trashed At</th>}
-            <th className="w-36 px-3 py-2 text-sm font-bold uppercase">Actions</th>
+            {isTrashed && <th className="w-32 px-3 py-2 text-sm font-bold">Trashed At</th>}
           </tr>
         </thead>
         <tbody>
@@ -589,15 +668,15 @@ function VideoRow({
   return (
     <tr
       className={cn(
-        'border-b border-black/10 hover:bg-yellow-50',
-        selected && 'bg-yellow-100',
-        isTrashed && 'opacity-80'
+        'group border-b border-gray-100 hover:bg-gray-100',
+        selected ? 'bg-purple-100' : 'odd:bg-white even:bg-gray-50/70',
+        isTrashed && 'opacity-70'
       )}
     >
       <Td>
         <input
           type="checkbox"
-          className="h-4 w-4 cursor-pointer accent-yellow-500"
+          className="h-4 w-4 cursor-pointer accent-purple-600"
           checked={selected}
           onChange={(e) => onSelectOne(video.id, e.target.checked)}
           aria-label={`Select video ${video.video_id ?? video.video_url}`}
@@ -618,22 +697,25 @@ function VideoRow({
           }}
         />
       </Td>
-      <Td className="max-w-50 truncate font-bold">
+      <Td className="max-w-50 font-semibold">
         <a
           href={displayVideoUrl(video)}
           target="_blank"
           rel="noopener noreferrer"
-          className="underline hover:text-yellow-500"
+          className="block truncate underline hover:text-purple-600"
         >
           {video.video_id ?? '\u2013'}
         </a>
+        <div className="flex items-center gap-3 opacity-0 group-focus-within:opacity-100 group-hover:opacity-100">
+          <VideoRowActions video={video} isTrashed={isTrashed} onEdit={onEdit} onAction={onAction} />
+        </div>
       </Td>
-      <Td>{video.city ?? '\u2013'}</Td>
+      <Td className="text-gray-800">{video.city ?? '\u2013'}</Td>
       <Td>{getLocationName(video.location)}</Td>
       <Td>
-        <CategoryBadge category={video.category} />
+        <CategoryBadge categories={video.categories} />
       </Td>
-      <Td className="max-w-40 truncate">{video.tags?.length ? video.tags.join(', ') : '\u2013'}</Td>
+      <Td className="max-w-40 truncate text-gray-600">{video.tags?.length ? video.tags.join(', ') : '\u2013'}</Td>
       <Td>
         <StatusCell
           video={video}
@@ -643,12 +725,8 @@ function VideoRow({
         />
       </Td>
       <Td>{formatDate(video.created_at)}</Td>
-      <Td>{formatDate(video.updated_at)}</Td>
       <Td>{formatDate(video.video_post_date)}</Td>
-      {isTrashed && <Td className="text-black/60">{formatDate(video.trashed_at)}</Td>}
-      <Td>
-        <VideoActions video={video} isTrashed={isTrashed} onEdit={onEdit} onAction={onAction} />
-      </Td>
+      {isTrashed && <Td className="text-gray-500">{formatDate(video.trashed_at)}</Td>}
     </tr>
   );
 }
@@ -680,6 +758,7 @@ function VideosPageContent(): JSX.Element {
     actionConfirmLabel,
     page,
     status,
+    statusCounts,
     category,
     location,
     sort,
@@ -691,9 +770,7 @@ function VideosPageContent(): JSX.Element {
     setActionConfirm,
     setSelectedIds,
     setBulkConfirm,
-    setStatus,
-    setCategory,
-    setLocation,
+    applyFilters,
     handleReset,
     handleSelectAll,
     handleSelectOne,
@@ -705,32 +782,31 @@ function VideosPageContent(): JSX.Element {
   } = useVideosPageState();
 
   return (
-    <section className="py-8" aria-labelledby="videos-heading">
+    <section aria-labelledby="videos-heading">
       <VideosPageHeader isTrashed={isTrashed} onAdd={() => setShowAdd(true)} />
 
-      <VideosFilterBar
-        status={status}
-        onStatusChange={setStatus}
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <StatusTabs status={status} statusCounts={statusCounts} />
+        <SearchInput placeholder="Search videos…" />
+      </div>
+
+      <VideosToolbar
+        selectedCount={selectedIds.size}
+        bulkAction={bulkAction}
+        bulkLoading={bulkLoading}
+        isTrashed={isTrashed}
         category={category}
-        onCategoryChange={setCategory}
         location={location}
-        onLocationChange={setLocation}
+        page={page}
+        totalPages={totalPages}
+        totalCount={totalCount}
+        perPage={perPage}
+        onBulkActionChange={(action) => setBulkAction(action)}
+        onApplyBulk={handleApplyBulk}
+        onClear={() => setSelectedIds(new Set())}
+        onApplyFilters={applyFilters}
         onReset={handleReset}
       />
-
-      <Pagination className="mb-4" page={page} totalPages={totalPages} totalCount={totalCount} perPage={perPage} />
-
-      {selectedIds.size > 0 && (
-        <BulkActionsToolbar
-          selectedCount={selectedIds.size}
-          bulkAction={bulkAction}
-          bulkLoading={bulkLoading}
-          isTrashed={isTrashed}
-          onBulkActionChange={(action) => setBulkAction(action)}
-          onApplyBulk={handleApplyBulk}
-          onClear={() => setSelectedIds(new Set())}
-        />
-      )}
 
       <VideosTable
         videos={videos}
