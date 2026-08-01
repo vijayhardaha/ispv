@@ -64,6 +64,7 @@ export function useVideosPageState(): UseVideosPageStateReturn {
     totalCount: loader.totalCount,
     isTrashed: loader.isTrashed,
     totalPages: loader.totalPages,
+    perPage: loader.perPage,
     page: loader.page,
     goToPage: loader.goToPage,
     status: loader.status,

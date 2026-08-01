@@ -561,6 +561,8 @@ function VideosPageContent(): JSX.Element {
     allSelected,
     isTrashed,
     totalPages,
+    perPage,
+    totalCount,
     actionConfirmLabel,
     page,
     goToPage,
@@ -585,6 +587,15 @@ function VideosPageContent(): JSX.Element {
   return (
     <section className="py-8" aria-labelledby="videos-heading">
       <VideosPageHeader isTrashed={isTrashed} onAdd={() => setShowAdd(true)} />
+
+      <Pagination
+        className="mb-4"
+        page={page}
+        totalPages={totalPages}
+        onPageChange={goToPage}
+        totalCount={totalCount}
+        perPage={perPage}
+      />
 
       <VideosFilterBar status={status} onStatusChange={setStatus} onReset={handleReset} />
 
@@ -614,7 +625,14 @@ function VideosPageContent(): JSX.Element {
         onInlineStatusChange={handleInlineStatusChange}
       />
 
-      <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} />
+      <Pagination
+        className="mt-4"
+        page={page}
+        totalPages={totalPages}
+        onPageChange={goToPage}
+        totalCount={totalCount}
+        perPage={perPage}
+      />
 
       {actionConfirm && (
         <DeleteConfirmDialog

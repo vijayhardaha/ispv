@@ -19,6 +19,7 @@ const PER_PAGE = 15;
  * @property {number} totalCount - Total video count across all pages.
  * @property {boolean} isTrashed - Whether the trashed filter is active.
  * @property {number} totalPages - Total number of pages.
+ * @property {number} perPage - Number of videos displayed per page.
  * @property {number} page - Current page number.
  * @property {(page: number) => void} goToPage - Navigate to a specific page.
  * @property {string} status - Current status filter value.
@@ -32,6 +33,7 @@ export interface UseVideosLoaderReturn {
   totalCount: number;
   isTrashed: boolean;
   totalPages: number;
+  perPage: number;
   page: number;
   goToPage: (page: number) => void;
   status: string;
@@ -98,6 +100,7 @@ export function useVideosLoader(): UseVideosLoaderReturn {
     totalCount,
     isTrashed,
     totalPages,
+    perPage: PER_PAGE,
     page,
     goToPage,
     status,
