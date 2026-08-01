@@ -9,7 +9,7 @@ import type { CategoryRecord } from '@/constants/categories';
 import type { LocationRecord } from '@/constants/locations';
 import { videoFormSchema } from '@/lib/db';
 import type { VideoRecord } from '@/lib/db';
-import { extractIgId, reconstructIgUrl, detectSource } from '@/lib/utils';
+import { capitalizeCity, extractIgId, reconstructIgUrl, detectSource } from '@/lib/utils';
 
 /**
  * Properties for the VideoFormModal component.
@@ -67,7 +67,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
     video_src: detectSource(videoUrl),
     category: category || null,
     location: location || null,
-    city: city || null,
+    city: city ? capitalizeCity(city) : null,
     tags: tagsArr,
     description: description || null,
     status,
@@ -83,7 +83,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
   const buildUpdateBody = (tagsArr: string[]): Record<string, unknown> => ({
     category: category || null,
     location: location || null,
-    city: city || null,
+    city: city ? capitalizeCity(city) : null,
     tags: tagsArr,
     description: description || null,
     status,

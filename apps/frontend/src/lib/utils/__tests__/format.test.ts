@@ -5,7 +5,7 @@
 
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 
-import { formatNumber, timeAgo } from '@/lib/utils';
+import { capitalizeCity, formatNumber, timeAgo } from '@/lib/utils';
 
 describe('formatNumber', () => {
   it('formats numbers under 1000 as plain strings', () => {
@@ -40,6 +40,32 @@ describe('formatNumber', () => {
   it('handles large numbers with decimal portions', () => {
     expect(formatNumber(1_234_567)).toBe('1.2M');
     expect(formatNumber(9_999_999)).toBe('10M');
+  });
+});
+
+describe('capitalizeCity', () => {
+  it('trims surrounding whitespace and title-cases a single word', () => {
+    expect(capitalizeCity('  mumbai  ')).toBe('Mumbai');
+  });
+
+  it('title-cases multi-word city names', () => {
+    expect(capitalizeCity('new delhi')).toBe('New Delhi');
+  });
+
+  it('normalizes already-mixed casing', () => {
+    expect(capitalizeCity('NeW DeLhI')).toBe('New Delhi');
+  });
+
+  it('collapses internal whitespace runs', () => {
+    expect(capitalizeCity('mumbai   city')).toBe('Mumbai City');
+  });
+
+  it('returns empty string for whitespace-only input', () => {
+    expect(capitalizeCity('   ')).toBe('');
+  });
+
+  it('returns empty string for empty input', () => {
+    expect(capitalizeCity('')).toBe('');
   });
 });
 

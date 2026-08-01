@@ -1,14 +1,35 @@
 import { z } from 'zod/v4';
 
+import { capitalizeCity } from '@/lib/utils';
+
+/**
+ * Trims surrounding whitespace from each tag and drops empty entries.
+ *
+ * @param {string[] | null | undefined} tags - Raw tag list.
+ *
+ * @returns {string[] | null | undefined} Cleaned tag list, or the original value when nullish.
+ */
+function normalizeTags(tags: string[] | null | undefined): string[] | null | undefined {
+  if (!tags) {
+    return tags;
+  }
+  return tags.map((t) => t.trim()).filter(Boolean);
+}
+
 /**
  * Zod schema validating the public video submission request body.
+ * City is trimmed and title-cased; tags are trimmed of surrounding whitespace.
  */
 export const submitVideoBodySchema = z.object({
   video_url: z.string().min(1, 'video_url is required'),
-  tags: z.array(z.string()).nullable().optional(),
+  tags: z.array(z.string()).nullable().optional().transform(normalizeTags),
   category: z.string().nullable().optional(),
   location: z.string().nullable().optional(),
-  city: z.string().nullable().optional(),
+  city: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((v) => (v ? capitalizeCity(v) : v)),
 });
 
 /**
@@ -68,6 +89,7 @@ export interface VideoRecord {
 
 /**
  * Zod schema validating the admin video create/edit form submission.
+ * City is trimmed and title-cased; tags are trimmed of surrounding whitespace.
  */
 export const videoFormSchema = z.object({
   video_url: z.string().optional(),
@@ -75,8 +97,12 @@ export const videoFormSchema = z.object({
   video_src: z.string().optional(),
   category: z.string().nullable().optional(),
   location: z.string().nullable().optional(),
-  city: z.string().nullable().optional(),
-  tags: z.array(z.string()).optional(),
+  city: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((v) => (v ? capitalizeCity(v) : v)),
+  tags: z.array(z.string()).optional().transform(normalizeTags),
   description: z.string().nullable().optional(),
   status: z.enum(['draft', 'pending_review', 'published', 'rejected']).optional(),
 });

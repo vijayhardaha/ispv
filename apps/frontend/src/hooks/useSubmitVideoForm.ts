@@ -6,7 +6,7 @@ import { z } from 'zod/v4';
 
 import type { DbLocation } from '@/lib/db';
 import { checkVideoExists, getLocations } from '@/lib/db';
-import { extractInstagramId } from '@/lib/utils';
+import { capitalizeCity, extractInstagramId } from '@/lib/utils';
 
 /** Maximum number of tags allowed. */
 const MAX_TAGS = 15;
@@ -262,7 +262,7 @@ export function useSubmitVideoForm({
     const response = await fetch(`${adminUrl}/api/public/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url, location, city, tags: cleanTags }),
+      body: JSON.stringify({ url, location, city: capitalizeCity(city), tags: cleanTags }),
     });
 
     if (!response.ok) {

@@ -117,6 +117,24 @@ describe('POST /api/public/submit', () => {
     expect(res.status).toBe(200);
   });
 
+  it('trims tags and title-cases the city before calling the RPC', async () => {
+    mockRpc.mockResolvedValue({ data: { ok: true }, error: null });
+
+    const res = await POST(
+      makeRequest({
+        video_url: 'https://www.instagram.com/reel/GHI789def/',
+        hashtags: ' protest , Delhi ,students ',
+        city: '  new delhi  ',
+      })
+    );
+    expect(res.status).toBe(200);
+
+    expect(mockRpc).toHaveBeenCalledWith(
+      'submit_video',
+      expect.objectContaining({ p_tags: 'protest,delhi,students', p_city: 'New Delhi' })
+    );
+  });
+
   it('accepts standard post URL format', async () => {
     mockRpc.mockResolvedValue({ data: { ok: true }, error: null });
 
