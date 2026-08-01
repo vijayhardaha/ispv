@@ -3,21 +3,33 @@ import { describe, expect, it } from 'vitest';
 import { CATEGORIES } from '../categories';
 import { COLORS, TAG_VARIANTS } from '../colors';
 import { LOCATIONS } from '../locations';
-import { type NavLink, HEADER_NAV_LINKS } from '../navlinks';
+import { type NavLink, SIDEBAR_NAV_LINKS } from '../navlinks';
 import { SITE_CONFIG, SITE_METADATA } from '../seo';
 
 describe('TagVariant & COLORS', () => {
-  it('defines all 6 tag variant colors with their Tailwind classes', () => {
+  it('defines all 18 tag variant colors with their Tailwind classes', () => {
+    expect(TAG_VARIANTS.amber).toBe('bg-amber-500 text-black');
     expect(TAG_VARIANTS.blue).toBe('bg-blue-600 text-white');
-    expect(TAG_VARIANTS.yellow).toBe('bg-yellow-400 text-black');
-    expect(TAG_VARIANTS.red).toBe('bg-red-500 text-white');
+    expect(TAG_VARIANTS.cyan).toBe('bg-cyan-700 text-white');
+    expect(TAG_VARIANTS.emerald).toBe('bg-emerald-600 text-white');
+    expect(TAG_VARIANTS.fuchsia).toBe('bg-fuchsia-600 text-white');
     expect(TAG_VARIANTS.green).toBe('bg-green-600 text-white');
-    expect(TAG_VARIANTS.black).toBe('bg-black text-white');
-    expect(TAG_VARIANTS.white).toBe('bg-white text-black');
+    expect(TAG_VARIANTS.indigo).toBe('bg-indigo-600 text-white');
+    expect(TAG_VARIANTS.lime).toBe('bg-lime-500 text-black');
+    expect(TAG_VARIANTS.orange).toBe('bg-orange-500 text-black');
+    expect(TAG_VARIANTS.pink).toBe('bg-pink-600 text-white');
+    expect(TAG_VARIANTS.purple).toBe('bg-purple-600 text-white');
+    expect(TAG_VARIANTS.red).toBe('bg-red-500 text-white');
+    expect(TAG_VARIANTS.rose).toBe('bg-rose-600 text-white');
+    expect(TAG_VARIANTS.sky).toBe('bg-sky-700 text-white');
+    expect(TAG_VARIANTS.teal).toBe('bg-teal-600 text-white');
+    expect(TAG_VARIANTS.violet).toBe('bg-violet-600 text-white');
+    expect(TAG_VARIANTS.yellow).toBe('bg-yellow-400 text-black');
+    expect(TAG_VARIANTS.slate).toBe('bg-slate-600 text-white');
   });
 
   it('derives COLORS from TAG_VARIANTS keys with no duplicates', () => {
-    expect(COLORS).toHaveLength(7);
+    expect(COLORS).toHaveLength(18);
     expect(new Set(COLORS).size).toBe(COLORS.length);
   });
 
@@ -32,13 +44,13 @@ describe('TagVariant & COLORS', () => {
   });
 });
 
-describe('NavLink & HEADER_NAV_LINKS', () => {
-  it('defines exactly 2 header navigation links', () => {
-    expect(HEADER_NAV_LINKS).toHaveLength(2);
+describe('NavLink & SIDEBAR_NAV_LINKS', () => {
+  it('defines exactly 2 sidebar navigation links', () => {
+    expect(SIDEBAR_NAV_LINKS).toHaveLength(2);
   });
 
   it('each nav link has the correct NavLink shape', () => {
-    for (const link of HEADER_NAV_LINKS) {
+    for (const link of SIDEBAR_NAV_LINKS) {
       expect(link).toHaveProperty('label');
       expect(link).toHaveProperty('href');
       expect(typeof link.label).toBe('string');
@@ -47,22 +59,22 @@ describe('NavLink & HEADER_NAV_LINKS', () => {
   });
 
   it('first link points to Dashboard', () => {
-    expect(HEADER_NAV_LINKS[0]).toEqual<NavLink>({ label: 'Dashboard', href: '/' });
+    expect(SIDEBAR_NAV_LINKS[0]).toEqual<NavLink>({ label: 'Dashboard', href: '/' });
   });
 
   it('second link points to Videos', () => {
-    expect(HEADER_NAV_LINKS[1]).toEqual<NavLink>({ label: 'Videos', href: '/videos' });
+    expect(SIDEBAR_NAV_LINKS[1]).toEqual<NavLink>({ label: 'Videos', href: '/videos' });
   });
 
   it('all hrefs start with /', () => {
-    for (const link of HEADER_NAV_LINKS) {
+    for (const link of SIDEBAR_NAV_LINKS) {
       expect(link.href).toMatch(/^\//);
     }
   });
 
   it('no duplicate labels or hrefs', () => {
-    const labels = HEADER_NAV_LINKS.map((l) => l.label);
-    const hrefs = HEADER_NAV_LINKS.map((l) => l.href);
+    const labels = SIDEBAR_NAV_LINKS.map((l) => l.label);
+    const hrefs = SIDEBAR_NAV_LINKS.map((l) => l.href);
     expect(new Set(labels).size).toBe(labels.length);
     expect(new Set(hrefs).size).toBe(hrefs.length);
   });
