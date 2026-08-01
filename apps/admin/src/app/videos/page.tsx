@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState, type ComponentPropsWithoutRef, type JSX } from 'react';
+import { Suspense, useState, type ComponentPropsWithoutRef, type JSX, type ReactNode } from 'react';
 
 import { ChevronDown, ChevronUp, Filter, Plus } from 'lucide-react';
 import Link from 'next/link';
@@ -9,6 +9,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import type { StatusCount } from '@/app/videos/useVideosLoader';
 import { useVideosPageState } from '@/app/videos/useVideosPageState';
 import { Button } from '@/components/ui/Button';
+import { Checkbox } from '@/components/ui/Checkbox';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { Pagination } from '@/components/ui/Pagination';
 import { SearchInput } from '@/components/ui/SearchInput';
@@ -91,6 +92,7 @@ function StatusTabs({ status, statusCounts }: { status: string; statusCounts: St
     <nav className="flex flex-wrap items-center gap-1" aria-label="Video status filters">
       {statusCounts.map((s) => {
         const active = (s.status === '' && status === '') || (s.status !== '' && status === s.status);
+        const isTrashed = s.status === 'trashed';
         return (
           <Link
             key={s.status}
@@ -98,7 +100,13 @@ function StatusTabs({ status, statusCounts }: { status: string; statusCounts: St
             aria-current={active ? 'page' : undefined}
             className={cn(
               'border border-gray-300 px-3 py-1 text-xs font-semibold transition-colors',
-              active ? 'border-purple-600 bg-purple-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'
+              active
+                ? isTrashed
+                  ? 'border-red-600 bg-red-600 text-white'
+                  : 'border-purple-600 bg-purple-600 text-white'
+                : isTrashed
+                  ? 'bg-white text-red-600 hover:bg-red-50'
+                  : 'bg-white text-gray-700 hover:bg-gray-100'
             )}
           >
             {STATUS_LABELS[s.status]} ({s.count})
@@ -116,8 +124,8 @@ function StatusTabs({ status, statusCounts }: { status: string; statusCounts: St
  * buttons. The right side shows the results count and pagination.
  *
  * @param {object} props - Component properties.
- * @param {number} props.selectedCount - Number of currently selected videos.
  * @param {string} props.bulkAction - Currently selected bulk action value.
+ * @param {boolean} props.hasSelection - Whether any row is checked.
  * @param {boolean} props.bulkLoading - Whether a bulk operation is in progress.
  * @param {boolean} props.isTrashed - Whether the trashed filter is active.
  * @param {string} props.category - Currently applied category filter value.
@@ -128,15 +136,14 @@ function StatusTabs({ status, statusCounts }: { status: string; statusCounts: St
  * @param {number} props.perPage - Items per page.
  * @param {(action: string) => void} props.onBulkActionChange - Callback when bulk action selection changes.
  * @param {() => void} props.onApplyBulk - Callback to execute the selected bulk action.
- * @param {() => void} props.onClear - Callback to clear all selections.
  * @param {(category: string, location: string) => void} props.onApplyFilters - Callback to apply filter dropdowns.
  * @param {() => void} props.onReset - Callback to clear all filters.
  *
  * @returns {JSX.Element} Rendered toolbar row.
  */
 function VideosToolbar({
-  selectedCount,
   bulkAction,
+  hasSelection,
   bulkLoading,
   isTrashed,
   category,
@@ -147,12 +154,11 @@ function VideosToolbar({
   perPage,
   onBulkActionChange,
   onApplyBulk,
-  onClear,
   onApplyFilters,
   onReset,
 }: {
-  selectedCount: number;
   bulkAction: string;
+  hasSelection: boolean;
   bulkLoading: boolean;
   isTrashed: boolean;
   category: string;
@@ -163,7 +169,6 @@ function VideosToolbar({
   perPage: number;
   onBulkActionChange: (action: string) => void;
   onApplyBulk: () => void;
-  onClear: () => void;
   onApplyFilters: (category: string, location: string) => void;
   onReset: () => void;
 }): JSX.Element {
@@ -187,9 +192,10 @@ function VideosToolbar({
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border border-gray-200 bg-white px-4 py-3">
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2">
-          {selectedCount > 0 && <span className="text-xs font-bold uppercase">{selectedCount} selected</span>}
           <Select
             variant="bulk"
+            name="bulk_action"
+            id="bulk_action"
             value={bulkAction}
             onChange={(e) => onBulkActionChange(e.target.value)}
             disabled={bulkLoading}
@@ -202,7 +208,7 @@ function VideosToolbar({
               </>
             ) : (
               <>
-                <option value="trash">Trash</option>
+                <option value="trash">Move to trash</option>
                 <optgroup label="Change status to…">
                   {BULK_STATUS_OPTIONS.map((s) => (
                     <option key={s} value={s}>
@@ -215,20 +221,13 @@ function VideosToolbar({
           </Select>
 
           <Button
-            size="sm"
             variant={bulkAction === 'delete' || bulkAction === 'trash' ? 'danger' : 'primary'}
-            disabled={!bulkAction || bulkLoading}
+            disabled={!bulkAction || !hasSelection || bulkLoading}
             loading={bulkLoading}
             onClick={onApplyBulk}
           >
             Apply
           </Button>
-
-          {selectedCount > 0 && (
-            <Button size="sm" variant="secondary" disabled={bulkLoading} onClick={onClear}>
-              Clear
-            </Button>
-          )}
         </div>
 
         <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
@@ -236,6 +235,8 @@ function VideosToolbar({
         <div className="flex items-center gap-2">
           <Select
             variant="filter"
+            name="category"
+            id="category-filter"
             value={draftCategory}
             onChange={(e) => setDraftCategory(e.target.value)}
             aria-label="Category filter"
@@ -244,17 +245,19 @@ function VideosToolbar({
           />
           <Select
             variant="filter"
+            name="location"
+            id="location-filter"
             value={draftLocation}
             onChange={(e) => setDraftLocation(e.target.value)}
             aria-label="Location filter"
             placeholder="All locations"
             options={LOCATIONS.map((l) => ({ value: l.slug, label: l.name }))}
           />
-          <Button size="sm" onClick={() => onApplyFilters(draftCategory, draftLocation)}>
+          <Button onClick={() => onApplyFilters(draftCategory, draftLocation)}>
             <Filter className="h-3.5 w-3.5" aria-hidden="true" />
             Filter
           </Button>
-          <Button size="sm" variant="secondary" onClick={onReset}>
+          <Button variant="secondary" onClick={onReset}>
             Reset
           </Button>
         </div>
@@ -286,7 +289,7 @@ function CategoryBadge({ categories }: { categories: string[] | null }): JSX.Ele
         <span
           key={cat.slug}
           className={cn(
-            'inline-block border border-gray-200 px-2 py-0.5 text-xs font-semibold',
+            'inline-block px-2 py-0.5 text-xs font-semibold',
             TAG_VARIANTS[cat.color as TagVariant] ?? 'bg-gray-200 text-black'
           )}
         >
@@ -330,6 +333,9 @@ function StatusCell({
   return (
     <Select
       variant="inline"
+      size="sm"
+      name="status"
+      id={`status-${video.id}`}
       value={video.status}
       disabled={changingStatus.has(video.id)}
       className={cn(
@@ -349,6 +355,41 @@ function StatusCell({
         </option>
       ))}
     </Select>
+  );
+}
+
+/**
+ * Compact text-style action button for table row actions.
+ *
+ * Renders a link-styled button with a WordPress-style text-link look: no
+ * decoration by default, underline only on hover. The `danger` flag switches
+ * the text to red for destructive actions.
+ *
+ * @param {object} props - Component properties.
+ * @param {import('react').ReactNode} props.children - Button label.
+ * @param {() => void} props.onClick - Click handler.
+ * @param {boolean} [props.danger] - Use red text styling for destructive actions.
+ *
+ * @returns {JSX.Element} Rendered row action button.
+ */
+function RowActionButton({
+  children,
+  onClick,
+  danger = false,
+}: {
+  children: ReactNode;
+  onClick: () => void;
+  danger?: boolean;
+}): JSX.Element {
+  return (
+    <Button
+      type="button"
+      variant="link"
+      onClick={onClick}
+      className={cn('text-xs font-semibold', danger ? 'text-red-600 hover:text-red-700' : 'hover:text-purple-600')}
+    >
+      {children}
+    </Button>
   );
 }
 
@@ -378,42 +419,22 @@ function VideoRowActions({
 }): JSX.Element {
   if (isTrashed) {
     return (
-      <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={() => onAction(video.id, 'restore')}
-          className="text-xs font-semibold underline underline-offset-2 hover:text-purple-600"
-        >
-          Restore
-        </button>
-        <button
-          type="button"
-          onClick={() => onAction(video.id, 'delete')}
-          className="text-xs font-semibold text-red-600 underline underline-offset-2 hover:text-red-700"
-        >
+      <>
+        <RowActionButton onClick={() => onAction(video.id, 'restore')}>Restore</RowActionButton>
+        <RowActionButton danger onClick={() => onAction(video.id, 'delete')}>
           Purge
-        </button>
-      </div>
+        </RowActionButton>
+      </>
     );
   }
 
   return (
-    <div className="flex items-center gap-3">
-      <button
-        type="button"
-        onClick={() => onEdit(video)}
-        className="text-xs font-semibold underline underline-offset-2 hover:text-purple-600"
-      >
-        Edit
-      </button>
-      <button
-        type="button"
-        onClick={() => onAction(video.id, 'trash')}
-        className="text-xs font-bold text-red-500 underline underline-offset-2 hover:text-red-700"
-      >
+    <>
+      <RowActionButton onClick={() => onEdit(video)}>Edit</RowActionButton>
+      <RowActionButton danger onClick={() => onAction(video.id, 'trash')}>
         Trash
-      </button>
-    </div>
+      </RowActionButton>
+    </>
   );
 }
 
@@ -580,10 +601,10 @@ function VideosTable({
         <thead className="border-b border-gray-200 bg-gray-50">
           <tr>
             <th className="w-10 px-3 py-2">
-              <input
+              <Checkbox
                 ref={selectAllRef}
-                type="checkbox"
-                className="h-4 w-4 cursor-pointer accent-purple-600"
+                name="select_all"
+                id="select_all"
                 checked={allSelected}
                 onChange={(e) => onSelectAll(e.target.checked)}
                 aria-label="Select all videos"
@@ -674,9 +695,9 @@ function VideoRow({
       )}
     >
       <Td>
-        <input
-          type="checkbox"
-          className="h-4 w-4 cursor-pointer accent-purple-600"
+        <Checkbox
+          name="select_video"
+          id={`select-${video.id}`}
           checked={selected}
           onChange={(e) => onSelectOne(video.id, e.target.checked)}
           aria-label={`Select video ${video.video_id ?? video.video_url}`}
@@ -706,7 +727,7 @@ function VideoRow({
         >
           {video.video_id ?? '\u2013'}
         </a>
-        <div className="flex items-center gap-3 opacity-0 group-focus-within:opacity-100 group-hover:opacity-100">
+        <div className="mt-1 flex items-center gap-2 opacity-0 group-focus-within:opacity-100 group-hover:opacity-100">
           <VideoRowActions video={video} isTrashed={isTrashed} onEdit={onEdit} onAction={onAction} />
         </div>
       </Td>
@@ -768,7 +789,6 @@ function VideosPageContent(): JSX.Element {
     setShowAdd,
     setBulkAction,
     setActionConfirm,
-    setSelectedIds,
     setBulkConfirm,
     applyFilters,
     handleReset,
@@ -791,8 +811,8 @@ function VideosPageContent(): JSX.Element {
       </div>
 
       <VideosToolbar
-        selectedCount={selectedIds.size}
         bulkAction={bulkAction}
+        hasSelection={selectedIds.size > 0}
         bulkLoading={bulkLoading}
         isTrashed={isTrashed}
         category={category}
@@ -803,7 +823,6 @@ function VideosPageContent(): JSX.Element {
         perPage={perPage}
         onBulkActionChange={(action) => setBulkAction(action)}
         onApplyBulk={handleApplyBulk}
-        onClear={() => setSelectedIds(new Set())}
         onApplyFilters={applyFilters}
         onReset={handleReset}
       />
@@ -838,7 +857,7 @@ function VideosPageContent(): JSX.Element {
 
       {bulkConfirm && (
         <DeleteConfirmDialog
-          label={bulkConfirm.action === 'delete' ? 'Permanently Delete' : bulkConfirm.action === 'trash' ? 'Trash' : ''}
+          label="Video"
           action={bulkConfirm.action as 'trash' | 'delete'}
           onCancel={() => setBulkConfirm(null)}
           onConfirm={handleConfirmBulk}
