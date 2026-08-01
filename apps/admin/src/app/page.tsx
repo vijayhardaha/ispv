@@ -161,9 +161,11 @@ export default async function DashboardPage(): Promise<JSX.Element> {
 
   return (
     <section aria-labelledby="dashboard-heading">
-      <h1 id="dashboard-heading" className="mb-8 text-3xl font-extrabold uppercase">
-        Dashboard
-      </h1>
+      <header className="mb-6 flex items-center justify-between">
+        <h1 id="dashboard-heading" className="text-3xl font-extrabold uppercase">
+          Dashboard
+        </h1>
+      </header>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {statusStats.map((s) => (
@@ -184,7 +186,7 @@ export default async function DashboardPage(): Promise<JSX.Element> {
             <div className="mb-2 flex items-center justify-between">
               <span
                 className={cn(
-                  'inline-block border border-gray-200 px-2 py-0.5 text-xs font-semibold',
+                  'inline-block px-2 py-0.5 text-xs font-semibold',
                   TAG_VARIANTS[cat.color as TagVariant] ?? 'bg-gray-200 text-black'
                 )}
               >
