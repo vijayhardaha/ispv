@@ -2,19 +2,22 @@
 
 import type { JSX } from 'react';
 
-import { Button } from '@/components/ui/Button';
+import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
+
 import { cn } from '@/lib/utils';
 
 /**
- * Renders a range of page numbers with an ellipsis gap.
+ * Renders a range of page number links with an ellipsis gap.
+ * The current page is rendered as a static marker, all others as links.
  *
  * @param {number} current - Current page.
  * @param {number} total - Total pages.
- * @param {(n: number) => void} onChange - Page change callback.
+ * @param {(n: number) => string} buildHref - Builds the href for a given page number.
  *
- * @returns {JSX.Element[]} Page number button elements.
+ * @returns {JSX.Element[]} Page number link elements.
  */
-function getPageNumbers(current: number, total: number, onChange: (n: number) => void): JSX.Element[] {
+function getPageNumbers(current: number, total: number, buildHref: (n: number) => string): JSX.Element[] {
   const items: JSX.Element[] = [];
   const siblingCount = 1;
   const range = siblingCount + 3; // pages shown around current + first/last buffer
@@ -23,16 +26,19 @@ function getPageNumbers(current: number, total: number, onChange: (n: number) =>
   const showRightEllipsis = current < total - range + 1;
 
   const addPage = (n: number) => {
+    const baseClass = 'min-w-[32px] border-2 border-black px-3 py-1 text-center text-xs font-bold uppercase';
+    if (n === current) {
+      items.push(
+        <span key={n} className={cn(baseClass, 'bg-yellow-400 text-black')} aria-current="page">
+          {n}
+        </span>
+      );
+      return;
+    }
     items.push(
-      <Button
-        key={n}
-        size="sm"
-        variant={n === current ? 'primary' : 'secondary'}
-        onClick={() => onChange(n)}
-        className="min-w-[32px]"
-      >
+      <Link key={n} href={buildHref(n)} className={cn(baseClass, 'bg-white text-black hover:bg-gray-100')}>
         {n}
-      </Button>
+      </Link>
     );
   };
 
@@ -101,12 +107,13 @@ function clampPage(page: number, totalPages: number): number {
 /**
  * Numbered pagination component with ellipsis for large page ranges.
  *
- * Optionally renders a "Showing X-Y from Z" results count when totalCount and perPage are provided.
+ * Renders plain links (no onClick handlers) that carry the `page` URL param,
+ * preserving all other search params. Optionally renders a
+ * "Showing X-Y from Z" results count when totalCount and perPage are provided.
  *
  * @param {object} props - Component properties.
  * @param {number} props.page - Current active page.
  * @param {number} props.totalPages - Total number of pages.
- * @param {(n: number) => void} props.onPageChange - Callback when a page is selected.
  * @param {number} [props.totalCount] - Total items across all pages, enables results label.
  * @param {number} [props.perPage] - Items per page, used to compute results label.
  * @param {string} [props.className] - Additional CSS classes to extend.
@@ -116,18 +123,19 @@ function clampPage(page: number, totalPages: number): number {
 export function Pagination({
   page,
   totalPages,
-  onPageChange,
   totalCount,
   perPage,
   className,
 }: {
   page: number;
   totalPages: number;
-  onPageChange: (n: number) => void;
   totalCount?: number;
   perPage?: number;
   className?: string;
 }): JSX.Element | null {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const hasPager = totalPages > 1;
   const hasLabel = totalCount !== undefined && perPage !== undefined;
 
@@ -135,19 +143,46 @@ export function Pagination({
     return null;
   }
 
+  const buildHref = (n: number): string => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (n <= 1) {
+      params.delete('page');
+    } else {
+      params.set('page', String(n));
+    }
+    const qs = params.toString();
+    return qs ? `${pathname}?${qs}` : pathname;
+  };
+
+  const navBase = 'border-2 border-black px-3 py-1 text-xs font-bold uppercase';
+  const enabledClass = cn(navBase, 'bg-white text-black hover:bg-gray-100');
+  const disabledClass = cn(navBase, 'bg-white text-black/40');
+
   return (
     <nav className={cn('flex items-center justify-center gap-1', className)} aria-label="Pagination">
       {hasPager && (
         <div className="flex items-center gap-1">
-          <Button disabled={page <= 1} onClick={() => onPageChange(page - 1)} variant="secondary" size="sm">
-            Prev
-          </Button>
+          {page <= 1 ? (
+            <span className={disabledClass} aria-disabled="true">
+              Prev
+            </span>
+          ) : (
+            <Link href={buildHref(page - 1)} className={enabledClass}>
+              Prev
+            </Link>
+          )}
 
-          {getPageNumbers(page, totalPages, onPageChange)}
+          {getPageNumbers(page, totalPages, buildHref)}
 
-          <Button disabled={page >= totalPages} onClick={() => onPageChange(page + 1)} variant="secondary" size="sm">
-            Next
-          </Button>
+          {page >= totalPages ? (
+            <span className={disabledClass} aria-disabled="true">
+              Next
+            </span>
+          ) : (
+            <Link href={buildHref(page + 1)} className={enabledClass}>
+              Next
+            </Link>
+          )}
         </div>
       )}
 
