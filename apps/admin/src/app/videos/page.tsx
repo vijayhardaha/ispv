@@ -383,7 +383,7 @@ function SortableTh({
   onSort: (column: string) => void;
 }): JSX.Element {
   const active = sort === sortKey;
-  const Icon = active ? (dir === 'asc' ? ChevronUp : ChevronDown) : ChevronDown;
+  const Icon = active ? (dir === 'asc' ? ChevronUp : ChevronDown) : ChevronUp;
 
   return (
     <th
