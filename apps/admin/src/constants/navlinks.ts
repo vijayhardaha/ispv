@@ -1,5 +1,5 @@
 /**
- * Navigation link structure for header and footer.
+ * Navigation link structure for the admin sidebar.
  *
  * @type {NavLink}
  * @property {string} label - The display text for the link.
@@ -11,11 +11,11 @@ export interface NavLink {
 }
 
 /**
- * Navigation links displayed in the admin panel header.
+ * Navigation links displayed in the admin panel sidebar.
  *
  * @type {NavLink[]}
  */
-export const HEADER_NAV_LINKS: NavLink[] = [
+export const SIDEBAR_NAV_LINKS: NavLink[] = [
   { label: 'Dashboard', href: '/' },
   { label: 'Videos', href: '/videos' },
 ];

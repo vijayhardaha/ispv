@@ -9,16 +9,16 @@ import { Container } from '@/components/ui/Container';
  */
 export function AdminFooter(): JSX.Element {
   return (
-    <footer className="border-t-2 border-black bg-white">
+    <footer className="border-t border-gray-200 bg-white">
       <Container className="flex items-center justify-between py-4">
-        <span className="font-display text-xs font-extrabold tracking-tight uppercase">ISPV Admin</span>
-        <p className="text-xs text-black/50">
+        <span className="font-display text-xs font-semibold tracking-tight uppercase">ISPV Admin</span>
+        <p className="text-xs text-gray-500">
           &copy; {new Date().getFullYear()}{' '}
           <a
             href="https://ispv.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
-            className="transition-colors hover:text-yellow-500"
+            className="transition-colors hover:text-purple-600"
           >
             Indian Students Protest Vault
           </a>
