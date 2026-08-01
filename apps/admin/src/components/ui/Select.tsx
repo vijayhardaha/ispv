@@ -17,12 +17,12 @@ import { cn } from '@/lib/utils';
 type SelectVariant = 'form' | 'filter' | 'bulk' | 'inline';
 
 const variantStyles: Record<SelectVariant, string> = {
-  form: 'w-full rounded-md border border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 focus:outline-none',
+  form: 'w-full rounded-md border border-gray-300 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 focus:outline-none',
   filter:
-    'rounded-md border border-gray-300 bg-white font-semibold focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 focus:outline-none',
-  bulk: 'rounded-md border border-gray-300 bg-white font-semibold focus:border-purple-500 focus:outline-none',
+    'rounded-md border border-gray-300 bg-white font-semibold disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 focus:outline-none',
+  bulk: 'rounded-md border border-gray-300 bg-white font-semibold disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500 focus:border-purple-500 focus:outline-none',
   inline:
-    'rounded-md border border-gray-300 bg-white font-semibold disabled:pointer-events-none disabled:opacity-50 focus:border-purple-500 focus:outline-none',
+    'rounded-md border border-gray-300 bg-white font-semibold disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500 focus:border-purple-500 focus:outline-none',
 };
 
 /** Size variants for the Select component (md is default). */
@@ -31,7 +31,7 @@ type SelectSize = 'sm' | 'md' | 'lg';
 const sizeStyles: Record<SelectSize, string> = {
   sm: 'h-7 px-1.5 text-xs',
   md: 'h-9 px-2.5 text-sm',
-  lg: 'h-10 px-3.5 text-base',
+  lg: 'h-11 px-3.5 text-base',
 };
 
 /**

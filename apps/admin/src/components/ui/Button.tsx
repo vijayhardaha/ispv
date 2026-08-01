@@ -13,7 +13,7 @@ const variantStyles = {
   link: 'text-gray-700 hover:text-purple-600 hover:underline hover:underline-offset-2',
 } as const;
 
-const sizeStyles = { sm: 'h-7 px-1.5 text-xs', md: 'h-9 px-2.5 text-sm', lg: 'h-10 px-3.5 text-base' } as const;
+const sizeStyles = { sm: 'h-7 px-1.5 text-xs', md: 'h-9 px-2.5 text-sm', lg: 'h-11 px-3.5 text-base' } as const;
 
 /** Visual style variants for the Button component. */
 type ButtonVariant = keyof typeof variantStyles;

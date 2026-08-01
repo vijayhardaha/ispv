@@ -39,7 +39,7 @@ export function Checkbox({
   ref?: Ref<HTMLInputElement>;
 }): JSX.Element {
   return (
-    <label htmlFor={id} className={cn('group inline-flex cursor-pointer items-center gap-2', className)}>
+    <label htmlFor={id} className={cn('group inline-flex cursor-pointer items-start gap-1.5', className)}>
       <input
         ref={ref}
         id={id}

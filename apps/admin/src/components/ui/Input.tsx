@@ -6,15 +6,15 @@ import { cn } from '@/lib/utils';
 
 /** Base input styles shared by Input and Textarea. */
 export const inputBase =
-  'w-full rounded-md border border-gray-300 placeholder:text-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 focus:outline-none';
+  'w-full rounded-md border border-gray-300 placeholder:text-gray-400 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 focus:outline-none';
 
 /** Size variants for the Input component (md is default). */
 type InputSize = 'sm' | 'md' | 'lg';
 
 const inputSizeStyles: Record<InputSize, string> = {
   sm: 'h-7 px-1.5 text-xs',
-  md: 'h-8 px-2.5 text-sm',
-  lg: 'h-10 px-3.5 text-base',
+  md: 'h-9 px-2.5 text-sm',
+  lg: 'h-11 px-3.5 text-base',
 };
 
 /**

@@ -79,10 +79,10 @@ export function ModalTitle({ editing = false, children }: { editing?: boolean; c
 export function ModalActions({ onClose, loading = false }: { onClose: () => void; loading?: boolean }): JSX.Element {
   return (
     <div className="flex justify-end gap-2 border-t border-gray-200 px-4 py-3">
-      <Button type="button" variant="secondary" onClick={onClose} disabled={loading}>
+      <Button type="button" variant="secondary" size="lg" onClick={onClose} disabled={loading}>
         Cancel
       </Button>
-      <Button type="submit" loading={loading}>
+      <Button type="submit" size="lg" loading={loading}>
         {loading ? 'Saving…' : 'Save'}
       </Button>
     </div>
