@@ -2,8 +2,6 @@
 
 import { useCallback, useMemo, type JSX } from 'react';
 
-import { Grid3x3 } from 'lucide-react';
-
 import { SectionHeader } from '@/components/shared/SectionHeader';
 import { VideoCard } from '@/components/shared/VideoCard';
 import { Container } from '@/components/ui/Container';
@@ -32,12 +30,10 @@ export function CategorySection({ cat, videos }: { cat: DbCategory; videos: Vide
       <Container>
         <SectionHeader
           tagVariant={cat.color as TagVariant}
-          tagText={cat.tag}
-          tagIcon={<Grid3x3 className="inline size-3" />}
+          tagText={`// ${cat.tag}`}
           heading={cat.name}
           description={cat.description ?? undefined}
           href={`/categories/${cat.slug}`}
-          buttonIcon={<Grid3x3 className="size-4" />}
         />
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">

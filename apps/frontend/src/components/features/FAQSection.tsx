@@ -135,7 +135,7 @@ export function FAQSection(): JSX.Element {
             {FAQS.map((faq) => (
               <details
                 key={faq.question}
-                className="group shadow-brutal-xl hover:shadow-brutal-2xl open:shadow-brutal border-2 border-black bg-white transition-[transform,box-shadow] duration-200 open:translate-x-0.5 open:translate-y-0.5 hover:-translate-x-0.5 hover:-translate-y-0.5"
+                className="group shadow-brutal-xl hover:shadow-brutal-2xl open:shadow-brutal border-2 border-black bg-white transition-[transform,translate,box-shadow] duration-200 open:translate-x-0.5 open:translate-y-0.5 hover:-translate-x-0.5 hover:-translate-y-0.5"
               >
                 <summary className="flex cursor-pointer items-center justify-between p-6 select-none md:p-8">
                   <h3 className="font-display text-xl font-bold tracking-tight uppercase md:text-3xl">

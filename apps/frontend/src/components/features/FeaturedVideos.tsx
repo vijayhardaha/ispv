@@ -51,7 +51,6 @@ export function FeaturedVideos({ categories }: { categories: DbCategory[] }): JS
           description="Browse by theme — each category collects verified submissions from across India."
           href="/categories"
           buttonText="View categories"
-          buttonIcon={<Sparkles className="size-4" />}
           className="border-b-4"
         />
 

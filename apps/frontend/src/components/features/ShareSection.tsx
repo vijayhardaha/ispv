@@ -79,7 +79,7 @@ const PLATFORMS: SharePlatform[] = [
 function ShareTag(): JSX.Element {
   return (
     <div className="mb-6 inline-block -rotate-2 border-2 border-black bg-yellow-400 px-4 py-2 shadow-[4px_4px_0px_0px_#000]">
-      <span className="font-mono text-sm font-bold tracking-tight uppercase">Spread the word</span>
+      <span className="font-mono text-sm font-bold tracking-tight uppercase">{'//'} Spread the word</span>
     </div>
   );
 }

@@ -23,8 +23,10 @@ export function PageHero({ breadcrumb, title, children }: PageHeroProps): JSX.El
   return (
     <section className="border-b-2 border-black bg-black py-10 text-white">
       <Container>
-        <div className="font-mono text-[10px] tracking-widest text-yellow-500 uppercase">/ {breadcrumb}</div>
-        <h1 className="font-display mt-2 text-4xl font-extrabold tracking-tight uppercase md:text-6xl">{title}</h1>
+        <div className="font-mono text-[10px] tracking-widest text-yellow-500 uppercase">
+          {'//'} {breadcrumb}
+        </div>
+        <h1 className="font-display mt-2 text-3xl font-extrabold tracking-tight uppercase md:text-5xl">{title}</h1>
         {children}
       </Container>
     </section>

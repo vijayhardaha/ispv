@@ -31,7 +31,7 @@ export function SloganTicker(): JSX.Element {
               PLACARD_STYLES[i % PLACARD_STYLES.length]
             )}
           >
-            {s}
+            {'///'} {s}
           </div>
         ))}
       </div>
