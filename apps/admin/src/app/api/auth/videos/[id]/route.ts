@@ -1,8 +1,10 @@
 /** Run on the Edge runtime for faster cold starts and DB response times. */
 export const runtime = 'edge';
 
+import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
+import { DASHBOARD_STATS_REVALIDATE_SECONDS, DASHBOARD_STATS_TAG } from '@/constants/cache';
 import { checkDuplicate, deleteVideoById, requireUser } from '@/lib/api';
 import { videoFormSchema } from '@/lib/db';
 import { createServerSupabase } from '@/lib/db/supabase-server';
@@ -49,6 +51,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   if (error) {
     return NextResponse.json({ error: 'Update failed' }, { status: 500 });
   }
+  revalidateTag(DASHBOARD_STATS_TAG, { expire: DASHBOARD_STATS_REVALIDATE_SECONDS });
   return NextResponse.json(data);
 }
 
@@ -83,6 +86,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
 
+      revalidateTag(DASHBOARD_STATS_TAG, { expire: DASHBOARD_STATS_REVALIDATE_SECONDS });
       return NextResponse.json({ ok: true });
     }
 
@@ -92,11 +96,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
 
+      revalidateTag(DASHBOARD_STATS_TAG, { expire: DASHBOARD_STATS_REVALIDATE_SECONDS });
       return NextResponse.json({ ok: true });
     }
 
     case 'delete': {
-      return deleteVideoById(supabase, id);
+      const res = await deleteVideoById(supabase, id);
+      if (res.ok) {
+        revalidateTag(DASHBOARD_STATS_TAG, { expire: DASHBOARD_STATS_REVALIDATE_SECONDS });
+      }
+      return res;
     }
 
     default:
@@ -122,5 +131,9 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     return guard;
   }
 
-  return deleteVideoById(supabase, id);
+  const res = await deleteVideoById(supabase, id);
+  if (res.ok) {
+    revalidateTag(DASHBOARD_STATS_TAG, { expire: DASHBOARD_STATS_REVALIDATE_SECONDS });
+  }
+  return res;
 }

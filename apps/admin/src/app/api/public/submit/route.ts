@@ -1,8 +1,10 @@
 /** Run on the Edge runtime for faster cold starts and DB response times. */
 export const runtime = 'edge';
 
+import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
+import { DASHBOARD_STATS_REVALIDATE_SECONDS, DASHBOARD_STATS_TAG } from '@/constants/cache';
 import { createServiceSupabase, checkRateLimit } from '@/lib/api';
 import { submitVideoBodySchema } from '@/lib/db';
 import { extractIgId, detectSource } from '@/lib/utils';
@@ -67,6 +69,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     if (error) {
       return NextResponse.json({ error: 'Submission failed' }, { status: 500 });
     }
+    revalidateTag(DASHBOARD_STATS_TAG, { expire: DASHBOARD_STATS_REVALIDATE_SECONDS });
     return NextResponse.json(data ?? { ok: true });
   } catch (e) {
     return NextResponse.json({ error: e instanceof Error ? e.message : 'Internal error' }, { status: 500 });

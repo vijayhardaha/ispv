@@ -4,9 +4,11 @@ export const runtime = 'nodejs';
 import dns from 'node:dns/promises';
 import net from 'node:net';
 
+import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 import sharp from 'sharp';
 
+import { DASHBOARD_STATS_REVALIDATE_SECONDS, DASHBOARD_STATS_TAG } from '@/constants/cache';
 import { createServiceSupabase, sanitizeFilename, uploadBuffer } from '@/lib/api';
 import { enrichVideoBodySchema } from '@/lib/db';
 import { detectSource, extractIgId } from '@/lib/utils';
@@ -249,6 +251,8 @@ export async function POST(req: Request): Promise<NextResponse> {
       console.error('[enrich] RPC submit_video failed for', video_id, ':', error.message);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    revalidateTag(DASHBOARD_STATS_TAG, { expire: DASHBOARD_STATS_REVALIDATE_SECONDS });
 
     if (thumbnail_url) {
       console.log('[enrich] Successfully enriched', video_id, '- thumbnail:', thumbnail_url);
