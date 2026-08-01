@@ -13,9 +13,8 @@ const mockRpc = vi.fn();
 
 vi.mock('@supabase/supabase-js', () => ({ createClient: vi.fn(() => ({ rpc: mockRpc })) }));
 
-vi.mock('@/lib/rateLimit', () => ({
+vi.mock('@/lib/api/rateLimit', () => ({
   checkRateLimit: vi.fn(async () => true), // allow all requests
-  tryUseUpstashRateLimit: vi.fn(async () => false), // falls back to in-memory
 }));
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
@@ -82,9 +81,39 @@ describe('POST /api/public/submit', () => {
       p_video_src: 'instagram',
       p_tags: 'protest,delhi',
       p_category: 'delhi',
+      p_categories: null,
       p_location: null,
       p_city: 'New Delhi',
     });
+  });
+
+  it('passes selected categories to the RPC as an array', async () => {
+    mockRpc.mockResolvedValue({ data: { ok: true }, error: null });
+
+    const res = await POST(
+      makeRequest({
+        video_url: 'https://www.instagram.com/reel/ABC123xyz/',
+        categories: ['protest-marches', 'police-conduct'],
+      })
+    );
+    expect(res.status).toBe(200);
+
+    expect(mockRpc).toHaveBeenCalledWith(
+      'submit_video',
+      expect.objectContaining({ p_categories: ['protest-marches', 'police-conduct'] })
+    );
+  });
+
+  it('rejects more than three categories', async () => {
+    const res = await POST(
+      makeRequest({
+        video_url: 'https://www.instagram.com/reel/ABC123xyz/',
+        categories: ['protest-marches', 'police-conduct', 'gen-z-moments', 'human-rights'],
+      })
+    );
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toMatch(/3 categories/i);
   });
 
   it('passes hashtags to RPC as a comma-separated string', async () => {

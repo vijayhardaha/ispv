@@ -69,9 +69,27 @@ describe('POST /api/auth/submit', () => {
       p_video_src: 'instagram',
       p_tags: ['protest', 'delhi'],
       p_category: 'protest-marches',
+      p_categories: null,
       p_location: 'delhi',
       p_city: 'New Delhi',
     });
+  });
+
+  it('submits a video with multiple categories', async () => {
+    mockRpc.mockResolvedValue({ data: { ok: true }, error: null });
+
+    const res = await submitPost(
+      makeRequest({
+        video_url: 'https://www.instagram.com/reel/ABC123xyz/',
+        categories: ['protest-marches', 'police-conduct', 'gen-z-moments'],
+      })
+    );
+    expect(res.status).toBe(200);
+
+    expect(mockRpc).toHaveBeenCalledWith(
+      'submit_video',
+      expect.objectContaining({ p_categories: ['protest-marches', 'police-conduct', 'gen-z-moments'] })
+    );
   });
 
   it('submits a video with minimal metadata', async () => {
