@@ -45,8 +45,6 @@ export const LOCATIONS: DbLocation[] = [
   { slug: 'uttarakhand', name: 'Uttarakhand' },
   { slug: 'west-bengal', name: 'West Bengal' },
   { slug: 'chandigarh', name: 'Chandigarh' },
-  { slug: 'andaman-nicobar-islands', name: 'Andaman and Nicobar Islands' },
-  { slug: 'dadra-nagar-haveli-daman-diu', name: 'Dadra and Nagar Haveli and Daman and Diu' },
   { slug: 'jammu-kashmir', name: 'Jammu and Kashmir' },
   { slug: 'ladakh', name: 'Ladakh' },
   { slug: 'lakshadweep', name: 'Lakshadweep' },
