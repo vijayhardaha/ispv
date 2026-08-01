@@ -1,7 +1,7 @@
 import type { JSX, ReactNode } from 'react';
 
 import type { Metadata } from 'next';
-import { JetBrains_Mono, Poppins, Space_Grotesk } from 'next/font/google';
+import { Instrument_Sans, JetBrains_Mono, Poppins } from 'next/font/google';
 
 import { AdminFooter } from '@/components/layout/AdminFooter';
 import { AdminHeader } from '@/components/layout/AdminHeader';
@@ -12,7 +12,7 @@ import { createServerSupabase } from '@/lib/db/supabase-server';
 
 import './globals.css';
 
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
+const instrumentSans = Instrument_Sans({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -43,7 +43,7 @@ export default async function RootLayout({ children }: { children: ReactNode }):
   } = await supabase.auth.getUser();
 
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${poppins.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${instrumentSans.variable} ${poppins.variable} ${jetbrainsMono.variable}`}>
       <body className="font-body flex min-h-screen flex-col bg-gray-100 text-black antialiased">
         <SkipContent />
         {user && <AdminHeader />}
