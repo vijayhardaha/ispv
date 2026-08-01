@@ -9,9 +9,8 @@ import Link from 'next/link';
 import { RecentlyAddedVideos } from '@/components/features/RecentlyAddedVideos';
 import { PageHero } from '@/components/shared/PageHero';
 import { Button } from '@/components/ui/Button';
-import { CATEGORIES } from '@/constants/categories';
 import type { DbCategory } from '@/constants/categories';
-import { getCategoryCounts } from '@/lib/db';
+import { getCategories, getCategoryVideoCounts } from '@/lib/db';
 import { buildMetadata, buildBreadcrumbs, globalSchema, siteUrl } from '@/lib/seo';
 import { getPublishedVideos } from '@/lib/videos';
 
@@ -29,7 +28,7 @@ const PAGE_DESCRIPTION =
 const PAGE_PATH = '/categories';
 
 /** JSON-LD schemas for the categories page. */
-export const PAGE_SCHEMA = [
+const PAGE_SCHEMA = [
   ...globalSchema(),
   collectionPageSchema({ rootUrl: ROOT_URL, path: PAGE_PATH }, { name: PAGE_TITLE, description: PAGE_DESCRIPTION }),
   breadcrumbSchema({ rootUrl: ROOT_URL, items: buildBreadcrumbs(PAGE_PATH, 'Categories') }),
@@ -44,21 +43,6 @@ export const metadata: Metadata = buildMetadata({ title: PAGE_TITLE, description
 
 /** Revalidate the categories page every 5 minutes for Incremental Static Regeneration. */
 export const revalidate = 300;
-
-/**
- * Sorts the categories array with the "Other" category pinned to the end.
- *
- * @returns {DbCategory[]} Reordered category list with "Other" last.
- */
-function sortCategoriesWithOtherLast(): DbCategory[] {
-  const list = [...CATEGORIES];
-  const other = list.findIndex((c) => c.slug === 'other');
-  if (other !== -1) {
-    const [item] = list.splice(other, 1);
-    list.push(item);
-  }
-  return list;
-}
 
 /**
  * Category card linking to the category detail page with name, description, and video count.
@@ -145,9 +129,12 @@ function FullArchiveCta(): JSX.Element {
  * @returns {Promise<JSX.Element>} Rendered categories page.
  */
 export default async function CategoriesPage(): Promise<JSX.Element> {
-  const [{ videos }, categoryCountsRaw] = await Promise.all([getPublishedVideos({ perPage: 12 }), getCategoryCounts()]);
+  const [{ videos }, categoryCountsRaw] = await Promise.all([
+    getPublishedVideos({ perPage: 12 }),
+    getCategoryVideoCounts(),
+  ]);
 
-  const categories = sortCategoriesWithOtherLast();
+  const categories = await getCategories();
   const categoryCounts = Object.fromEntries(categoryCountsRaw.map((cc) => [cc.slug, cc.count]));
 
   return (

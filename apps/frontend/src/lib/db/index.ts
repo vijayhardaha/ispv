@@ -1,17 +1,13 @@
 export { supabase } from './supabase';
 export {
   getCategories,
-  getLocations,
-  getCategoryByValue,
   getFeaturedCategories,
+  getCategoryByValue,
+  getCategoryVideoCounts,
   getTags,
-  checkVideoExists,
-  getPublishedVideoCount,
-  getCityCounts,
-  getLocationCounts,
+  getLocations,
   getLocationVideoCounts,
-  getCategoryCounts,
+  checkVideoExists,
   getHomepageStats,
-  type HomepageStats,
 } from './db';
 export type { DbCategory, DbLocation } from './db';

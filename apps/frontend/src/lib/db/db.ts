@@ -22,6 +22,57 @@ export async function getCategories(): Promise<DbCategory[]> {
 }
 
 /**
+ * Returns featured categories in display order.
+ *
+ * @returns {Promise<DbCategory[]>} Featured category entries.
+ */
+export async function getFeaturedCategories(): Promise<DbCategory[]> {
+  return FEATURED_CATEGORIES_SLUGS.map((slug) => CATEGORIES.find((c) => c.slug === slug)).filter(
+    Boolean
+  ) as DbCategory[];
+}
+
+/**
+ * Finds a category by its URL-safe slug.
+ *
+ * @param {string} value - Category slug.
+ *
+ * @returns {Promise<DbCategory | null>} Matching category or null.
+ */
+export async function getCategoryByValue(value: string): Promise<DbCategory | null> {
+  return CATEGORIES.find((c) => c.slug === value) ?? null;
+}
+
+/**
+ * Returns per-category video counts for all published videos.
+ *
+ * @returns {Promise<{ slug: string; count: number }[]>} Category slug and video count pairs.
+ */
+export async function getCategoryVideoCounts(): Promise<{ slug: string; count: number }[]> {
+  const { data, error } = await supabase.rpc('get_category_counts');
+
+  if (error || !data) {
+    return [];
+  }
+
+  return data.map((r: { slug: string; count: number }) => ({ slug: r.slug, count: r.count }));
+}
+
+/**
+ * Fetches tags with occurrence counts from published videos.
+ *
+ * @returns {Promise<string[]>} Tag names ordered by popularity.
+ */
+export async function getTags(): Promise<string[]> {
+  const { data, error } = await supabase.rpc('get_tags');
+  if (error || !data) {
+    return [];
+  }
+
+  return data.map((r: { tag: string }) => r.tag);
+}
+
+/**
  * Returns all locations with "Foreign (Outside India)" pinned last.
  *
  * @returns {Promise<DbLocation[]>} Ordered location list.
@@ -38,39 +89,19 @@ export async function getLocations(): Promise<DbLocation[]> {
 }
 
 /**
- * Finds a category by its URL-safe slug.
+ * Returns per-location video counts for all published videos.
+ * Used by LocationsMap to display counts per state/UT.
  *
- * @param {string} value - Category slug.
- *
- * @returns {Promise<DbCategory | null>} Matching category or null.
+ * @returns {Promise<{ slug: string; count: number }[]>} Location slug and video count pairs.
  */
-export async function getCategoryByValue(value: string): Promise<DbCategory | null> {
-  return CATEGORIES.find((c) => c.slug === value) ?? null;
-}
+export async function getLocationVideoCounts(): Promise<{ slug: string; count: number }[]> {
+  const { data, error } = await supabase.rpc('get_location_counts');
 
-/**
- * Returns featured categories in display order.
- *
- * @returns {Promise<DbCategory[]>} Featured category entries.
- */
-export async function getFeaturedCategories(): Promise<DbCategory[]> {
-  return FEATURED_CATEGORIES_SLUGS.map((slug) => CATEGORIES.find((c) => c.slug === slug)).filter(
-    Boolean
-  ) as DbCategory[];
-}
-
-/**
- * Fetches tags with occurrence counts from published videos.
- *
- * @returns {Promise<string[]>} Tag names ordered by popularity.
- */
-export async function getTags(): Promise<string[]> {
-  const { data, error } = await supabase.rpc('get_tags');
   if (error || !data) {
     return [];
   }
 
-  return data.map((r: { tag: string }) => r.tag);
+  return data.map((r: { location: string; count: number }) => ({ slug: r.location, count: r.count }));
 }
 
 /**
@@ -114,85 +145,6 @@ export async function checkVideoExists(
   } catch (err) {
     return { exists: false, error: err instanceof Error ? err.message : 'Network error' };
   }
-}
-
-/**
- * Returns the total count of published videos.
- *
- * @returns {Promise<number>} Published video count.
- */
-export async function getPublishedVideoCount(): Promise<number> {
-  const { count, error } = await supabase
-    .from('videos')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'published');
-
-  if (error || count === null) {
-    return 0;
-  }
-
-  return count;
-}
-
-/**
- * Returns the total number of unique cities among published videos.
- *
- * @returns {Promise<number>} Unique city count.
- */
-export async function getCityCounts(): Promise<number> {
-  const { data, error } = await supabase.rpc('get_city_counts');
-
-  if (error || !data) {
-    return 0;
-  }
-
-  return data.length;
-}
-
-/**
- * Returns the total number of unique locations among published videos.
- *
- * @returns {Promise<number>} Unique location count.
- */
-export async function getLocationCounts(): Promise<number> {
-  const { data, error } = await supabase.rpc('get_location_counts');
-
-  if (error || !data) {
-    return 0;
-  }
-
-  return data.length;
-}
-
-/**
- * Returns per-location video counts for all published videos.
- * Used by LocationsMap to display counts per state/UT.
- *
- * @returns {Promise<{ slug: string; count: number }[]>} Location slug and video count pairs.
- */
-export async function getLocationVideoCounts(): Promise<{ slug: string; count: number }[]> {
-  const { data, error } = await supabase.rpc('get_location_counts');
-
-  if (error || !data) {
-    return [];
-  }
-
-  return data.map((r: { location: string; count: number }) => ({ slug: r.location, count: r.count }));
-}
-
-/**
- * Returns per-category video counts for all published videos.
- *
- * @returns {Promise<{ slug: string; count: number }[]>} Category slug and video count pairs.
- */
-export async function getCategoryCounts(): Promise<{ slug: string; count: number }[]> {
-  const { data, error } = await supabase.rpc('get_category_counts');
-
-  if (error || !data) {
-    return [];
-  }
-
-  return data.map((r: { slug: string; count: number }) => ({ slug: r.slug, count: r.count }));
 }
 
 /**

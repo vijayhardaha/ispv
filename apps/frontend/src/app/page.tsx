@@ -12,12 +12,8 @@ import { HeroSection } from '@/components/features/HeroSection';
 import { LocationsMap } from '@/components/features/LocationsMap';
 import { ShareSection } from '@/components/features/ShareSection';
 import { SloganTicker } from '@/components/features/SloganTicker';
-import { CATEGORIES, FEATURED_CATEGORIES_SLUGS } from '@/constants/categories';
-import type { DbCategory } from '@/constants/categories';
-import { LOCATIONS } from '@/constants/locations';
-import type { DbLocation } from '@/constants/locations';
 import { SITE_CONFIG } from '@/constants/seo';
-import { getHomepageStats } from '@/lib/db';
+import { getCategories, getFeaturedCategories, getHomepageStats, getLocations } from '@/lib/db';
 import { buildMetadata, globalSchema, siteUrl } from '@/lib/seo';
 import { getCategorySectionVideos } from '@/lib/videos';
 
@@ -52,55 +48,14 @@ export const metadata: Metadata = buildMetadata({
 export const revalidate = 300;
 
 /**
- * Sorts the category list with the "Other" category pinned last.
- *
- * @returns {DbCategory[]} Category list with "Other" moved to the end.
- */
-function sortCategoriesWithOtherLast(): DbCategory[] {
-  const list = [...CATEGORIES];
-  const other = list.findIndex((c) => c.slug === 'other');
-  if (other !== -1) {
-    const [item] = list.splice(other, 1);
-    list.push(item);
-  }
-  return list;
-}
-
-/**
- * Resolves the featured category records from their display slugs.
- *
- * @returns {DbCategory[]} Featured categories in display order.
- */
-function getFeaturedCategories(): DbCategory[] {
-  return FEATURED_CATEGORIES_SLUGS.map((slug) => CATEGORIES.find((c) => c.slug === slug)).filter(
-    Boolean
-  ) as DbCategory[];
-}
-
-/**
- * Sorts the location list with the "Foreign" location pinned last.
- *
- * @returns {DbLocation[]} Location list with "Foreign" moved to the end.
- */
-function sortLocationsWithForeignLast(): DbLocation[] {
-  const list = [...LOCATIONS];
-  const foreignIdx = list.findIndex((l) => l.slug === 'foreign');
-  if (foreignIdx !== -1) {
-    const [item] = list.splice(foreignIdx, 1);
-    list.push(item);
-  }
-  return list;
-}
-
-/**
  * Home page — fetches videos and categories, renders hero, sections, and map.
  *
  * @returns {Promise<JSX.Element>} Rendered home page.
  */
 export default async function HomePage(): Promise<JSX.Element> {
-  const categories = sortCategoriesWithOtherLast();
-  const featuredCategories = getFeaturedCategories();
-  const locations = sortLocationsWithForeignLast();
+  const categories = await getCategories();
+  const featuredCategories = await getFeaturedCategories();
+  const locations = await getLocations();
 
   const categorySlugs = categories.filter((c) => c.slug !== 'other').map((c) => c.slug);
   const totalSections = categorySlugs.length;
