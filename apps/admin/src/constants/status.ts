@@ -1,7 +1,7 @@
 /**
  * All possible video statuses for filtering, including empty string for "All" and "trashed".
  */
-export const STATUSES = ['', 'draft', 'published', 'rejected', 'trashed'] as const;
+export const STATUSES = ['', 'published', 'draft', 'rejected', 'trashed'] as const;
 
 /**
  * Human-readable labels for each video status value.
@@ -17,4 +17,4 @@ export const STATUS_LABELS: Record<string, string> = {
 /**
  * Valid status values for bulk updates, in display order.
  */
-export const BULK_STATUS_OPTIONS = ['draft', 'published', 'rejected'] as const;
+export const BULK_STATUS_OPTIONS = ['published', 'draft', 'rejected'] as const;

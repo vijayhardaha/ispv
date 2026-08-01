@@ -4,7 +4,7 @@ import { BULK_STATUS_OPTIONS, STATUSES, STATUS_LABELS } from '../status';
 
 describe('STATUSES', () => {
   it('contains all possible status values including empty string for All', () => {
-    expect(STATUSES).toEqual(['', 'draft', 'published', 'rejected', 'trashed']);
+    expect(STATUSES).toEqual(['', 'published', 'draft', 'rejected', 'trashed']);
   });
 
   it('includes trashed status', () => {
@@ -38,7 +38,7 @@ describe('STATUS_LABELS', () => {
 
 describe('BULK_STATUS_OPTIONS', () => {
   it('contains non-trashed statuses for bulk updates', () => {
-    expect(BULK_STATUS_OPTIONS).toEqual(['draft', 'published', 'rejected']);
+    expect(BULK_STATUS_OPTIONS).toEqual(['published', 'draft', 'rejected']);
   });
 
   it('excludes trashed and empty string', () => {
