@@ -29,7 +29,7 @@ See [`PHILOSOPHY.md`](./PHILOSOPHY.md) for the full philosophy document.
 
 ## Architecture
 
-This is a **Bun monorepo** with three packages:
+This is a **Bun monorepo** (`ispv`) with three packages:
 
 | Package                                 | Path                | Description                                             |
 | --------------------------------------- | ------------------- | ------------------------------------------------------- |

@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-- **Name**: `@ispv/frontend` — a Next.js static archive site (part of `ispv-monorepo`)
+- **Name**: `@ispv/frontend` — a Next.js static archive site (part of the `ispv` monorepo)
 - **Admin**: `@ispv/admin` — Next.js admin panel at `apps/admin/`
 - **Extension**: `@ispv/extension` — Chrome extension at `chrome-extension/`
 - **Purpose**: Indexes peaceful Indian protest Instagram reels, organised by city, category, and hashtag
