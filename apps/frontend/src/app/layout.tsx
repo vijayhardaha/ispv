@@ -11,16 +11,16 @@ import { VercelAnalytics } from '@/components/shared/VercelAnalytics';
 import { SITE_METADATA } from '@/constants/seo';
 import '@/globals.css';
 
-const instrumentSans = Instrument_Sans({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
+const bodyFont = Instrument_Sans({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
 
-const poppins = Poppins({
+const headingFont = Poppins({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800'],
   variable: '--font-display',
   display: 'swap',
 });
 
-const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
+const monoFont = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
 
 /**
  * Global metadata for the Protest Vault site using site-wide SEO configuration.
@@ -37,7 +37,7 @@ export const metadata: Metadata = SITE_METADATA;
  */
 export default function RootLayout({ children }: { children: ReactNode }): JSX.Element {
   return (
-    <html lang="en" className={`${instrumentSans.variable} ${poppins.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${bodyFont.variable} ${headingFont.variable} ${monoFont.variable}`}>
       <body className="font-body bg-gray-100 text-black antialiased">
         <a
           href="#main-content"

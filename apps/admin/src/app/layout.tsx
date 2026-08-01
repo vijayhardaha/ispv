@@ -12,16 +12,16 @@ import { createServerSupabase } from '@/lib/db/supabase-server';
 
 import './globals.css';
 
-const instrumentSans = Instrument_Sans({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
+const bodyFont = Instrument_Sans({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
 
-const poppins = Poppins({
+const headingFont = Poppins({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800'],
   variable: '--font-display',
   display: 'swap',
 });
 
-const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
+const monoFont = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
 
 /**
  * Site-wide metadata for the admin panel using SEO configuration.
@@ -43,7 +43,7 @@ export default async function RootLayout({ children }: { children: ReactNode }):
   } = await supabase.auth.getUser();
 
   return (
-    <html lang="en" className={`${instrumentSans.variable} ${poppins.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${bodyFont.variable} ${headingFont.variable} ${monoFont.variable}`}>
       <body className="font-body flex min-h-screen flex-col bg-gray-100 text-black antialiased">
         <SkipContent />
         {user && <AdminHeader />}
