@@ -1,9 +1,27 @@
-import { put } from '@vercel/blob';
+import { del, put } from '@vercel/blob';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 
-import { uploadBuffer } from '../upload';
+import { deleteBlob, sanitizeFilename, uploadBuffer } from '../upload';
 
-vi.mock('@vercel/blob', () => ({ put: vi.fn() }));
+vi.mock('@vercel/blob', () => ({ put: vi.fn(), del: vi.fn() }));
+
+describe('sanitizeFilename', () => {
+  it('keeps alphanumeric characters, hyphens, underscores, and dots', () => {
+    expect(sanitizeFilename('instagram-ABC123_v2.jpg')).toBe('instagram-ABC123_v2.jpg');
+  });
+
+  it('strips spaces and special characters', () => {
+    expect(sanitizeFilename('my file!@#.jpg')).toBe('myfile.jpg');
+  });
+
+  it('returns empty string for input with no allowed characters', () => {
+    expect(sanitizeFilename('!!! ')).toBe('');
+  });
+
+  it('keeps dots in filenames with extensions', () => {
+    expect(sanitizeFilename('thumb.123.png')).toBe('thumb.123.png');
+  });
+});
 
 describe('uploadBuffer', () => {
   const originalEnv = process.env;
@@ -49,5 +67,50 @@ describe('uploadBuffer', () => {
     const url = await uploadBuffer(buffer, 'local-sample.jpg');
 
     expect(url).toBeNull();
+  });
+});
+
+describe('deleteBlob', () => {
+  const originalEnv = process.env;
+
+  beforeEach(() => {
+    process.env = { ...originalEnv };
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    process.env = originalEnv;
+  });
+
+  it('skips silently for null or empty URLs', async () => {
+    await deleteBlob(null);
+    await deleteBlob('');
+    await deleteBlob(undefined);
+    expect(del).not.toHaveBeenCalled();
+  });
+
+  it('skips non-Vercel blob URLs', async () => {
+    await deleteBlob('https://example.com/image.jpg');
+    expect(del).not.toHaveBeenCalled();
+  });
+
+  it('deletes the blob when a token is configured', async () => {
+    process.env.BLOB_READ_WRITE_TOKEN = 'test_token';
+    vi.mocked(del).mockResolvedValueOnce();
+
+    await deleteBlob('https://blob.vercel-storage.com/image.jpg');
+
+    expect(del).toHaveBeenCalledWith('https://blob.vercel-storage.com/image.jpg');
+  });
+
+  it('warns and skips when the token is missing', async () => {
+    delete process.env.BLOB_READ_WRITE_TOKEN;
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    await deleteBlob('https://blob.vercel-storage.com/image.jpg');
+
+    expect(del).not.toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalled();
+    warnSpy.mockRestore();
   });
 });
