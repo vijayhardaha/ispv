@@ -81,49 +81,53 @@ export function Header(): JSX.Element {
           </div>
         </Container>
 
-        {mobileOpen && (
-          <div className="fixed inset-0 z-50 lg:hidden">
-            {}
-            <div
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
-              onClick={() => setMobileOpen(false)}
-              role="presentation"
-            />
-            <div className="fixed top-0 right-0 flex h-full w-105 max-w-full flex-col border-l-2 border-black bg-gray-100 shadow-xl transition-transform duration-300">
-              <div className="flex items-center justify-between border-b-2 border-black px-4 py-3">
-                <span className="font-display text-sm font-extrabold uppercase">Menu</span>
-                <Button variant="default" size="icon" aria-label="Close menu" onClick={() => setMobileOpen(false)}>
-                  <X className="h-5 w-5" />
-                </Button>
-              </div>
-              <nav className="flex-1 space-y-1 overflow-y-auto px-4 py-4">
-                {HEADER_NAV_LINKS.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileOpen(false)}
-                    className={cn(
-                      'font-display block border-2 border-transparent px-4 py-3 text-base font-bold tracking-tight uppercase transition-colors hover:border-black hover:bg-yellow-400',
-                      isActive(link.href) ? 'border-black bg-yellow-400' : 'text-black'
-                    )}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
-              <div className="border-t-2 border-black bg-white p-4">
-                <SubmitVideoDialog
-                  trigger={
-                    <Button variant="default" className="w-full">
-                      Submit Video
-                    </Button>
-                  }
-                  onOpenChange={(o) => !o && setMobileOpen(false)}
-                />
-              </div>
+        <div
+          className={`fixed inset-0 z-50 transition-[visibility] duration-300 lg:hidden ${mobileOpen ? 'visible' : 'invisible'}`}
+          aria-hidden={!mobileOpen}
+        >
+          <div
+            className={`fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${mobileOpen ? 'opacity-100' : 'opacity-0'}`}
+            onClick={() => setMobileOpen(false)}
+            role="presentation"
+          />
+          <div
+            className={`fixed top-0 right-0 flex h-full w-105 max-w-full flex-col border-l-2 border-black bg-gray-100 shadow-xl transition-transform duration-300 ease-out ${
+              mobileOpen ? 'translate-x-0' : 'translate-x-full'
+            }`}
+          >
+            <div className="flex items-center justify-between border-b-2 border-black px-4 py-3">
+              <span className="font-display text-sm font-extrabold uppercase">Menu</span>
+              <Button variant="default" size="icon" aria-label="Close menu" onClick={() => setMobileOpen(false)}>
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+            <nav className="flex-1 space-y-1 overflow-y-auto px-4 py-4">
+              {HEADER_NAV_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    'font-display block border-2 border-transparent px-4 py-3 text-base font-bold tracking-tight uppercase transition-colors hover:border-black hover:bg-yellow-400',
+                    isActive(link.href) ? 'border-black bg-yellow-400' : 'text-black'
+                  )}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+            <div className="border-t-2 border-black bg-white p-4">
+              <SubmitVideoDialog
+                trigger={
+                  <Button variant="default" className="w-full">
+                    Submit Video
+                  </Button>
+                }
+                onOpenChange={(o) => !o && setMobileOpen(false)}
+              />
             </div>
           </div>
-        )}
+        </div>
       </div>
     </header>
   );
