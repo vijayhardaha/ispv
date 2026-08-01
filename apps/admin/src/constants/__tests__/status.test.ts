@@ -4,7 +4,7 @@ import { BULK_STATUS_OPTIONS, STATUSES, STATUS_LABELS } from '../status';
 
 describe('STATUSES', () => {
   it('contains all possible status values including empty string for All', () => {
-    expect(STATUSES).toEqual(['', 'draft', 'pending_review', 'published', 'rejected', 'trashed']);
+    expect(STATUSES).toEqual(['', 'draft', 'published', 'rejected', 'trashed']);
   });
 
   it('includes trashed status', () => {
@@ -20,7 +20,6 @@ describe('STATUS_LABELS', () => {
   it('returns human-readable label for each status', () => {
     expect(STATUS_LABELS['']).toBe('All');
     expect(STATUS_LABELS.draft).toBe('Draft');
-    expect(STATUS_LABELS.pending_review).toBe('Pending');
     expect(STATUS_LABELS.published).toBe('Published');
     expect(STATUS_LABELS.rejected).toBe('Rejected');
     expect(STATUS_LABELS.trashed).toBe('Trashed');
@@ -39,7 +38,7 @@ describe('STATUS_LABELS', () => {
 
 describe('BULK_STATUS_OPTIONS', () => {
   it('contains non-trashed statuses for bulk updates', () => {
-    expect(BULK_STATUS_OPTIONS).toEqual(['draft', 'pending_review', 'published', 'rejected']);
+    expect(BULK_STATUS_OPTIONS).toEqual(['draft', 'published', 'rejected']);
   });
 
   it('excludes trashed and empty string', () => {

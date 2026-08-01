@@ -11,7 +11,7 @@ import type { GetVideosApiResponse } from './types';
  * Filter options for the get_videos_for_api RPC.
  *
  * @type {GetVideosFilters}
- * @property {string | null} [status] - Filter by video status (draft, pending_review, published, rejected).
+ * @property {string | null} [status] - Filter by video status (draft, published, rejected).
  * @property {string | null} [search] - Search query across video_url, video_id, description, city.
  * @property {string | null} [category] - Filter by category slug.
  * @property {string | null} [location] - Filter by location slug.
