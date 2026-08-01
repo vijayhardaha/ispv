@@ -1,5 +1,3 @@
-export type { VideoRecord } from './schemas';
-
 /**
  * Pagination metadata returned by get_videos_for_api RPC.
  *
