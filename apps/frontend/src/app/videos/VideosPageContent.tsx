@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState, type JSX } from 'react';
+import { type JSX } from 'react';
 
 import { PageHero } from '@/components/shared/PageHero';
 import { VideoGridSection } from '@/components/shared/VideoGridSection';
+import { useFilterOptions } from '@/hooks/useFilterOptions';
 import { useFilterState } from '@/hooks/useFilterState';
+import { usePagedVideos } from '@/hooks/usePagedVideos';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
-import { getLocations, getTags } from '@/lib/db';
-import { getPublishedVideos, type VideoEntry } from '@/lib/videos';
 
 /**
  * Client-bound content for the videos page. Loads videos, renders filter bar, grid, and pagination.
@@ -17,43 +17,10 @@ import { getPublishedVideos, type VideoEntry } from '@/lib/videos';
  * @returns {JSX.Element} Rendered videos page content.
  */
 export function VideosPageContent(): JSX.Element {
-  const [paged, setPaged] = useState<VideoEntry[]>([]);
-  const [total, setTotal] = useState(0);
-  const [allTags, setAllTags] = useState<string[]>([]);
-  const [allLocations, setAllLocations] = useState<{ slug: string; name: string }[]>([]);
-  const [loading, setLoading] = useState(true);
   const { state, setFilter } = useFilterState();
   const { play } = useReelPlayer();
-  const loadedStatic = useRef(false);
-
-  useEffect(() => {
-    if (!loadedStatic.current) {
-      loadedStatic.current = true;
-      Promise.all([getTags(), getLocations()]).then(([tags, locs]) => {
-        setAllTags(tags);
-        setAllLocations(locs.map((l) => ({ slug: l.slug, name: l.name })));
-      });
-    }
-
-    let cancelled = false;
-    getPublishedVideos({
-      category: state.category,
-      location: state.location,
-      tag: state.tags[0],
-      query: state.query,
-      sort: state.sort,
-      page: state.page,
-      perPage: state.perPage,
-    }).then((result) => {
-      if (cancelled) return;
-      setPaged(result.videos);
-      setTotal(result.total);
-      setLoading(false);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [state]);
+  const { paged, total, loading } = usePagedVideos(state);
+  const { allTags, allLocations } = useFilterOptions();
 
   const totalPages = Math.max(1, Math.ceil(total / state.perPage));
   const safePage = Math.min(state.page, totalPages);

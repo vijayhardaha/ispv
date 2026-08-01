@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { useFilterOptions } from '@/hooks/useFilterOptions';
 import { useFilterState } from '@/hooks/useFilterState';
+import { usePagedVideos } from '@/hooks/usePagedVideos';
 import { useReelPlayer } from '@/hooks/useReelPlayer';
-import { getCategoryByValue, getLocations, getTags, type DbCategory } from '@/lib/db';
+import { getCategoryByValue, type DbCategory } from '@/lib/db';
 import type { FilterState } from '@/lib/helpers/filterVideos';
-import { getPublishedVideos, type VideoEntry } from '@/lib/videos';
+import type { VideoEntry } from '@/lib/videos';
 
 /**
  * Data shape for the category page, including category metadata and filter options.
@@ -57,45 +59,22 @@ export interface CategoryPageFilter {
 export function useCategoryPage(
   value: string
 ): CategoryPageData & { filters: CategoryPageFilter; play: ReturnType<typeof useReelPlayer>['play'] } {
-  const [paged, setPaged] = useState<VideoEntry[]>([]);
-  const [total, setTotal] = useState(0);
   const [cat, setCat] = useState<DbCategory | null>(null);
-  const [allLocations, setAllLocations] = useState<{ slug: string; name: string }[]>([]);
-  const [allTags, setAllTags] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
   const { state, setFilter } = useFilterState({ category: value });
   const { play } = useReelPlayer();
-  const loadedStatic = useRef(false);
+  const { paged, total, loading } = usePagedVideos(state);
+  const { allTags, allLocations } = useFilterOptions();
 
   useEffect(() => {
-    if (!loadedStatic.current) {
-      loadedStatic.current = true;
-      Promise.all([getCategoryByValue(value), getLocations(), getTags()]).then(([c, locs, tags]) => {
-        setCat(c);
-        setAllLocations(locs.map((l) => ({ slug: l.slug, name: l.name })));
-        setAllTags(tags);
-      });
-    }
-
     let cancelled = false;
-    getPublishedVideos({
-      category: value,
-      location: state.location,
-      tag: state.tags[0],
-      query: state.query,
-      sort: state.sort,
-      page: state.page,
-      perPage: state.perPage,
-    }).then((result) => {
+    getCategoryByValue(value).then((c) => {
       if (cancelled) return;
-      setPaged(result.videos);
-      setTotal(result.total);
-      setLoading(false);
+      setCat(c);
     });
     return () => {
       cancelled = true;
     };
-  }, [value, state]);
+  }, [value]);
 
   const totalPages = Math.max(1, Math.ceil(total / state.perPage));
   const safePage = Math.min(state.page, totalPages);
