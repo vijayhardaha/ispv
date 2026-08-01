@@ -97,24 +97,24 @@ src/
 
 ### `videos` table
 
-| Column            | Type        | Notes                                           |
-| ----------------- | ----------- | ----------------------------------------------- |
-| `id`              | UUID        | Primary key                                     |
-| `video_url`       | text        | Original Instagram URL                          |
-| `video_id`        | text        | Extracted Instagram media ID                    |
-| `video_src`       | text        | 'instagram' or 'youtube'                        |
-| `categories`      | text[]      | Category slugs (multiple allowed)               |
-| `location`        | text        | Location slug                                   |
-| `city`            | text        | City name                                       |
-| `tags`            | text[]      | Searchable tags                                 |
-| `description`     | text        | Video description                               |
-| `thumbnail_url`   | text        | Vercel Blob URL                                 |
-| `video_post_date` | timestamptz | Instagram post date                             |
-| `view_count`      | integer     | View counter                                    |
-| `status`          | text        | draft/published/rejected/trashed                  |
-| `trashed_at`      | timestamptz | Soft-delete timestamp                           |
-| `created_at`      | timestamptz | Record creation                                 |
-| `updated_at`      | timestamptz | Last update                                     |
+| Column            | Type        | Notes                             |
+| ----------------- | ----------- | --------------------------------- |
+| `id`              | UUID        | Primary key                       |
+| `video_url`       | text        | Original Instagram URL            |
+| `video_id`        | text        | Extracted Instagram media ID      |
+| `video_src`       | text        | 'instagram' or 'youtube'          |
+| `categories`      | text[]      | Category slugs (multiple allowed) |
+| `location`        | text        | Location slug                     |
+| `city`            | text        | City name                         |
+| `tags`            | text[]      | Searchable tags                   |
+| `description`     | text        | Video description                 |
+| `thumbnail_url`   | text        | Vercel Blob URL                   |
+| `video_post_date` | timestamptz | Instagram post date               |
+| `view_count`      | integer     | View counter                      |
+| `status`          | text        | draft/published/rejected/trashed  |
+| `trashed_at`      | timestamptz | Soft-delete timestamp             |
+| `created_at`      | timestamptz | Record creation                   |
+| `updated_at`      | timestamptz | Last update                       |
 
 ### RPC Functions
 
