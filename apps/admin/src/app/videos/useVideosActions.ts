@@ -2,7 +2,8 @@
 
 import { useState, useCallback } from 'react';
 
-import { useToast } from '@/components/Toast';
+import { toast } from 'react-hot-toast';
+
 import { STATUS_LABELS } from '@/constants/status';
 
 /**
@@ -60,7 +61,6 @@ export function useVideosActions(
   const [bulkAction, setBulkAction] = useState<string>('');
   const [bulkConfirm, setBulkConfirm] = useState<{ action: string } | null>(null);
   const [changingStatus, setChangingStatus] = useState<Set<string>>(new Set());
-  const { toast } = useToast();
 
   const handleSingleAction = useCallback(
     async (id: string, action: 'trash' | 'restore' | 'delete') => {
@@ -74,14 +74,14 @@ export function useVideosActions(
 
       if (res.ok) {
         const label = action === 'trash' ? 'trashed' : action === 'restore' ? 'restored' : 'permanently deleted';
-        toast(`Video ${label}`, 'success');
+        toast.success(`Video ${label}`);
         loadData();
       } else {
         const err = await res.json().catch(() => ({ error: 'Action failed' }));
-        toast(err.error || 'Action failed', 'error');
+        toast.error(err.error || 'Action failed');
       }
     },
-    [toast, loadData]
+    [loadData]
   );
 
   const executeBulkAction = useCallback(
@@ -108,15 +108,15 @@ export function useVideosActions(
       if (res.ok) {
         const labels: Record<string, string> = { trash: 'trashed', restore: 'restored', delete: 'permanently deleted' };
         const label = labels[action] ?? `updated to ${STATUS_LABELS[action] ?? action}`;
-        toast(`${ids.length} video(s) ${label}`, 'success');
+        toast.success(`${ids.length} video(s) ${label}`);
         setSelectedIds(new Set());
         loadData();
       } else {
         const err = await res.json().catch(() => ({ error: 'Bulk operation failed' }));
-        toast(err.error || 'Bulk operation failed', 'error');
+        toast.error(err.error || 'Bulk operation failed');
       }
     },
-    [selectedIds, toast, loadData, setSelectedIds]
+    [selectedIds, loadData, setSelectedIds]
   );
 
   const handleApplyBulk = useCallback(async () => {
@@ -149,14 +149,14 @@ export function useVideosActions(
         return next;
       });
       if (res.ok) {
-        toast(`Status updated to ${STATUS_LABELS[newStatus] ?? newStatus}`, 'success');
+        toast.success(`Status updated to ${STATUS_LABELS[newStatus] ?? newStatus}`);
         loadData();
       } else {
         const err = await res.json().catch(() => ({ error: 'Failed to update status' }));
-        toast(err.error || 'Failed to update status', 'error');
+        toast.error(err.error || 'Failed to update status');
       }
     },
-    [toast, loadData]
+    [loadData]
   );
 
   const actionConfirmLabel = 'Video';

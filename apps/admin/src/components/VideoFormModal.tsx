@@ -2,11 +2,14 @@
 
 import { useState, type JSX, type SubmitEvent } from 'react';
 
-import { useToast } from '@/components/Toast';
+import { toast } from 'react-hot-toast';
+
 import { Checkbox } from '@/components/ui/Checkbox';
-import { Field, Input, ModalActions, ModalOverlay, ModalTitle, Textarea } from '@/components/ui/Modal';
+import { Input } from '@/components/ui/Input';
+import { Field, ModalActions, ModalOverlay, ModalTitle } from '@/components/ui/Modal';
 import { Radio } from '@/components/ui/Radio';
 import { Select } from '@/components/ui/Select';
+import { Textarea } from '@/components/ui/Textarea';
 import type { CategoryRecord } from '@/constants/categories';
 import type { LocationRecord } from '@/constants/locations';
 import { BULK_STATUS_OPTIONS, STATUS_LABELS } from '@/constants/status';
@@ -55,7 +58,6 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
   const [description, setDescription] = useState(video?.description ?? '');
   const [status, setStatus] = useState<string>(video?.status ?? 'draft');
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
 
   /**
    * Toggles a category slug in the selected categories list.
@@ -111,7 +113,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
   const sendRequest = async (body: Record<string, unknown>): Promise<boolean> => {
     const parsed = videoFormSchema.safeParse(body);
     if (!parsed.success) {
-      toast(parsed.error.issues[0]?.message ?? 'Invalid form data', 'error');
+      toast.error(parsed.error.issues[0]?.message ?? 'Invalid form data');
       return false;
     }
 
@@ -122,13 +124,13 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
     });
 
     if (res.ok) {
-      toast(video ? 'Video updated' : 'Video created', 'success');
+      toast.success(video ? 'Video updated' : 'Video created');
       onSaved();
       return true;
     }
 
     const err = await res.json().catch(() => ({ error: 'Unknown error' }));
-    toast(err.error || 'Failed to save video', 'error');
+    toast.error(err.error || 'Failed to save video');
     return false;
   };
 
@@ -165,7 +167,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
           </Field>
 
           <Field label="Categories" htmlFor={categories[0] ? `category-${categories[0].slug}` : undefined}>
-            <div className="flex max-h-44 flex-wrap gap-2 overflow-y-auto border border-gray-200 bg-white p-3">
+            <div className="flex max-h-44 flex-wrap gap-2 overflow-y-auto rounded-md border border-gray-200 bg-white p-3">
               {categories.map((c) => (
                 <Checkbox
                   key={c.slug}
@@ -181,7 +183,7 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
           </Field>
 
           <Field label="Status" htmlFor={BULK_STATUS_OPTIONS[0] ? `status-${BULK_STATUS_OPTIONS[0]}` : undefined}>
-            <div className="flex flex-wrap gap-x-4 gap-y-2 border border-gray-200 bg-white p-3">
+            <div className="flex flex-wrap gap-x-4 gap-y-2 rounded-md border border-gray-200 bg-white p-3">
               {BULK_STATUS_OPTIONS.map((s) => (
                 <Radio
                   key={s}
