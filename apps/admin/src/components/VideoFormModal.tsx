@@ -149,74 +149,95 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
 
   return (
     <ModalOverlay onClose={onClose}>
-      <ModalTitle editing={!!video}>Video</ModalTitle>
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <Field label="Instagram URL">
-          <Input
-            value={videoUrl}
-            onChange={(e) => setVideoUrl(e.target.value)}
-            placeholder="https://www.instagram.com/reel/..."
-            required
-            disabled={!!video}
-          />
-        </Field>
-
-        <Field label="Categories">
-          <div className="grid max-h-44 grid-cols-2 gap-2 overflow-y-auto border border-gray-200 bg-white p-3">
-            {categories.map((c) => (
-              <Checkbox
-                key={c.slug}
-                label={c.name}
-                checked={selectedCategories.includes(c.slug)}
-                onChange={() => toggleCategory(c.slug)}
-              />
-            ))}
-          </div>
-        </Field>
-
-        <Field label="Status">
-          <div className="flex flex-wrap gap-x-4 gap-y-2 border border-gray-200 bg-white p-3">
-            {BULK_STATUS_OPTIONS.map((s) => (
-              <Radio
-                key={s}
-                label={STATUS_LABELS[s]}
-                name="status"
-                value={s}
-                checked={status === s}
-                onChange={() => setStatus(s)}
-              />
-            ))}
-          </div>
-        </Field>
-
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Location">
-            <Select value={location} onChange={(e) => setLocation(e.target.value)}>
-              <option value="">— Select —</option>
-              {locations.map((s) => (
-                <option key={s.slug} value={s.slug}>
-                  {s.name}
-                </option>
-              ))}
-            </Select>
+      <form onSubmit={handleSubmit}>
+        <ModalTitle editing={!!video}>Video</ModalTitle>
+        <div className="space-y-3 p-4">
+          <Field label="Instagram URL" htmlFor="video_url">
+            <Input
+              name="video_url"
+              id="video_url"
+              value={videoUrl}
+              onChange={(e) => setVideoUrl(e.target.value)}
+              placeholder="https://www.instagram.com/reel/..."
+              required
+              disabled={!!video}
+            />
           </Field>
-          <Field label="City">
-            <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="e.g. Delhi, Mumbai, Bangalore" />
+
+          <Field label="Categories" htmlFor={categories[0] ? `category-${categories[0].slug}` : undefined}>
+            <div className="flex max-h-44 flex-wrap gap-2 overflow-y-auto border border-gray-200 bg-white p-3">
+              {categories.map((c) => (
+                <Checkbox
+                  key={c.slug}
+                  name="categories"
+                  id={`category-${c.slug}`}
+                  label={c.name}
+                  labelClassName="text-xs"
+                  checked={selectedCategories.includes(c.slug)}
+                  onChange={() => toggleCategory(c.slug)}
+                />
+              ))}
+            </div>
+          </Field>
+
+          <Field label="Status" htmlFor={BULK_STATUS_OPTIONS[0] ? `status-${BULK_STATUS_OPTIONS[0]}` : undefined}>
+            <div className="flex flex-wrap gap-x-4 gap-y-2 border border-gray-200 bg-white p-3">
+              {BULK_STATUS_OPTIONS.map((s) => (
+                <Radio
+                  key={s}
+                  label={STATUS_LABELS[s]}
+                  name="status"
+                  id={`status-${s}`}
+                  value={s}
+                  checked={status === s}
+                  onChange={() => setStatus(s)}
+                />
+              ))}
+            </div>
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Location" htmlFor="location">
+              <Select name="location" id="location" value={location} onChange={(e) => setLocation(e.target.value)}>
+                <option value="">— Select —</option>
+                {locations.map((s) => (
+                  <option key={s.slug} value={s.slug}>
+                    {s.name}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+            <Field label="City" htmlFor="city">
+              <Input
+                name="city"
+                id="city"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="e.g. Delhi, Mumbai, Bangalore"
+              />
+            </Field>
+          </div>
+
+          <Field label="Tags (comma-separated)" htmlFor="tags">
+            <Input
+              name="tags"
+              id="tags"
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
+              placeholder="e.g. protest, students, peace"
+            />
+          </Field>
+
+          <Field label="Description" htmlFor="description">
+            <Textarea
+              name="description"
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Brief description of the video"
+            />
           </Field>
         </div>
-
-        <Field label="Tags (comma-separated)">
-          <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="e.g. protest, students, peace" />
-        </Field>
-
-        <Field label="Description">
-          <Textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Brief description of the video"
-          />
-        </Field>
-
         <ModalActions onClose={onClose} loading={loading} />
       </form>
     </ModalOverlay>
