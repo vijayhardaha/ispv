@@ -2,6 +2,7 @@
 
 ## Stack
 
+- **Package:** `@ispv/admin` (part of the `ispv` monorepo)
 - **Framework:** Next.js ^16.2.11 (App Router, Turbopack)
 - **Language:** TypeScript ^6.0.3, React ^19.2.8
 - **Styling:** Tailwind CSS ^4.3.3 (`@tailwindcss/postcss`), `tw-animate-css` ^1.4.0
