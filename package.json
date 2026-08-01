@@ -1,5 +1,5 @@
 {
-  "name": "reel-vault-monorepo",
+  "name": "ispv",
   "workspaces": [
     "apps/*",
     "chrome-extension"
