@@ -3,25 +3,25 @@
 ## Stack
 
 - **Package:** `@ispv/frontend` (part of the `ispv` monorepo)
-- **Framework:** Next.js ^16.2.11 (App Router, Turbopack)
+- **Framework:** Next.js ^16.2.12 (App Router, Turbopack)
 - **Language:** TypeScript ^6.0.3, React ^19.2.8
 - **Styling:** Tailwind CSS ^4.3.3 (`@tailwindcss/postcss`), `tw-animate-css` ^1.4.0
-- **UI Primitives:** Radix UI (Dialog, Select, Slot)
-- **Icons:** lucide-react ^1.26.0, react-icons ^5.7.0
+- **UI Primitives:** Radix UI (Dialog, Select, Slot) + custom Checkbox, CoverWaves, Tag, Input
+- **Icons:** lucide-react ^1.28.0, react-icons ^5.7.0
 - **Class Utils:** clsx + tailwind-merge (`cn()`)
 - **Variants:** class-variance-authority ^0.7.1
-- **Database:** Supabase (browser client via `@supabase/supabase-js` ^2.110.8)
-- **Schema/Validation:** Zod ^4.4.3, `@vijayhardaha/schema-builder` ^1.2.0 (JSON-LD), `lib/schema.ts` (Zod schemas)
-- **SEO:** `next-sitemap` ^4.2.3 for sitemap generation, `@next/third-parties` ^16.2.11
-- **Analytics:** `@vercel/analytics` ^2.0.1 (VercelAnalytics component exists but NOT wired in layout)
-- **Testing:** Vitest ^4.1.10 (node env, 5+ test files — utilities, adapters, constants, filtering, formatting, Instagram)
+- **Database:** Supabase (browser client via `@supabase/supabase-js` ^2.111.0)
+- **Schema/Validation:** Zod ^4.4.3, `@vijayhardaha/schema-builder` ^1.2.0 (JSON-LD)
+- **SEO:** `next-sitemap` ^4.2.3 for sitemap generation, `@next/third-parties` ^16.2.12
+- **Analytics:** `@vercel/analytics` ^2.0.1 (VercelAnalytics wired in layout), GoogleAnalytics gated to production GA ID
+- **Testing:** Vitest ^4.1.10 (node env, 16 test files — utilities, adapters, constants, filtering, formatting, Instagram, tag/category/db helpers)
 
 ## Project Structure
 
 ```
 src/
 ├── app/              # App Router pages
-│   ├── layout.tsx    # Root layout (fonts, Header, Footer, GA, JSON-LD, ReelPlayerProvider)
+│   ├── layout.tsx    # Root layout (fonts, Header, Footer, GA, VercelAnalytics, JSON-LD, ReelPlayerProvider)
 │   ├── page.tsx      # Homepage (server component — fetches videos, categories, locations from Supabase)
 │   ├── not-found.tsx
 │   ├── about/page.tsx
@@ -29,6 +29,7 @@ src/
 │   ├── categories/[id]/page.tsx (with useCategoryPage hook, CategoryHero, CategoryVideos)
 │   ├── dmca/page.tsx
 │   │   ├── api/og/preview.png/route.tsx  # OG preview API endpoint
+│   ├── locations/page.tsx (locations listing page)
 │   ├── privacy/page.tsx
 │   ├── sitemap/page.tsx
 │   ├── terms/page.tsx
@@ -37,17 +38,17 @@ src/
 ├── components/
 │   ├── features/     # HeroSection, FeaturedVideos, CategorySection, CategorySectionLoader,
 │   │                 # LocationsMap, CTASection, FAQSection, ShareSection, SloganTicker,
-│   │                 # HashtagArea, SubmitVideoDialog, RecentlyAddedVideos, PullQuoteSection
+│   │                 # TagArea, SubmitVideoDialog, RecentlyAddedVideos, PullQuoteSection
 │   ├── layout/       # Header, Footer
 │   ├── shared/       # FilterBar, VideoCard (React.memo), ReelPlayer, ReelPlayerProvider, ReelItem,
 │   │                 # Pagination, TagChips (React.memo), SectionHeader, VideoGridSection,
 │   │                 # VideoCardSkeleton, SuccessState, PageHero, GoogleAnalytics, VercelAnalytics
-│   └── ui/           # Primitives (Button, Container, Dialog, Dropdown, Input, Tag)
+│   └── ui/           # Primitives (Button, Container, Dialog, Dropdown, Input, Tag, Checkbox, CoverWaves)
 ├── constants/        # seo.ts, colors.ts, navlinks.ts, categories.ts, locations.ts, slogans.ts
-├── helpers/          # filterVideos.ts (with sort support), formatLocation.ts, media.ts
-├── hooks/            # useFilterState.ts, useReelPlayer.ts, useSubmitVideoForm.ts
-└── lib/              # videos.ts (VideoEntry + getAllVideosFromDb), db.ts, adapt.ts, cn.ts,
-                      # format.ts, instagram.ts, supabase.ts, schema.ts, seo.ts, meta.ts
+├── helpers/          # filterVideos.ts (with sort support), formatLocation.ts, media.ts, categories.ts, tags.ts
+├── hooks/            # useFilterState.ts, usePagedVideos.ts, useFilterOptions.ts, useReelPlayer.ts, useSubmitVideoForm.ts
+└── lib/              # subdirs: utils/ (cn, format, instagram), videos/ (videos.ts, adapt.ts),
+                      # db/ (db.ts, supabase.ts), seo/ (seo.ts, meta.ts, schema.ts), helpers/
 ```
 
 ## Data Architecture
@@ -84,7 +85,7 @@ HomepageStats {
 }
 ```
 
-### DB Functions (`lib/db.ts`)
+### DB Functions (`lib/db/db.ts`)
 
 | Function                   | Returns                               | Notes                                        |
 | -------------------------- | ------------------------------------- | -------------------------------------------- |
@@ -94,17 +95,16 @@ HomepageStats {
 | `getTags()`                | `string[]`                            | Via `get_tags` RPC, sorted by frequency      |
 | `getFeaturedCategories()`  | `DbCategory[]`                        | 6 slugs, display order preserved             |
 | `getHomepageStats()`       | `HomepageStats`                       | Aggregate stats via `get_homepage_stats` RPC |
-| `getPublishedVideoCount()` | `number`                              | Published video count                        |
-| `getCityCounts()`          | `number`                              | Unique city count                            |
-| `getLocationCounts()`      | `number`                              | Unique location count                        |
+| `getCategoryVideoCounts()` | `{slug, count}[]`                     | Per-category video counts                    |
 | `getLocationVideoCounts()` | `{slug, count}[]`                     | Per-location video counts                    |
-| `getCategoryCounts()`      | `{slug, count}[]`                     | Per-category video counts                    |
 | `checkVideoExists(url)`    | `{exists, trashed?, status?, error?}` | Duplicate check via admin API                |
 
 ## Filter Architecture
 
 - `FilterState` (`helpers/filterVideos.ts`): `{ query, category, location, tags[], page, perPage, sort }`
 - `useFilterState` (`hooks/useFilterState.ts`): **URL-driven** — reads `q`, `location`, `tag`, `sort`, `page` from `useSearchParams` and exposes `setFilter(param, value)` which rewrites the URL via `router.replace` (resets `page`). Used by both the videos page and category pages so filters/sort/pagination live in the URL
+- `usePagedVideos` (`hooks/usePagedVideos.ts`): fetches published videos from a `FilterState` with stale-request cancellation, returns `{ paged, total, loading }`
+- `useFilterOptions` (`hooks/useFilterOptions.ts`): loads static locations + tags once, returns `{ allLocations, allTags }`
 - `filterVideos()` (`helpers/filterVideos.ts`): AND logic across category, location, tags, query, then sorts by selected option (pure helper — client pages filter server-side via the RPC)
 - `SORT_OPTIONS` (`helpers/filterVideos.ts`): label/value pairs for sort dropdown
 - `SortOption` type: `views_desc`, `views_asc`, `posted_date_desc`, `posted_date_asc`, `created_date_desc`, `created_date_asc`, `city_asc`, `city_desc`, `location_asc`, `location_desc`
@@ -123,7 +123,7 @@ HomepageStats {
 
 ## Component Conventions
 
-- Named `const` function exports: `export const Foo = (...) => { ... }`
+- Named function declarations: `export function Foo() { ... }`
 - **`React.memo`** wraps `VideoCard` and `TagChips` to skip re-renders when props don't change
 - **`useCallback`** / **`useMemo`** used throughout for stable references (CategorySection, FilterBar, useSubmitVideoForm, ReelPlayerProvider)
 - Explicit `JSX.Element` return type
@@ -136,10 +136,10 @@ HomepageStats {
 ## SEO & Analytics
 
 - `constants/seo.ts`: `SITE_CONFIG`, `SITE_METADATA` (full Next.js Metadata with OG/Twitter/robots)
-- `lib/seo.ts`: `siteUrl()`, `buildMetadata()` per-page metadata builder
-- `lib/schema.ts`: JSON-LD schemas (global + per-page) using `@vijayhardaha/schema-builder`
-- `GoogleAnalytics`: gated to production + non-empty `GOOGLE_ANALYTICS_ID` (currently empty — disabled)
-- `VercelAnalytics`: component exists at `shared/VercelAnalytics.tsx` but NOT imported in `layout.tsx`
+- `lib/seo/seo.ts`: `siteUrl()`, `getPermaLink()`; `lib/seo/meta.ts`: `buildMetadata()` per-page metadata builder
+- `lib/seo/schema.ts`: JSON-LD schemas (global + per-page) using `@vijayhardaha/schema-builder`
+- `GoogleAnalytics`: gated to production + non-empty `NEXT_PUBLIC_GA_ID` (currently empty — disabled)
+- `VercelAnalytics`: wired in the root layout alongside GoogleAnalytics
 
 ## Performance Optimisations Applied
 
@@ -155,22 +155,24 @@ HomepageStats {
 ## Testing
 
 - Vitest ^4.1.10, node environment, `globals: true`
-- Test files: `adapt.test.ts`, `cn.test.ts`, `format.test.ts`, `instagram.test.ts`, `seo.test.ts`, `videos.test.ts`, `schema.test.ts`, `meta.test.ts`, `filterVideos.test.ts`, `formatLocation.test.ts`, `media.test.ts`, `constants.test.ts`, `slogans.test.ts`
-- Covers: DB adapters, class merging, formatting utilities, Instagram URL parsing, SEO helpers, filter logic, constants validation, media helpers
+- **195 tests across 16 files**
+- Test files: `adapt.test.ts`, `cn.test.ts`, `format.test.ts`, `instagram.test.ts`, `seo.test.ts`, `videos.test.ts`, `schema.test.ts`, `meta.test.ts`, `filterVideos.test.ts`, `formatLocation.test.ts`, `media.test.ts`, `constants.test.ts`, `slogans.test.ts`, `tags.test.ts`, `categories.test.ts`, `db.test.ts`
+- Covers: DB adapters, class merging, formatting utilities, Instagram URL parsing, SEO helpers, filter logic, constants validation, media helpers, tag parsing, category badges, db RPC wrappers
 - No component tests or E2E tests
 
 ## Not Wired / Known Gaps
 
-- `VercelAnalytics` component exists at `shared/VercelAnalytics.tsx` but is not imported in layout.tsx
 - `GoogleAnalytics` component is gated to production + non-empty `NEXT_PUBLIC_GA_ID` (currently empty — disabled)
 - `SubmitVideoDialog` POSTs to the admin public API endpoint — needs production URL configured in `NEXT_PUBLIC_ADMIN_URL`
 - No env files tracked (only `.env.example` with Supabase placeholder values)
+- Font variables are loaded as `bodyFont` (Instrument Sans), `headingFont` (Poppins), `monoFont` (JetBrains Mono)
+- `app/locations` links to `/videos?location=<slug>` via query param
 
 ## Config Files
 
 | File                     | Purpose                                                                  |
 | ------------------------ | ------------------------------------------------------------------------ |
-| `next.config.ts`         | Image remote patterns (Unsplash, Vercel Blob)                            |
+| `next.config.ts`         | Image remote patterns (Instagram CDN, Vercel Blob)                       |
 | `postcss.config.mjs`     | `@tailwindcss/postcss` plugin                                            |
 | `tsconfig.json`          | Extends `@vijayhardaha/dev-config/tsconfig`, `@/*` alias, vitest globals |
 | `eslint.config.mjs`      | Delegates to `@vijayhardaha/dev-config/eslint/next`                      |
