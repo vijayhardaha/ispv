@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 
 /** Base input styles shared by Input and Textarea. */
 export const inputBase =
-  'w-full rounded-md border border-gray-300 placeholder:text-gray-400 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 focus:outline-none';
+  'w-full rounded-md border border-gray-300 placeholder:text-gray-400 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500 focus:border-pink-500 focus:ring-2 focus:ring-pink-500/30 focus:outline-none';
 
 /** Size variants for the Input component (md is default). */
 type InputSize = 'sm' | 'md' | 'lg';

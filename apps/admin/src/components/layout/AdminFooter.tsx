@@ -11,14 +11,14 @@ export function AdminFooter(): JSX.Element {
   return (
     <footer className="border-t border-gray-200 bg-white">
       <Container className="flex items-center justify-between py-4">
-        <span className="font-display text-xs font-semibold tracking-tight uppercase">ISPV Admin</span>
+        <span className="text-sm font-bold tracking-tight uppercase">ISPV Admin</span>
         <p className="text-xs text-gray-500">
           &copy; {new Date().getFullYear()}{' '}
           <a
             href="https://ispv.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
-            className="transition-colors hover:text-purple-600"
+            className="transition-colors hover:text-pink-600"
           >
             Indian Students Protest Vault
           </a>

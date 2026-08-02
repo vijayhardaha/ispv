@@ -44,12 +44,12 @@ export function Radio({
       <span
         className={cn(
           'grid h-5 w-5 shrink-0 place-items-center rounded-full border border-gray-300 bg-white',
-          'transition-colors peer-checked:border-purple-600 peer-checked:[&_span]:opacity-100',
+          'transition-colors peer-checked:border-pink-600 peer-checked:[&_span]:opacity-100',
           'group-hover:border-gray-400 peer-disabled:cursor-not-allowed peer-disabled:opacity-40',
-          'peer-focus-visible:ring-2 peer-focus-visible:ring-purple-500 peer-focus-visible:ring-offset-1'
+          'peer-focus-visible:ring-2 peer-focus-visible:ring-pink-500 peer-focus-visible:ring-offset-1'
         )}
       >
-        <span className="h-2.5 w-2.5 rounded-full bg-purple-600 opacity-0 transition-opacity" />
+        <span className="h-2.5 w-2.5 rounded-full bg-pink-600 opacity-0 transition-opacity" />
       </span>
       {label && <span className={cn('text-sm', labelClassName)}>{label}</span>}
     </label>

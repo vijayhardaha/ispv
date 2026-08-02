@@ -31,7 +31,7 @@ function getPageNumbers(current: number, total: number, buildHref: (n: number) =
       'inline-flex min-w-8 h-8 items-center justify-center rounded-md border border-gray-300 px-2 text-xs font-semibold';
     if (n === current) {
       items.push(
-        <span key={n} className={cn(baseClass, 'border-purple-600 bg-purple-600 text-white')} aria-current="page">
+        <span key={n} className={cn(baseClass, 'border-pink-600 bg-pink-600 text-white')} aria-current="page">
           {n}
         </span>
       );

@@ -5,12 +5,12 @@ import type { ComponentPropsWithoutRef, JSX } from 'react';
 import { cn } from '@/lib/utils';
 
 const variantStyles = {
-  primary: 'border border-purple-600 bg-purple-600 text-white hover:bg-purple-700 hover:border-purple-700',
+  primary: 'border border-pink-600 bg-pink-600 text-white hover:bg-pink-700 hover:border-pink-700',
   secondary: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-100',
   danger: 'border border-red-600 bg-red-600 text-white hover:bg-red-700 hover:border-red-700',
   'danger-ghost': 'border border-red-600 bg-red-600 text-white hover:bg-red-700 hover:border-red-700',
   'danger-outline': 'border border-red-300 bg-transparent text-red-600 hover:bg-red-50 hover:border-red-400',
-  link: 'text-gray-700 hover:text-purple-600 hover:underline hover:underline-offset-2',
+  link: 'text-gray-700 hover:text-pink-600 hover:underline hover:underline-offset-2',
 } as const;
 
 const sizeStyles = { sm: 'h-7 px-1.5 text-xs', md: 'h-9 px-2.5 text-sm', lg: 'h-11 px-3.5 text-base' } as const;

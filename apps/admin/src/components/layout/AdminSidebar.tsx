@@ -37,7 +37,7 @@ export function AdminSidebar(): JSX.Element {
               aria-current={active ? 'page' : undefined}
               className={cn(
                 'rounded-md px-3 py-2 text-sm font-semibold transition-colors',
-                active ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white'
+                active ? 'bg-pink-600 text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white'
               )}
             >
               {link.label}

@@ -39,7 +39,7 @@ export function NativeSelect({ className, size = 'default', ...props }: NativeSe
         data-size={size}
         className={cn(
           'h-9 w-full min-w-0 appearance-none rounded-md border border-gray-300 bg-white py-1 pr-8 pl-2.5 text-sm transition-colors outline-none select-none',
-          'focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30',
+          'focus:border-pink-500 focus:ring-2 focus:ring-pink-500/30',
           'disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500',
           'data-[size=sm]:h-7 data-[size=sm]:px-2 data-[size=sm]:text-xs'
         )}

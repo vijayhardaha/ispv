@@ -53,11 +53,11 @@ export function Checkbox({
       <span
         className={cn(
           'grid h-5 w-5 shrink-0 place-items-center rounded-sm border border-gray-300 bg-white',
-          'transition-colors peer-checked:border-purple-600 peer-checked:bg-purple-600',
-          'peer-indeterminate:border-purple-600 peer-indeterminate:bg-purple-600',
+          'transition-colors peer-checked:border-pink-600 peer-checked:bg-pink-600',
+          'peer-indeterminate:border-pink-600 peer-indeterminate:bg-pink-600',
           'peer-checked:[&_.cb-check]:opacity-100 peer-indeterminate:[&_.cb-minus]:opacity-100',
           'group-hover:border-gray-400 peer-disabled:cursor-not-allowed peer-disabled:opacity-40',
-          'peer-focus-visible:ring-2 peer-focus-visible:ring-purple-500 peer-focus-visible:ring-offset-1'
+          'peer-focus-visible:ring-2 peer-focus-visible:ring-pink-500 peer-focus-visible:ring-offset-1'
         )}
       >
         <Check

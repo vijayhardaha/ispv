@@ -15,19 +15,17 @@ export const SelectGroup = SelectPrimitive.Group;
 
 /**
  * Displays the currently selected value inside the trigger.
- * Truncates overflow with an ellipsis instead of wrapping.
+ * The value node is marked with a data-slot so the trigger can apply
+ * truncation styles (min-w-0 flex-1 truncate) via child selectors.
  *
  * @param {object} props - Component properties.
- * @param {string} [props.className] - Additional CSS classes to merge onto the value.
  *
  * @returns {JSX.Element} Rendered selected value.
  */
 export const SelectValue = forwardRef<
   ComponentRef<typeof SelectPrimitive.Value>,
   ComponentPropsWithoutRef<typeof SelectPrimitive.Value>
->(({ className, ...props }, ref) => (
-  <SelectPrimitive.Value ref={ref} className={cn('min-w-0 flex-1 truncate', className)} {...props} />
-));
+>((props, ref) => <SelectPrimitive.Value ref={ref} data-slot="select-value" {...props} />);
 SelectValue.displayName = 'SelectValue';
 
 /** Size variants for the SelectTrigger. */
@@ -52,8 +50,9 @@ export const SelectTrigger = forwardRef<
     data-size={size}
     className={cn(
       'flex w-full items-center justify-between gap-2 rounded-md border border-gray-300 bg-white text-sm transition-colors outline-none select-none',
+      'text-left *:data-[slot=select-value]:min-w-0 *:data-[slot=select-value]:flex-1 *:data-[slot=select-value]:truncate',
       'data-placeholder:text-gray-400',
-      'focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30',
+      'focus:border-pink-500 focus:ring-2 focus:ring-pink-500/30',
       'disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500',
       'data-[size=default]:h-9 data-[size=default]:px-2.5',
       'data-[size=sm]:h-7 data-[size=sm]:px-2 data-[size=sm]:text-xs',
@@ -98,7 +97,7 @@ export const SelectContent = forwardRef<
       <SelectScrollUpButton />
       <SelectPrimitive.Viewport
         data-position={position}
-        className={cn('p-1', position === 'popper' && 'w-full min-w-[var(--radix-select-trigger-width)]')}
+        className={cn('p-1', position === 'popper' && 'w-full min-w-[--radix-select-trigger-width]')}
       >
         {children}
       </SelectPrimitive.Viewport>
@@ -125,7 +124,7 @@ export const SelectItem = forwardRef<
     ref={ref}
     className={cn(
       'relative flex w-full cursor-default items-center rounded-md py-1.5 pr-8 pl-2 text-sm outline-none select-none',
-      'data-highlighted:bg-purple-50 data-highlighted:text-purple-700',
+      'data-highlighted:bg-pink-50 data-highlighted:text-pink-700',
       'data-disabled:pointer-events-none data-disabled:opacity-50',
       className
     )}
@@ -134,7 +133,7 @@ export const SelectItem = forwardRef<
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
     <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check className="size-4 text-purple-600" />
+        <Check className="size-4 text-pink-600" />
       </SelectPrimitive.ItemIndicator>
     </span>
   </SelectPrimitive.Item>
