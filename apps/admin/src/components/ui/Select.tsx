@@ -13,8 +13,22 @@ export const Select = SelectPrimitive.Root;
 /** Groups related select items, typically with a label. */
 export const SelectGroup = SelectPrimitive.Group;
 
-/** Displays the currently selected value inside the trigger. */
-export const SelectValue = SelectPrimitive.Value;
+/**
+ * Displays the currently selected value inside the trigger.
+ * Truncates overflow with an ellipsis instead of wrapping.
+ *
+ * @param {object} props - Component properties.
+ * @param {string} [props.className] - Additional CSS classes to merge onto the value.
+ *
+ * @returns {JSX.Element} Rendered selected value.
+ */
+export const SelectValue = forwardRef<
+  ComponentRef<typeof SelectPrimitive.Value>,
+  ComponentPropsWithoutRef<typeof SelectPrimitive.Value>
+>(({ className, ...props }, ref) => (
+  <SelectPrimitive.Value ref={ref} className={cn('min-w-0 flex-1 truncate', className)} {...props} />
+));
+SelectValue.displayName = 'SelectValue';
 
 /** Size variants for the SelectTrigger. */
 type SelectSize = 'sm' | 'default';
