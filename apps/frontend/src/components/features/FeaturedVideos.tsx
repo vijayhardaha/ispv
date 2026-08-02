@@ -48,7 +48,7 @@ export function FeaturedVideos({ categories }: { categories: DbCategory[] }): JS
               <span className="bg-linear-to-r from-red-600 to-red-500 bg-clip-text text-transparent">First</span>
             </>
           }
-          description="Browse by theme — each category collects verified submissions from across India. (थीम के अनुसार ब्राउज़ करें — प्रत्येक श्रेणी में भारत भर से सत्यापित सबमिशन शामिल हैं।)"
+          description="Start with the themes that matter most — each category gathers verified videos from across India. (सबसे महत्वपूर्ण विषयों से शुरुआत करें — प्रत्येक श्रेणी में भारत भर से सत्यापित वीडियो शामिल हैं।)"
           href="/categories"
           buttonText="View categories"
           className="border-b-4"
