@@ -129,7 +129,7 @@ export function VideoGridSection({
       ) : (
         <>
           <div className="mt-6 flex items-center justify-between">
-            <div className="text-[10px] tracking-widest text-black/60 uppercase">
+            <div className="text-xs text-black/60 uppercase">
               Page {safePage} of {totalPages} · {total} videos
             </div>
             <SortControls sort={state.sort} onSortChange={(sort) => setFilter('sort', sort)} />
