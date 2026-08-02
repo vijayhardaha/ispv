@@ -13,7 +13,15 @@ import { Checkbox } from '@/components/ui/Checkbox';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { Pagination } from '@/components/ui/Pagination';
 import { SearchInput } from '@/components/ui/SearchInput';
-import { Select } from '@/components/ui/Select';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/Select';
 import { VideoFormModal } from '@/components/VideoFormModal';
 import { CATEGORIES, type CategoryRecord } from '@/constants/categories';
 import { TAG_VARIANTS, type TagVariant } from '@/constants/colors';
@@ -192,32 +200,30 @@ function VideosToolbar({
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3">
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2">
-          <Select
-            variant="bulk"
-            name="bulk_action"
-            id="bulk_action"
-            value={bulkAction}
-            onChange={(e) => onBulkActionChange(e.target.value)}
-            disabled={bulkLoading}
-          >
-            <option value="">Bulk action…</option>
-            {isTrashed ? (
-              <>
-                <option value="restore">Restore</option>
-                <option value="delete">Permanently Delete</option>
-              </>
-            ) : (
-              <>
-                <option value="trash">Move to trash</option>
-                <optgroup label="Change status to…">
-                  {BULK_STATUS_OPTIONS.map((s) => (
-                    <option key={s} value={s}>
-                      {STATUS_LABELS[s]}
-                    </option>
-                  ))}
-                </optgroup>
-              </>
-            )}
+          <Select value={bulkAction} onValueChange={onBulkActionChange} disabled={bulkLoading}>
+            <SelectTrigger id="bulk_action" className="w-48 font-semibold">
+              <SelectValue placeholder="Bulk action…" />
+            </SelectTrigger>
+            <SelectContent>
+              {isTrashed ? (
+                <>
+                  <SelectItem value="restore">Restore</SelectItem>
+                  <SelectItem value="delete">Permanently Delete</SelectItem>
+                </>
+              ) : (
+                <>
+                  <SelectItem value="trash">Move to trash</SelectItem>
+                  <SelectGroup>
+                    <SelectLabel>Change status to…</SelectLabel>
+                    {BULK_STATUS_OPTIONS.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {STATUS_LABELS[s]}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </>
+              )}
+            </SelectContent>
           </Select>
 
           <Button
@@ -233,26 +239,30 @@ function VideosToolbar({
         <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
 
         <div className="flex items-center gap-2">
-          <Select
-            variant="filter"
-            name="category"
-            id="category-filter"
-            value={draftCategory}
-            onChange={(e) => setDraftCategory(e.target.value)}
-            aria-label="Category filter"
-            placeholder="All categories"
-            options={CATEGORIES.map((c) => ({ value: c.slug, label: c.name }))}
-          />
-          <Select
-            variant="filter"
-            name="location"
-            id="location-filter"
-            value={draftLocation}
-            onChange={(e) => setDraftLocation(e.target.value)}
-            aria-label="Location filter"
-            placeholder="All locations"
-            options={LOCATIONS.map((l) => ({ value: l.slug, label: l.name }))}
-          />
+          <Select value={draftCategory} onValueChange={setDraftCategory}>
+            <SelectTrigger id="category-filter" aria-label="Category filter" className="w-44 font-semibold">
+              <SelectValue placeholder="All categories" />
+            </SelectTrigger>
+            <SelectContent>
+              {CATEGORIES.map((c) => (
+                <SelectItem key={c.slug} value={c.slug}>
+                  {c.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={draftLocation} onValueChange={setDraftLocation}>
+            <SelectTrigger id="location-filter" aria-label="Location filter" className="w-44 font-semibold">
+              <SelectValue placeholder="All locations" />
+            </SelectTrigger>
+            <SelectContent>
+              {LOCATIONS.map((l) => (
+                <SelectItem key={l.slug} value={l.slug}>
+                  {l.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button onClick={() => onApplyFilters(draftCategory, draftLocation)}>
             <Filter className="h-3.5 w-3.5" aria-hidden="true" />
             Filter
@@ -331,29 +341,30 @@ function StatusCell({
   }
 
   return (
-    <Select
-      variant="inline"
-      size="sm"
-      name="status"
-      id={`status-${video.id}`}
-      value={video.status}
-      disabled={changingStatus.has(video.id)}
-      className={cn(
-        video.status === 'published'
-          ? 'border-green-600 bg-green-600 text-white'
-          : video.status === 'draft'
-            ? 'border-gray-300 bg-gray-100 text-gray-800'
-            : video.status === 'rejected'
-              ? 'border-red-600 bg-red-600 text-white'
-              : 'border-purple-600 bg-purple-600 text-white'
-      )}
-      onChange={(e) => onChange(video.id, e.target.value)}
-    >
-      {BULK_STATUS_OPTIONS.map((s) => (
-        <option key={s} value={s} className="bg-white text-black">
-          {STATUS_LABELS[s]}
-        </option>
-      ))}
+    <Select value={video.status} onValueChange={(s) => onChange(video.id, s)} disabled={changingStatus.has(video.id)}>
+      <SelectTrigger
+        id={`status-${video.id}`}
+        size="sm"
+        className={cn(
+          'w-28 font-semibold',
+          video.status === 'published'
+            ? 'border-green-600 bg-green-600 text-white'
+            : video.status === 'draft'
+              ? 'border-gray-300 bg-gray-100 text-gray-800'
+              : video.status === 'rejected'
+                ? 'border-red-600 bg-red-600 text-white'
+                : 'border-purple-600 bg-purple-600 text-white'
+        )}
+      >
+        <SelectValue placeholder="Select status" />
+      </SelectTrigger>
+      <SelectContent>
+        {BULK_STATUS_OPTIONS.map((s) => (
+          <SelectItem key={s} value={s}>
+            {STATUS_LABELS[s]}
+          </SelectItem>
+        ))}
+      </SelectContent>
     </Select>
   );
 }

@@ -8,7 +8,7 @@ import { Checkbox } from '@/components/ui/Checkbox';
 import { Input } from '@/components/ui/Input';
 import { Field, ModalActions, ModalOverlay, ModalTitle } from '@/components/ui/Modal';
 import { Radio } from '@/components/ui/Radio';
-import { Select } from '@/components/ui/Select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
 import type { CategoryRecord } from '@/constants/categories';
 import type { LocationRecord } from '@/constants/locations';
@@ -16,6 +16,9 @@ import { BULK_STATUS_OPTIONS, STATUS_LABELS } from '@/constants/status';
 import { videoFormSchema } from '@/lib/db';
 import type { VideoRecord } from '@/lib/db';
 import { capitalizeCity, extractIgId, reconstructIgUrl, detectSource } from '@/lib/utils';
+
+/** Sentinel value for the clear-location option in the location select. */
+const NO_LOCATION = '__none__';
 
 /**
  * Properties for the VideoFormModal component.
@@ -200,13 +203,18 @@ export function VideoFormModal({ video, categories, locations, onClose, onSaved 
 
           <div className="grid grid-cols-2 gap-3">
             <Field label="Location" htmlFor="location">
-              <Select name="location" id="location" value={location} onChange={(e) => setLocation(e.target.value)}>
-                <option value="">— Select —</option>
-                {locations.map((s) => (
-                  <option key={s.slug} value={s.slug}>
-                    {s.name}
-                  </option>
-                ))}
+              <Select value={location || NO_LOCATION} onValueChange={(v) => setLocation(v === NO_LOCATION ? '' : v)}>
+                <SelectTrigger id="location">
+                  <SelectValue placeholder="— Select —" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NO_LOCATION}>— Select —</SelectItem>
+                  {locations.map((s) => (
+                    <SelectItem key={s.slug} value={s.slug}>
+                      {s.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </Field>
             <Field label="City" htmlFor="city">
