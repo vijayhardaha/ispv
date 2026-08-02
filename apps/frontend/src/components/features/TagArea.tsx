@@ -62,7 +62,7 @@ export function TagArea({
   return (
     <div className="space-y-1">
       <FieldLabel htmlFor="reel-tags" className="flex w-full items-center justify-between">
-        <span className="inline-flex items-center gap-1.5">
+        <span className="inline-flex items-center gap-1">
           <Hash className="size-3.5" /> Tags
         </span>
         <span className="text-xs font-bold text-zinc-700">
@@ -101,7 +101,7 @@ export function TagArea({
 
       {!atMaxTags && !atMaxWords && SUGGESTED_TAGS.length > 0 && (
         <div>
-          <p className="mb-1 text-[10px] font-bold tracking-widest text-black/50 uppercase">Suggestions</p>
+          <p className="mb-1 text-xs font-bold text-black/60 uppercase">Suggestions</p>
           <div className="flex flex-wrap gap-1">
             {SUGGESTED_TAGS.map((t) => (
               <button
@@ -117,6 +117,22 @@ export function TagArea({
           </div>
         </div>
       )}
+
+      <p className="text-xs leading-relaxed text-black/60">
+        Add keywords like{' '}
+        <span className="font-bold text-black/90 underline decoration-yellow-400 decoration-2 underline-offset-2">
+          person names
+        </span>
+        ,{' '}
+        <span className="font-bold text-black/90 underline decoration-yellow-400 decoration-2 underline-offset-2">
+          location names
+        </span>
+        , or{' '}
+        <span className="font-bold text-black/90 underline decoration-yellow-400 decoration-2 underline-offset-2">
+          special keywords
+        </span>{' '}
+        so others can find this video easily.
+      </p>
     </div>
   );
 }

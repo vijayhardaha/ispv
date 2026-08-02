@@ -115,9 +115,11 @@ export function SubmitVideoDialog({
               </div>
 
               <div className="space-y-1">
-                <FieldLabel htmlFor="reel-categories">
-                  <LayoutGrid className="h-3.5 w-3.5" /> Category
-                  <span className="ml-2 font-normal text-black/50 normal-case">
+                <FieldLabel htmlFor="reel-categories" className="flex w-full items-center justify-between">
+                  <span className="inline-flex items-center gap-1">
+                    <LayoutGrid className="h-3.5 w-3.5" /> Category
+                  </span>
+                  <span className="text-xs font-bold text-zinc-700">
                     {form.categories.length}/{MAX_CATEGORIES} selected
                   </span>
                 </FieldLabel>
@@ -140,29 +142,13 @@ export function SubmitVideoDialog({
                   })}
                 </div>
                 {form.categories.length >= MAX_CATEGORIES && (
-                  <p className="text-xs text-black/50">
+                  <p className="mt-2 text-xs font-bold text-black/60">
                     Maximum {MAX_CATEGORIES} categories. Uncheck one to pick another.
                   </p>
                 )}
               </div>
 
               <TagArea tags={form.tags} setTags={form.setTags} disabled={form.submitting} />
-
-              <p className="text-sm leading-relaxed text-black/80">
-                Add keywords like{' '}
-                <span className="font-bold text-black/90 underline decoration-yellow-400 decoration-2 underline-offset-2">
-                  person names
-                </span>
-                ,{' '}
-                <span className="font-bold text-black/90 underline decoration-yellow-400 decoration-2 underline-offset-2">
-                  location names
-                </span>
-                , or{' '}
-                <span className="font-bold text-black/90 underline decoration-yellow-400 decoration-2 underline-offset-2">
-                  special keywords
-                </span>{' '}
-                so others can find this video easily.
-              </p>
             </DialogBody>
 
             <DialogFooter className="shrink-0">
