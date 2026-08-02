@@ -48,7 +48,7 @@ export function FeaturedVideos({ categories }: { categories: DbCategory[] }): JS
               <span className="bg-linear-to-r from-red-600 to-red-500 bg-clip-text text-transparent">First</span>
             </>
           }
-          description="Browse by theme — each category collects verified submissions from across India."
+          description="Browse by theme — each category collects verified submissions from across India. (थीम के अनुसार ब्राउज़ करें — प्रत्येक श्रेणी में भारत भर से सत्यापित सबमिशन शामिल हैं।)"
           href="/categories"
           buttonText="View categories"
           className="border-b-4"
@@ -67,8 +67,8 @@ export function FeaturedVideos({ categories }: { categories: DbCategory[] }): JS
                   <Icon className="size-5" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="font-display text-sm font-extrabold tracking-tight uppercase">{cat.name}</h3>
-                  <p className="mt-0.5 text-xs text-black/70">{cat.description}</p>
+                  <h3 className="font-display font-extrabold tracking-tight uppercase">{cat.name}</h3>
+                  <p className="mt-0.5 text-sm text-black/70">{cat.description}</p>
                 </div>
               </Link>
             );
