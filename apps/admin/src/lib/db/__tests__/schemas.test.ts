@@ -56,6 +56,28 @@ describe('submitVideoBodySchema', () => {
     }
   });
 
+  it('splits comma-joined entries within the tags array', () => {
+    const result = submitVideoBodySchema.safeParse({
+      video_url: 'https://instagram.com/reel/abc',
+      tags: ['demo, , cool', 'protest'],
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.tags).toEqual(['demo', 'cool', 'protest']);
+    }
+  });
+
+  it('deduplicates repeated tags', () => {
+    const result = submitVideoBodySchema.safeParse({
+      video_url: 'https://instagram.com/reel/abc',
+      tags: ['demo', 'demo', ' cool, demo '],
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.tags).toEqual(['demo', 'cool']);
+    }
+  });
+
   it('capitalizes the city name', () => {
     const result = submitVideoBodySchema.safeParse({
       video_url: 'https://instagram.com/reel/abc',

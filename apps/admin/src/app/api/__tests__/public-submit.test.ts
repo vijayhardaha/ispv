@@ -171,4 +171,26 @@ describe('POST /api/public/submit', () => {
     expect(res.status).toBe(200);
     expect(mockRpc).toHaveBeenCalledWith('submit_video', expect.objectContaining({ p_video_id: 'DEF456abc' }));
   });
+
+  it('cleans dirty comma-separated tags with stray spaces', async () => {
+    mockRpc.mockResolvedValue({ data: { ok: true }, error: null });
+
+    const res = await POST(
+      makeRequest({ video_url: 'https://www.instagram.com/reel/JKL012mno/', hashtags: 'demo, , cool' })
+    );
+    expect(res.status).toBe(200);
+
+    expect(mockRpc).toHaveBeenCalledWith('submit_video', expect.objectContaining({ p_tags: 'demo,cool' }));
+  });
+
+  it('accepts tags provided as an array', async () => {
+    mockRpc.mockResolvedValue({ data: { ok: true }, error: null });
+
+    const res = await POST(
+      makeRequest({ video_url: 'https://www.instagram.com/reel/JKL012mno/', tags: [' demo ', 'cool'] })
+    );
+    expect(res.status).toBe(200);
+
+    expect(mockRpc).toHaveBeenCalledWith('submit_video', expect.objectContaining({ p_tags: 'demo,cool' }));
+  });
 });

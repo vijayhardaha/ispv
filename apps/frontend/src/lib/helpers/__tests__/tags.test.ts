@@ -24,6 +24,10 @@ describe('parseTags', () => {
     expect(parseTags('protest, ,, march,,')).toEqual(['protest', 'march']);
   });
 
+  it('cleans stray spaces between commas', () => {
+    expect(parseTags('demo, , cool')).toEqual(['demo', 'cool']);
+  });
+
   it('returns empty array for empty input', () => {
     expect(parseTags('')).toEqual([]);
   });
