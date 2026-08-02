@@ -21,11 +21,11 @@ const BUTTON_REST = '+';
  */
 function createSpinner() {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('width', '24');
-  svg.setAttribute('height', '24');
+  svg.setAttribute('width', '22');
+  svg.setAttribute('height', '22');
   svg.setAttribute('viewBox', '0 0 24 24');
   svg.setAttribute('fill', 'none');
-  svg.setAttribute('stroke', '#000');
+  svg.setAttribute('stroke', '#fff');
   svg.setAttribute('stroke-width', '2.5');
   svg.setAttribute('stroke-linecap', 'round');
 
@@ -46,16 +46,16 @@ function createSpinner() {
 
 /** Shared button style text (sans content). */
 const BTN_STYLE =
-  'position:fixed;bottom:100px;right:40px;z-index:99999;width:56px;height:56px;border:2px solid #000;background:#facc15;color:#000;font-size:28px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;';
+  'position:fixed;bottom:24px;right:24px;z-index:99999;width:54px;height:54px;border:none;border-radius:50%;background:linear-gradient(45deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);color:#fff;font-size:26px;font-weight:600;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s ease,opacity .15s ease;box-shadow:0 4px 14px rgba(0,0,0,.18);';
 
 /** Floating collect button HTML template. */
 const BUTTON_HTML = `<button id="ispv-collect" title="Collect to ISPV" style="${BTN_STYLE}">${BUTTON_REST}</button>`;
 
-/** Notification toast styles for success, error, and warning states. */
+/** Notification toast accent colors, icons, and messages for success, error, and warning states. */
 const NOTIFICATION_STYLES = {
-  success: { bg: '#22c55e', text: 'white', icon: '\u2713', message: 'Submitted to ISPV' },
-  error: { bg: '#ef4444', text: 'white', icon: '\u2717', message: 'Failed to submit' },
-  warning: { bg: '#facc15', text: 'black', icon: '\u26A0', message: '' },
+  success: { color: '#2ecc71', icon: '\u2713\uFE0E', message: 'Submitted to ISPV' },
+  error: { color: '#ed4956', icon: '\u2717\uFE0E', message: 'Failed to submit' },
+  warning: { color: '#f7a600', icon: '!', message: '' },
 };
 
 /**
@@ -126,7 +126,14 @@ class ISPVCollector {
     }
 
     document.body.insertAdjacentHTML('beforeend', BUTTON_HTML);
-    document.getElementById('ispv-collect').addEventListener('click', () => this.#collectData());
+    const btn = document.getElementById('ispv-collect');
+    btn.addEventListener('click', () => this.#collectData());
+    btn.addEventListener('mouseenter', () => {
+      btn.style.transform = 'scale(1.08)';
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = 'scale(1)';
+    });
   }
 
   // --------------------------------------------------------------------
@@ -259,32 +266,39 @@ class ISPVCollector {
   #showNotification(type, customMessage) {
     const style = NOTIFICATION_STYLES[type];
     const message = customMessage ?? style.message;
+    const fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+
+    // Replace any visible toast so stacked notifications never overlap.
+    document.querySelectorAll('.ispv-toast').forEach((t) => t.remove());
 
     const toast = document.createElement('div');
-    toast.textContent = `${style.icon} ${message}`;
-    Object.assign(toast.style, {
-      position: 'fixed',
-      bottom: '170px',
-      right: '40px',
-      zIndex: '99999',
-      padding: '12px 20px',
-      borderRadius: '8px',
-      border: '2px solid #000',
-      background: style.bg,
-      color: style.text,
-      fontSize: '14px',
-      fontWeight: '600',
-      fontFamily: 'system-ui, sans-serif',
-      boxShadow: '4px 4px 0 #000',
-      transition: 'opacity 0.3s ease',
-      opacity: '1',
-    });
+    toast.classList.add('ispv-toast');
+    toast.style.cssText = `position:fixed;bottom:92px;right:24px;z-index:99999;display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:16px;background:#fff;font-family:${fontFamily};box-shadow:0 4px 20px rgba(0,0,0,.14);opacity:1;`;
 
+    const icon = document.createElement('span');
+    icon.textContent = style.icon;
+    icon.style.cssText = `width:22px;height:22px;border-radius:50%;background:${style.color};color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;`;
+
+    const text = document.createElement('span');
+    text.textContent = message;
+    text.style.cssText = 'font-size:14px;font-weight:500;color:#262626;';
+
+    toast.appendChild(icon);
+    toast.appendChild(text);
     document.body.appendChild(toast);
 
+    toast.animate(
+      [
+        { opacity: 0, transform: 'translateY(8px)' },
+        { opacity: 1, transform: 'translateY(0)' },
+      ],
+      { duration: 200, easing: 'ease-out' }
+    );
+
     setTimeout(() => {
-      toast.style.opacity = '0';
-      setTimeout(() => toast.remove(), 300);
+      toast.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, easing: 'ease-in' });
+      // Hard-remove fallback in case the exit animation is throttled (e.g. background tab).
+      setTimeout(() => toast.remove(), 250);
     }, 3000);
   }
 }
