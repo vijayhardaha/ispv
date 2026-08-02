@@ -40,7 +40,6 @@ export function LocationsMap({
           description="Every location listed draws from archival videos — sourced from people on the ground and organised by state and union territory. Click any location to jump to its videos."
           href="/videos"
           buttonText="View all videos"
-          buttonIcon={<MapPin className="size-4" />}
         />
 
         <div>
@@ -55,7 +54,7 @@ export function LocationsMap({
                 className="shadow-brutal-sm group flex items-center justify-between gap-4 border-2 border-black bg-white px-3 py-2 transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
               >
                 <span className="font-display text-sm font-bold uppercase">{loc.name}</span>
-                <span className="font-mono text-sm font-bold tracking-tight text-black/80">{loc.count}</span>
+                <span className="font-mono text-sm font-bold tracking-tight text-black/60">{loc.count}</span>
               </Link>
             ))}
           </div>
