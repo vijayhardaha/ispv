@@ -46,7 +46,7 @@ export function SourcesSection({ sources }: { sources: Source[] }): JSX.Element 
             </a>
           ))}
         </div>
-        <p className="mt-6 leading-relaxed text-black/80">
+        <p className="mt-6 leading-relaxed text-black/60">
           This page is for informational purposes. For the most current and detailed information, refer to the original
           source materials linked above.
         </p>

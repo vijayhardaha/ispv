@@ -65,7 +65,7 @@ export function HeroSection({
             <span className="block text-black">By the People.</span>
           </h1>
 
-          <p className="mt-5 max-w-xl text-base text-black/80 md:text-lg">
+          <p className="mt-5 max-w-xl text-base text-black/60 md:text-lg">
             Every video captures one perspective. Together, they preserve the timeline of student movements across
             India. This vault organizes publicly shared recordings by event, location, and date, making them easy to
             discover for years to come.

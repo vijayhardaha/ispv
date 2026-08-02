@@ -163,7 +163,7 @@ function Step({ n, title, children }: { n: number; title: string; children: Reac
       </div>
       <div>
         <h4 className="font-display text-lg font-extrabold uppercase">{title}</h4>
-        <p className="mt-1 text-black/80">{children}</p>
+        <p className="mt-1 text-black/60">{children}</p>
       </div>
     </div>
   );
@@ -259,12 +259,12 @@ export default function AboutPage(): JSX.Element {
           <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase md:text-4xl">
             Why This Matters
           </h2>
-          <p className="mt-4 leading-relaxed text-black/80">History is rarely experienced from a single camera.</p>
-          <p className="mt-3 leading-relaxed text-black/80">
+          <p className="mt-4 leading-relaxed text-black/60">History is rarely experienced from a single camera.</p>
+          <p className="mt-3 leading-relaxed text-black/60">
             Thousands of students record the same event from different streets, different cities, and different
             perspectives. Individually, each video captures a moment. Together, they preserve the memory of a movement.
           </p>
-          <p className="mt-3 leading-relaxed text-black/80">
+          <p className="mt-3 leading-relaxed text-black/60">
             Indian Students Protest Vault exists to ensure those publicly shared recordings remain organized,
             searchable, and accessible for anyone seeking to understand these moments through the people who witnessed
             them.

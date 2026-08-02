@@ -43,7 +43,7 @@ export function CoreDemandsSection({ demands }: { demands: Demand[] }): JSX.Elem
             </div>
           ))}
         </div>
-        <p className="mt-6 text-black/80">
+        <p className="mt-6 text-black/60">
           Disclaimer: This demand data is gathered from public internet sources. Please check official movement
           communications for the most accurate and current information.
         </p>

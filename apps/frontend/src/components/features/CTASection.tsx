@@ -21,7 +21,7 @@ export function CTASection(): JSX.Element {
         <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase md:text-5xl">
           Got a reel the world should see?
         </h2>
-        <p className="mt-3 text-black/80">
+        <p className="mt-3 text-black/60">
           If you filmed something peaceful and public, submit the URL. We&apos;ll add it to the archive and the next
           person scrolling will see it.
         </p>
