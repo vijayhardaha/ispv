@@ -3,7 +3,8 @@ import { z } from 'zod/v4';
 import { capitalizeCity } from '@/lib/utils';
 
 /**
- * Trims surrounding whitespace from each tag and drops empty entries.
+ * Splits comma-joined tag strings, trims surrounding whitespace, drops empty entries,
+ * and deduplicates the result.
  *
  * @param {string[] | null | undefined} tags - Raw tag list.
  *
@@ -13,7 +14,14 @@ function normalizeTags(tags: string[] | null | undefined): string[] | null | und
   if (!tags) {
     return tags;
   }
-  return tags.map((t) => t.trim()).filter(Boolean);
+  return Array.from(
+    new Set(
+      tags
+        .flatMap((tag) => tag.split(','))
+        .map((tag) => tag.trim())
+        .filter(Boolean)
+    )
+  );
 }
 
 /**

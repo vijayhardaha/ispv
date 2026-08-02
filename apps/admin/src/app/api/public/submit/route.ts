@@ -25,15 +25,14 @@ export async function POST(req: Request): Promise<NextResponse> {
     }
 
     const body = await req.json();
+    const rawTags = body.tags ?? body.hashtags;
     const parsed = submitVideoBodySchema.safeParse({
       video_url: body.url ?? body.video_url,
-      tags:
-        body.tags || body.hashtags
-          ? (body.tags || body.hashtags)
-              .split(',')
-              .map((s: string) => s.trim().toLowerCase())
-              .filter(Boolean)
-          : undefined,
+      tags: rawTags
+        ? (Array.isArray(rawTags) ? rawTags : rawTags.split(','))
+            .map((s: string) => s.trim().toLowerCase())
+            .filter(Boolean)
+        : undefined,
       category: body.location ?? null,
       categories: Array.isArray(body.categories) ? body.categories : undefined,
       location: null,
