@@ -66,10 +66,8 @@ function CategoryCard({ category, videoCount }: { category: DbCategory; videoCou
         </span>
         <ArrowRight className="h-6 w-6 -rotate-12 transition-transform group-hover:rotate-0" />
       </div>
-      <h2 className="font-display mt-3 text-3xl font-extrabold tracking-tight uppercase md:text-4xl">
-        {category.name}
-      </h2>
-      <p className="mt-2 max-w-xs text-sm opacity-90">{category.description}</p>
+      <h2 className="font-display mt-3 text-2xl font-extrabold tracking-tight uppercase">{category.name}</h2>
+      <p className="mt-2 max-w-xs text-sm text-black/70">{category.description}</p>
     </Link>
   );
 }

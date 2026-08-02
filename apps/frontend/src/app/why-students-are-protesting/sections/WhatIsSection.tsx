@@ -13,7 +13,7 @@ export function WhatIsSection(): JSX.Element {
   return (
     <section className="py-12">
       <Container>
-        <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase md:text-4xl">
+        <h2 className="font-display text-2xl font-extrabold tracking-tight uppercase md:text-3xl">
           What Is This Movement?
         </h2>
         <p className="mt-4">

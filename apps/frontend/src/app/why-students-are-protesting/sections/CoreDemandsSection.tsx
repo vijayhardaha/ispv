@@ -27,7 +27,7 @@ export function CoreDemandsSection({ demands }: { demands: Demand[] }): JSX.Elem
   return (
     <section className="border-y-2 border-black bg-gray-100 py-12">
       <Container>
-        <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase md:text-4xl">Core Demands</h2>
+        <h2 className="font-display text-2xl font-extrabold tracking-tight uppercase md:text-3xl">Core Demands</h2>
         <p className="mt-2">
           The movement publicly advocates for the following principles, reflected in its published manifesto and
           official communications.

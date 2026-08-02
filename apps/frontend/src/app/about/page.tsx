@@ -210,7 +210,7 @@ export default function AboutPage(): JSX.Element {
       {/* How It Works */}
       <section className="border-y-2 border-black bg-gray-100 py-12">
         <Container>
-          <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase md:text-4xl">How It Works</h2>
+          <h2 className="font-display text-2xl font-extrabold tracking-tight uppercase md:text-3xl">How It Works</h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {STEPS.map((s) => (
               <Step key={s.n} n={s.n} title={s.title}>
@@ -256,7 +256,7 @@ export default function AboutPage(): JSX.Element {
       {/* Why This Matters */}
       <section className="border-y-2 border-black bg-gray-100 py-12">
         <Container>
-          <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase md:text-4xl">
+          <h2 className="font-display text-2xl font-extrabold tracking-tight uppercase md:text-3xl">
             Why This Matters
           </h2>
           <p className="mt-4 leading-relaxed text-black/60">History is rarely experienced from a single camera.</p>

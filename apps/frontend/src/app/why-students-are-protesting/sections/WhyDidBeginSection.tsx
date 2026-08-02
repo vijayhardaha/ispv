@@ -22,7 +22,7 @@ export function WhyDidBeginSection(): JSX.Element {
   return (
     <section className="border-y-2 border-black bg-gray-100 py-12">
       <Container>
-        <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase md:text-4xl">Why Did It Begin?</h2>
+        <h2 className="font-display text-2xl font-extrabold tracking-tight uppercase md:text-3xl">Why Did It Begin?</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {REASONS.map((item) => (
             <div key={item} className="shadow-brutal-sm flex items-center gap-3 border-2 border-black bg-white p-3">

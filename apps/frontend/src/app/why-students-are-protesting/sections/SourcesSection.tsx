@@ -27,7 +27,7 @@ export function SourcesSection({ sources }: { sources: Source[] }): JSX.Element 
   return (
     <section className="py-12">
       <Container>
-        <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase md:text-4xl">Sources</h2>
+        <h2 className="font-display text-2xl font-extrabold tracking-tight uppercase md:text-3xl">Sources</h2>
         <p className="mt-2 text-lg">Information on this page is drawn from the following publicly available sources.</p>
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {sources.map((source) => (

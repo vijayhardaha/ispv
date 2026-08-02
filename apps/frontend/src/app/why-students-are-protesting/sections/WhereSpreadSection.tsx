@@ -18,7 +18,7 @@ export function WhereSpreadSection(): JSX.Element {
     <section className="py-12">
       <Container className="text-center">
         <Globe className="mx-auto h-10 w-10 text-black" />
-        <h2 className="font-display mt-3 text-3xl font-extrabold tracking-tight uppercase md:text-4xl">
+        <h2 className="font-display mt-3 text-2xl font-extrabold tracking-tight uppercase md:text-3xl">
           Where Did It Spread?
         </h2>
         <p className="mt-3">

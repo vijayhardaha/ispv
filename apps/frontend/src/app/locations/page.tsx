@@ -68,7 +68,7 @@ function LocationCard({ location, videoCount }: { location: DbLocation; videoCou
       </div>
       <div className="mt-3 flex items-center gap-2">
         <MapPin className="h-6 w-6 shrink-0" />
-        <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase md:text-4xl">{location.name}</h2>
+        <h2 className="font-display text-2xl font-extrabold tracking-tight uppercase">{location.name}</h2>
       </div>
     </Link>
   );

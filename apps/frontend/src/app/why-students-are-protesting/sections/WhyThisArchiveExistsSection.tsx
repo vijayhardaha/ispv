@@ -17,7 +17,7 @@ export function WhyThisArchiveExistsSection(): JSX.Element {
   return (
     <section className="border-y-2 border-black bg-yellow-400 py-12">
       <Container className="flex flex-col items-center text-center">
-        <h2 className="font-display text-3xl font-extrabold tracking-tight uppercase md:text-4xl">
+        <h2 className="font-display text-2xl font-extrabold tracking-tight uppercase md:text-3xl">
           Why This Archive Exists
         </h2>
         <p className="mt-4 max-w-2xl">
