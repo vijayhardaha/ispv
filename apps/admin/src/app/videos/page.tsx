@@ -111,7 +111,7 @@ function StatusTabs({ status, statusCounts }: { status: string; statusCounts: St
               active
                 ? isTrashed
                   ? 'border-red-600 bg-red-600 text-white'
-                  : 'border-purple-600 bg-purple-600 text-white'
+                  : 'border-pink-600 bg-pink-600 text-white'
                 : isTrashed
                   ? 'bg-white text-red-600 hover:bg-red-50'
                   : 'bg-white text-gray-700 hover:bg-gray-100'
@@ -353,7 +353,7 @@ function StatusCell({
               ? 'border-gray-300 bg-gray-100 text-gray-800'
               : video.status === 'rejected'
                 ? 'border-red-600 bg-red-600 text-white'
-                : 'border-purple-600 bg-purple-600 text-white'
+                : 'border-pink-600 bg-pink-600 text-white'
         )}
       >
         <SelectValue placeholder="Select status" />
@@ -397,7 +397,7 @@ function RowActionButton({
       type="button"
       variant="link"
       onClick={onClick}
-      className={cn('text-xs font-semibold', danger ? 'text-red-600 hover:text-red-700' : 'hover:text-purple-600')}
+      className={cn('text-xs font-semibold', danger ? 'text-red-600 hover:text-red-700' : 'hover:text-pink-600')}
     >
       {children}
     </Button>
@@ -476,8 +476,8 @@ function formatDate(dateStr: string | null | undefined): string {
   }
   try {
     const d = new Date(dateStr);
-    const datePart = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).format(d);
-    const timePart = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).format(d);
+    const datePart = new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).format(d);
+    const timePart = new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }).format(d);
     return `${datePart} @${timePart}`;
   } catch {
     return '\u2013';
@@ -537,7 +537,7 @@ function SortableTh({
       <button
         type="button"
         onClick={() => onSort(sortKey)}
-        className={cn('group inline-flex items-center gap-1 hover:text-purple-600', active && 'text-purple-700')}
+        className={cn('group inline-flex items-center gap-1 hover:text-pink-600', active && 'text-pink-700')}
       >
         {label}
         <Icon
@@ -701,7 +701,7 @@ function VideoRow({
     <tr
       className={cn(
         'group border-b border-gray-100 hover:bg-gray-100',
-        selected ? 'bg-purple-100' : 'odd:bg-white even:bg-gray-50/70',
+        selected ? 'bg-pink-100' : 'odd:bg-white even:bg-gray-50/70',
         isTrashed && 'opacity-70'
       )}
     >
@@ -720,7 +720,7 @@ function VideoRow({
           src={video.thumbnail_url ?? '/sample.svg'}
           alt=""
           loading="lazy"
-          className="h-10 w-10 rounded border border-black object-cover"
+          className="h-10 w-10 rounded border border-gray-300 object-cover"
           onError={(e) => {
             const el = e.target as HTMLImageElement;
             if (!el.src.endsWith('/sample.svg')) {
@@ -734,7 +734,7 @@ function VideoRow({
           href={displayVideoUrl(video)}
           target="_blank"
           rel="noopener noreferrer"
-          className="block truncate underline hover:text-purple-600"
+          className="block truncate underline hover:text-pink-600"
         >
           {video.video_id ?? '\u2013'}
         </a>
