@@ -37,7 +37,7 @@ export function LocationsMap({
           tagText="Map"
           tagIcon={<MapPin className="inline size-3" />}
           heading="Locations on the ground"
-          description="Every location listed draws from archival videos — sourced from people on the ground and organised by state and union territory. Click any location to jump to its videos."
+          description="Every location listed draws from archival videos — sourced from people on the ground and organised by state and union territory. Click any location to jump to its videos. (सूचीबद्ध हर स्थान संग्रहीत वीडियो से लिया गया है — जो ज़मीन पर मौजूद लोगों से प्राप्त किए गए हैं और राज्य तथा केंद्र शासित प्रदेश के अनुसार व्यवस्थित हैं। किसी भी स्थान पर क्लिक करके उसके वीडियो देखें।)"
           href="/videos"
           buttonText="View all videos"
         />
