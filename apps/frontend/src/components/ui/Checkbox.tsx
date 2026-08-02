@@ -58,7 +58,6 @@ export function Checkbox({
         className={cn(
           'grid h-5 w-5 shrink-0 place-items-center border-2 border-black bg-white transition-all duration-200',
           'shadow-brutal-sm',
-          'group-hover:shadow-brutal group-hover:-translate-x-0.5 group-hover:-translate-y-0.5',
           'peer-checked:bg-yellow-400',
           'peer-focus-visible:ring-2 peer-focus-visible:ring-yellow-500 peer-focus-visible:ring-offset-2',
           'peer-disabled:cursor-not-allowed peer-disabled:opacity-40'
